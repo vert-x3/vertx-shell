@@ -32,7 +32,7 @@
   <name>Vert.x Unit</name>
 
   <properties>
-    <stack.version>3.0.0-SNAPSHOT</stack.version>
+    <stack.version>3.0.0</stack.version>
   </properties>
 
   <dependencyManagement>
@@ -73,14 +73,6 @@
       <optional>true</optional>
     </dependency>
 
-    <!-- Not needed at runtime unless you use the JUnit extension -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <optional>true</optional>
-    </dependency>
-
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-docgen</artifactId>
@@ -96,12 +88,19 @@
       <artifactId>vertx-codegen</artifactId>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-core</artifactId>
-      <type>test-jar</type>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-unit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
