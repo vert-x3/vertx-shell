@@ -19,7 +19,6 @@ package io.vertx.rxjava.ext.shell.command;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
-import io.vertx.rxjava.core.Vertx;
 import io.vertx.core.Handler;
 
 /**
@@ -41,9 +40,14 @@ public class Command {
     return delegate;
   }
 
-  public static Command create(Vertx vertx, String name) { 
-    Command ret= Command.newInstance(io.vertx.ext.shell.command.Command.create((io.vertx.core.Vertx) vertx.getDelegate(), name));
+  public static Command create(String name) { 
+    Command ret= Command.newInstance(io.vertx.ext.shell.command.Command.create(name));
     return ret;
+  }
+
+  public Command option(Option option) { 
+    this.delegate.option((io.vertx.ext.shell.command.Option) option.getDelegate());
+    return this;
   }
 
   public String name() { 

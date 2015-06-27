@@ -1,8 +1,8 @@
 package io.vertx.ext.shell.command;
 
+import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.impl.CommandImpl;
 
 /**
@@ -11,9 +11,12 @@ import io.vertx.ext.shell.command.impl.CommandImpl;
 @VertxGen
 public interface Command {
 
-  static Command create(Vertx vertx, String name) {
-    return new CommandImpl(vertx, name);
+  static Command create(String name) {
+    return new CommandImpl(name);
   }
+
+  @Fluent
+  Command option(Option option);
 
   String name();
 

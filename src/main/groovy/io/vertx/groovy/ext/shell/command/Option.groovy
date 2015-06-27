@@ -17,39 +17,28 @@
 package io.vertx.groovy.ext.shell.command;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
-import io.vertx.core.Handler
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
-public class Command {
-  final def io.vertx.ext.shell.command.Command delegate;
-  public Command(io.vertx.ext.shell.command.Command delegate) {
+public class Option {
+  final def io.vertx.ext.shell.command.Option delegate;
+  public Option(io.vertx.ext.shell.command.Option delegate) {
     this.delegate = delegate;
   }
   public Object getDelegate() {
     return delegate;
   }
-  public static Command create(String name) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.Command.create(name), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
+  public static Option create(String name, int arity) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.Option.create(name, arity), io.vertx.ext.shell.command.Option.class, io.vertx.groovy.ext.shell.command.Option.class);
     return ret;
-  }
-  public Command option(Option option) {
-    this.delegate.option((io.vertx.ext.shell.command.Option)option.getDelegate());
-    return this;
   }
   public String name() {
     def ret = this.delegate.name();
     return ret;
   }
-  public void setExecuteHandler(Handler<Execution> handler) {
-    this.delegate.setExecuteHandler(new Handler<io.vertx.ext.shell.command.Execution>() {
-      public void handle(io.vertx.ext.shell.command.Execution event) {
-        handler.handle(new io.vertx.groovy.ext.shell.command.Execution(event));
-      }
-    });
-  }
-  public void unregister() {
-    this.delegate.unregister();
+  public int arity() {
+    def ret = this.delegate.arity();
+    return ret;
   }
 }

@@ -1,4 +1,5 @@
 require 'vertx-shell/execution'
+require 'vertx-shell/option'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.command.Command
 module VertxShell
@@ -14,14 +15,22 @@ module VertxShell
     def j_del
       @j_del
     end
-    # @param [::Vertx::Vertx] vertx 
     # @param [String] name 
     # @return [::VertxShell::Command]
-    def self.create(vertx=nil,name=nil)
-      if vertx.class.method_defined?(:j_del) && name.class == String && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::Command.java_method(:create, [Java::IoVertxCore::Vertx.java_class,Java::java.lang.String.java_class]).call(vertx.j_del,name),::VertxShell::Command)
+    def self.create(name=nil)
+      if name.class == String && !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::Command.java_method(:create, [Java::java.lang.String.java_class]).call(name),::VertxShell::Command)
       end
-      raise ArgumentError, "Invalid arguments when calling create(vertx,name)"
+      raise ArgumentError, "Invalid arguments when calling create(name)"
+    end
+    # @param [::VertxShell::Option] option 
+    # @return [self]
+    def option(option=nil)
+      if option.class.method_defined?(:j_del) && !block_given?
+        @j_del.java_method(:option, [Java::IoVertxExtShellCommand::Option.java_class]).call(option.j_del)
+        return self
+      end
+      raise ArgumentError, "Invalid arguments when calling option(option)"
     end
     # @return [String]
     def name

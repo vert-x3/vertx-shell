@@ -14,37 +14,21 @@
  * under the License.
  */
 
-/** @module vertx-shell-js/command */
+/** @module vertx-shell-js/option */
 var utils = require('vertx-js/util/utils');
-var Execution = require('vertx-shell-js/execution');
-var Option = require('vertx-shell-js/option');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JCommand = io.vertx.ext.shell.command.Command;
+var JOption = io.vertx.ext.shell.command.Option;
 
 /**
 
  @class
 */
-var Command = function(j_val) {
+var Option = function(j_val) {
 
-  var j_command = j_val;
+  var j_option = j_val;
   var that = this;
-
-  /**
-
-   @public
-   @param option {Option} 
-   @return {Command}
-   */
-  this.option = function(option) {
-    var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_command["option(io.vertx.ext.shell.command.Option)"](option._jdel);
-      return that;
-    } else utils.invalidArgs();
-  };
 
   /**
 
@@ -55,21 +39,7 @@ var Command = function(j_val) {
   this.name = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return j_command["name()"]();
-    } else utils.invalidArgs();
-  };
-
-  /**
-
-   @public
-   @param handler {function} 
-   */
-  this.setExecuteHandler = function(handler) {
-    var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_command["setExecuteHandler(io.vertx.core.Handler)"](function(jVal) {
-      handler(utils.convReturnVertxGen(jVal, Execution));
-    });
+      return j_option["name()"]();
     } else utils.invalidArgs();
   };
 
@@ -77,32 +47,34 @@ var Command = function(j_val) {
 
    @public
 
+   @return {number}
    */
-  this.unregister = function() {
+  this.arity = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      j_command["unregister()"]();
+      return j_option["arity()"]();
     } else utils.invalidArgs();
   };
 
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
-  this._jdel = j_command;
+  this._jdel = j_option;
 };
 
 /**
 
- @memberof module:vertx-shell-js/command
+ @memberof module:vertx-shell-js/option
  @param name {string} 
- @return {Command}
+ @param arity {number} 
+ @return {Option}
  */
-Command.create = function(name) {
+Option.create = function(name, arity) {
   var __args = arguments;
-  if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnVertxGen(JCommand["create(java.lang.String)"](name), Command);
+  if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] ==='number') {
+    return utils.convReturnVertxGen(JOption["create(java.lang.String,int)"](name, arity), Option);
   } else utils.invalidArgs();
 };
 
 // We export the Constructor function
-module.exports = Command;
+module.exports = Option;

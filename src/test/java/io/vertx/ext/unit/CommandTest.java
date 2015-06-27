@@ -22,7 +22,7 @@ public class CommandTest {
   @Test
   public void testSomething(TestContext context) {
     CommandManager manager = CommandManager.create(vertx);
-    Command cmd = Command.create(vertx, "foo");
+    Command cmd = Command.create("foo");
     cmd.setExecuteHandler(ctx -> {
       ctx.end(3);
     });
@@ -40,7 +40,7 @@ public class CommandTest {
   @Test
   public void testStdin(TestContext context) {
     CommandManager manager = CommandManager.create(vertx);
-    Command cmd = Command.create(vertx, "foo");
+    Command cmd = Command.create("foo");
     cmd.setExecuteHandler(ctx -> ctx.setStdin(data -> {
       context.assertEquals("hello_world", data);
       ctx.end(0);
@@ -63,7 +63,7 @@ public class CommandTest {
   @Test
   public void testStdout(TestContext context) {
     CommandManager manager = CommandManager.create(vertx);
-    Command cmd = Command.create(vertx, "foo");
+    Command cmd = Command.create("foo");
     cmd.setExecuteHandler(ctx -> {
       ctx.stdout().handle("bye_world");
       ctx.end(0);
