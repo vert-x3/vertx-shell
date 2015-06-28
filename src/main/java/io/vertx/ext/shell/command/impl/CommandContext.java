@@ -7,6 +7,10 @@ import io.vertx.ext.shell.command.Execution;
 import io.vertx.ext.shell.impl.Process;
 import io.vertx.ext.shell.impl.ProcessContext;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
@@ -27,9 +31,24 @@ public class CommandContext {
   }
 
   public Process createProcess() {
+    return createProcess(Collections.emptyMap(), Collections.emptyList());
+  }
+
+  public Process createProcess(Map<String, List<String>> options, List<String> arguments) {
     return new Process() {
       public void execute(ProcessContext context) {
         Execution execution = new Execution() {
+
+          @Override
+          public List<String> arguments() {
+            return arguments;
+          }
+
+          @Override
+          public List<String> getOption(String name) {
+            return options.get(name);
+          }
+
           @Override
           public Execution setStdin(Stream stdin) {
             if (stdin != null) {

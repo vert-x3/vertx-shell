@@ -37,8 +37,8 @@ public class Shell {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.Shell.create((io.vertx.core.Vertx)vertx.getDelegate(), (io.vertx.ext.shell.command.CommandManager)manager.getDelegate()), io.vertx.ext.shell.Shell.class, io.vertx.groovy.ext.shell.Shell.class);
     return ret;
   }
-  public void createProcess(String name, Handler<AsyncResult<Job>> handler) {
-    this.delegate.createProcess(name, new Handler<AsyncResult<io.vertx.ext.shell.Job>>() {
+  public void createJob(String s, Handler<AsyncResult<Job>> handler) {
+    this.delegate.createJob(s, new Handler<AsyncResult<io.vertx.ext.shell.Job>>() {
       public void handle(AsyncResult<io.vertx.ext.shell.Job> event) {
         AsyncResult<Job> f
         if (event.succeeded()) {

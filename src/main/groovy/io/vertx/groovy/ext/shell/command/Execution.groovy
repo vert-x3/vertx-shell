@@ -17,6 +17,7 @@
 package io.vertx.groovy.ext.shell.command;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import java.util.List
 import io.vertx.groovy.ext.shell.Stream
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -29,6 +30,14 @@ public class Execution {
   }
   public Object getDelegate() {
     return delegate;
+  }
+  public List<String> arguments() {
+    def ret = this.delegate.arguments();
+    return ret;
+  }
+  public List<String> getOption(String name) {
+    def ret = this.delegate.getOption(name);
+    return ret;
   }
   public Execution setStdin(Stream stdin) {
     this.delegate.setStdin((io.vertx.ext.shell.Stream)stdin.getDelegate());

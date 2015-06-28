@@ -3,7 +3,6 @@ package io.vertx.ext.unit;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandManager;
-import io.vertx.ext.shell.cli.CliRequest;
 import io.vertx.ext.shell.command.impl.CommandManagerImpl;
 import io.vertx.ext.shell.impl.ShellImpl;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -21,12 +20,22 @@ public class CommandManagerTest {
   Vertx vertx = Vertx.vertx();
 
   @Test
-  public void testMakeRequest(TestContext context) {
+  public void testEval(TestContext context) {
     CommandManagerImpl mgr = (CommandManagerImpl) CommandManager.create(vertx);
-    mgr.addCommand(Command.create("hello"), context.asyncAssertSuccess(v -> {
+    Command command = Command.create("hello");
+    command.setExecuteHandler(exec -> {
+      context.assertEquals(Arrays.asList("world"), exec.arguments());
+      exec.end(0);
+    });
+    mgr.addCommand(command, context.asyncAssertSuccess(v -> {
       ShellImpl shell = new ShellImpl(vertx, mgr);
-      CliRequest request = shell.makeRequest("hello world");
-      context.assertEquals(Arrays.asList("world"), request.getArguments());
+      shell.createJob("hello world", context.asyncAssertSuccess(job -> {
+        Async async = context.async();
+        job.endHandler(code -> {
+          async.complete();
+        });
+        job.run();
+      }));
     }));
   }
 

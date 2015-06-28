@@ -24,14 +24,14 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling create(vertx,manager)"
     end
-    # @param [String] name 
+    # @param [String] s 
     # @yield 
     # @return [void]
-    def create_process(name=nil)
-      if name.class == String && block_given?
-        return @j_del.java_method(:createProcess, [Java::java.lang.String.java_class,Java::IoVertxCore::Handler.java_class]).call(name,(Proc.new { |ar| yield(ar.failed ? ar.cause : nil, ar.succeeded ? ::Vertx::Util::Utils.safe_create(ar.result,::VertxShell::Job) : nil) }))
+    def create_job(s=nil)
+      if s.class == String && block_given?
+        return @j_del.java_method(:createJob, [Java::java.lang.String.java_class,Java::IoVertxCore::Handler.java_class]).call(s,(Proc.new { |ar| yield(ar.failed ? ar.cause : nil, ar.succeeded ? ::Vertx::Util::Utils.safe_create(ar.result,::VertxShell::Job) : nil) }))
       end
-      raise ArgumentError, "Invalid arguments when calling create_process(name)"
+      raise ArgumentError, "Invalid arguments when calling create_job(s)"
     end
   end
 end

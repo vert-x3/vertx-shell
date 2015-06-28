@@ -34,6 +34,32 @@ var Execution = function(j_val) {
   /**
 
    @public
+
+   @return {Array.<string>}
+   */
+  this.arguments = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return j_execution["arguments()"]();
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+   @param name {string} 
+   @return {Array.<string>}
+   */
+  this.getOption = function(name) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'string') {
+      return j_execution["getOption(java.lang.String)"](name);
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
    @param stdin {Stream} 
    @return {Execution}
    */

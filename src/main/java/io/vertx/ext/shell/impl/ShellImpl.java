@@ -30,30 +30,31 @@ public class ShellImpl implements Shell {
   }
 
   @Override
-  public void createProcess(String name, Handler<AsyncResult<Job>> handler) {
-
-    CommandContext commandCtx = manager.getCommand(name);
-
-    if (commandCtx != null) {
-      JobProcess process = new JobProcess(vertx, commandCtx.createProcess());
-      handler.handle(Future.succeededFuture(process));
-    } else {
-      handler.handle(Future.failedFuture("Command " + name + " does not exist"));
+  public void createJob(String s, Handler<AsyncResult<Job>> handler) {
+    Process process;
+    try {
+      process = makeRequest(s);
+    } catch (Exception e) {
+      handler.handle(Future.failedFuture(e));
+      return;
     }
+    JobProcess job = new JobProcess(vertx, process);
+    handler.handle(Future.succeededFuture(job));
   }
 
-  public CliRequest makeRequest(String s) {
+  private Process makeRequest(String s) {
     ListIterator<CliToken> tokens = CliToken.tokenize(s).collect(Collectors.toList()).listIterator();
     while (tokens.hasNext()) {
       CliToken token = tokens.next();
       switch (token.getKind()) {
         case TEXT:
-          CommandContext ctx = manager.getCommand(token.getValue());
-          if (ctx == null) {
+          CommandContext command = manager.getCommand(token.getValue());
+          if (command == null) {
             throw new IllegalArgumentException(token.getValue() + ": command not found");
           }
-          CliParser parser = new CliParser(ctx.command());
-          return parser.parse(tokens);
+          CliParser parser = new CliParser(command.command());
+          CliRequest req = parser.parse(tokens);
+          return command.createProcess(req.getOptions(), req.getArguments());
         case BLANK:
           break;
         default:

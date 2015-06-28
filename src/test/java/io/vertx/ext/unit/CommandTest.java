@@ -28,7 +28,7 @@ public class CommandTest {
     });
     manager.addCommand(cmd, context.asyncAssertSuccess(v -> {
       Shell shell = Shell.create(vertx, manager);
-      shell.createProcess("foo", context.asyncAssertSuccess(process -> {
+      shell.createJob("foo", context.asyncAssertSuccess(process -> {
         process.endHandler(code -> {
           context.assertEquals(3, code);
         });
@@ -48,7 +48,7 @@ public class CommandTest {
     manager.addCommand(cmd, context.asyncAssertSuccess(v -> {
       Shell shell = Shell.create(vertx, manager);
       Async async = context.async();
-      shell.createProcess("foo", context.asyncAssertSuccess(process -> {
+      shell.createJob("foo", context.asyncAssertSuccess(process -> {
         process.endHandler(code -> {
           context.assertEquals(0, code);
           async.complete();
@@ -70,7 +70,7 @@ public class CommandTest {
     });
     manager.addCommand(cmd, context.asyncAssertSuccess(v -> {
       Shell shell = Shell.create(vertx, manager);
-      shell.createProcess("foo", context.asyncAssertSuccess(process -> {
+      shell.createJob("foo", context.asyncAssertSuccess(process -> {
         Async async = context.async();
         LinkedList<String> data = new LinkedList<>();
         process.setStdout(data::add);

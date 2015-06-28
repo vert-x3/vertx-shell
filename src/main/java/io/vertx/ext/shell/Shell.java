@@ -17,7 +17,7 @@ public interface Shell {
     return new ShellImpl(vertx, manager);
   }
 
-  void createProcess(String name, Handler<AsyncResult<Job>> handler);
+  void createJob(String s, Handler<AsyncResult<Job>> handler);
 
 
 

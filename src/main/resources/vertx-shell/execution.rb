@@ -14,6 +14,21 @@ module VertxShell
     def j_del
       @j_del
     end
+    # @return [Array<String>]
+    def arguments
+      if !block_given?
+        return @j_del.java_method(:arguments, []).call().to_a.map { |elt| elt }
+      end
+      raise ArgumentError, "Invalid arguments when calling arguments()"
+    end
+    # @param [String] name 
+    # @return [Array<String>]
+    def get_option(name=nil)
+      if name.class == String && !block_given?
+        return @j_del.java_method(:getOption, [Java::java.lang.String.java_class]).call(name).to_a.map { |elt| elt }
+      end
+      raise ArgumentError, "Invalid arguments when calling get_option(name)"
+    end
     # @param [::VertxShell::Stream] stdin 
     # @return [self]
     def set_stdin(stdin=nil)

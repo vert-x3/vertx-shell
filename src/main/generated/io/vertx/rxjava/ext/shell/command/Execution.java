@@ -19,6 +19,7 @@ package io.vertx.rxjava.ext.shell.command;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
+import java.util.List;
 import io.vertx.rxjava.ext.shell.Stream;
 
 /**
@@ -38,6 +39,18 @@ public class Execution {
 
   public Object getDelegate() {
     return delegate;
+  }
+
+  public List<String> arguments() { 
+    List<String> ret = this.delegate.arguments();
+;
+    return ret;
+  }
+
+  public List<String> getOption(String name) { 
+    List<String> ret = this.delegate.getOption(name);
+;
+    return ret;
   }
 
   public Execution setStdin(Stream stdin) { 

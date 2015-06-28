@@ -35,13 +35,13 @@ var Shell = function(j_val) {
   /**
 
    @public
-   @param name {string} 
+   @param s {string} 
    @param handler {function} 
    */
-  this.createProcess = function(name, handler) {
+  this.createJob = function(s, handler) {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_shell["createProcess(java.lang.String,io.vertx.core.Handler)"](name, function(ar) {
+      j_shell["createJob(java.lang.String,io.vertx.core.Handler)"](s, function(ar) {
       if (ar.succeeded()) {
         handler(utils.convReturnVertxGen(ar.result(), Job), null);
       } else {
