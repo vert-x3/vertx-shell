@@ -3,27 +3,25 @@ package io.vertx.ext.shell.impl;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.command.impl.ExecutionContext;
 import io.vertx.ext.shell.Signal;
 import io.vertx.ext.shell.Stream;
-import io.vertx.ext.shell.command.impl.CommandContext;
 
-import io.vertx.ext.shell.Process;
+import io.vertx.ext.shell.Job;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class ProcessImpl implements Process {
+public class JobProcess implements Job {
 
   final Vertx vertx;
-  final CommandContext commandContext;
+  final Process commandContext;
   volatile Handler<Integer> endHandler;
   volatile Stream stdin;
   volatile Stream stdout;
 
-  public ProcessImpl(Vertx vertx, CommandContext commandContext) {
+  public JobProcess(Vertx vertx, Process process) {
     this.vertx = vertx;
-    this.commandContext = commandContext;
+    this.commandContext = process;
   }
 
   @Override
@@ -45,15 +43,14 @@ public class ProcessImpl implements Process {
   public void run(Handler<Void> beginHandler) {
     Context context = vertx.getOrCreateContext();
     Handler<Integer> endHandler = this.endHandler;
-    ExecutionContext processContext = new ExecutionContext() {
+    ProcessContext processContext = new ProcessContext() {
       @Override
       public void begin() {
         context.runOnContext(beginHandler);
       }
       @Override
-      public ExecutionContext setStdin(Stream stdin) {
-        ProcessImpl.this.stdin = stdin;
-        return this;
+      public void setStdin(Stream stdin) {
+        JobProcess.this.stdin = stdin;
       }
       @Override
       public Stream stdout() {

@@ -16,7 +16,9 @@
 
 package io.vertx.rxjava.ext.shell;
 
-import io.vertx.ext.shell.Job;
+import java.util.Map;
+import io.vertx.lang.rxjava.InternalHelper;
+import rx.Observable;
 import io.vertx.ext.shell.Signal;
 import io.vertx.core.Handler;
 
@@ -27,11 +29,11 @@ import io.vertx.core.Handler;
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.Job original} non RX-ified interface using Vert.x codegen.
  */
 
-public class Process {
+public class Job {
 
-  final Job delegate;
+  final io.vertx.ext.shell.Job delegate;
 
-  public Process(Job delegate) {
+  public Job(io.vertx.ext.shell.Job delegate) {
     this.delegate = delegate;
   }
 
@@ -65,7 +67,7 @@ public class Process {
   }
 
 
-  public static Process newInstance(Job arg) {
-    return arg != null ? new Process(arg) : null;
+  public static Job newInstance(io.vertx.ext.shell.Job arg) {
+    return arg != null ? new Job(arg) : null;
   }
 }

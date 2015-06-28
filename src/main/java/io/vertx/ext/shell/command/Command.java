@@ -16,7 +16,9 @@ public interface Command {
   }
 
   @Fluent
-  Command option(Option option);
+  Command addOption(Option option);
+
+  Option getOption(String name);
 
   String name();
 

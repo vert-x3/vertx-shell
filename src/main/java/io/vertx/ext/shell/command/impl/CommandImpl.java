@@ -24,9 +24,14 @@ public class CommandImpl implements Command {
   }
 
   @Override
-  public CommandImpl option(Option option) {
+  public CommandImpl addOption(Option option) {
     options.put(option.name(), option);
     return this;
+  }
+
+  @Override
+  public Option getOption(String name) {
+    return options.get(name);
   }
 
   @Override

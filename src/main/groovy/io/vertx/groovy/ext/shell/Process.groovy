@@ -16,6 +16,7 @@
 
 package io.vertx.groovy.ext.shell;
 import groovy.transform.CompileStatic
+import io.vertx.ext.shell.Job
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.ext.shell.Signal
 import io.vertx.core.Handler
@@ -24,8 +25,8 @@ import io.vertx.core.Handler
 */
 @CompileStatic
 public class Process {
-  final def io.vertx.ext.shell.Process delegate;
-  public Process(io.vertx.ext.shell.Process delegate) {
+  final def Job delegate;
+  public Process(Job delegate) {
     this.delegate = delegate;
   }
   public Object getDelegate() {

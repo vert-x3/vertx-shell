@@ -14,58 +14,40 @@
  * under the License.
  */
 
-package io.vertx.rxjava.ext.shell;
-
-import io.vertx.ext.shell.Job;
-import io.vertx.ext.shell.Signal;
-import io.vertx.core.Handler;
-
+package io.vertx.groovy.ext.shell;
+import groovy.transform.CompileStatic
+import io.vertx.lang.groovy.InternalHelper
+import io.vertx.ext.shell.Signal
+import io.vertx.core.Handler
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
- *
- * <p/>
- * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.Job original} non RX-ified interface using Vert.x codegen.
- */
-
-public class Process {
-
-  final Job delegate;
-
-  public Process(Job delegate) {
+*/
+@CompileStatic
+public class Job {
+  final def io.vertx.ext.shell.Job delegate;
+  public Job(io.vertx.ext.shell.Job delegate) {
     this.delegate = delegate;
   }
-
   public Object getDelegate() {
     return delegate;
   }
-
-  public Stream stdin() { 
-    Stream ret= Stream.newInstance(this.delegate.stdin());
+  public Stream stdin() {
+    def ret= InternalHelper.safeCreate(this.delegate.stdin(), io.vertx.ext.shell.Stream.class, io.vertx.groovy.ext.shell.Stream.class);
     return ret;
   }
-
-  public void setStdout(Stream stdout) { 
-    this.delegate.setStdout((io.vertx.ext.shell.Stream) stdout.getDelegate());
+  public void setStdout(Stream stdout) {
+    this.delegate.setStdout((io.vertx.ext.shell.Stream)stdout.getDelegate());
   }
-
-  public void run() { 
+  public void run() {
     this.delegate.run();
   }
-
-  public void run(Handler<Void> beginHandler) { 
+  public void run(Handler<Void> beginHandler) {
     this.delegate.run(beginHandler);
   }
-
-  public void sendSignal(Signal signal) { 
+  public void sendSignal(Signal signal) {
     this.delegate.sendSignal(signal);
   }
-
-  public void endHandler(Handler<Integer> handler) { 
+  public void endHandler(Handler<Integer> handler) {
     this.delegate.endHandler(handler);
-  }
-
-
-  public static Process newInstance(Job arg) {
-    return arg != null ? new Process(arg) : null;
   }
 }

@@ -16,8 +16,8 @@
 
 /** @module vertx-shell-js/shell */
 var utils = require('vertx-js/util/utils');
-var Process = require('vertx-shell-js/process');
 var CommandManager = require('vertx-shell-js/command_manager');
+var Job = require('vertx-shell-js/job');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
@@ -43,7 +43,7 @@ var Shell = function(j_val) {
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
       j_shell["createProcess(java.lang.String,io.vertx.core.Handler)"](name, function(ar) {
       if (ar.succeeded()) {
-        handler(utils.convReturnVertxGen(ar.result(), Process), null);
+        handler(utils.convReturnVertxGen(ar.result(), Job), null);
       } else {
         handler(null, ar.cause());
       }

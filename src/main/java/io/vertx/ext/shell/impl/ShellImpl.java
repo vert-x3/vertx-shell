@@ -5,10 +5,16 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.*;
-import io.vertx.ext.shell.Process;
+import io.vertx.ext.shell.Job;
+import io.vertx.ext.shell.cli.CliParser;
+import io.vertx.ext.shell.cli.CliRequest;
+import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandManager;
 import io.vertx.ext.shell.command.impl.CommandContext;
 import io.vertx.ext.shell.command.impl.CommandManagerImpl;
+
+import java.util.ListIterator;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -24,16 +30,36 @@ public class ShellImpl implements Shell {
   }
 
   @Override
-  public void createProcess(String name, Handler<AsyncResult<Process>> handler) {
+  public void createProcess(String name, Handler<AsyncResult<Job>> handler) {
 
     CommandContext commandCtx = manager.getCommand(name);
 
     if (commandCtx != null) {
-      ProcessImpl process = new ProcessImpl(vertx, commandCtx);
+      JobProcess process = new JobProcess(vertx, commandCtx.createProcess());
       handler.handle(Future.succeededFuture(process));
     } else {
       handler.handle(Future.failedFuture("Command " + name + " does not exist"));
     }
+  }
 
+  public CliRequest makeRequest(String s) {
+    ListIterator<CliToken> tokens = CliToken.tokenize(s).collect(Collectors.toList()).listIterator();
+    while (tokens.hasNext()) {
+      CliToken token = tokens.next();
+      switch (token.getKind()) {
+        case TEXT:
+          CommandContext ctx = manager.getCommand(token.getValue());
+          if (ctx == null) {
+            throw new IllegalArgumentException(token.getValue() + ": command not found");
+          }
+          CliParser parser = new CliParser(ctx.command());
+          return parser.parse(tokens);
+        case BLANK:
+          break;
+        default:
+          throw new IllegalArgumentException("Bad line " + s);
+      }
+    }
+    throw new IllegalArgumentException();
   }
 }

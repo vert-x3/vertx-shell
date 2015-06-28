@@ -1,6 +1,8 @@
-package io.vertx.ext.shell.command.impl;
+package io.vertx.ext.shell.cli;
 
+import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.Option;
+import io.vertx.ext.shell.command.impl.CommandImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +16,7 @@ import java.util.stream.Collectors;
  */
 public class CliParser {
 
-  final CommandImpl command;
+  final Command command;
 
   public CliParser(CommandImpl command) {
     this.command = command;
@@ -31,7 +33,7 @@ public class CliParser {
       CliToken.Kind kind = token.getKind();
       if (kind == CliToken.Kind.OPT || kind == CliToken.Kind.LONG_OPT) {
         String optionName = token.getValue();
-        Option option = command.options.get(optionName);
+        Option option = command.getOption(optionName);
         if (option == null) {
           throw new IllegalArgumentException("Unrecognized option " + optionName);
         }

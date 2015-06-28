@@ -5,6 +5,9 @@ import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.cli.CliParser;
+import io.vertx.ext.shell.cli.CliRequest;
+import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandManager;
 
@@ -33,27 +36,6 @@ public class CommandManagerImpl implements CommandManager {
 
   public CommandContext getCommand(String name) {
     return commandMap.get(name);
-  }
-
-  public CliRequest makeRequest(String s) {
-    ListIterator<CliToken> tokens = CliToken.tokenize(s).collect(Collectors.toList()).listIterator();
-    while (tokens.hasNext()) {
-      CliToken token = tokens.next();
-      switch (token.getKind()) {
-        case TEXT:
-          CommandContext ctx = commandMap.get(token.getValue());
-          if (ctx == null) {
-            throw new IllegalArgumentException(token.getValue() + ": command not found");
-          }
-          CliParser parser = new CliParser(ctx.command);
-          return parser.parse(tokens);
-        case BLANK:
-          break;
-        default:
-          throw new IllegalArgumentException("Bad line " + s);
-      }
-    }
-    throw new IllegalArgumentException();
   }
 
   @Override

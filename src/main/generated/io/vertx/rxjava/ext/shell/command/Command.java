@@ -45,9 +45,14 @@ public class Command {
     return ret;
   }
 
-  public Command option(Option option) { 
-    this.delegate.option((io.vertx.ext.shell.command.Option) option.getDelegate());
+  public Command addOption(Option option) { 
+    this.delegate.addOption((io.vertx.ext.shell.command.Option) option.getDelegate());
     return this;
+  }
+
+  public Option getOption(String name) { 
+    Option ret= Option.newInstance(this.delegate.getOption(name));
+    return ret;
   }
 
   public String name() { 

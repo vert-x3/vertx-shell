@@ -1,8 +1,8 @@
 package io.vertx.ext.unit;
 
 import io.vertx.ext.shell.command.Option;
-import io.vertx.ext.shell.command.impl.CliParser;
-import io.vertx.ext.shell.command.impl.CliRequest;
+import io.vertx.ext.shell.cli.CliParser;
+import io.vertx.ext.shell.cli.CliRequest;
 import io.vertx.ext.shell.command.impl.CommandImpl;
 import org.junit.Test;
 
@@ -19,7 +19,7 @@ public class CliParserTest {
 
   @Test
   public void testZeroArgumentOption() {
-    CommandImpl command = new CommandImpl("").option(Option.create("f", 0));
+    CommandImpl command = new CommandImpl("").addOption(Option.create("f", 0));
     CliParser parser = new CliParser(command);
     CliRequest request = parser.parse("-f");
     assertEquals(Collections.singletonMap("f", Arrays.<String>asList()), request.getOptions());
@@ -28,7 +28,7 @@ public class CliParserTest {
 
   @Test
   public void testOneArgumentOption() {
-    CommandImpl command = new CommandImpl("").option(Option.create("f", 1));
+    CommandImpl command = new CommandImpl("").addOption(Option.create("f", 1));
     CliParser parser = new CliParser(command);
     CliRequest request = parser.parse("-f f_value");
     assertEquals(Collections.singletonMap("f", Arrays.asList("f_value")), request.getOptions());
@@ -62,7 +62,7 @@ public class CliParserTest {
 
   @Test
   public void testOptionAndArgument() {
-    CommandImpl command = new CommandImpl("").option(Option.create("f", 1));
+    CommandImpl command = new CommandImpl("").addOption(Option.create("f", 1));
     CliParser parser = new CliParser(command);
     CliRequest request = parser.parse("arg_value");
     assertEquals(Collections.<String, List<String>>emptyMap(), request.getOptions());

@@ -25,12 +25,20 @@ module VertxShell
     end
     # @param [::VertxShell::Option] option 
     # @return [self]
-    def option(option=nil)
+    def add_option(option=nil)
       if option.class.method_defined?(:j_del) && !block_given?
-        @j_del.java_method(:option, [Java::IoVertxExtShellCommand::Option.java_class]).call(option.j_del)
+        @j_del.java_method(:addOption, [Java::IoVertxExtShellCommand::Option.java_class]).call(option.j_del)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling option(option)"
+      raise ArgumentError, "Invalid arguments when calling add_option(option)"
+    end
+    # @param [String] name 
+    # @return [::VertxShell::Option]
+    def get_option(name=nil)
+      if name.class == String && !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:getOption, [Java::java.lang.String.java_class]).call(name),::VertxShell::Option)
+      end
+      raise ArgumentError, "Invalid arguments when calling get_option(name)"
     end
     # @return [String]
     def name

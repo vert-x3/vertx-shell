@@ -34,9 +34,13 @@ public class Command {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.Command.create(name), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
     return ret;
   }
-  public Command option(Option option) {
-    this.delegate.option((io.vertx.ext.shell.command.Option)option.getDelegate());
+  public Command addOption(Option option) {
+    this.delegate.addOption((io.vertx.ext.shell.command.Option)option.getDelegate());
     return this;
+  }
+  public Option getOption(String name) {
+    def ret= InternalHelper.safeCreate(this.delegate.getOption(name), io.vertx.ext.shell.command.Option.class, io.vertx.groovy.ext.shell.command.Option.class);
+    return ret;
   }
   public String name() {
     def ret = this.delegate.name();

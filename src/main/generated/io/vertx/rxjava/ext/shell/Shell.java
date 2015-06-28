@@ -48,22 +48,22 @@ public class Shell {
     return ret;
   }
 
-  public void createProcess(String name, Handler<AsyncResult<Process>> handler) { 
-    this.delegate.createProcess(name, new Handler<AsyncResult<io.vertx.ext.shell.Process>>() {
-      public void handle(AsyncResult<io.vertx.ext.shell.Process> event) {
-        AsyncResult<Process> f;
+  public void createProcess(String name, Handler<AsyncResult<Job>> handler) { 
+    this.delegate.createProcess(name, new Handler<AsyncResult<io.vertx.ext.shell.Job>>() {
+      public void handle(AsyncResult<io.vertx.ext.shell.Job> event) {
+        AsyncResult<Job> f;
         if (event.succeeded()) {
-          f = InternalHelper.<Process>result(new Process(event.result()));
+          f = InternalHelper.<Job>result(new Job(event.result()));
         } else {
-          f = InternalHelper.<Process>failure(event.cause());
+          f = InternalHelper.<Job>failure(event.cause());
         }
         handler.handle(f);
       }
     });
   }
 
-  public Observable<Process> createProcessObservable(String name) { 
-    io.vertx.rx.java.ObservableFuture<Process> handler = io.vertx.rx.java.RxHelper.observableFuture();
+  public Observable<Job> createProcessObservable(String name) { 
+    io.vertx.rx.java.ObservableFuture<Job> handler = io.vertx.rx.java.RxHelper.observableFuture();
     createProcess(name, handler.toHandler());
     return handler;
   }

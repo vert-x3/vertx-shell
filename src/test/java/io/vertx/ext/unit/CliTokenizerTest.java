@@ -1,6 +1,6 @@
 package io.vertx.ext.unit;
 
-import io.vertx.ext.shell.command.impl.CliToken;
+import io.vertx.ext.shell.cli.CliToken;
 import org.junit.Test;
 
 import java.util.Arrays;

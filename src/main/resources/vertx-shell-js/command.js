@@ -38,11 +38,24 @@ var Command = function(j_val) {
    @param option {Option} 
    @return {Command}
    */
-  this.option = function(option) {
+  this.addOption = function(option) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_command["option(io.vertx.ext.shell.command.Option)"](option._jdel);
+      j_command["addOption(io.vertx.ext.shell.command.Option)"](option._jdel);
       return that;
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+   @param name {string} 
+   @return {Option}
+   */
+  this.getOption = function(name) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'string') {
+      return utils.convReturnVertxGen(j_command["getOption(java.lang.String)"](name), Option);
     } else utils.invalidArgs();
   };
 

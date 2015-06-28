@@ -1,4 +1,4 @@
-package io.vertx.ext.shell.command.impl;
+package io.vertx.ext.shell.cli;
 
 import java.util.List;
 import java.util.Map;
