@@ -36,7 +36,7 @@ public class ShellTty {
     for (io.termd.core.readline.Function function : Helper.loadServices(Thread.currentThread().getContextClassLoader(), io.termd.core.readline.Function.class)) {
       readline.addFunction(function);
     }
-    conn.setSignalHandler(signal -> {
+    conn.setEventHandler(signal -> {
       Job job = currentJob.get();
       switch (signal) {
         case INTR:
