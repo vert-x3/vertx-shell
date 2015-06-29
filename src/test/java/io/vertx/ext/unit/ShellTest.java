@@ -24,8 +24,8 @@ public class ShellTest {
   public void testRun(TestContext context) {
     CommandManager manager = CommandManager.create(vertx);
     Command cmd = Command.create("foo");
-    cmd.setExecuteHandler(ctx -> {
-      ctx.end(3);
+    cmd.processHandler(process -> {
+      process.end(3);
     });
     manager.addCommand(cmd, context.asyncAssertSuccess(v -> {
       Shell shell = Shell.create(vertx, manager);
@@ -42,9 +42,9 @@ public class ShellTest {
   public void testStdin(TestContext context) {
     CommandManager manager = CommandManager.create(vertx);
     Command cmd = Command.create("foo");
-    cmd.setExecuteHandler(ctx -> ctx.setStdin(data -> {
+    cmd.processHandler(process -> process.setStdin(data -> {
       context.assertEquals("hello_world", data);
-      ctx.end(0);
+      process.end(0);
     }));
     manager.addCommand(cmd, context.asyncAssertSuccess(v -> {
       Shell shell = Shell.create(vertx, manager);
@@ -65,9 +65,9 @@ public class ShellTest {
   public void testStdout(TestContext context) {
     CommandManager manager = CommandManager.create(vertx);
     Command cmd = Command.create("foo");
-    cmd.setExecuteHandler(ctx -> {
-      ctx.stdout().handle("bye_world");
-      ctx.end(0);
+    cmd.processHandler(process -> {
+      process.stdout().handle("bye_world");
+      process.end(0);
     });
     manager.addCommand(cmd, context.asyncAssertSuccess(v -> {
       Shell shell = Shell.create(vertx, manager);
@@ -93,17 +93,17 @@ public class ShellTest {
     Async async = testContext.async();
     commandCtx.runOnContext(v1 -> {
       Command command = Command.create("foo");
-      command.setExecuteHandler(ctx -> {
+      command.processHandler(process -> {
         testContext.assertTrue(commandCtx == Vertx.currentContext());
-        ctx.setStdin(text -> {
+        process.setStdin(text -> {
           testContext.assertTrue(commandCtx == Vertx.currentContext());
           testContext.assertEquals("ping", text);
-          ctx.write("pong");
+          process.write("pong");
         });
-        ctx.setSignalHandler(signal -> {
+        process.setSignalHandler(signal -> {
           testContext.assertTrue(commandCtx == Vertx.currentContext());
           testContext.assertEquals("SIGTERM", signal);
-          ctx.end(0);
+          process.end(0);
         });
       });
       manager.addCommand(command, testContext.asyncAssertSuccess(v2 -> {
@@ -134,10 +134,10 @@ public class ShellTest {
   public void testSendSignal(TestContext context) {
     CommandManager manager = CommandManager.create(vertx);
     Command cmd = Command.create("foo");
-    cmd.setExecuteHandler(ctx -> {
-      ctx.setSignalHandler(signal -> {
+    cmd.processHandler(process -> {
+      process.setSignalHandler(signal -> {
         context.assertEquals("SIGTERM", signal);
-        ctx.end(0);
+        process.end(0);
       });
     });
     manager.addCommand(cmd, context.asyncAssertSuccess(v -> {

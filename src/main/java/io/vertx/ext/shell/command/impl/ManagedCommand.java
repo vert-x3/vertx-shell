@@ -3,7 +3,7 @@ package io.vertx.ext.shell.command.impl;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.Stream;
-import io.vertx.ext.shell.command.Execution;
+import io.vertx.ext.shell.command.CommandProcess;
 import io.vertx.ext.shell.impl.Process;
 import io.vertx.ext.shell.impl.ProcessContext;
 
@@ -21,7 +21,7 @@ public class ManagedCommand {
 
   final Context context;
   final CommandImpl command;
-  final Handler<Execution> handler;
+  final Handler<CommandProcess> handler;
 
   public ManagedCommand(Context context, CommandImpl command) {
     this.context = context;
@@ -51,7 +51,7 @@ public class ManagedCommand {
           }
         });
 
-        Execution execution = new Execution() {
+        CommandProcess process = new CommandProcess() {
 
           @Override
           public List<String> arguments() {
@@ -64,7 +64,7 @@ public class ManagedCommand {
           }
 
           @Override
-          public Execution setStdin(Stream stdin) {
+          public CommandProcess setStdin(Stream stdin) {
             if (stdin != null) {
               context.setStdin(event -> ManagedCommand.this.context.runOnContext(v -> stdin.handle(event)));
             } else {
@@ -77,12 +77,12 @@ public class ManagedCommand {
             return context.stdout();
           }
           @Override
-          public Execution write(String text) {
+          public CommandProcess write(String text) {
             context.stdout().handle(text);
             return this;
           }
           @Override
-          public Execution setSignalHandler(Handler<String> handler) {
+          public CommandProcess setSignalHandler(Handler<String> handler) {
             signalHandler.set(handler);
             return this;
           }
@@ -92,7 +92,7 @@ public class ManagedCommand {
           }
         };
         ManagedCommand.this.context.runOnContext(v -> {
-          handler.handle(execution);
+          handler.handle(process);
           context.begin();
         });
       }

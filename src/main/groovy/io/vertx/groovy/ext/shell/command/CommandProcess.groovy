@@ -24,9 +24,9 @@ import io.vertx.groovy.ext.shell.Stream
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
-public class Execution {
-  final def io.vertx.ext.shell.command.Execution delegate;
-  public Execution(io.vertx.ext.shell.command.Execution delegate) {
+public class CommandProcess {
+  final def io.vertx.ext.shell.command.CommandProcess delegate;
+  public CommandProcess(io.vertx.ext.shell.command.CommandProcess delegate) {
     this.delegate = delegate;
   }
   public Object getDelegate() {
@@ -40,11 +40,11 @@ public class Execution {
     def ret = this.delegate.getOption(name);
     return ret;
   }
-  public Execution setStdin(Stream stdin) {
+  public CommandProcess setStdin(Stream stdin) {
     this.delegate.setStdin((io.vertx.ext.shell.Stream)stdin.getDelegate());
     return this;
   }
-  public Execution setSignalHandler(Handler<String> handler) {
+  public CommandProcess setSignalHandler(Handler<String> handler) {
     this.delegate.setSignalHandler(handler);
     return this;
   }
@@ -52,7 +52,7 @@ public class Execution {
     def ret= InternalHelper.safeCreate(this.delegate.stdout(), io.vertx.ext.shell.Stream.class, io.vertx.groovy.ext.shell.Stream.class);
     return ret;
   }
-  public Execution write(String text) {
+  public CommandProcess write(String text) {
     this.delegate.write(text);
     return this;
   }

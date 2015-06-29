@@ -60,10 +60,10 @@ public class Command {
     return ret;
   }
 
-  public void setExecuteHandler(Handler<Execution> handler) { 
-    this.delegate.setExecuteHandler(new Handler<io.vertx.ext.shell.command.Execution>() {
-      public void handle(io.vertx.ext.shell.command.Execution event) {
-        handler.handle(new Execution(event));
+  public void processHandler(Handler<CommandProcess> handler) { 
+    this.delegate.processHandler(new Handler<io.vertx.ext.shell.command.CommandProcess>() {
+      public void handle(io.vertx.ext.shell.command.CommandProcess event) {
+        handler.handle(new CommandProcess(event));
       }
     });
   }

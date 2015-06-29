@@ -1,5 +1,5 @@
-require 'vertx-shell/execution'
 require 'vertx-shell/option'
+require 'vertx-shell/command_process'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.command.Command
 module VertxShell
@@ -49,11 +49,11 @@ module VertxShell
     end
     # @yield 
     # @return [void]
-    def set_execute_handler
+    def process_handler
       if block_given?
-        return @j_del.java_method(:setExecuteHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(::Vertx::Util::Utils.safe_create(event,::VertxShell::Execution)) }))
+        return @j_del.java_method(:processHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(::Vertx::Util::Utils.safe_create(event,::VertxShell::CommandProcess)) }))
       end
-      raise ArgumentError, "Invalid arguments when calling set_execute_handler()"
+      raise ArgumentError, "Invalid arguments when calling process_handler()"
     end
     # @return [void]
     def unregister

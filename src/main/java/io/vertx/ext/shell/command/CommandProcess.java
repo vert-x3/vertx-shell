@@ -11,22 +11,22 @@ import java.util.List;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
-public interface Execution {
+public interface CommandProcess {
 
   List<String> arguments();
 
   List<String> getOption(String name);
 
   @Fluent
-  Execution setStdin(Stream stdin);
+  CommandProcess setStdin(Stream stdin);
 
   @Fluent
-  Execution setSignalHandler(Handler<String> handler);
+  CommandProcess setSignalHandler(Handler<String> handler);
 
   Stream stdout();
 
   @Fluent
-  Execution write(String text);
+  CommandProcess write(String text);
 
   void end(int code);
 

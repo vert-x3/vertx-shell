@@ -1,14 +1,11 @@
 package io.vertx.ext.shell.command.impl;
 
 import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.Option;
 import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.command.Execution;
+import io.vertx.ext.shell.command.CommandProcess;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -17,7 +14,7 @@ public class CommandImpl implements Command {
 
   final String name;
   final HashMap<String, Option> options = new HashMap<>();
-  Handler<Execution> handler;
+  Handler<CommandProcess> handler;
 
   public CommandImpl(String name) {
     this.name = name;
@@ -40,7 +37,7 @@ public class CommandImpl implements Command {
   }
 
   @Override
-  public void setExecuteHandler(Handler<Execution> handler) {
+  public void processHandler(Handler<CommandProcess> handler) {
     this.handler = handler;
   }
 

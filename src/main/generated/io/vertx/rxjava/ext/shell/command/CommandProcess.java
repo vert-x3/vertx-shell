@@ -27,14 +27,14 @@ import io.vertx.rxjava.ext.shell.Stream;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  *
  * <p/>
- * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.command.Execution original} non RX-ified interface using Vert.x codegen.
+ * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.command.CommandProcess original} non RX-ified interface using Vert.x codegen.
  */
 
-public class Execution {
+public class CommandProcess {
 
-  final io.vertx.ext.shell.command.Execution delegate;
+  final io.vertx.ext.shell.command.CommandProcess delegate;
 
-  public Execution(io.vertx.ext.shell.command.Execution delegate) {
+  public CommandProcess(io.vertx.ext.shell.command.CommandProcess delegate) {
     this.delegate = delegate;
   }
 
@@ -54,12 +54,12 @@ public class Execution {
     return ret;
   }
 
-  public Execution setStdin(Stream stdin) { 
+  public CommandProcess setStdin(Stream stdin) { 
     this.delegate.setStdin((io.vertx.ext.shell.Stream) stdin.getDelegate());
     return this;
   }
 
-  public Execution setSignalHandler(Handler<String> handler) { 
+  public CommandProcess setSignalHandler(Handler<String> handler) { 
     this.delegate.setSignalHandler(handler);
     return this;
   }
@@ -69,7 +69,7 @@ public class Execution {
     return ret;
   }
 
-  public Execution write(String text) { 
+  public CommandProcess write(String text) { 
     this.delegate.write(text);
     return this;
   }
@@ -79,7 +79,7 @@ public class Execution {
   }
 
 
-  public static Execution newInstance(io.vertx.ext.shell.command.Execution arg) {
-    return arg != null ? new Execution(arg) : null;
+  public static CommandProcess newInstance(io.vertx.ext.shell.command.CommandProcess arg) {
+    return arg != null ? new CommandProcess(arg) : null;
   }
 }

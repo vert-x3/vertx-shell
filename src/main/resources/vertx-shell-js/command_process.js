@@ -14,35 +14,33 @@
  * under the License.
  */
 
-/** @module vertx-shell-js/command */
+/** @module vertx-shell-js/command_process */
 var utils = require('vertx-js/util/utils');
-var Option = require('vertx-shell-js/option');
-var CommandProcess = require('vertx-shell-js/command_process');
+var Stream = require('vertx-shell-js/stream');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JCommand = io.vertx.ext.shell.command.Command;
+var JCommandProcess = io.vertx.ext.shell.command.CommandProcess;
 
 /**
 
  @class
 */
-var Command = function(j_val) {
+var CommandProcess = function(j_val) {
 
-  var j_command = j_val;
+  var j_commandProcess = j_val;
   var that = this;
 
   /**
 
    @public
-   @param option {Option} 
-   @return {Command}
+
+   @return {Array.<string>}
    */
-  this.addOption = function(option) {
+  this.arguments = function() {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_command["addOption(io.vertx.ext.shell.command.Option)"](option._jdel);
-      return that;
+    if (__args.length === 0) {
+      return j_commandProcess["arguments()"]();
     } else utils.invalidArgs();
   };
 
@@ -50,25 +48,26 @@ var Command = function(j_val) {
 
    @public
    @param name {string} 
-   @return {Option}
+   @return {Array.<string>}
    */
   this.getOption = function(name) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'string') {
-      return utils.convReturnVertxGen(j_command["getOption(java.lang.String)"](name), Option);
+      return j_commandProcess["getOption(java.lang.String)"](name);
     } else utils.invalidArgs();
   };
 
   /**
 
    @public
-
-   @return {string}
+   @param stdin {Stream} 
+   @return {CommandProcess}
    */
-  this.name = function() {
+  this.setStdin = function(stdin) {
     var __args = arguments;
-    if (__args.length === 0) {
-      return j_command["name()"]();
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      j_commandProcess["setStdin(io.vertx.ext.shell.Stream)"](stdin._jdel);
+      return that;
     } else utils.invalidArgs();
   };
 
@@ -76,13 +75,15 @@ var Command = function(j_val) {
 
    @public
    @param handler {function} 
+   @return {CommandProcess}
    */
-  this.processHandler = function(handler) {
+  this.setSignalHandler = function(handler) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_command["processHandler(io.vertx.core.Handler)"](function(jVal) {
-      handler(utils.convReturnVertxGen(jVal, CommandProcess));
+      j_commandProcess["setSignalHandler(io.vertx.core.Handler)"](function(jVal) {
+      handler(jVal);
     });
+      return that;
     } else utils.invalidArgs();
   };
 
@@ -90,32 +91,46 @@ var Command = function(j_val) {
 
    @public
 
+   @return {Stream}
    */
-  this.unregister = function() {
+  this.stdout = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      j_command["unregister()"]();
+      return utils.convReturnVertxGen(j_commandProcess["stdout()"](), Stream);
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+   @param text {string} 
+   @return {CommandProcess}
+   */
+  this.write = function(text) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'string') {
+      j_commandProcess["write(java.lang.String)"](text);
+      return that;
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+   @param code {number} 
+   */
+  this.end = function(code) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] ==='number') {
+      j_commandProcess["end(int)"](code);
     } else utils.invalidArgs();
   };
 
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
-  this._jdel = j_command;
-};
-
-/**
-
- @memberof module:vertx-shell-js/command
- @param name {string} 
- @return {Command}
- */
-Command.create = function(name) {
-  var __args = arguments;
-  if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnVertxGen(JCommand["create(java.lang.String)"](name), Command);
-  } else utils.invalidArgs();
+  this._jdel = j_commandProcess;
 };
 
 // We export the Constructor function
-module.exports = Command;
+module.exports = CommandProcess;

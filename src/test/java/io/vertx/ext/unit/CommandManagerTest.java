@@ -23,9 +23,9 @@ public class CommandManagerTest {
   public void testEval(TestContext context) {
     CommandManagerImpl mgr = (CommandManagerImpl) CommandManager.create(vertx);
     Command command = Command.create("hello");
-    command.setExecuteHandler(exec -> {
-      context.assertEquals(Arrays.asList("world"), exec.arguments());
-      exec.end(0);
+    command.processHandler(process -> {
+      context.assertEquals(Arrays.asList("world"), process.arguments());
+      process.end(0);
     });
     mgr.addCommand(command, context.asyncAssertSuccess(v -> {
       ShellImpl shell = new ShellImpl(vertx, mgr);

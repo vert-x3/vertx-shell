@@ -22,7 +22,7 @@ public interface Command {
 
   String name();
 
-  void setExecuteHandler(Handler<Execution> handler);
+  void processHandler(Handler<CommandProcess> handler);
 
   void unregister();
 

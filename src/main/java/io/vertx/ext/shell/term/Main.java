@@ -27,30 +27,30 @@ public class Main {
     CommandManager mgr = CommandManager.create(vertx);
 
     Command helloCmd = Command.create("hello");
-    helloCmd.setExecuteHandler(exec -> {
-      exec.write("hello world\r\n");
-      exec.end(0);
+    helloCmd.processHandler(process -> {
+      process.write("hello world\r\n");
+      process.end(0);
     });
     mgr.addCommand(helloCmd, ar -> {});
 
     Command helpCmd = Command.create("help");
-    helpCmd.setExecuteHandler(exec -> {
-      exec.write("available commands:\r\n");
-      exec.write("hello\r\n");
-      exec.write("help\r\n");
-      exec.write("ls\r\n");
-      exec.write("sleep\r\n");
-      exec.end(0);
+    helpCmd.processHandler(process -> {
+      process.write("available commands:\r\n");
+      process.write("hello\r\n");
+      process.write("help\r\n");
+      process.write("ls\r\n");
+      process.write("sleep\r\n");
+      process.end(0);
     });
     mgr.addCommand(helpCmd, ar -> {});
 
     Command sleepCmd = Command.create("sleep");
-    sleepCmd.setExecuteHandler(exec -> {
-      if (exec.arguments().isEmpty()) {
-        exec.write("usage: sleep seconds\r\n");
-        exec.end(0);
+    sleepCmd.processHandler(process -> {
+      if (process.arguments().isEmpty()) {
+        process.write("usage: sleep seconds\r\n");
+        process.end(0);
       } else {
-        String arg = exec.arguments().get(0);
+        String arg = process.arguments().get(0);
         int seconds = -1;
         try {
           seconds = Integer.parseInt(arg);
@@ -58,34 +58,34 @@ public class Main {
         }
         if (seconds > 0) {
           long id = vertx.setTimer(seconds * 1000, v -> {
-            exec.end(0);
+            process.end(0);
           });
-          exec.setSignalHandler(signal -> {
+          process.setSignalHandler(signal -> {
             if (signal.equals("SIGINT")) {
               if (vertx.cancelTimer(id)) {
-                exec.end(0);
+                process.end(0);
               }
             }
           });
           return;
         }
-        exec.end(0);
+        process.end(0);
       }
     });
     mgr.addCommand(sleepCmd, ar -> {});
 
     Command lsCmd = Command.create("ls");
-    lsCmd.setExecuteHandler(exec -> {
+    lsCmd.processHandler(process -> {
       vertx.fileSystem().readDir(".", ar -> {
         if (ar.succeeded()) {
           List<String> files = ar.result();
           for (String file : files) {
-            exec.write(file + "\r\n");
+            process.write(file + "\r\n");
           }
         } else {
           ar.cause().printStackTrace();
         }
-        exec.end(0);
+        process.end(0);
       });
     });
     mgr.addCommand(lsCmd, ar -> {});
