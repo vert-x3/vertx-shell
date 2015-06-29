@@ -38,7 +38,7 @@ public class ShellTty {
     }
     conn.setSignalHandler(signal -> {
       switch (signal) {
-        case INT:
+        case INTR:
           Job job = currentJob.get();
           if (job != null) {
             job.sendSignal("SIGINT");
