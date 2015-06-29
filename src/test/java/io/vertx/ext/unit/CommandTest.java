@@ -1,5 +1,6 @@
 package io.vertx.ext.unit;
 
+import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.Shell;
 import io.vertx.ext.shell.command.Command;
@@ -10,6 +11,7 @@ import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -82,5 +84,53 @@ public class CommandTest {
         process.run();
       }));
     }));
+  }
+
+  @Test
+  public void testVertxContext(TestContext testContext) throws Exception {
+    Context commandCtx = vertx.getOrCreateContext();
+    Context shellCtx = vertx.getOrCreateContext();
+    CommandManager manager = CommandManager.create(vertx);
+    Async async = testContext.async();
+    commandCtx.runOnContext(v1 -> {
+      Command command = Command.create("foo");
+      command.setExecuteHandler(ctx -> {
+        testContext.assertTrue(commandCtx == Vertx.currentContext());
+        ctx.setStdin(text -> {
+          testContext.assertTrue(commandCtx == Vertx.currentContext());
+          switch (text) {
+            case "ping":
+              ctx.write("pong");
+              break;
+            case "end":
+              ctx.end(0);
+              break;
+            default:
+              testContext.fail();
+          }
+        });
+      });
+      manager.addCommand(command, testContext.asyncAssertSuccess(v2 -> {
+        shellCtx.runOnContext(v3 -> {
+          Shell shell = Shell.create(vertx, manager);
+          shell.createJob("foo", testContext.asyncAssertSuccess(process -> {
+            testContext.assertTrue(shellCtx == Vertx.currentContext());
+            process.endHandler(code -> {
+              testContext.assertTrue(shellCtx == Vertx.currentContext());
+              async.complete();
+            });
+            process.run(v4 -> {
+              testContext.assertTrue(shellCtx == Vertx.currentContext());
+              process.stdin().handle("ping");
+              process.setStdout(text -> {
+                testContext.assertTrue(shellCtx == Vertx.currentContext());
+                testContext.assertEquals("pong", text);
+                process.stdin().handle("end");
+              });
+            });
+          }));
+        });
+      }));
+    });
   }
 }
