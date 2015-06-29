@@ -74,6 +74,22 @@ var Execution = function(j_val) {
   /**
 
    @public
+   @param handler {function} 
+   @return {Execution}
+   */
+  this.setSignalHandler = function(handler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_execution["setSignalHandler(io.vertx.core.Handler)"](function(jVal) {
+      handler(jVal);
+    });
+      return that;
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
 
    @return {Stream}
    */

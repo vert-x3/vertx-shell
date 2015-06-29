@@ -19,7 +19,6 @@ package io.vertx.rxjava.ext.shell;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
-import io.vertx.ext.shell.Signal;
 import io.vertx.core.Handler;
 
 /**
@@ -58,7 +57,7 @@ public class Job {
     this.delegate.run(beginHandler);
   }
 
-  public void sendSignal(Signal signal) { 
+  public void sendSignal(String signal) { 
     this.delegate.sendSignal(signal);
   }
 

@@ -20,6 +20,7 @@ import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
+import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.Stream;
 
 /**
@@ -55,6 +56,11 @@ public class Execution {
 
   public Execution setStdin(Stream stdin) { 
     this.delegate.setStdin((io.vertx.ext.shell.Stream) stdin.getDelegate());
+    return this;
+  }
+
+  public Execution setSignalHandler(Handler<String> handler) { 
+    this.delegate.setSignalHandler(handler);
     return this;
   }
 

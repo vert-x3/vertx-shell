@@ -17,7 +17,6 @@
 package io.vertx.groovy.ext.shell;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
-import io.vertx.ext.shell.Signal
 import io.vertx.core.Handler
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -44,7 +43,7 @@ public class Job {
   public void run(Handler<Void> beginHandler) {
     this.delegate.run(beginHandler);
   }
-  public void sendSignal(Signal signal) {
+  public void sendSignal(String signal) {
     this.delegate.sendSignal(signal);
   }
   public void endHandler(Handler<Integer> handler) {

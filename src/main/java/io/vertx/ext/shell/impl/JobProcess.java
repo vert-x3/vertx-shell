@@ -3,7 +3,6 @@ package io.vertx.ext.shell.impl;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.Signal;
 import io.vertx.ext.shell.Stream;
 
 import io.vertx.ext.shell.Job;
@@ -18,6 +17,7 @@ public class JobProcess implements Job {
   volatile Handler<Integer> endHandler;
   volatile Stream stdin;
   volatile Stream stdout;
+  volatile Handler<String> signalHandler;
 
   public JobProcess(Vertx vertx, Process process) {
     this.vertx = vertx;
@@ -64,6 +64,10 @@ public class JobProcess implements Job {
         };
       }
       @Override
+      public void setSignalHandler(Handler<String> handler) {
+        signalHandler = handler;
+      }
+      @Override
       public void end(int code) {
         if (endHandler != null) {
           context.runOnContext(v -> endHandler.handle(code));
@@ -74,8 +78,8 @@ public class JobProcess implements Job {
   }
 
   @Override
-  public void sendSignal(Signal signal) {
-
+  public void sendSignal(String signal) {
+    signalHandler.handle(signal);
   }
 
   @Override

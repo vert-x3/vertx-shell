@@ -57,8 +57,15 @@ public class Main {
         } catch (NumberFormatException ignore) {
         }
         if (seconds > 0) {
-          vertx.setTimer(seconds * 1000, id -> {
+          long id = vertx.setTimer(seconds * 1000, v -> {
             exec.end(0);
+          });
+          exec.setSignalHandler(signal -> {
+            if (signal.equals("SIGINT")) {
+              if (vertx.cancelTimer(id)) {
+                exec.end(0);
+              }
+            }
           });
           return;
         }

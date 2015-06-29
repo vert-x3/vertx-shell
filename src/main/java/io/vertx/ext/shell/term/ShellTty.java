@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -21,6 +22,7 @@ public class ShellTty {
 
   final TelnetTtyConnection conn;
   final Shell shell;
+  final AtomicReference<Job> currentJob = new AtomicReference<>();
 
   public ShellTty(TelnetTtyConnection conn, Shell shell) {
     this.conn = conn;
@@ -34,6 +36,16 @@ public class ShellTty {
     for (io.termd.core.readline.Function function : Helper.loadServices(Thread.currentThread().getContextClassLoader(), io.termd.core.readline.Function.class)) {
       readline.addFunction(function);
     }
+    conn.setSignalHandler(signal -> {
+      switch (signal) {
+        case INT:
+          Job job = currentJob.get();
+          if (job != null) {
+            job.sendSignal("SIGINT");
+          }
+          break;
+      }
+    });
     conn.write("Welcome to vertx-shell\r\n\r\n");
     read(readline);
   }
@@ -43,8 +55,10 @@ public class ShellTty {
       shell.createJob(line, ar -> {
         if (ar.succeeded()) {
           Job job = ar.result();
+          currentJob.set(job);
           job.setStdout(conn::write);
           job.endHandler(code -> {
+            currentJob.set(null);
             read(readline);
           });
           job.run();

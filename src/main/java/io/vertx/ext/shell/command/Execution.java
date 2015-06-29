@@ -2,6 +2,7 @@ package io.vertx.ext.shell.command;
 
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
+import io.vertx.core.Handler;
 import io.vertx.ext.shell.Stream;
 
 import java.util.List;
@@ -18,6 +19,9 @@ public interface Execution {
 
   @Fluent
   Execution setStdin(Stream stdin);
+
+  @Fluent
+  Execution setSignalHandler(Handler<String> handler);
 
   Stream stdout();
 

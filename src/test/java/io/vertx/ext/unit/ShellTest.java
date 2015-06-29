@@ -11,7 +11,6 @@ import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -98,16 +97,13 @@ public class ShellTest {
         testContext.assertTrue(commandCtx == Vertx.currentContext());
         ctx.setStdin(text -> {
           testContext.assertTrue(commandCtx == Vertx.currentContext());
-          switch (text) {
-            case "ping":
-              ctx.write("pong");
-              break;
-            case "end":
-              ctx.end(0);
-              break;
-            default:
-              testContext.fail();
-          }
+          testContext.assertEquals("ping", text);
+          ctx.write("pong");
+        });
+        ctx.setSignalHandler(signal -> {
+          testContext.assertTrue(commandCtx == Vertx.currentContext());
+          testContext.assertEquals("SIGTERM", signal);
+          ctx.end(0);
         });
       });
       manager.addCommand(command, testContext.asyncAssertSuccess(v2 -> {
@@ -125,12 +121,36 @@ public class ShellTest {
               process.setStdout(text -> {
                 testContext.assertTrue(shellCtx == Vertx.currentContext());
                 testContext.assertEquals("pong", text);
-                process.stdin().handle("end");
+                process.sendSignal("SIGTERM");
               });
             });
           }));
         });
       }));
     });
+  }
+
+  @Test
+  public void testSendSignal(TestContext context) {
+    CommandManager manager = CommandManager.create(vertx);
+    Command cmd = Command.create("foo");
+    cmd.setExecuteHandler(ctx -> {
+      ctx.setSignalHandler(signal -> {
+        context.assertEquals("SIGTERM", signal);
+        ctx.end(0);
+      });
+    });
+    manager.addCommand(cmd, context.asyncAssertSuccess(v -> {
+      Shell shell = Shell.create(vertx, manager);
+      shell.createJob("foo", context.asyncAssertSuccess(process -> {
+        Async async = context.async();
+        process.endHandler(status -> {
+          async.complete();
+        });
+        process.run(v2 -> {
+          process.sendSignal("SIGTERM");
+        });
+      }));
+    }));
   }
 }

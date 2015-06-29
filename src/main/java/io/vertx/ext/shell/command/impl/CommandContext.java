@@ -10,6 +10,7 @@ import io.vertx.ext.shell.impl.ProcessContext;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -37,6 +38,17 @@ public class CommandContext {
   public Process createProcess(Map<String, List<String>> options, List<String> arguments) {
     return new Process() {
       public void execute(ProcessContext context) {
+
+        AtomicReference<Handler<String>> signalHandler = new AtomicReference<>();
+        context.setSignalHandler(signal -> {
+          Handler<String> handler = signalHandler.get();
+          if (handler != null) {
+            CommandContext.this.context.runOnContext(v -> {
+              handler.handle(signal);
+            });
+          }
+        });
+
         Execution execution = new Execution() {
 
           @Override
@@ -65,6 +77,11 @@ public class CommandContext {
           @Override
           public Execution write(String text) {
             context.stdout().handle(text);
+            return this;
+          }
+          @Override
+          public Execution setSignalHandler(Handler<String> handler) {
+            signalHandler.set(handler);
             return this;
           }
           @Override

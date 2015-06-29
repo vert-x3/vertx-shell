@@ -73,12 +73,12 @@ var Job = function(j_val) {
   /**
 
    @public
-   @param signal {Object} 
+   @param signal {string} 
    */
   this.sendSignal = function(signal) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'string') {
-      j_job["sendSignal(io.vertx.ext.shell.Signal)"](io.vertx.ext.shell.Signal.valueOf(__args[0]));
+      j_job["sendSignal(java.lang.String)"](signal);
     } else utils.invalidArgs();
   };
 
