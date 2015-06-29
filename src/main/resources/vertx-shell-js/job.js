@@ -73,13 +73,13 @@ var Job = function(j_val) {
   /**
 
    @public
-   @param signal {string} 
+   @param event {string} 
    @return {boolean}
    */
-  this.sendSignal = function(signal) {
+  this.sendEvent = function(event) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'string') {
-      return j_job["sendSignal(java.lang.String)"](signal);
+      return j_job["sendEvent(java.lang.String)"](event);
     } else utils.invalidArgs();
   };
 

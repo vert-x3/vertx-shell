@@ -43,7 +43,7 @@ module VertxShell
     # @return [void]
     def send_signal(signal=nil)
       if signal.class == Symbol && !block_given?
-        return @j_del.java_method(:sendSignal, [Java::IoVertxExtShell::Signal.java_class]).call(Java::IoVertxExtShell::Signal.valueOf(signal))
+        return @j_del.java_method(:sendEvent, [Java::IoVertxExtShell::Signal.java_class]).call(Java::IoVertxExtShell::Signal.valueOf(signal))
       end
       raise ArgumentError, "Invalid arguments when calling send_signal(signal)"
     end

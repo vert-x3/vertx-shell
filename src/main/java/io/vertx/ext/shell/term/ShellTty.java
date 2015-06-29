@@ -10,7 +10,6 @@ import io.vertx.ext.shell.Shell;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.concurrent.atomic.AtomicReference;
@@ -36,18 +35,18 @@ public class ShellTty {
     for (io.termd.core.readline.Function function : Helper.loadServices(Thread.currentThread().getContextClassLoader(), io.termd.core.readline.Function.class)) {
       readline.addFunction(function);
     }
-    conn.setEventHandler(signal -> {
+    conn.setEventHandler(event -> {
       Job job = currentJob.get();
-      switch (signal) {
+      switch (event) {
         case INTR:
           if (job != null) {
-            job.sendSignal("SIGINT");
+            job.sendEvent("SIGINT");
           }
           break;
         case EOF:
           if (job != null) {
             // Pseudo signal
-            if (job.sendSignal("EOF")) {
+            if (job.sendEvent("EOF")) {
               return;
             }
           }

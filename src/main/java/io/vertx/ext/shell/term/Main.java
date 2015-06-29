@@ -60,7 +60,7 @@ public class Main {
           long id = vertx.setTimer(seconds * 1000, v -> {
             process.end(0);
           });
-          process.signalHandler("SIGINT", v -> {
+          process.eventHandler("SIGINT", v -> {
             if (vertx.cancelTimer(id)) {
               process.end(0);
             }

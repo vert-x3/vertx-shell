@@ -59,8 +59,8 @@ public class CommandProcess {
     return this;
   }
 
-  public CommandProcess signalHandler(String signal, Handler<Void> handler) { 
-    this.delegate.signalHandler(signal, handler);
+  public CommandProcess eventHandler(String event, Handler<Void> handler) { 
+    this.delegate.eventHandler(event, handler);
     return this;
   }
 

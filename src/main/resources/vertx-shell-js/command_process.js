@@ -74,14 +74,14 @@ var CommandProcess = function(j_val) {
   /**
 
    @public
-   @param signal {string} 
+   @param event {string} 
    @param handler {function} 
    @return {CommandProcess}
    */
-  this.signalHandler = function(signal, handler) {
+  this.eventHandler = function(event, handler) {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_commandProcess["signalHandler(java.lang.String,io.vertx.core.Handler)"](signal, handler);
+      j_commandProcess["eventHandler(java.lang.String,io.vertx.core.Handler)"](event, handler);
       return that;
     } else utils.invalidArgs();
   };

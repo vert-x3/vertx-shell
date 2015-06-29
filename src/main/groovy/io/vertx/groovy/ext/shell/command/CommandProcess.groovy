@@ -44,8 +44,8 @@ public class CommandProcess {
     this.delegate.setStdin((io.vertx.ext.shell.Stream)stdin.getDelegate());
     return this;
   }
-  public CommandProcess signalHandler(String signal, Handler<Void> handler) {
-    this.delegate.signalHandler(signal, handler);
+  public CommandProcess eventHandler(String event, Handler<Void> handler) {
+    this.delegate.eventHandler(event, handler);
     return this;
   }
   public Stream stdout() {

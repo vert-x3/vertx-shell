@@ -12,7 +12,7 @@ public interface ProcessContext {
 
   void setStdin(Stream stdin);
 
-  void signalHandler(String signal, Handler<Void> handler);
+  void eventHandler(String event, Handler<Void> handler);
 
   Stream stdout();
 

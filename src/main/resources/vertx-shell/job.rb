@@ -39,13 +39,13 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling run()"
     end
-    # @param [String] signal 
+    # @param [String] event 
     # @return [true,false]
-    def send_signal?(signal=nil)
-      if signal.class == String && !block_given?
-        return @j_del.java_method(:sendSignal, [Java::java.lang.String.java_class]).call(signal)
+    def send_event?(event=nil)
+      if event.class == String && !block_given?
+        return @j_del.java_method(:sendEvent, [Java::java.lang.String.java_class]).call(event)
       end
-      raise ArgumentError, "Invalid arguments when calling send_signal?(signal)"
+      raise ArgumentError, "Invalid arguments when calling send_event?(event)"
     end
     # @yield 
     # @return [void]

@@ -20,7 +20,7 @@ public class JobProcess implements Job {
   volatile Handler<Integer> endHandler;
   volatile Stream stdin;
   volatile Stream stdout;
-  final Map<String, Handler<Void>> signalHandlers = new HashMap<>();
+  final Map<String, Handler<Void>> eventHandlers = new HashMap<>();
 
   public JobProcess(Vertx vertx, Process process) {
     this.vertx = vertx;
@@ -67,11 +67,11 @@ public class JobProcess implements Job {
         };
       }
       @Override
-      public void signalHandler(String signal, Handler<Void> handler) {
+      public void eventHandler(String event, Handler<Void> handler) {
         if (handler == null) {
-          signalHandlers.remove(signal);
+          eventHandlers.remove(event);
         } else {
-          signalHandlers.put(signal, handler);
+          eventHandlers.put(event, handler);
         }
       }
       @Override
@@ -85,8 +85,8 @@ public class JobProcess implements Job {
   }
 
   @Override
-  public boolean sendSignal(String signal) {
-    Handler<Void> handler = signalHandlers.get(signal);
+  public boolean sendEvent(String event) {
+    Handler<Void> handler = eventHandlers.get(event);
     if (handler != null) {
       handler.handle(null);
       return true;

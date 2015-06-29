@@ -10,7 +10,6 @@ import io.vertx.ext.shell.impl.ProcessContext;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * The command registered with a manager.
@@ -72,15 +71,15 @@ public class ManagedCommand {
             return this;
           }
           @Override
-          public CommandProcess signalHandler(String signal, Handler<Void> handler) {
+          public CommandProcess eventHandler(String event, Handler<Void> handler) {
             if (handler != null) {
-              context.signalHandler(signal, v -> {
+              context.eventHandler(event, v -> {
                 ManagedCommand.this.context.runOnContext(v2 -> {
                   handler.handle(null);
                 });
               });
             } else {
-              context.signalHandler(signal, null);
+              context.eventHandler(event, null);
             }
             return this;
           }
