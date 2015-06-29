@@ -10,7 +10,7 @@ import io.vertx.ext.shell.cli.CliParser;
 import io.vertx.ext.shell.cli.CliRequest;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandManager;
-import io.vertx.ext.shell.command.impl.CommandContext;
+import io.vertx.ext.shell.command.impl.ManagedCommand;
 import io.vertx.ext.shell.command.impl.CommandManagerImpl;
 
 import java.util.ListIterator;
@@ -48,7 +48,7 @@ public class ShellImpl implements Shell {
       CliToken token = tokens.next();
       switch (token.getKind()) {
         case TEXT:
-          CommandContext command = manager.getCommand(token.getValue());
+          ManagedCommand command = manager.getCommand(token.getValue());
           if (command == null) {
             throw new IllegalArgumentException(token.getValue() + ": command not found");
           }

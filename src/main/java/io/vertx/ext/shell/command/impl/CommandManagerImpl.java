@@ -5,15 +5,10 @@ import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.cli.CliParser;
-import io.vertx.ext.shell.cli.CliRequest;
-import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandManager;
 
-import java.util.ListIterator;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -21,7 +16,7 @@ import java.util.stream.Collectors;
 public class CommandManagerImpl implements CommandManager {
 
   private final Vertx vertx;
-  private final ConcurrentHashMap<String, CommandContext> commandMap = new ConcurrentHashMap<>();
+  private final ConcurrentHashMap<String, ManagedCommand> commandMap = new ConcurrentHashMap<>();
 
   public CommandManagerImpl(Vertx vertx) {
     this.vertx = vertx;
@@ -30,11 +25,11 @@ public class CommandManagerImpl implements CommandManager {
   @Override
   public void addCommand(Command command, Handler<AsyncResult<Void>> handler) {
     Context context = vertx.getOrCreateContext();
-    commandMap.put(command.name(), new CommandContext(context, (CommandImpl) command));
+    commandMap.put(command.name(), new ManagedCommand(context, (CommandImpl) command));
     handler.handle(Future.succeededFuture());
   }
 
-  public CommandContext getCommand(String name) {
+  public ManagedCommand getCommand(String name) {
     return commandMap.get(name);
   }
 

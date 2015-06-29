@@ -13,15 +13,17 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ * The command registered with a manager.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class CommandContext {
+public class ManagedCommand {
 
   final Context context;
   final CommandImpl command;
   final Handler<Execution> handler;
 
-  public CommandContext(Context context, CommandImpl command) {
+  public ManagedCommand(Context context, CommandImpl command) {
     this.context = context;
     this.command = command;
     this.handler = command.handler;
@@ -43,7 +45,7 @@ public class CommandContext {
         context.setSignalHandler(signal -> {
           Handler<String> handler = signalHandler.get();
           if (handler != null) {
-            CommandContext.this.context.runOnContext(v -> {
+            ManagedCommand.this.context.runOnContext(v -> {
               handler.handle(signal);
             });
           }
@@ -64,7 +66,7 @@ public class CommandContext {
           @Override
           public Execution setStdin(Stream stdin) {
             if (stdin != null) {
-              context.setStdin(event -> CommandContext.this.context.runOnContext(v -> stdin.handle(event)));
+              context.setStdin(event -> ManagedCommand.this.context.runOnContext(v -> stdin.handle(event)));
             } else {
               context.setStdin(null);
             }
@@ -89,7 +91,7 @@ public class CommandContext {
             context.end(code);
           }
         };
-        CommandContext.this.context.runOnContext(v -> {
+        ManagedCommand.this.context.runOnContext(v -> {
           handler.handle(execution);
           context.begin();
         });
