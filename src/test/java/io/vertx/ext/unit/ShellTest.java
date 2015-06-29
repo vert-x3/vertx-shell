@@ -17,12 +17,12 @@ import java.util.concurrent.CountDownLatch;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @RunWith(VertxUnitRunner.class)
-public class CommandTest {
+public class ShellTest {
 
   Vertx vertx = Vertx.vertx();
 
   @Test
-  public void testSomething(TestContext context) {
+  public void testRun(TestContext context) {
     CommandManager manager = CommandManager.create(vertx);
     Command cmd = Command.create("foo");
     cmd.setExecuteHandler(ctx -> {
