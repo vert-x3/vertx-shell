@@ -2,6 +2,7 @@ package io.vertx.ext.shell.command.impl;
 
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
+import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Stream;
 import io.vertx.ext.shell.command.CommandProcess;
 import io.vertx.ext.shell.impl.Process;
@@ -50,6 +51,11 @@ public class ManagedCommand {
           @Override
           public List<String> getOption(String name) {
             return options.get(name);
+          }
+
+          @Override
+          public Dimension windowSize() {
+            return context.windowSize();
           }
 
           @Override

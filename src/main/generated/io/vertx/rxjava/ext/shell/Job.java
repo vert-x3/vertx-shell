@@ -66,6 +66,10 @@ public class Job {
     this.delegate.endHandler(handler);
   }
 
+  public void setWindowSize(Dimension size) { 
+    this.delegate.setWindowSize((io.vertx.ext.shell.Dimension) size.getDelegate());
+  }
+
 
   public static Job newInstance(io.vertx.ext.shell.Job arg) {
     return arg != null ? new Job(arg) : null;

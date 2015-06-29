@@ -17,40 +17,28 @@
 package io.vertx.groovy.ext.shell;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
-import io.vertx.core.Handler
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
-public class Job {
-  final def io.vertx.ext.shell.Job delegate;
-  public Job(io.vertx.ext.shell.Job delegate) {
+public class Dimension {
+  final def io.vertx.ext.shell.Dimension delegate;
+  public Dimension(io.vertx.ext.shell.Dimension delegate) {
     this.delegate = delegate;
   }
   public Object getDelegate() {
     return delegate;
   }
-  public Stream stdin() {
-    def ret= InternalHelper.safeCreate(this.delegate.stdin(), io.vertx.ext.shell.Stream.class, io.vertx.groovy.ext.shell.Stream.class);
+  public static Dimension create(int width, int height) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.Dimension.create(width, height), io.vertx.ext.shell.Dimension.class, io.vertx.groovy.ext.shell.Dimension.class);
     return ret;
   }
-  public void setStdout(Stream stdout) {
-    this.delegate.setStdout((io.vertx.ext.shell.Stream)stdout.getDelegate());
-  }
-  public void run() {
-    this.delegate.run();
-  }
-  public void run(Handler<Void> beginHandler) {
-    this.delegate.run(beginHandler);
-  }
-  public boolean sendEvent(String event) {
-    def ret = this.delegate.sendEvent(event);
+  public int width() {
+    def ret = this.delegate.width();
     return ret;
   }
-  public void endHandler(Handler<Integer> handler) {
-    this.delegate.endHandler(handler);
-  }
-  public void setWindowSize(Dimension size) {
-    this.delegate.setWindowSize((io.vertx.ext.shell.Dimension)size.getDelegate());
+  public int height() {
+    def ret = this.delegate.height();
+    return ret;
   }
 }

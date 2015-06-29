@@ -1,3 +1,4 @@
+require 'vertx-shell/dimension'
 require 'vertx-shell/stream'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.Job
@@ -54,6 +55,14 @@ module VertxShell
         return @j_del.java_method(:endHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
       end
       raise ArgumentError, "Invalid arguments when calling end_handler()"
+    end
+    # @param [::VertxShell::Dimension] size 
+    # @return [void]
+    def set_window_size(size=nil)
+      if size.class.method_defined?(:j_del) && !block_given?
+        return @j_del.java_method(:setWindowSize, [Java::IoVertxExtShell::Dimension.java_class]).call(size.j_del)
+      end
+      raise ArgumentError, "Invalid arguments when calling set_window_size(size)"
     end
   end
 end

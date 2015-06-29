@@ -40,9 +40,22 @@ public class Main {
       process.write("help\r\n");
       process.write("ls\r\n");
       process.write("sleep\r\n");
+      process.write("window\r\n");
       process.end(0);
     });
     mgr.addCommand(helpCmd, ar -> {});
+
+    Command windowCmd = Command.create("window");
+    windowCmd.processHandler(process -> {
+      process.write("[" + process.windowSize().width() + "," + process.windowSize().height() + "]\r\n");
+      process.eventHandler("RESIZE", v -> {
+        process.write("[" + process.windowSize().width() + "," + process.windowSize().height() + "]\r\n");
+      });
+      process.eventHandler("SIGINT", v -> {
+        process.end(0);
+      });
+    });
+    mgr.addCommand(windowCmd, ar -> {});
 
     Command sleepCmd = Command.create("sleep");
     sleepCmd.processHandler(process -> {

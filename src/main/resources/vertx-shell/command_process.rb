@@ -1,3 +1,4 @@
+require 'vertx-shell/dimension'
 require 'vertx-shell/stream'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.command.CommandProcess
@@ -28,6 +29,13 @@ module VertxShell
         return @j_del.java_method(:getOption, [Java::java.lang.String.java_class]).call(name).to_a.map { |elt| elt }
       end
       raise ArgumentError, "Invalid arguments when calling get_option(name)"
+    end
+    # @return [::VertxShell::Dimension]
+    def window_size
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:windowSize, []).call(),::VertxShell::Dimension)
+      end
+      raise ArgumentError, "Invalid arguments when calling window_size()"
     end
     # @param [::VertxShell::Stream] stdin 
     # @return [self]

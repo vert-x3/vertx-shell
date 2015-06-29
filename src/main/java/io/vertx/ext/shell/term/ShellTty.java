@@ -5,6 +5,7 @@ import io.termd.core.readline.Keymap;
 import io.termd.core.readline.Readline;
 import io.termd.core.telnet.TelnetTtyConnection;
 import io.termd.core.util.Helper;
+import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Job;
 import io.vertx.ext.shell.Shell;
 
@@ -22,6 +23,7 @@ public class ShellTty {
   final TelnetTtyConnection conn;
   final Shell shell;
   final AtomicReference<Job> currentJob = new AtomicReference<>();
+  Dimension size;
 
   public ShellTty(TelnetTtyConnection conn, Shell shell) {
     this.conn = conn;
@@ -35,6 +37,13 @@ public class ShellTty {
     for (io.termd.core.readline.Function function : Helper.loadServices(Thread.currentThread().getContextClassLoader(), io.termd.core.readline.Function.class)) {
       readline.addFunction(function);
     }
+    conn.setResizeHandler(resize -> {
+      size = Dimension.create(resize.getWidth(), resize.getHeight());
+      Job job = currentJob.get();
+      if (job != null) {
+        job.setWindowSize(size);
+      }
+    });
     conn.setEventHandler(event -> {
       Job job = currentJob.get();
       switch (event) {
@@ -64,6 +73,9 @@ public class ShellTty {
       shell.createJob(line, ar -> {
         if (ar.succeeded()) {
           Job job = ar.result();
+          if (size != null) {
+            job.setWindowSize(size);
+          }
           currentJob.set(job);
           job.setStdout(conn::write);
           job.endHandler(code -> {

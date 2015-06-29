@@ -20,6 +20,7 @@ import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
+import io.vertx.rxjava.ext.shell.Dimension;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.Stream;
 
@@ -51,6 +52,11 @@ public class CommandProcess {
   public List<String> getOption(String name) { 
     List<String> ret = this.delegate.getOption(name);
 ;
+    return ret;
+  }
+
+  public Dimension windowSize() { 
+    Dimension ret= Dimension.newInstance(this.delegate.windowSize());
     return ret;
   }
 

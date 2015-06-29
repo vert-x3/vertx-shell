@@ -18,6 +18,7 @@ package io.vertx.groovy.ext.shell.command;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import java.util.List
+import io.vertx.groovy.ext.shell.Dimension
 import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.Stream
 /**
@@ -38,6 +39,10 @@ public class CommandProcess {
   }
   public List<String> getOption(String name) {
     def ret = this.delegate.getOption(name);
+    return ret;
+  }
+  public Dimension windowSize() {
+    def ret= InternalHelper.safeCreate(this.delegate.windowSize(), io.vertx.ext.shell.Dimension.class, io.vertx.groovy.ext.shell.Dimension.class);
     return ret;
   }
   public CommandProcess setStdin(Stream stdin) {

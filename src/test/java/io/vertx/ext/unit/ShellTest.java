@@ -2,6 +2,7 @@ package io.vertx.ext.unit;
 
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Shell;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandManager;
@@ -11,6 +12,7 @@ import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -149,6 +151,37 @@ public class ShellTest {
         process.run(v2 -> {
           process.sendEvent("SIGTERM");
         });
+      }));
+    }));
+  }
+
+  @Test
+  public void testResize(TestContext context) {
+    CommandManager manager = CommandManager.create(vertx);
+    Command cmd = Command.create("foo");
+    CountDownLatch latch = new CountDownLatch(1);
+    cmd.processHandler(process -> {
+      context.assertEquals(20, process.windowSize().width());
+      context.assertEquals(10, process.windowSize().height());
+      process.eventHandler("RESIZE", v -> {
+        context.assertEquals(25, process.windowSize().width());
+        context.assertEquals(15, process.windowSize().height());
+        process.end(0);
+      });
+      process.stdout().handle("ping");
+    });
+    manager.addCommand(cmd, context.asyncAssertSuccess(v -> {
+      Shell shell = Shell.create(vertx, manager);
+      shell.createJob("foo", context.asyncAssertSuccess(process -> {
+        Async async = context.async();
+        process.endHandler(status -> {
+          async.complete();
+        });
+        process.setWindowSize(Dimension.create(20, 10));
+        process.setStdout(text -> {
+          process.setWindowSize(Dimension.create(25, 15));
+        });
+        process.run();
       }));
     }));
   }

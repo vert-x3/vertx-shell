@@ -16,6 +16,7 @@
 
 /** @module vertx-shell-js/job */
 var utils = require('vertx-js/util/utils');
+var Dimension = require('vertx-shell-js/dimension');
 var Stream = require('vertx-shell-js/stream');
 
 var io = Packages.io;
@@ -94,6 +95,18 @@ var Job = function(j_val) {
       j_job["endHandler(io.vertx.core.Handler)"](function(jVal) {
       handler(jVal);
     });
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+   @param size {Dimension} 
+   */
+  this.setWindowSize = function(size) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      j_job["setWindowSize(io.vertx.ext.shell.Dimension)"](size._jdel);
     } else utils.invalidArgs();
   };
 

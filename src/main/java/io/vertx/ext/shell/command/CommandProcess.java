@@ -3,6 +3,7 @@ package io.vertx.ext.shell.command;
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
+import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Stream;
 
 import java.util.List;
@@ -16,6 +17,8 @@ public interface CommandProcess {
   List<String> arguments();
 
   List<String> getOption(String name);
+
+  Dimension windowSize();
 
   @Fluent
   CommandProcess setStdin(Stream stdin);

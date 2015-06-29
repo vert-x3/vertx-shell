@@ -16,6 +16,7 @@
 
 /** @module vertx-shell-js/command_process */
 var utils = require('vertx-js/util/utils');
+var Dimension = require('vertx-shell-js/dimension');
 var Stream = require('vertx-shell-js/stream');
 
 var io = Packages.io;
@@ -54,6 +55,19 @@ var CommandProcess = function(j_val) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'string') {
       return j_commandProcess["getOption(java.lang.String)"](name);
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+
+   @return {Dimension}
+   */
+  this.windowSize = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return utils.convReturnVertxGen(j_commandProcess["windowSize()"](), Dimension);
     } else utils.invalidArgs();
   };
 

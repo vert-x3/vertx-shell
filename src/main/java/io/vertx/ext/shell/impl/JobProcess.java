@@ -3,6 +3,7 @@ package io.vertx.ext.shell.impl;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Stream;
 
 import io.vertx.ext.shell.Job;
@@ -20,11 +21,21 @@ public class JobProcess implements Job {
   volatile Handler<Integer> endHandler;
   volatile Stream stdin;
   volatile Stream stdout;
+  volatile Dimension windowSize;
   final Map<String, Handler<Void>> eventHandlers = new HashMap<>();
 
   public JobProcess(Vertx vertx, Process process) {
     this.vertx = vertx;
     this.commandContext = process;
+  }
+
+  @Override
+  public void setWindowSize(Dimension size) {
+    boolean emitEvent = windowSize == null || windowSize.width() != size.width() || windowSize.height() != size.height();
+    windowSize = size;
+    if (emitEvent) {
+      sendEvent("RESIZE");
+    }
   }
 
   @Override
@@ -39,7 +50,8 @@ public class JobProcess implements Job {
 
   @Override
   public void run() {
-    run(v -> {});
+    run(v -> {
+    });
   }
 
   @Override
@@ -47,6 +59,10 @@ public class JobProcess implements Job {
     Context context = vertx.getOrCreateContext();
     Handler<Integer> endHandler = this.endHandler;
     ProcessContext processContext = new ProcessContext() {
+      @Override
+      public Dimension windowSize() {
+        return windowSize;
+      }
       @Override
       public void begin() {
         context.runOnContext(beginHandler);

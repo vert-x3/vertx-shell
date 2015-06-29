@@ -21,4 +21,6 @@ public interface Job {
 
   void endHandler(Handler<Integer> handler);
 
+  void setWindowSize(Dimension size);
+
 }
