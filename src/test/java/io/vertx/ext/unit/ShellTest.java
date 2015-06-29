@@ -100,9 +100,8 @@ public class ShellTest {
           testContext.assertEquals("ping", text);
           process.write("pong");
         });
-        process.setSignalHandler(signal -> {
+        process.signalHandler("SIGTERM", signal -> {
           testContext.assertTrue(commandCtx == Vertx.currentContext());
-          testContext.assertEquals("SIGTERM", signal);
           process.end(0);
         });
       });
@@ -121,7 +120,8 @@ public class ShellTest {
               process.setStdout(text -> {
                 testContext.assertTrue(shellCtx == Vertx.currentContext());
                 testContext.assertEquals("pong", text);
-                process.sendSignal("SIGTERM");
+                testContext.assertTrue(process.sendSignal("SIGTERM"));
+                testContext.assertFalse(process.sendSignal("WHATEVER"));
               });
             });
           }));
@@ -135,8 +135,7 @@ public class ShellTest {
     CommandManager manager = CommandManager.create(vertx);
     Command cmd = Command.create("foo");
     cmd.processHandler(process -> {
-      process.setSignalHandler(signal -> {
-        context.assertEquals("SIGTERM", signal);
+      process.signalHandler("SIGTERM", v -> {
         process.end(0);
       });
     });

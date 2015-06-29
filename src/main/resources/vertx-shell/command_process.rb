@@ -38,14 +38,15 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling set_stdin(stdin)"
     end
+    # @param [String] signal 
     # @yield 
     # @return [self]
-    def set_signal_handler
-      if block_given?
-        @j_del.java_method(:setSignalHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
+    def signal_handler(signal=nil)
+      if signal.class == String && block_given?
+        @j_del.java_method(:signalHandler, [Java::java.lang.String.java_class,Java::IoVertxCore::Handler.java_class]).call(signal,Proc.new { yield })
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling set_signal_handler()"
+      raise ArgumentError, "Invalid arguments when calling signal_handler(signal)"
     end
     # @return [::VertxShell::Stream]
     def stdout

@@ -7,6 +7,9 @@ import io.vertx.ext.shell.Stream;
 
 import io.vertx.ext.shell.Job;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
@@ -17,7 +20,7 @@ public class JobProcess implements Job {
   volatile Handler<Integer> endHandler;
   volatile Stream stdin;
   volatile Stream stdout;
-  volatile Handler<String> signalHandler;
+  final Map<String, Handler<Void>> signalHandlers = new HashMap<>();
 
   public JobProcess(Vertx vertx, Process process) {
     this.vertx = vertx;
@@ -64,8 +67,12 @@ public class JobProcess implements Job {
         };
       }
       @Override
-      public void setSignalHandler(Handler<String> handler) {
-        signalHandler = handler;
+      public void signalHandler(String signal, Handler<Void> handler) {
+        if (handler == null) {
+          signalHandlers.remove(signal);
+        } else {
+          signalHandlers.put(signal, handler);
+        }
       }
       @Override
       public void end(int code) {
@@ -78,8 +85,13 @@ public class JobProcess implements Job {
   }
 
   @Override
-  public void sendSignal(String signal) {
-    signalHandler.handle(signal);
+  public boolean sendSignal(String signal) {
+    Handler<Void> handler = signalHandlers.get(signal);
+    if (handler != null) {
+      handler.handle(null);
+      return true;
+    }
+    return false;
   }
 
   @Override

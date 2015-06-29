@@ -21,7 +21,7 @@ public interface CommandProcess {
   CommandProcess setStdin(Stream stdin);
 
   @Fluent
-  CommandProcess setSignalHandler(Handler<String> handler);
+  CommandProcess signalHandler(String signal, Handler<Void> handler);
 
   Stream stdout();
 

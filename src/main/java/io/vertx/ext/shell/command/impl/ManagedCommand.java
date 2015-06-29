@@ -41,16 +41,6 @@ public class ManagedCommand {
     return new Process() {
       public void execute(ProcessContext context) {
 
-        AtomicReference<Handler<String>> signalHandler = new AtomicReference<>();
-        context.setSignalHandler(signal -> {
-          Handler<String> handler = signalHandler.get();
-          if (handler != null) {
-            ManagedCommand.this.context.runOnContext(v -> {
-              handler.handle(signal);
-            });
-          }
-        });
-
         CommandProcess process = new CommandProcess() {
 
           @Override
@@ -82,8 +72,16 @@ public class ManagedCommand {
             return this;
           }
           @Override
-          public CommandProcess setSignalHandler(Handler<String> handler) {
-            signalHandler.set(handler);
+          public CommandProcess signalHandler(String signal, Handler<Void> handler) {
+            if (handler != null) {
+              context.signalHandler(signal, v -> {
+                ManagedCommand.this.context.runOnContext(v2 -> {
+                  handler.handle(null);
+                });
+              });
+            } else {
+              context.signalHandler(signal, null);
+            }
             return this;
           }
           @Override

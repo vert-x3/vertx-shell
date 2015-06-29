@@ -57,8 +57,9 @@ public class Job {
     this.delegate.run(beginHandler);
   }
 
-  public void sendSignal(String signal) { 
-    this.delegate.sendSignal(signal);
+  public boolean sendSignal(String signal) { 
+    boolean ret = this.delegate.sendSignal(signal);
+    return ret;
   }
 
   public void endHandler(Handler<Integer> handler) { 

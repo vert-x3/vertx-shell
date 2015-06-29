@@ -74,11 +74,12 @@ var Job = function(j_val) {
 
    @public
    @param signal {string} 
+   @return {boolean}
    */
   this.sendSignal = function(signal) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'string') {
-      j_job["sendSignal(java.lang.String)"](signal);
+      return j_job["sendSignal(java.lang.String)"](signal);
     } else utils.invalidArgs();
   };
 

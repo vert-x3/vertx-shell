@@ -60,11 +60,9 @@ public class Main {
           long id = vertx.setTimer(seconds * 1000, v -> {
             process.end(0);
           });
-          process.setSignalHandler(signal -> {
-            if (signal.equals("SIGINT")) {
-              if (vertx.cancelTimer(id)) {
-                process.end(0);
-              }
+          process.signalHandler("SIGINT", v -> {
+            if (vertx.cancelTimer(id)) {
+              process.end(0);
             }
           });
           return;

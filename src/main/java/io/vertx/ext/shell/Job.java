@@ -17,7 +17,7 @@ public interface Job {
 
   void run(Handler<Void> beginHandler);
 
-  void sendSignal(String signal);
+  boolean sendSignal(String signal);
 
   void endHandler(Handler<Integer> handler);
 

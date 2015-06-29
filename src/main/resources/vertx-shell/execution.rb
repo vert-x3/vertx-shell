@@ -42,7 +42,7 @@ module VertxShell
     # @return [self]
     def set_signal_handler
       if block_given?
-        @j_del.java_method(:setSignalHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
+        @j_del.java_method(:signalHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
         return self
       end
       raise ArgumentError, "Invalid arguments when calling set_signal_handler()"
