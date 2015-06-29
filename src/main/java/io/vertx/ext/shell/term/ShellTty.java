@@ -37,12 +37,22 @@ public class ShellTty {
       readline.addFunction(function);
     }
     conn.setSignalHandler(signal -> {
+      Job job = currentJob.get();
       switch (signal) {
         case INTR:
-          Job job = currentJob.get();
           if (job != null) {
             job.sendSignal("SIGINT");
           }
+          break;
+        case EOF:
+          if (job != null) {
+            // Pseudo signal
+            if (job.sendSignal("EOF")) {
+              return;
+            }
+          }
+          // Disconnect if not handled
+          conn.close();
           break;
       }
     });
