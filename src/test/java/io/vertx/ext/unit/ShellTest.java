@@ -159,7 +159,6 @@ public class ShellTest {
   public void testResize(TestContext context) {
     CommandManager manager = CommandManager.create(vertx);
     Command cmd = Command.create("foo");
-    CountDownLatch latch = new CountDownLatch(1);
     cmd.processHandler(process -> {
       context.assertEquals(20, process.windowSize().width());
       context.assertEquals(10, process.windowSize().height());
@@ -182,6 +181,48 @@ public class ShellTest {
           process.setWindowSize(Dimension.create(25, 15));
         });
         process.run();
+      }));
+    }));
+  }
+
+  // Just some proof of concept, there are issues because we there is a timing
+  // problem when wiring processes
+  @Test
+  public void testPipe(TestContext context) {
+    CommandManager manager = CommandManager.create(vertx);
+    Command cmd1 = Command.create("cmd1");
+    cmd1.processHandler(process -> {
+      process.setStdin(text -> {
+        process.stdout().handle("|" + text + "|");
+        process.end(0);
+      });
+    });
+    Command cmd2 = Command.create("cmd2");
+    cmd2.processHandler(process -> {
+      System.out.println("");
+      process.setStdin(text -> {
+        process.stdout().handle("<" + text + ">");
+        process.end(0);
+      });
+    });
+    manager.addCommand(cmd1, context.asyncAssertSuccess(v1 -> {
+      manager.addCommand(cmd2, context.asyncAssertSuccess(v2 -> {
+        Shell shell = Shell.create(vertx, manager);
+        shell.createJob("cmd2", context.asyncAssertSuccess(process2 -> {
+          Async async = context.async();
+          process2.setStdout(text -> {
+            context.assertEquals("<|hello|>", text);
+            async.complete();
+          });
+          process2.run(a1 -> {
+            shell.createJob("cmd1", context.asyncAssertSuccess(process1 -> {
+              process1.setStdout(process2.stdin());
+              process1.run(a2 -> {
+                process1.stdin().handle("hello");
+              });
+            }));
+          });
+        }));
       }));
     }));
   }
