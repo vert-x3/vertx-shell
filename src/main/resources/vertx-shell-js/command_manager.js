@@ -37,10 +37,10 @@ var CommandManager = function(j_val) {
    @param command {Command} 
    @param handler {function} 
    */
-  this.addCommand = function(command, handler) {
+  this.registerCommand = function(command, handler) {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'function') {
-      j_commandManager["addCommand(io.vertx.ext.shell.command.Command,io.vertx.core.Handler)"](command._jdel, function(ar) {
+      j_commandManager["registerCommand(io.vertx.ext.shell.command.Command,io.vertx.core.Handler)"](command._jdel, function(ar) {
       if (ar.succeeded()) {
         handler(null, null);
       } else {

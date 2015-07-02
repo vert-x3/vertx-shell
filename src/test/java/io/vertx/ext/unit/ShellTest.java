@@ -12,7 +12,6 @@ import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -29,7 +28,7 @@ public class ShellTest {
     cmd.processHandler(process -> {
       process.end(3);
     });
-    manager.addCommand(cmd, context.asyncAssertSuccess(v -> {
+    manager.registerCommand(cmd, context.asyncAssertSuccess(v -> {
       Shell shell = Shell.create(vertx, manager);
       shell.createJob("foo", context.asyncAssertSuccess(process -> {
         process.endHandler(code -> {
@@ -48,7 +47,7 @@ public class ShellTest {
       context.assertEquals("hello_world", data);
       process.end(0);
     }));
-    manager.addCommand(cmd, context.asyncAssertSuccess(v -> {
+    manager.registerCommand(cmd, context.asyncAssertSuccess(v -> {
       Shell shell = Shell.create(vertx, manager);
       Async async = context.async();
       shell.createJob("foo", context.asyncAssertSuccess(process -> {
@@ -71,7 +70,7 @@ public class ShellTest {
       process.stdout().handle("bye_world");
       process.end(0);
     });
-    manager.addCommand(cmd, context.asyncAssertSuccess(v -> {
+    manager.registerCommand(cmd, context.asyncAssertSuccess(v -> {
       Shell shell = Shell.create(vertx, manager);
       shell.createJob("foo", context.asyncAssertSuccess(process -> {
         Async async = context.async();
@@ -107,7 +106,7 @@ public class ShellTest {
           process.end(0);
         });
       });
-      manager.addCommand(command, testContext.asyncAssertSuccess(v2 -> {
+      manager.registerCommand(command, testContext.asyncAssertSuccess(v2 -> {
         shellCtx.runOnContext(v3 -> {
           Shell shell = Shell.create(vertx, manager);
           shell.createJob("foo", testContext.asyncAssertSuccess(process -> {
@@ -141,7 +140,7 @@ public class ShellTest {
         process.end(0);
       });
     });
-    manager.addCommand(cmd, context.asyncAssertSuccess(v -> {
+    manager.registerCommand(cmd, context.asyncAssertSuccess(v -> {
       Shell shell = Shell.create(vertx, manager);
       shell.createJob("foo", context.asyncAssertSuccess(process -> {
         Async async = context.async();
@@ -169,7 +168,7 @@ public class ShellTest {
       });
       process.stdout().handle("ping");
     });
-    manager.addCommand(cmd, context.asyncAssertSuccess(v -> {
+    manager.registerCommand(cmd, context.asyncAssertSuccess(v -> {
       Shell shell = Shell.create(vertx, manager);
       shell.createJob("foo", context.asyncAssertSuccess(process -> {
         Async async = context.async();
@@ -205,8 +204,8 @@ public class ShellTest {
         process.end(0);
       });
     });
-    manager.addCommand(cmd1, context.asyncAssertSuccess(v1 -> {
-      manager.addCommand(cmd2, context.asyncAssertSuccess(v2 -> {
+    manager.registerCommand(cmd1, context.asyncAssertSuccess(v1 -> {
+      manager.registerCommand(cmd2, context.asyncAssertSuccess(v2 -> {
         Shell shell = Shell.create(vertx, manager);
         shell.createJob("cmd2", context.asyncAssertSuccess(process2 -> {
           Async async = context.async();

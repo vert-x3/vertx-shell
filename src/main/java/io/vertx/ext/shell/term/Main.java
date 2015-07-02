@@ -31,7 +31,8 @@ public class Main {
       process.write("hello world\r\n");
       process.end(0);
     });
-    mgr.addCommand(helloCmd, ar -> {});
+    mgr.registerCommand(helloCmd, ar -> {
+    });
 
     Command helpCmd = Command.create("help");
     helpCmd.processHandler(process -> {
@@ -43,7 +44,8 @@ public class Main {
       process.write("window\r\n");
       process.end(0);
     });
-    mgr.addCommand(helpCmd, ar -> {});
+    mgr.registerCommand(helpCmd, ar -> {
+    });
 
     Command windowCmd = Command.create("window");
     windowCmd.processHandler(process -> {
@@ -55,7 +57,8 @@ public class Main {
         process.end(0);
       });
     });
-    mgr.addCommand(windowCmd, ar -> {});
+    mgr.registerCommand(windowCmd, ar -> {
+    });
 
     Command sleepCmd = Command.create("sleep");
     sleepCmd.processHandler(process -> {
@@ -83,7 +86,8 @@ public class Main {
         process.end(0);
       }
     });
-    mgr.addCommand(sleepCmd, ar -> {});
+    mgr.registerCommand(sleepCmd, ar -> {
+    });
 
     Command lsCmd = Command.create("ls");
     lsCmd.processHandler(process -> {
@@ -99,7 +103,8 @@ public class Main {
         process.end(0);
       });
     });
-    mgr.addCommand(lsCmd, ar -> {});
+    mgr.registerCommand(lsCmd, ar -> {
+    });
 
     Shell shell = Shell.create(vertx, mgr);
 

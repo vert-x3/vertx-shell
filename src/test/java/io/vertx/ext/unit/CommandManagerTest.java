@@ -27,7 +27,7 @@ public class CommandManagerTest {
       context.assertEquals(Arrays.asList("world"), process.arguments());
       process.end(0);
     });
-    mgr.addCommand(command, context.asyncAssertSuccess(v -> {
+    mgr.registerCommand(command, context.asyncAssertSuccess(v -> {
       ShellImpl shell = new ShellImpl(vertx, mgr);
       shell.createJob("hello world", context.asyncAssertSuccess(job -> {
         Async async = context.async();

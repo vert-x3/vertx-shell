@@ -47,13 +47,13 @@ public class CommandManager {
     return ret;
   }
 
-  public void addCommand(Command command, Handler<AsyncResult<Void>> handler) { 
-    this.delegate.addCommand((io.vertx.ext.shell.command.Command) command.getDelegate(), handler);
+  public void registerCommand(Command command, Handler<AsyncResult<Void>> handler) { 
+    this.delegate.registerCommand((io.vertx.ext.shell.command.Command) command.getDelegate(), handler);
   }
 
-  public Observable<Void> addCommandObservable(Command command) { 
+  public Observable<Void> registerCommandObservable(Command command) { 
     io.vertx.rx.java.ObservableFuture<Void> handler = io.vertx.rx.java.RxHelper.observableFuture();
-    addCommand(command, handler.toHandler());
+    registerCommand(command, handler.toHandler());
     return handler;
   }
 
