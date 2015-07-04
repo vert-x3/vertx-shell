@@ -18,60 +18,60 @@ public class CliTokenizerTest {
 
   @Test
   public void testEmpty() {
-    assertTokens("", CliToken.EOF);
+    assertTokens("");
   }
 
   @Test
   public void testDashes() {
-    assertTokens("-", CliTokenKind.TEXT.create("-"), CliToken.EOF);
-    assertTokens("- ", CliTokenKind.TEXT.create("-"), CliTokenKind.BLANK.create(" "), CliToken.EOF);
-    assertTokens("-\t", CliTokenKind.TEXT.create("-"), CliTokenKind.BLANK.create("\t"), CliToken.EOF);
-    assertTokens("--", CliTokenKind.TEXT.create("--"), CliToken.EOF);
-    assertTokens("-- ", CliTokenKind.TEXT.create("--"), CliTokenKind.BLANK.create(" "), CliToken.EOF);
-    assertTokens("--\t", CliTokenKind.TEXT.create("--"), CliTokenKind.BLANK.create("\t"), CliToken.EOF);
-    assertTokens("---", CliTokenKind.TEXT.create("---"), CliToken.EOF);
-    assertTokens("--- ", CliTokenKind.TEXT.create("---"), CliTokenKind.BLANK.create(" "), CliToken.EOF);
-    assertTokens("---\t", CliTokenKind.TEXT.create("---"), CliTokenKind.BLANK.create("\t"), CliToken.EOF);
+    assertTokens("-", CliTokenKind.TEXT.create("-"));
+    assertTokens("- ", CliTokenKind.TEXT.create("-"), CliTokenKind.BLANK.create(" "));
+    assertTokens("-\t", CliTokenKind.TEXT.create("-"), CliTokenKind.BLANK.create("\t"));
+    assertTokens("--", CliTokenKind.TEXT.create("--"));
+    assertTokens("-- ", CliTokenKind.TEXT.create("--"), CliTokenKind.BLANK.create(" "));
+    assertTokens("--\t", CliTokenKind.TEXT.create("--"), CliTokenKind.BLANK.create("\t"));
+    assertTokens("---", CliTokenKind.TEXT.create("---"));
+    assertTokens("--- ", CliTokenKind.TEXT.create("---"), CliTokenKind.BLANK.create(" "));
+    assertTokens("---\t", CliTokenKind.TEXT.create("---"), CliTokenKind.BLANK.create("\t"));
   }
 
   @Test
   public void testOpt() {
-    assertTokens("-a", CliTokenKind.OPT.create("a"), CliToken.EOF);
-    assertTokens("-ab", CliTokenKind.OPT.create("ab"), CliToken.EOF);
+    assertTokens("-a", CliTokenKind.OPT.create("a"));
+    assertTokens("-ab", CliTokenKind.OPT.create("ab"));
   }
 
   @Test
   public void testLongOpt() {
-    assertTokens("--a", CliTokenKind.LONG_OPT.create("a"), CliToken.EOF);
-    assertTokens("--ab", CliTokenKind.LONG_OPT.create("ab"), CliToken.EOF);
+    assertTokens("--a", CliTokenKind.LONG_OPT.create("a"));
+    assertTokens("--ab", CliTokenKind.LONG_OPT.create("ab"));
   }
 
   @Test
   public void testBlank() {
-    assertTokens(" ", CliTokenKind.BLANK.create(" "), CliToken.EOF);
-    assertTokens("\t", CliTokenKind.BLANK.create("\t"), CliToken.EOF);
-    assertTokens(" \t", CliTokenKind.BLANK.create(" \t"), CliToken.EOF);
-    assertTokens("\t ", CliTokenKind.BLANK.create("\t "), CliToken.EOF);
+    assertTokens(" ", CliTokenKind.BLANK.create(" "));
+    assertTokens("\t", CliTokenKind.BLANK.create("\t"));
+    assertTokens(" \t", CliTokenKind.BLANK.create(" \t"));
+    assertTokens("\t ", CliTokenKind.BLANK.create("\t "));
   }
 
   @Test
   public void testText() {
-    assertTokens("a", CliTokenKind.TEXT.create("a"), CliToken.EOF);
+    assertTokens("a", CliTokenKind.TEXT.create("a"));
   }
 
   @Test
   public void testEscape() {
-    assertTokens("\\a", CliTokenKind.TEXT.create("a"), CliToken.EOF);
-    assertTokens("\\\"", CliTokenKind.TEXT.create("\""), CliToken.EOF);
-    assertTokens("\\'", CliTokenKind.TEXT.create("'"), CliToken.EOF);
-    assertTokens("\"a\"", CliTokenKind.TEXT.create("a"), CliToken.EOF);
-    assertTokens("\" \"", CliTokenKind.TEXT.create(" "), CliToken.EOF);
-    assertTokens("\"\\a\"", CliTokenKind.TEXT.create("\\a"), CliToken.EOF);
-    assertTokens("\"\\\"\"", CliTokenKind.TEXT.create("\""), CliToken.EOF);
-    assertTokens("'a'", CliTokenKind.TEXT.create("a"), CliToken.EOF);
-    assertTokens("' '", CliTokenKind.TEXT.create(" "), CliToken.EOF);
-    assertTokens("'\\'", CliTokenKind.TEXT.create("\\"), CliToken.EOF);
-//    assertTokens("'", CliToken.Kind.TEXT.create("\\"), CliToken.EOF);
+    assertTokens("\\a", CliTokenKind.TEXT.create("a"));
+    assertTokens("\\\"", CliTokenKind.TEXT.create("\""));
+    assertTokens("\\'", CliTokenKind.TEXT.create("'"));
+    assertTokens("\"a\"", CliTokenKind.TEXT.create("a"));
+    assertTokens("\" \"", CliTokenKind.TEXT.create(" "));
+    assertTokens("\"\\a\"", CliTokenKind.TEXT.create("\\a"));
+    assertTokens("\"\\\"\"", CliTokenKind.TEXT.create("\""));
+    assertTokens("'a'", CliTokenKind.TEXT.create("a"));
+    assertTokens("' '", CliTokenKind.TEXT.create(" "));
+    assertTokens("'\\'", CliTokenKind.TEXT.create("\\"));
+//    assertTokens("'", CliToken.Kind.TEXT.create("\\"));
   }
 
   private void assertTokens(String s, CliToken... expected) {

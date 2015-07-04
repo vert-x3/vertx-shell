@@ -5,8 +5,6 @@ package io.vertx.ext.shell.cli;
 */
 public enum CliTokenKind {
 
-  EOF,
-
   BLANK,
 
   OPT,

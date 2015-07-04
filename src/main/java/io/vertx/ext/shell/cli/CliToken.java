@@ -21,8 +21,6 @@ public class CliToken {
     this.value = value;
   }
 
-  public static final CliToken EOF = new CliToken(CliTokenKind.EOF, "");
-
   public CliTokenKind getKind() {
     return kind;
   }
@@ -75,7 +73,6 @@ public class CliToken {
           break;
       }
     }
-    builder.accept(EOF);
   }
 
   private static int textToken(String s, int index, Stream.Builder<CliToken> builder) {
