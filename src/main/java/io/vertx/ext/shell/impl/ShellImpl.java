@@ -6,8 +6,6 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.*;
 import io.vertx.ext.shell.Job;
-import io.vertx.ext.shell.cli.CliParser;
-import io.vertx.ext.shell.cli.CliRequest;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandManager;
 import io.vertx.ext.shell.command.impl.ManagedCommand;
@@ -16,7 +14,6 @@ import io.vertx.ext.shell.command.impl.CommandManagerImpl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -45,7 +42,7 @@ public class ShellImpl implements Shell {
   }
 
   private Process makeRequest(String s) {
-    ListIterator<CliToken> tokens = CliToken.tokenize(s).collect(Collectors.toList()).listIterator();
+    ListIterator<CliToken> tokens = CliToken.tokenize(s).listIterator();
     while (tokens.hasNext()) {
       CliToken token = tokens.next();
       switch (token.getKind()) {

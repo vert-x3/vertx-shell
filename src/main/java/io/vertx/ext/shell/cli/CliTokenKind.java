@@ -1,5 +1,7 @@
 package io.vertx.ext.shell.cli;
 
+import io.vertx.ext.shell.cli.impl.CliTokenImpl;
+
 /**
 * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
@@ -14,7 +16,7 @@ public enum CliTokenKind {
   TEXT;
 
   public CliToken create(String value) {
-    return new CliToken(this, value);
+    return new CliTokenImpl(this, value);
   }
 
 }

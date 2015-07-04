@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -23,7 +22,7 @@ public class CliParser {
   }
 
   public CliRequest parse(String s) {
-    return parse(CliToken.tokenize(s).collect(Collectors.toList()).listIterator());
+    return parse(CliToken.tokenize(s).listIterator());
   }
 
   public CliRequest parse(ListIterator<CliToken> tokens) {
