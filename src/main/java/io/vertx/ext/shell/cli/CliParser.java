@@ -30,8 +30,8 @@ public class CliParser {
     HashMap<String, List<String>> optionMap = new HashMap<>();
     while (tokens.hasNext()) {
       CliToken token = tokens.next();
-      CliToken.Kind kind = token.getKind();
-      if (kind == CliToken.Kind.OPT || kind == CliToken.Kind.LONG_OPT) {
+      CliTokenKind kind = token.getKind();
+      if (kind == CliTokenKind.OPT || kind == CliTokenKind.LONG_OPT) {
         String optionName = token.getValue();
         Option option = command.getOption(optionName);
         if (option == null) {
@@ -39,7 +39,7 @@ public class CliParser {
         }
         List<String> values = parseOption(tokens, option);
         optionMap.put(optionName, values);
-      } else if (kind == CliToken.Kind.TEXT) {
+      } else if (kind == CliTokenKind.TEXT) {
         tokens.previous();
         break;
       }

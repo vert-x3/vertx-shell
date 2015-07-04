@@ -7,41 +7,23 @@ import java.util.stream.Stream;
  */
 public class CliToken {
 
-  public static enum Kind {
-
-    EOF,
-
-    BLANK,
-
-    OPT,
-
-    LONG_OPT,
-
-    TEXT;
-
-    public CliToken create(String value) {
-      return new CliToken(this, value);
-    }
-
-  }
-
-  final Kind kind;
+  final CliTokenKind kind;
   final String raw;
   final String value;
 
-  public CliToken(Kind kind, String value) {
+  public CliToken(CliTokenKind kind, String value) {
     this(kind, value, value);
   }
 
-  public CliToken(Kind kind, String raw, String value) {
+  public CliToken(CliTokenKind kind, String raw, String value) {
     this.kind = kind;
     this.raw = raw;
     this.value = value;
   }
 
-  public static final CliToken EOF = new CliToken(Kind.EOF, "");
+  public static final CliToken EOF = new CliToken(CliTokenKind.EOF, "");
 
-  public Kind getKind() {
+  public CliTokenKind getKind() {
     return kind;
   }
 
@@ -153,7 +135,7 @@ public class CliToken {
       // Todo
       throw new UnsupportedOperationException();
     }
-    builder.accept(new CliToken(Kind.TEXT, s.substring(from, index), value.toString()));
+    builder.accept(new CliToken(CliTokenKind.TEXT, s.substring(from, index), value.toString()));
     return index;
   }
 
@@ -162,7 +144,7 @@ public class CliToken {
     while (index < s.length() && isBlank(s.charAt(index))) {
       index++;
     }
-    builder.accept(new CliToken(Kind.BLANK, s.substring(from, index)));
+    builder.accept(new CliToken(CliTokenKind.BLANK, s.substring(from, index)));
     return index;
   }
 
@@ -172,16 +154,16 @@ public class CliToken {
       if (c == '-') {
         index = longOptToken(s, index + 1, builder);
       } else if (isBlank(c)) {
-        builder.accept(new CliToken(Kind.TEXT, "-"));
+        builder.accept(new CliToken(CliTokenKind.TEXT, "-"));
       } else {
         int from = index;
         while (index < s.length() && !isBlank(s.charAt(index))) {
           index++;
         }
-        builder.accept(new CliToken(Kind.OPT, s.substring(from, index)));
+        builder.accept(new CliToken(CliTokenKind.OPT, s.substring(from, index)));
       }
     } else {
-      builder.accept(new CliToken(Kind.TEXT, "-"));
+      builder.accept(new CliToken(CliTokenKind.TEXT, "-"));
     }
     return index;
   }
@@ -192,16 +174,16 @@ public class CliToken {
       if (c == '-') {
         index = textToken(s, index - 2, builder);
       } else if (isBlank(c)) {
-        builder.accept(new CliToken(Kind.TEXT, "--"));
+        builder.accept(new CliToken(CliTokenKind.TEXT, "--"));
       } else {
         int from = index;
         while (index < s.length() && !isBlank(s.charAt(index))) {
           index++;
         }
-        builder.accept(new CliToken(Kind.LONG_OPT, s.substring(from, index)));
+        builder.accept(new CliToken(CliTokenKind.LONG_OPT, s.substring(from, index)));
       }
     } else {
-      builder.accept(new CliToken(Kind.TEXT, "--"));
+      builder.accept(new CliToken(CliTokenKind.TEXT, "--"));
     }
     return index;
   }

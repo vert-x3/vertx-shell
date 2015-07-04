@@ -13,6 +13,8 @@ import io.vertx.ext.shell.command.CommandManager;
 import io.vertx.ext.shell.command.impl.ManagedCommand;
 import io.vertx.ext.shell.command.impl.CommandManagerImpl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Collectors;
 
@@ -52,9 +54,11 @@ public class ShellImpl implements Shell {
           if (command == null) {
             throw new IllegalArgumentException(token.getValue() + ": command not found");
           }
-          CliParser parser = new CliParser(command.command());
-          CliRequest req = parser.parse(tokens);
-          return command.createProcess(req.getOptions(), req.getArguments());
+          List<CliToken> remaining = new ArrayList<>();
+          while (tokens.hasNext()) {
+            remaining.add(tokens.next());
+          }
+          return command.createProcess(remaining);
         case BLANK:
           break;
         default:

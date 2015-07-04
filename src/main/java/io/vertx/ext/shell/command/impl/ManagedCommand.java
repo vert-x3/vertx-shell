@@ -4,6 +4,9 @@ import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Stream;
+import io.vertx.ext.shell.cli.CliParser;
+import io.vertx.ext.shell.cli.CliRequest;
+import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandProcess;
 import io.vertx.ext.shell.impl.Process;
 import io.vertx.ext.shell.impl.ProcessContext;
@@ -34,10 +37,16 @@ public class ManagedCommand {
   }
 
   public Process createProcess() {
-    return createProcess(Collections.emptyMap(), Collections.emptyList());
+    return createProcess(Collections.emptyList());
   }
 
-  public Process createProcess(Map<String, List<String>> options, List<String> arguments) {
+  public Process createProcess(List<CliToken> tokens) {
+
+    CliParser parser = new CliParser(command);
+
+    CliRequest req = parser.parse(tokens.listIterator());
+
+
     return new Process() {
       public void execute(ProcessContext context) {
 
@@ -45,12 +54,12 @@ public class ManagedCommand {
 
           @Override
           public List<String> arguments() {
-            return arguments;
+            return req.getArguments();
           }
 
           @Override
           public List<String> getOption(String name) {
-            return options.get(name);
+            return req.getOptions().get(name);
           }
 
           @Override
