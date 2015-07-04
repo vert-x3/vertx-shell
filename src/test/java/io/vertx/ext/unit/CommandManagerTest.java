@@ -1,6 +1,7 @@
 package io.vertx.ext.unit;
 
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.command.ArgToken;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandManager;
 import io.vertx.ext.shell.command.impl.CommandManagerImpl;
@@ -24,7 +25,7 @@ public class CommandManagerTest {
     CommandManagerImpl mgr = (CommandManagerImpl) CommandManager.create(vertx);
     Command command = Command.create("hello");
     command.processHandler(process -> {
-      context.assertEquals(Arrays.asList("world"), process.arguments());
+      context.assertEquals(Arrays.asList(ArgToken.createBlank(" "), ArgToken.createText("world")), process.args());
       process.end(0);
     });
     mgr.registerCommand(command, context.asyncAssertSuccess(v -> {

@@ -8,6 +8,7 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.shell.Shell;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandManager;
+import io.vertx.ext.shell.getopt.GetOptCommand;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -60,7 +61,7 @@ public class Main {
     mgr.registerCommand(windowCmd, ar -> {
     });
 
-    Command sleepCmd = Command.create("sleep");
+    GetOptCommand sleepCmd = GetOptCommand.create("sleep");
     sleepCmd.processHandler(process -> {
       if (process.arguments().isEmpty()) {
         process.write("usage: sleep seconds\r\n");
@@ -86,7 +87,7 @@ public class Main {
         process.end(0);
       }
     });
-    mgr.registerCommand(sleepCmd, ar -> {
+    mgr.registerCommand(sleepCmd.build(), ar -> {
     });
 
     Command lsCmd = Command.create("ls");

@@ -14,9 +14,7 @@ import java.util.List;
 @VertxGen
 public interface CommandProcess {
 
-  List<String> arguments();
-
-  List<String> getOption(String name);
+  List<ArgToken> args();
 
   Dimension windowSize();
 

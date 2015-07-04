@@ -14,50 +14,44 @@
  * under the License.
  */
 
-package io.vertx.groovy.ext.shell.command;
+package io.vertx.groovy.ext.shell.getopt;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import java.util.List
-import io.vertx.groovy.ext.shell.Dimension
 import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.Stream
+import io.vertx.groovy.ext.shell.command.CommandProcess
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
-public class CommandProcess {
-  final def io.vertx.ext.shell.command.CommandProcess delegate;
-  public CommandProcess(io.vertx.ext.shell.command.CommandProcess delegate) {
+public class GetOptCommandProcess extends CommandProcess {
+  final def io.vertx.ext.shell.getopt.GetOptCommandProcess delegate;
+  public GetOptCommandProcess(io.vertx.ext.shell.getopt.GetOptCommandProcess delegate) {
+    super(delegate);
     this.delegate = delegate;
   }
   public Object getDelegate() {
     return delegate;
   }
-  public List<ArgToken> args() {
-    def ret = this.delegate.args()?.collect({underpants -> new io.vertx.groovy.ext.shell.command.ArgToken(underpants)});
-      return ret;
-  }
-  public Dimension windowSize() {
-    def ret= InternalHelper.safeCreate(this.delegate.windowSize(), io.vertx.ext.shell.Dimension.class, io.vertx.groovy.ext.shell.Dimension.class);
+  public List<String> arguments() {
+    def ret = this.delegate.arguments();
     return ret;
   }
-  public CommandProcess setStdin(Stream stdin) {
+  public List<String> getOption(String name) {
+    def ret = this.delegate.getOption(name);
+    return ret;
+  }
+  public GetOptCommandProcess setStdin(Stream stdin) {
     this.delegate.setStdin((io.vertx.ext.shell.Stream)stdin.getDelegate());
     return this;
   }
-  public CommandProcess eventHandler(String event, Handler<Void> handler) {
+  public GetOptCommandProcess eventHandler(String event, Handler<Void> handler) {
     this.delegate.eventHandler(event, handler);
     return this;
   }
-  public Stream stdout() {
-    def ret= InternalHelper.safeCreate(this.delegate.stdout(), io.vertx.ext.shell.Stream.class, io.vertx.groovy.ext.shell.Stream.class);
-    return ret;
-  }
-  public CommandProcess write(String text) {
+  public GetOptCommandProcess write(String text) {
     this.delegate.write(text);
     return this;
-  }
-  public void end(int code) {
-    this.delegate.end(code);
   }
 }

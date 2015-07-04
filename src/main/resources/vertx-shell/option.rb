@@ -1,5 +1,5 @@
 require 'vertx/util/utils.rb'
-# Generated from io.vertx.ext.shell.command.Option
+# Generated from io.vertx.ext.shell.getopt.Option
 module VertxShell
   #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
   class Option
@@ -18,7 +18,7 @@ module VertxShell
     # @return [::VertxShell::Option]
     def self.create(name=nil,arity=nil)
       if name.class == String && arity.class == Fixnum && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::Option.java_method(:create, [Java::java.lang.String.java_class,Java::int.java_class]).call(name,arity),::VertxShell::Option)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellGetopt::Option.java_method(:create, [Java::java.lang.String.java_class,Java::int.java_class]).call(name,arity),::VertxShell::Option)
       end
       raise ArgumentError, "Invalid arguments when calling create(name,arity)"
     end

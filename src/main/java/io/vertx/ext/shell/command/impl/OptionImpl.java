@@ -1,6 +1,6 @@
 package io.vertx.ext.shell.command.impl;
 
-import io.vertx.ext.shell.command.Option;
+import io.vertx.ext.shell.getopt.Option;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>

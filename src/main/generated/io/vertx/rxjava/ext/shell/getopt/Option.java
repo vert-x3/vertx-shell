@@ -14,37 +14,48 @@
  * under the License.
  */
 
-package io.vertx.groovy.ext.shell.cli;
-import groovy.transform.CompileStatic
-import io.vertx.lang.groovy.InternalHelper
-import java.util.List
-import io.vertx.ext.shell.cli.CliTokenKind
+package io.vertx.rxjava.ext.shell.getopt;
+
+import java.util.Map;
+import io.vertx.lang.rxjava.InternalHelper;
+import rx.Observable;
+
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
-*/
-@CompileStatic
-public class CliToken {
-  final def io.vertx.ext.shell.cli.CliToken delegate;
-  public CliToken(io.vertx.ext.shell.cli.CliToken delegate) {
+ *
+ * <p/>
+ * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.getopt.Option original} non RX-ified interface using Vert.x codegen.
+ */
+
+public class Option {
+
+  final io.vertx.ext.shell.getopt.Option delegate;
+
+  public Option(io.vertx.ext.shell.getopt.Option delegate) {
     this.delegate = delegate;
   }
+
   public Object getDelegate() {
     return delegate;
   }
-  public CliTokenKind getKind() {
-    def ret = this.delegate.getKind();
+
+  public static Option create(String name, int arity) { 
+    Option ret= Option.newInstance(io.vertx.ext.shell.getopt.Option.create(name, arity));
     return ret;
   }
-  public String getRaw() {
-    def ret = this.delegate.getRaw();
+
+  public String name() { 
+    String ret = this.delegate.name();
     return ret;
   }
-  public String getValue() {
-    def ret = this.delegate.getValue();
+
+  public int arity() { 
+    int ret = this.delegate.arity();
     return ret;
   }
-  public static List<CliToken> tokenize(String s) {
-    def ret = io.vertx.ext.shell.cli.CliToken.tokenize(s)?.collect({underpants -> new io.vertx.groovy.ext.shell.cli.CliToken(underpants)});
-      return ret;
+
+
+  public static Option newInstance(io.vertx.ext.shell.getopt.Option arg) {
+    return arg != null ? new Option(arg) : null;
   }
 }

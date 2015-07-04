@@ -6,7 +6,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.*;
 import io.vertx.ext.shell.Job;
-import io.vertx.ext.shell.cli.CliToken;
+import io.vertx.ext.shell.command.ArgToken;
 import io.vertx.ext.shell.command.CommandManager;
 import io.vertx.ext.shell.command.impl.ManagedCommand;
 import io.vertx.ext.shell.command.impl.CommandManagerImpl;
@@ -42,24 +42,19 @@ public class ShellImpl implements Shell {
   }
 
   private Process makeRequest(String s) {
-    ListIterator<CliToken> tokens = CliToken.tokenize(s).listIterator();
+    ListIterator<ArgToken> tokens = ArgToken.tokenize(s).listIterator();
     while (tokens.hasNext()) {
-      CliToken token = tokens.next();
-      switch (token.getKind()) {
-        case TEXT:
-          ManagedCommand command = manager.getCommand(token.getValue());
-          if (command == null) {
-            throw new IllegalArgumentException(token.getValue() + ": command not found");
-          }
-          List<CliToken> remaining = new ArrayList<>();
-          while (tokens.hasNext()) {
-            remaining.add(tokens.next());
-          }
-          return command.createProcess(remaining);
-        case BLANK:
-          break;
-        default:
-          throw new IllegalArgumentException("Bad line " + s);
+      ArgToken token = tokens.next();
+      if (token.isText()) {
+        ManagedCommand command = manager.getCommand(token.value());
+        if (command == null) {
+          throw new IllegalArgumentException(token.value() + ": command not found");
+        }
+        List<ArgToken> remaining = new ArrayList<>();
+        while (tokens.hasNext()) {
+          remaining.add(tokens.next());
+        }
+        return command.createProcess(remaining);
       }
     }
     throw new IllegalArgumentException();

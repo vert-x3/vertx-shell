@@ -1,31 +1,31 @@
 require 'vertx/util/utils.rb'
-# Generated from io.vertx.ext.shell.cli.CliToken
+# Generated from io.vertx.ext.shell.command.ArgToken
 module VertxShell
   #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
-  class CliToken
+  class ArgToken
     # @private
-    # @param j_del [::VertxShell::CliToken] the java delegate
+    # @param j_del [::VertxShell::ArgToken] the java delegate
     def initialize(j_del)
       @j_del = j_del
     end
     # @private
-    # @return [::VertxShell::CliToken] the underlying java delegate
+    # @return [::VertxShell::ArgToken] the underlying java delegate
     def j_del
       @j_del
     end
     # @param [String] s 
-    # @return [::VertxShell::CliToken]
+    # @return [::VertxShell::ArgToken]
     def self.create_text(s=nil)
       if s.class == String && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCli::CliToken.java_method(:createText, [Java::java.lang.String.java_class]).call(s),::VertxShell::CliToken)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::ArgToken.java_method(:createText, [Java::java.lang.String.java_class]).call(s),::VertxShell::ArgToken)
       end
       raise ArgumentError, "Invalid arguments when calling create_text(s)"
     end
     # @param [String] s 
-    # @return [::VertxShell::CliToken]
+    # @return [::VertxShell::ArgToken]
     def self.create_blank(s=nil)
       if s.class == String && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCli::CliToken.java_method(:createBlank, [Java::java.lang.String.java_class]).call(s),::VertxShell::CliToken)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::ArgToken.java_method(:createBlank, [Java::java.lang.String.java_class]).call(s),::VertxShell::ArgToken)
       end
       raise ArgumentError, "Invalid arguments when calling create_blank(s)"
     end
@@ -58,10 +58,10 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling blank?()"
     end
     # @param [String] s 
-    # @return [Array<::VertxShell::CliToken>]
+    # @return [Array<::VertxShell::ArgToken>]
     def self.tokenize(s=nil)
       if s.class == String && !block_given?
-        return Java::IoVertxExtShellCli::CliToken.java_method(:tokenize, [Java::java.lang.String.java_class]).call(s).to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::CliToken) }
+        return Java::IoVertxExtShellCommand::ArgToken.java_method(:tokenize, [Java::java.lang.String.java_class]).call(s).to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::ArgToken) }
       end
       raise ArgumentError, "Invalid arguments when calling tokenize(s)"
     end

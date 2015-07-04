@@ -14,48 +14,31 @@
  * under the License.
  */
 
-package io.vertx.rxjava.ext.shell.command;
-
-import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
-import rx.Observable;
-
+package io.vertx.groovy.ext.shell.getopt;
+import groovy.transform.CompileStatic
+import io.vertx.lang.groovy.InternalHelper
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
- *
- * <p/>
- * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.command.Option original} non RX-ified interface using Vert.x codegen.
- */
-
+*/
+@CompileStatic
 public class Option {
-
-  final io.vertx.ext.shell.command.Option delegate;
-
-  public Option(io.vertx.ext.shell.command.Option delegate) {
+  final def io.vertx.ext.shell.getopt.Option delegate;
+  public Option(io.vertx.ext.shell.getopt.Option delegate) {
     this.delegate = delegate;
   }
-
   public Object getDelegate() {
     return delegate;
   }
-
-  public static Option create(String name, int arity) { 
-    Option ret= Option.newInstance(io.vertx.ext.shell.command.Option.create(name, arity));
+  public static Option create(String name, int arity) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.getopt.Option.create(name, arity), io.vertx.ext.shell.getopt.Option.class, io.vertx.groovy.ext.shell.getopt.Option.class);
     return ret;
   }
-
-  public String name() { 
-    String ret = this.delegate.name();
+  public String name() {
+    def ret = this.delegate.name();
     return ret;
   }
-
-  public int arity() { 
-    int ret = this.delegate.arity();
+  public int arity() {
+    def ret = this.delegate.arity();
     return ret;
-  }
-
-
-  public static Option newInstance(io.vertx.ext.shell.command.Option arg) {
-    return arg != null ? new Option(arg) : null;
   }
 }

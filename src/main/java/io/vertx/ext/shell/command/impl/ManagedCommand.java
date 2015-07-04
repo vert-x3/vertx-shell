@@ -4,16 +4,13 @@ import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Stream;
-import io.vertx.ext.shell.cli.CliParser;
-import io.vertx.ext.shell.cli.CliRequest;
-import io.vertx.ext.shell.cli.CliToken;
+import io.vertx.ext.shell.command.ArgToken;
 import io.vertx.ext.shell.command.CommandProcess;
 import io.vertx.ext.shell.impl.Process;
 import io.vertx.ext.shell.impl.ProcessContext;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * The command registered with a manager.
@@ -40,26 +37,15 @@ public class ManagedCommand {
     return createProcess(Collections.emptyList());
   }
 
-  public Process createProcess(List<CliToken> tokens) {
-
-    CliParser parser = new CliParser(command);
-
-    CliRequest req = parser.parse(tokens.listIterator());
-
-
+  public Process createProcess(List<ArgToken> args) {
     return new Process() {
       public void execute(ProcessContext context) {
 
         CommandProcess process = new CommandProcess() {
 
           @Override
-          public List<String> arguments() {
-            return req.getArguments();
-          }
-
-          @Override
-          public List<String> getOption(String name) {
-            return req.getOptions().get(name);
+          public List<ArgToken> args() {
+            return args;
           }
 
           @Override

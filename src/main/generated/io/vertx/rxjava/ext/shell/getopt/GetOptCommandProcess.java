@@ -14,28 +14,29 @@
  * under the License.
  */
 
-package io.vertx.rxjava.ext.shell.command;
+package io.vertx.rxjava.ext.shell.getopt;
 
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
-import io.vertx.rxjava.ext.shell.Dimension;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.Stream;
+import io.vertx.rxjava.ext.shell.command.CommandProcess;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  *
  * <p/>
- * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.command.CommandProcess original} non RX-ified interface using Vert.x codegen.
+ * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.getopt.GetOptCommandProcess original} non RX-ified interface using Vert.x codegen.
  */
 
-public class CommandProcess {
+public class GetOptCommandProcess extends CommandProcess {
 
-  final io.vertx.ext.shell.command.CommandProcess delegate;
+  final io.vertx.ext.shell.getopt.GetOptCommandProcess delegate;
 
-  public CommandProcess(io.vertx.ext.shell.command.CommandProcess delegate) {
+  public GetOptCommandProcess(io.vertx.ext.shell.getopt.GetOptCommandProcess delegate) {
+    super(delegate);
     this.delegate = delegate;
   }
 
@@ -43,42 +44,35 @@ public class CommandProcess {
     return delegate;
   }
 
-  public List<ArgToken> args() { 
-    List<ArgToken> ret = this.delegate.args().stream().map(ArgToken::newInstance).collect(java.util.stream.Collectors.toList());
+  public List<String> arguments() { 
+    List<String> ret = this.delegate.arguments();
+;
     return ret;
   }
 
-  public Dimension windowSize() { 
-    Dimension ret= Dimension.newInstance(this.delegate.windowSize());
+  public List<String> getOption(String name) { 
+    List<String> ret = this.delegate.getOption(name);
+;
     return ret;
   }
 
-  public CommandProcess setStdin(Stream stdin) { 
+  public GetOptCommandProcess setStdin(Stream stdin) { 
     this.delegate.setStdin((io.vertx.ext.shell.Stream) stdin.getDelegate());
     return this;
   }
 
-  public CommandProcess eventHandler(String event, Handler<Void> handler) { 
+  public GetOptCommandProcess eventHandler(String event, Handler<Void> handler) { 
     this.delegate.eventHandler(event, handler);
     return this;
   }
 
-  public Stream stdout() { 
-    Stream ret= Stream.newInstance(this.delegate.stdout());
-    return ret;
-  }
-
-  public CommandProcess write(String text) { 
+  public GetOptCommandProcess write(String text) { 
     this.delegate.write(text);
     return this;
   }
 
-  public void end(int code) { 
-    this.delegate.end(code);
-  }
 
-
-  public static CommandProcess newInstance(io.vertx.ext.shell.command.CommandProcess arg) {
-    return arg != null ? new CommandProcess(arg) : null;
+  public static GetOptCommandProcess newInstance(io.vertx.ext.shell.getopt.GetOptCommandProcess arg) {
+    return arg != null ? new GetOptCommandProcess(arg) : null;
   }
 }

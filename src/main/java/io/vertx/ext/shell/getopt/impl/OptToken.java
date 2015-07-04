@@ -1,31 +1,30 @@
-package io.vertx.ext.shell.cli.impl;
+package io.vertx.ext.shell.getopt.impl;
 
-import io.vertx.ext.shell.cli.CliToken;
-import io.vertx.ext.shell.cli.CliTokenKind;
+import io.vertx.ext.shell.command.ArgToken;
 
-import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class CliTokenImpl implements CliToken {
+public class OptToken {
 
-  final CliTokenKind kind;
+  final OptTokenKind kind;
   final String raw;
   final String value;
 
-  public CliTokenImpl(CliTokenKind kind, String value) {
+  public OptToken(OptTokenKind kind, String value) {
     this(kind, value, value);
   }
 
-  public CliTokenImpl(CliTokenKind kind, String raw, String value) {
+  public OptToken(OptTokenKind kind, String raw, String value) {
     this.kind = kind;
     this.raw = raw;
     this.value = value;
   }
 
-  public CliTokenKind getKind() {
+  public OptTokenKind getKind() {
     return kind;
   }
 
@@ -39,8 +38,8 @@ public class CliTokenImpl implements CliToken {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof CliTokenImpl) {
-      CliTokenImpl that = (CliTokenImpl) obj;
+    if (obj instanceof OptToken) {
+      OptToken that = (OptToken) obj;
       return kind == that.kind && value.equals(that.value);
     }
     return false;
@@ -48,20 +47,40 @@ public class CliTokenImpl implements CliToken {
 
   @Override
   public String toString() {
-    return "CliToken[kind=" + kind + ",value=" + value + "]";
+    return "OptToken[kind=" + kind + ",value=" + value + "]";
   }
 
-  public static List<CliToken> tokenize(String s) {
-
-    List<CliToken> tokens = new LinkedList<>();
-
-    tokenize(s, 0, tokens);
-
-    return tokens;
-
+  public static List<OptToken> tokenize(String s) {
+    return tokenize(ArgToken.tokenize(s));
   }
 
-  private static void tokenize(String s, int index, List<CliToken> builder) {
+  public static List<OptToken> tokenize(List<ArgToken> tokens) {
+    return tokens.stream().map(t -> {
+      OptTokenKind kind;
+      String val = t.value();
+      if (t.isBlank()) {
+        kind = OptTokenKind.BLANK;
+      } else {
+        kind = OptTokenKind.TEXT;
+        if (val.startsWith("-")) {
+          if (val.startsWith("--")) {
+            if (val.length() > 2 && val.charAt(2) != '-') {
+              kind = OptTokenKind.LONG_OPT;
+              val = val.substring(2);
+            }
+          } else {
+            if (val.length() > 1 && val.charAt(1) != '-') {
+              kind = OptTokenKind.OPT;
+              val = val.substring(1);
+            }
+          }
+        }
+      }
+      return new OptToken(kind, t.raw(), val);
+    }).collect(Collectors.toList());
+  }
+
+  private static void tokenize(String s, int index, List<OptToken> builder) {
     while (index < s.length()) {
       char c = s.charAt(index);
       switch (c) {
@@ -79,7 +98,7 @@ public class CliTokenImpl implements CliToken {
     }
   }
 
-  private static int textToken(String s, int index, List<CliToken> builder) {
+  private static int textToken(String s, int index, List<OptToken> builder) {
     StringBuilder value = new StringBuilder();
     boolean escaped = false;
     int status = 0;
@@ -136,55 +155,55 @@ public class CliTokenImpl implements CliToken {
       // Todo
       throw new UnsupportedOperationException();
     }
-    builder.add(new CliTokenImpl(CliTokenKind.TEXT, s.substring(from, index), value.toString()));
+    builder.add(new OptToken(OptTokenKind.TEXT, s.substring(from, index), value.toString()));
     return index;
   }
 
-  private static int blankToken(String s, int index, List<CliToken> builder) {
+  private static int blankToken(String s, int index, List<OptToken> builder) {
     int from = index;
     while (index < s.length() && isBlank(s.charAt(index))) {
       index++;
     }
-    builder.add(new CliTokenImpl(CliTokenKind.BLANK, s.substring(from, index)));
+    builder.add(new OptToken(OptTokenKind.BLANK, s.substring(from, index)));
     return index;
   }
 
-  private static int optToken(String s, int index, List<CliToken> builder) {
+  private static int optToken(String s, int index, List<OptToken> builder) {
     if (index < s.length()) {
       char c = s.charAt(index);
       if (c == '-') {
         index = longOptToken(s, index + 1, builder);
       } else if (isBlank(c)) {
-        builder.add(new CliTokenImpl(CliTokenKind.TEXT, "-"));
+        builder.add(new OptToken(OptTokenKind.TEXT, "-"));
       } else {
         int from = index;
         while (index < s.length() && !isBlank(s.charAt(index))) {
           index++;
         }
-        builder.add(new CliTokenImpl(CliTokenKind.OPT, s.substring(from, index)));
+        builder.add(new OptToken(OptTokenKind.OPT, s.substring(from, index)));
       }
     } else {
-      builder.add(new CliTokenImpl(CliTokenKind.TEXT, "-"));
+      builder.add(new OptToken(OptTokenKind.TEXT, "-"));
     }
     return index;
   }
 
-  private static int longOptToken(String s, int index, List<CliToken> builder) {
+  private static int longOptToken(String s, int index, List<OptToken> builder) {
     if (index < s.length()) {
       char c = s.charAt(index);
       if (c == '-') {
         index = textToken(s, index - 2, builder);
       } else if (isBlank(c)) {
-        builder.add(new CliTokenImpl(CliTokenKind.TEXT, "--"));
+        builder.add(new OptToken(OptTokenKind.TEXT, "--"));
       } else {
         int from = index;
         while (index < s.length() && !isBlank(s.charAt(index))) {
           index++;
         }
-        builder.add(new CliTokenImpl(CliTokenKind.LONG_OPT, s.substring(from, index)));
+        builder.add(new OptToken(OptTokenKind.LONG_OPT, s.substring(from, index)));
       }
     } else {
-      builder.add(new CliTokenImpl(CliTokenKind.TEXT, "--"));
+      builder.add(new OptToken(OptTokenKind.TEXT, "--"));
     }
     return index;
   }

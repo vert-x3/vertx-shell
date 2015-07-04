@@ -14,48 +14,48 @@
  * under the License.
  */
 
-/** @module vertx-shell-js/command_process */
+/** @module vertx-shell-js/get_opt_command_process */
 var utils = require('vertx-js/util/utils');
-var Dimension = require('vertx-shell-js/dimension');
-var ArgToken = require('vertx-shell-js/arg_token');
 var Stream = require('vertx-shell-js/stream');
+var CommandProcess = require('vertx-shell-js/command_process');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JCommandProcess = io.vertx.ext.shell.command.CommandProcess;
+var JGetOptCommandProcess = io.vertx.ext.shell.getopt.GetOptCommandProcess;
 
 /**
 
  @class
 */
-var CommandProcess = function(j_val) {
+var GetOptCommandProcess = function(j_val) {
 
-  var j_commandProcess = j_val;
+  var j_getOptCommandProcess = j_val;
   var that = this;
+  CommandProcess.call(this, j_val);
 
   /**
 
    @public
 
-   @return {Array.<ArgToken>}
+   @return {Array.<string>}
    */
-  this.args = function() {
+  this.arguments = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnListSetVertxGen(j_commandProcess["args()"](), ArgToken);
+      return j_getOptCommandProcess["arguments()"]();
     } else utils.invalidArgs();
   };
 
   /**
 
    @public
-
-   @return {Dimension}
+   @param name {string} 
+   @return {Array.<string>}
    */
-  this.windowSize = function() {
+  this.getOption = function(name) {
     var __args = arguments;
-    if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_commandProcess["windowSize()"](), Dimension);
+    if (__args.length === 1 && typeof __args[0] === 'string') {
+      return j_getOptCommandProcess["getOption(java.lang.String)"](name);
     } else utils.invalidArgs();
   };
 
@@ -63,12 +63,12 @@ var CommandProcess = function(j_val) {
 
    @public
    @param stdin {Stream} 
-   @return {CommandProcess}
+   @return {GetOptCommandProcess}
    */
   this.setStdin = function(stdin) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_commandProcess["setStdin(io.vertx.ext.shell.Stream)"](stdin._jdel);
+      j_getOptCommandProcess["setStdin(io.vertx.ext.shell.Stream)"](stdin._jdel);
       return that;
     } else utils.invalidArgs();
   };
@@ -78,26 +78,13 @@ var CommandProcess = function(j_val) {
    @public
    @param event {string} 
    @param handler {function} 
-   @return {CommandProcess}
+   @return {GetOptCommandProcess}
    */
   this.eventHandler = function(event, handler) {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_commandProcess["eventHandler(java.lang.String,io.vertx.core.Handler)"](event, handler);
+      j_getOptCommandProcess["eventHandler(java.lang.String,io.vertx.core.Handler)"](event, handler);
       return that;
-    } else utils.invalidArgs();
-  };
-
-  /**
-
-   @public
-
-   @return {Stream}
-   */
-  this.stdout = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_commandProcess["stdout()"](), Stream);
     } else utils.invalidArgs();
   };
 
@@ -105,33 +92,21 @@ var CommandProcess = function(j_val) {
 
    @public
    @param text {string} 
-   @return {CommandProcess}
+   @return {GetOptCommandProcess}
    */
   this.write = function(text) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'string') {
-      j_commandProcess["write(java.lang.String)"](text);
+      j_getOptCommandProcess["write(java.lang.String)"](text);
       return that;
-    } else utils.invalidArgs();
-  };
-
-  /**
-
-   @public
-   @param code {number} 
-   */
-  this.end = function(code) {
-    var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] ==='number') {
-      j_commandProcess["end(int)"](code);
     } else utils.invalidArgs();
   };
 
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
-  this._jdel = j_commandProcess;
+  this._jdel = j_getOptCommandProcess;
 };
 
 // We export the Constructor function
-module.exports = CommandProcess;
+module.exports = GetOptCommandProcess;

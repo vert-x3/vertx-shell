@@ -16,7 +16,6 @@
 
 /** @module vertx-shell-js/command */
 var utils = require('vertx-js/util/utils');
-var Option = require('vertx-shell-js/option');
 var CommandProcess = require('vertx-shell-js/command_process');
 
 var io = Packages.io;
@@ -31,33 +30,6 @@ var Command = function(j_val) {
 
   var j_command = j_val;
   var that = this;
-
-  /**
-
-   @public
-   @param option {Option} 
-   @return {Command}
-   */
-  this.addOption = function(option) {
-    var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_command["addOption(io.vertx.ext.shell.command.Option)"](option._jdel);
-      return that;
-    } else utils.invalidArgs();
-  };
-
-  /**
-
-   @public
-   @param name {string} 
-   @return {Option}
-   */
-  this.getOption = function(name) {
-    var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'string') {
-      return utils.convReturnVertxGen(j_command["getOption(java.lang.String)"](name), Option);
-    } else utils.invalidArgs();
-  };
 
   /**
 

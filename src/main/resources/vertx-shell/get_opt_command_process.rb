@@ -1,34 +1,35 @@
-require 'vertx-shell/dimension'
-require 'vertx-shell/arg_token'
 require 'vertx-shell/stream'
+require 'vertx-shell/command_process'
 require 'vertx/util/utils.rb'
-# Generated from io.vertx.ext.shell.command.CommandProcess
+# Generated from io.vertx.ext.shell.getopt.GetOptCommandProcess
 module VertxShell
   #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
-  class CommandProcess
+  class GetOptCommandProcess < ::VertxShell::CommandProcess
     # @private
-    # @param j_del [::VertxShell::CommandProcess] the java delegate
+    # @param j_del [::VertxShell::GetOptCommandProcess] the java delegate
     def initialize(j_del)
+      super(j_del)
       @j_del = j_del
     end
     # @private
-    # @return [::VertxShell::CommandProcess] the underlying java delegate
+    # @return [::VertxShell::GetOptCommandProcess] the underlying java delegate
     def j_del
       @j_del
     end
-    # @return [Array<::VertxShell::ArgToken>]
-    def args
+    # @return [Array<String>]
+    def arguments
       if !block_given?
-        return @j_del.java_method(:args, []).call().to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::ArgToken) }
+        return @j_del.java_method(:arguments, []).call().to_a.map { |elt| elt }
       end
-      raise ArgumentError, "Invalid arguments when calling args()"
+      raise ArgumentError, "Invalid arguments when calling arguments()"
     end
-    # @return [::VertxShell::Dimension]
-    def window_size
-      if !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:windowSize, []).call(),::VertxShell::Dimension)
+    # @param [String] name 
+    # @return [Array<String>]
+    def get_option(name=nil)
+      if name.class == String && !block_given?
+        return @j_del.java_method(:getOption, [Java::java.lang.String.java_class]).call(name).to_a.map { |elt| elt }
       end
-      raise ArgumentError, "Invalid arguments when calling window_size()"
+      raise ArgumentError, "Invalid arguments when calling get_option(name)"
     end
     # @param [::VertxShell::Stream] stdin 
     # @return [self]
@@ -49,13 +50,6 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling event_handler(event)"
     end
-    # @return [::VertxShell::Stream]
-    def stdout
-      if !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:stdout, []).call(),::VertxShell::Stream)
-      end
-      raise ArgumentError, "Invalid arguments when calling stdout()"
-    end
     # @param [String] text 
     # @return [self]
     def write(text=nil)
@@ -64,14 +58,6 @@ module VertxShell
         return self
       end
       raise ArgumentError, "Invalid arguments when calling write(text)"
-    end
-    # @param [Fixnum] code 
-    # @return [void]
-    def end(code=nil)
-      if code.class == Fixnum && !block_given?
-        return @j_del.java_method(:end, [Java::int.java_class]).call(code)
-      end
-      raise ArgumentError, "Invalid arguments when calling end(code)"
     end
   end
 end

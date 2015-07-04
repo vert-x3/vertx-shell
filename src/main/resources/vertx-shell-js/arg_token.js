@@ -14,20 +14,20 @@
  * under the License.
  */
 
-/** @module vertx-shell-js/cli_token */
+/** @module vertx-shell-js/arg_token */
 var utils = require('vertx-js/util/utils');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JCliToken = io.vertx.ext.shell.cli.CliToken;
+var JArgToken = io.vertx.ext.shell.command.ArgToken;
 
 /**
 
  @class
 */
-var CliToken = function(j_val) {
+var ArgToken = function(j_val) {
 
-  var j_cliToken = j_val;
+  var j_argToken = j_val;
   var that = this;
 
   /**
@@ -39,7 +39,7 @@ var CliToken = function(j_val) {
   this.raw = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return j_cliToken["raw()"]();
+      return j_argToken["raw()"]();
     } else utils.invalidArgs();
   };
 
@@ -52,7 +52,7 @@ var CliToken = function(j_val) {
   this.value = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return j_cliToken["value()"]();
+      return j_argToken["value()"]();
     } else utils.invalidArgs();
   };
 
@@ -65,7 +65,7 @@ var CliToken = function(j_val) {
   this.isText = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return j_cliToken["isText()"]();
+      return j_argToken["isText()"]();
     } else utils.invalidArgs();
   };
 
@@ -78,54 +78,54 @@ var CliToken = function(j_val) {
   this.isBlank = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return j_cliToken["isBlank()"]();
+      return j_argToken["isBlank()"]();
     } else utils.invalidArgs();
   };
 
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
-  this._jdel = j_cliToken;
+  this._jdel = j_argToken;
 };
 
 /**
 
- @memberof module:vertx-shell-js/cli_token
+ @memberof module:vertx-shell-js/arg_token
  @param s {string} 
- @return {CliToken}
+ @return {ArgToken}
  */
-CliToken.createText = function(s) {
+ArgToken.createText = function(s) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnVertxGen(JCliToken["createText(java.lang.String)"](s), CliToken);
+    return utils.convReturnVertxGen(JArgToken["createText(java.lang.String)"](s), ArgToken);
   } else utils.invalidArgs();
 };
 
 /**
 
- @memberof module:vertx-shell-js/cli_token
+ @memberof module:vertx-shell-js/arg_token
  @param s {string} 
- @return {CliToken}
+ @return {ArgToken}
  */
-CliToken.createBlank = function(s) {
+ArgToken.createBlank = function(s) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnVertxGen(JCliToken["createBlank(java.lang.String)"](s), CliToken);
+    return utils.convReturnVertxGen(JArgToken["createBlank(java.lang.String)"](s), ArgToken);
   } else utils.invalidArgs();
 };
 
 /**
 
- @memberof module:vertx-shell-js/cli_token
+ @memberof module:vertx-shell-js/arg_token
  @param s {string} 
- @return {Array.<CliToken>}
+ @return {Array.<ArgToken>}
  */
-CliToken.tokenize = function(s) {
+ArgToken.tokenize = function(s) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnListSetVertxGen(JCliToken["tokenize(java.lang.String)"](s), CliToken);
+    return utils.convReturnListSetVertxGen(JArgToken["tokenize(java.lang.String)"](s), ArgToken);
   } else utils.invalidArgs();
 };
 
 // We export the Constructor function
-module.exports = CliToken;
+module.exports = ArgToken;
