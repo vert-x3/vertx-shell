@@ -65,7 +65,7 @@ public class ShellTty {
           break;
       }
     });
-    conn.write("Welcome to vertx-shell\r\n\r\n");
+    conn.write("Welcome to Vert.x Shell\r\n\r\n");
     read(readline);
   }
 
