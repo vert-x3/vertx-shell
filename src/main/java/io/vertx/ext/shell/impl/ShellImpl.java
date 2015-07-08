@@ -12,8 +12,10 @@ import io.vertx.ext.shell.command.impl.ManagedCommand;
 import io.vertx.ext.shell.command.impl.CommandManagerImpl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -58,5 +60,15 @@ public class ShellImpl implements Shell {
       }
     }
     throw new IllegalArgumentException();
+  }
+
+  @Override
+  public void complete(String prefix, Handler<List<String>> completions) {
+    List<String> names = manager.commands().
+        stream().
+        map(cmd -> cmd.command().name()).
+        filter(name -> name.startsWith(prefix)).
+        collect(Collectors.toList());
+    completions.handle(names);
   }
 }

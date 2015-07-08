@@ -51,6 +51,21 @@ var Shell = function(j_val) {
     } else utils.invalidArgs();
   };
 
+  /**
+
+   @public
+   @param prefix {string} 
+   @param completions {function} 
+   */
+  this.complete = function(prefix, completions) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_shell["complete(java.lang.String,io.vertx.core.Handler)"](prefix, function(jVal) {
+      completions(jVal);
+    });
+    } else utils.invalidArgs();
+  };
+
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.

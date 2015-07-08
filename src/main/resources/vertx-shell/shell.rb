@@ -33,5 +33,14 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling create_job(s)"
     end
+    # @param [String] prefix 
+    # @yield 
+    # @return [void]
+    def complete(prefix=nil)
+      if prefix.class == String && block_given?
+        return @j_del.java_method(:complete, [Java::java.lang.String.java_class,Java::IoVertxCore::Handler.java_class]).call(prefix,(Proc.new { |event| yield(event.to_a.map { |elt| elt }) }))
+      end
+      raise ArgumentError, "Invalid arguments when calling complete(prefix)"
+    end
   end
 end

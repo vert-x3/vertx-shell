@@ -19,6 +19,7 @@ package io.vertx.rxjava.ext.shell;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
+import java.util.List;
 import io.vertx.rxjava.ext.shell.command.CommandManager;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.core.AsyncResult;
@@ -66,6 +67,10 @@ public class Shell {
     io.vertx.rx.java.ObservableFuture<Job> handler = io.vertx.rx.java.RxHelper.observableFuture();
     createJob(s, handler.toHandler());
     return handler;
+  }
+
+  public void complete(String prefix, Handler<List<String>> completions) { 
+    this.delegate.complete(prefix, completions);
   }
 
 

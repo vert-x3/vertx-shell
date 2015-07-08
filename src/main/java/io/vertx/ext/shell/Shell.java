@@ -7,6 +7,8 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.CommandManager;
 import io.vertx.ext.shell.impl.ShellImpl;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
@@ -19,6 +21,7 @@ public interface Shell {
 
   void createJob(String s, Handler<AsyncResult<Job>> handler);
 
+  void complete(String prefix, Handler<List<String>> completions);
 
 
 }

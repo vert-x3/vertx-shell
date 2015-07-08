@@ -8,6 +8,7 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandManager;
 
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -20,6 +21,10 @@ public class CommandManagerImpl implements CommandManager {
 
   public CommandManagerImpl(Vertx vertx) {
     this.vertx = vertx;
+  }
+
+  public Collection<ManagedCommand> commands() {
+    return commandMap.values();
   }
 
   @Override

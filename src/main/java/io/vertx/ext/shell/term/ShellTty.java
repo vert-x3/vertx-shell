@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -37,7 +38,7 @@ public class ShellTty {
     for (io.termd.core.readline.Function function : Helper.loadServices(Thread.currentThread().getContextClassLoader(), io.termd.core.readline.Function.class)) {
       readline.addFunction(function);
     }
-    conn.setResizeHandler(resize -> {
+    conn.setSizeHandler(resize -> {
       size = Dimension.create(resize.getWidth(), resize.getHeight());
       Job job = currentJob.get();
       if (job != null) {
@@ -99,6 +100,9 @@ public class ShellTty {
           read(readline);
         }
       });
+    }, completion -> {
+      String text = Helper.fromCodePoints(completion.text());
+      shell.complete(text, completions -> completion.complete(completions.stream().map(Helper::toCodePoints).collect(Collectors.toList())));
     });
   }
 

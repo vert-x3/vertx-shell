@@ -17,6 +17,7 @@
 package io.vertx.groovy.ext.shell;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import java.util.List
 import io.vertx.groovy.ext.shell.command.CommandManager
 import io.vertx.groovy.core.Vertx
 import io.vertx.core.AsyncResult
@@ -49,5 +50,8 @@ public class Shell {
         handler.handle(f)
       }
     });
+  }
+  public void complete(String prefix, Handler<List<String>> completions) {
+    this.delegate.complete(prefix, completions);
   }
 }
