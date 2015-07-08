@@ -4,6 +4,7 @@ import io.termd.core.readline.KeyDecoder;
 import io.termd.core.readline.Keymap;
 import io.termd.core.readline.Readline;
 import io.termd.core.telnet.TelnetTtyConnection;
+import io.termd.core.tty.TtyConnection;
 import io.termd.core.util.Helper;
 import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Job;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
  */
 public class ShellTty {
 
-  final TelnetTtyConnection conn;
+  final TtyConnection conn;
   final Shell shell;
   final AtomicReference<Job> currentJob = new AtomicReference<>();
   Dimension size;
