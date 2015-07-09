@@ -16,6 +16,7 @@
 
 /** @module vertx-shell-js/command */
 var utils = require('vertx-js/util/utils');
+var Completion = require('vertx-shell-js/completion');
 var CommandProcess = require('vertx-shell-js/command_process');
 
 var io = Packages.io;
@@ -54,6 +55,20 @@ var Command = function(j_val) {
     if (__args.length === 1 && typeof __args[0] === 'function') {
       j_command["processHandler(io.vertx.core.Handler)"](function(jVal) {
       handler(utils.convReturnVertxGen(jVal, CommandProcess));
+    });
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+   @param handler {function} 
+   */
+  this.completeHandler = function(handler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_command["completeHandler(io.vertx.core.Handler)"](function(jVal) {
+      handler(utils.convReturnVertxGen(jVal, Completion));
     });
     } else utils.invalidArgs();
   };

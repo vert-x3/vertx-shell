@@ -5,13 +5,23 @@ import io.termd.core.telnet.TelnetHandler;
 import io.termd.core.telnet.TelnetTtyConnection;
 import io.termd.core.telnet.vertx.VertxTelnetBootstrap;
 import io.vertx.core.Vertx;
+import io.vertx.core.file.FileProps;
+import io.vertx.core.file.FileSystem;
+import io.vertx.core.file.FileSystemException;
 import io.vertx.ext.shell.Shell;
+import io.vertx.ext.shell.command.ArgToken;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandManager;
+import io.vertx.ext.shell.completion.Completion;
+import io.vertx.ext.shell.completion.Entry;
 import io.vertx.ext.shell.getopt.GetOptCommand;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -91,17 +101,96 @@ public class Main {
     });
 
     Command lsCmd = Command.create("ls");
-    lsCmd.processHandler(process -> {
-      vertx.fileSystem().readDir(".", ar -> {
-        if (ar.succeeded()) {
-          List<String> files = ar.result();
-          for (String file : files) {
-            process.write(file + "\r\n");
-          }
+    lsCmd.completeHandler(completion -> {
+      String last;
+      int s = completion.lineTokens().size();
+      if (s > 0 && completion.lineTokens().get(s - 1).isText()) {
+        last = completion.lineTokens().get(s - 1).raw();
+      } else {
+        last = "";
+      }
+      vertx.<Runnable>executeBlocking(fut -> {
+        List<String> files;
+        String name;
+        if (last.isEmpty() || last.lastIndexOf('/') == -1) {
+          name = last.substring(last.lastIndexOf('/') + 1);
+          files = vertx.
+              fileSystem().
+              readDirBlocking(".").stream().
+              map(file -> file.substring(file.lastIndexOf('/') + 1)).
+              collect(Collectors.toList());
         } else {
-          ar.cause().printStackTrace();
+          String path;
+          if (last.startsWith("/") && last.indexOf('/', 1) == -1) {
+            name = last.substring(1);
+            path = "/";
+          } else {
+            name = last.substring(last.lastIndexOf('/') + 1);
+            path = last.substring(0, last.lastIndexOf('/'));
+          }
+          files = vertx.
+              fileSystem().
+              readDirBlocking(path).stream().
+              map(file -> file.substring(file.lastIndexOf('/') + 1)).
+              collect(Collectors.toList());
         }
-        process.end(0);
+        Runnable done = () -> {
+          List<String> matches = files.stream().filter(file -> file.startsWith(name)).collect(Collectors.toList());
+          if (matches.isEmpty()) {
+            completion.complete(Collections.emptyList());
+          } else if (matches.size() == 1) {
+            boolean terminal = true;
+            String compl = matches.get(0).substring(name.length());
+            FileProps props = vertx.fileSystem().propsBlocking(last + compl);
+            if (props.isDirectory()) {
+              compl += "/";
+              terminal = false;
+            }
+            completion.complete(compl, terminal);
+          } else {
+            String common = Completion.findLongestCommonPrefix(matches);
+            if (common.length() > name.length()) {
+              completion.complete(common.substring(name.length()), false);
+            } else {
+              completion.complete(matches);
+            }
+          }
+        };
+        fut.complete(done);
+      }, res -> {
+        if (res.succeeded()) {
+          res.result().run();
+        } else {
+          completion.complete(Collections.emptyList());
+        }
+      });
+    });
+    lsCmd.processHandler(process -> {
+      String path = process.
+          args().
+          stream().
+          filter(ArgToken::isText).
+          map(ArgToken::value).
+          findFirst().
+          orElse(".");
+      vertx.fileSystem().props(path, ar1 -> {
+        if (ar1.succeeded()) {
+          vertx.fileSystem().readDir(path, ar2 -> {
+            if (ar1.succeeded()) {
+              List<String> files = ar2.result();
+              for (String file : files) {
+                String name = file.substring(file.lastIndexOf('/') + 1);
+                process.write(name + "\r\n");
+              }
+            } else {
+              ar1.cause().printStackTrace();
+            }
+            process.end(0);
+          });
+        } else {
+          process.write("ls: " + path + ": No such file or directory");
+          process.end(0);
+        }
       });
     });
     mgr.registerCommand(lsCmd, ar -> {

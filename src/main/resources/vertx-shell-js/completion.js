@@ -16,10 +16,11 @@
 
 /** @module vertx-shell-js/completion */
 var utils = require('vertx-js/util/utils');
+var ArgToken = require('vertx-shell-js/arg_token');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JCompletion = io.vertx.ext.shell.Completion;
+var JCompletion = io.vertx.ext.shell.completion.Completion;
 
 /**
 
@@ -36,22 +37,38 @@ var Completion = function(j_val) {
 
    @return {string}
    */
-  this.text = function() {
+  this.line = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return j_completion["text()"]();
+      return j_completion["line()"]();
     } else utils.invalidArgs();
   };
 
   /**
 
    @public
-   @param candidates {Array.<string>} 
+
+   @return {Array.<ArgToken>}
    */
-  this.complete = function(candidates) {
+  this.lineTokens = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return utils.convReturnListSetVertxGen(j_completion["lineTokens()"](), ArgToken);
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+   @param value {string} 
+   @param terminal {boolean} 
+   */
+  this.complete = function() {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0] instanceof Array) {
-      j_completion["complete(java.util.List)"](candidates);
+      j_completion["complete(java.util.List)"](__args[0]);
+    }  else if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] ==='boolean') {
+      j_completion["complete(java.lang.String,boolean)"](__args[0], __args[1]);
     } else utils.invalidArgs();
   };
 

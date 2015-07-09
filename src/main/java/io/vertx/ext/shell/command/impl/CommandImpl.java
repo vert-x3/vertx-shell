@@ -1,6 +1,7 @@
 package io.vertx.ext.shell.command.impl;
 
 import io.vertx.core.Handler;
+import io.vertx.ext.shell.completion.Completion;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandProcess;
 
@@ -10,7 +11,8 @@ import io.vertx.ext.shell.command.CommandProcess;
 public class CommandImpl implements Command {
 
   final String name;
-  Handler<CommandProcess> handler;
+  Handler<CommandProcess> processHandler;
+  Handler<Completion> completeHandler;
 
   public CommandImpl(String name) {
     this.name = name;
@@ -23,7 +25,12 @@ public class CommandImpl implements Command {
 
   @Override
   public void processHandler(Handler<CommandProcess> handler) {
-    this.handler = handler;
+    processHandler = handler;
+  }
+
+  @Override
+  public void completeHandler(Handler<Completion> handler) {
+    completeHandler = handler;
   }
 
   @Override

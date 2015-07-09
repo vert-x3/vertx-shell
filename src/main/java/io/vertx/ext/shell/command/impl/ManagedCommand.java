@@ -2,6 +2,7 @@ package io.vertx.ext.shell.command.impl;
 
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
+import io.vertx.ext.shell.completion.Completion;
 import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Stream;
 import io.vertx.ext.shell.command.ArgToken;
@@ -21,12 +22,14 @@ public class ManagedCommand {
 
   final Context context;
   final CommandImpl command;
-  final Handler<CommandProcess> handler;
+  final Handler<CommandProcess> processHandler;
+  final Handler<Completion> completionHandler;
 
   public ManagedCommand(Context context, CommandImpl command) {
     this.context = context;
     this.command = command;
-    this.handler = command.handler;
+    this.processHandler = command.processHandler;
+    this.completionHandler = command.completeHandler;
   }
 
   public CommandImpl command() {
@@ -35,6 +38,14 @@ public class ManagedCommand {
 
   public Process createProcess() {
     return createProcess(Collections.emptyList());
+  }
+
+  public void complete(Completion completion) {
+    if (completionHandler != null) {
+      context.runOnContext(v -> completionHandler.handle(completion));
+    } else {
+      completion.complete(Collections.emptyList());
+    }
   }
 
   public Process createProcess(List<ArgToken> args) {
@@ -90,7 +101,7 @@ public class ManagedCommand {
           }
         };
         ManagedCommand.this.context.runOnContext(v -> {
-          handler.handle(process);
+          processHandler.handle(process);
           context.begin();
         });
       }

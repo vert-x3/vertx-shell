@@ -10,6 +10,8 @@ import io.vertx.ext.shell.command.ArgToken;
 import io.vertx.ext.shell.command.CommandManager;
 import io.vertx.ext.shell.command.impl.ManagedCommand;
 import io.vertx.ext.shell.command.impl.CommandManagerImpl;
+import io.vertx.ext.shell.completion.Completion;
+import io.vertx.ext.shell.completion.Entry;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,12 +65,54 @@ public class ShellImpl implements Shell {
   }
 
   @Override
-  public void complete(String prefix, Handler<List<String>> completions) {
-    List<String> names = manager.commands().
-        stream().
-        map(cmd -> cmd.command().name()).
-        filter(name -> name.startsWith(prefix)).
-        collect(Collectors.toList());
-    completions.handle(names);
+  public void complete(Completion completion) {
+    List<ArgToken> tokens = new ArrayList<>(completion.lineTokens());
+    if (tokens.stream().filter(ArgToken::isText).count() == 1 && tokens.get(tokens.size() - 1).isText()) {
+      ArgToken last = tokens.get(tokens.size() - 1);
+      List<String> names = manager.commands().
+          stream().
+          map(cmd -> cmd.command().name()).
+          filter(name -> name.startsWith(last.value())).
+          map(name -> name.substring(last.value().length())).
+          collect(Collectors.toList());
+      completion.complete(names);
+      return;
+    } else if (tokens.stream().filter(ArgToken::isText).count() >= 1) {
+      ListIterator<ArgToken> it = tokens.listIterator();
+      while (it.hasNext()) {
+        ArgToken ct = it.next();
+        it.remove();
+        if (ct.isText()) {
+          List<ArgToken> newTokens = new ArrayList<>();
+          while (it.hasNext()) {
+            newTokens.add(it.next());
+          }
+          StringBuilder tmp = new StringBuilder();
+          newTokens.stream().forEach(token -> tmp.append(token.raw()));
+          String line = tmp.toString();
+          ManagedCommand command = manager.getCommand(ct.value());
+          command.complete(new Completion() {
+            @Override
+            public String line() {
+              return line;
+            }
+            @Override
+            public List<ArgToken> lineTokens() {
+              return newTokens;
+            }
+            @Override
+            public void complete(List<String> candidates) {
+              completion.complete(candidates);
+            }
+            @Override
+            public void complete(String value, boolean terminal) {
+              completion.complete(value, terminal);
+            }
+          });
+          return;
+        }
+      }
+    }
+    completion.complete(Collections.emptyList());
   }
 }

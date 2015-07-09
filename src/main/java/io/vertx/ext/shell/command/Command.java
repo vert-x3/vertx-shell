@@ -2,6 +2,7 @@ package io.vertx.ext.shell.command;
 
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
+import io.vertx.ext.shell.completion.Completion;
 import io.vertx.ext.shell.command.impl.CommandImpl;
 
 /**
@@ -17,6 +18,8 @@ public interface Command {
   String name();
 
   void processHandler(Handler<CommandProcess> handler);
+
+  void completeHandler(Handler<Completion> handler);
 
   void unregister();
 

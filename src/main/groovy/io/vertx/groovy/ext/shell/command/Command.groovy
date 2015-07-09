@@ -17,6 +17,7 @@
 package io.vertx.groovy.ext.shell.command;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import io.vertx.groovy.ext.shell.completion.Completion
 import io.vertx.core.Handler
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -42,6 +43,13 @@ public class Command {
     this.delegate.processHandler(new Handler<io.vertx.ext.shell.command.CommandProcess>() {
       public void handle(io.vertx.ext.shell.command.CommandProcess event) {
         handler.handle(new io.vertx.groovy.ext.shell.command.CommandProcess(event));
+      }
+    });
+  }
+  public void completeHandler(Handler<Completion> handler) {
+    this.delegate.completeHandler(new Handler<io.vertx.ext.shell.completion.Completion>() {
+      public void handle(io.vertx.ext.shell.completion.Completion event) {
+        handler.handle(new io.vertx.groovy.ext.shell.completion.Completion(event));
       }
     });
   }

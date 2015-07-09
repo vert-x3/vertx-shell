@@ -14,34 +14,21 @@
  * under the License.
  */
 
-/** @module vertx-shell-js/cli_token */
+/** @module vertx-shell-js/entry */
 var utils = require('vertx-js/util/utils');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JCliToken = io.vertx.ext.shell.cli.CliToken;
+var JEntry = io.vertx.ext.shell.completion.Entry;
 
 /**
 
  @class
 */
-var CliToken = function(j_val) {
+var Entry = function(j_val) {
 
-  var j_cliToken = j_val;
+  var j_entry = j_val;
   var that = this;
-
-  /**
-
-   @public
-
-   @return {string}
-   */
-  this.raw = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      return j_cliToken["raw()"]();
-    } else utils.invalidArgs();
-  };
 
   /**
 
@@ -52,7 +39,7 @@ var CliToken = function(j_val) {
   this.value = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return j_cliToken["value()"]();
+      return j_entry["value()"]();
     } else utils.invalidArgs();
   };
 
@@ -62,70 +49,58 @@ var CliToken = function(j_val) {
 
    @return {boolean}
    */
-  this.isText = function() {
+  this.isTerminal = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return j_cliToken["isText()"]();
-    } else utils.invalidArgs();
-  };
-
-  /**
-
-   @public
-
-   @return {boolean}
-   */
-  this.isBlank = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      return j_cliToken["isBlank()"]();
+      return j_entry["isTerminal()"]();
     } else utils.invalidArgs();
   };
 
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
-  this._jdel = j_cliToken;
+  this._jdel = j_entry;
 };
 
 /**
 
- @memberof module:vertx-shell-js/cli_token
- @param s {string} 
- @return {CliToken}
+ @memberof module:vertx-shell-js/entry
+ @param terminal {boolean} 
+ @param value {string} 
+ @return {Entry}
  */
-CliToken.createText = function(s) {
+Entry.entry = function(terminal, value) {
   var __args = arguments;
-  if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnVertxGen(JCliToken["createText(java.lang.String)"](s), CliToken);
+  if (__args.length === 2 && typeof __args[0] ==='boolean' && typeof __args[1] === 'string') {
+    return utils.convReturnVertxGen(JEntry["entry(boolean,java.lang.String)"](terminal, value), Entry);
   } else utils.invalidArgs();
 };
 
 /**
 
- @memberof module:vertx-shell-js/cli_token
- @param s {string} 
- @return {CliToken}
+ @memberof module:vertx-shell-js/entry
+ @param value {string} 
+ @return {Entry}
  */
-CliToken.createBlank = function(s) {
+Entry.terminalEntry = function(value) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnVertxGen(JCliToken["createBlank(java.lang.String)"](s), CliToken);
+    return utils.convReturnVertxGen(JEntry["terminalEntry(java.lang.String)"](value), Entry);
   } else utils.invalidArgs();
 };
 
 /**
 
- @memberof module:vertx-shell-js/cli_token
- @param s {string} 
- @return {Array.<CliToken>}
+ @memberof module:vertx-shell-js/entry
+ @param value {string} 
+ @return {Entry}
  */
-CliToken.tokenize = function(s) {
+Entry.nonTerminalEntry = function(value) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnListSetVertxGen(JCliToken["tokenize(java.lang.String)"](s), CliToken);
+    return utils.convReturnVertxGen(JEntry["nonTerminalEntry(java.lang.String)"](value), Entry);
   } else utils.invalidArgs();
 };
 
 // We export the Constructor function
-module.exports = CliToken;
+module.exports = Entry;

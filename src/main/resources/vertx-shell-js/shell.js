@@ -18,6 +18,7 @@
 var utils = require('vertx-js/util/utils');
 var CommandManager = require('vertx-shell-js/command_manager');
 var Job = require('vertx-shell-js/job');
+var Completion = require('vertx-shell-js/completion');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
@@ -54,15 +55,12 @@ var Shell = function(j_val) {
   /**
 
    @public
-   @param prefix {string} 
-   @param completions {function} 
+   @param completion {Completion} 
    */
-  this.complete = function(prefix, completions) {
+  this.complete = function(completion) {
     var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_shell["complete(java.lang.String,io.vertx.core.Handler)"](prefix, function(jVal) {
-      completions(jVal);
-    });
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      j_shell["complete(io.vertx.ext.shell.completion.Completion)"](completion._jdel);
     } else utils.invalidArgs();
   };
 

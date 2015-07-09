@@ -6,14 +6,19 @@ import io.termd.core.readline.Readline;
 import io.termd.core.telnet.TelnetTtyConnection;
 import io.termd.core.tty.TtyConnection;
 import io.termd.core.util.Helper;
+import io.vertx.ext.shell.completion.Completion;
 import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Job;
 import io.vertx.ext.shell.Shell;
+import io.vertx.ext.shell.command.ArgToken;
+import io.vertx.ext.shell.completion.Entry;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -72,6 +77,7 @@ public class ShellTty {
 
   public void read(Readline readline) {
     readline.readline(conn, "% ", line -> {
+      System.out.println("executing :" + line);
       shell.createJob(line, ar -> {
         if (ar.succeeded()) {
           Job job = ar.result();
@@ -102,8 +108,32 @@ public class ShellTty {
         }
       });
     }, completion -> {
-      String text = Helper.fromCodePoints(completion.text());
-      shell.complete(text, completions -> completion.complete(completions.stream().map(Helper::toCodePoints).collect(Collectors.toList())));
+      String line = Helper.fromCodePoints(completion.line());
+      List<ArgToken> tokens = Collections.unmodifiableList(ArgToken.tokenize(line));
+      Completion comp = new Completion() {
+        @Override
+        public String line() {
+          return line;
+        }
+        @Override
+        public List<ArgToken> lineTokens() {
+          return tokens;
+        }
+        @Override
+        public void complete(List<String> candidates) {
+          if (candidates.size() > 0) {
+            completion.suggest(candidates.stream().
+                map(Helper::toCodePoints).
+                collect(Collectors.toList()));
+          }
+          completion.end();
+        }
+        @Override
+        public void complete(String value, boolean terminal) {
+          completion.complete(Helper.toCodePoints(value), terminal).end();
+        }
+      };
+      shell.complete(comp);
     });
   }
 

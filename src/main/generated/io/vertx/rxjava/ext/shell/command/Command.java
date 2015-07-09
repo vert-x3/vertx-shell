@@ -19,6 +19,7 @@ package io.vertx.rxjava.ext.shell.command;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
+import io.vertx.rxjava.ext.shell.completion.Completion;
 import io.vertx.core.Handler;
 
 /**
@@ -54,6 +55,14 @@ public class Command {
     this.delegate.processHandler(new Handler<io.vertx.ext.shell.command.CommandProcess>() {
       public void handle(io.vertx.ext.shell.command.CommandProcess event) {
         handler.handle(new CommandProcess(event));
+      }
+    });
+  }
+
+  public void completeHandler(Handler<Completion> handler) { 
+    this.delegate.completeHandler(new Handler<io.vertx.ext.shell.completion.Completion>() {
+      public void handle(io.vertx.ext.shell.completion.Completion event) {
+        handler.handle(new Completion(event));
       }
     });
   }

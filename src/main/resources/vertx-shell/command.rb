@@ -1,3 +1,4 @@
+require 'vertx-shell/completion'
 require 'vertx-shell/command_process'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.command.Command
@@ -36,6 +37,14 @@ module VertxShell
         return @j_del.java_method(:processHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(::Vertx::Util::Utils.safe_create(event,::VertxShell::CommandProcess)) }))
       end
       raise ArgumentError, "Invalid arguments when calling process_handler()"
+    end
+    # @yield 
+    # @return [void]
+    def complete_handler
+      if block_given?
+        return @j_del.java_method(:completeHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(::Vertx::Util::Utils.safe_create(event,::VertxShell::Completion)) }))
+      end
+      raise ArgumentError, "Invalid arguments when calling complete_handler()"
     end
     # @return [void]
     def unregister

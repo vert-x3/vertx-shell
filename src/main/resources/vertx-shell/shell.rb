@@ -1,5 +1,6 @@
 require 'vertx-shell/command_manager'
 require 'vertx-shell/job'
+require 'vertx-shell/completion'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.Shell
 module VertxShell
@@ -33,14 +34,13 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling create_job(s)"
     end
-    # @param [String] prefix 
-    # @yield 
+    # @param [::VertxShell::Completion] completion 
     # @return [void]
-    def complete(prefix=nil)
-      if prefix.class == String && block_given?
-        return @j_del.java_method(:complete, [Java::java.lang.String.java_class,Java::IoVertxCore::Handler.java_class]).call(prefix,(Proc.new { |event| yield(event.to_a.map { |elt| elt }) }))
+    def complete(completion=nil)
+      if completion.class.method_defined?(:j_del) && !block_given?
+        return @j_del.java_method(:complete, [Java::IoVertxExtShellCompletion::Completion.java_class]).call(completion.j_del)
       end
-      raise ArgumentError, "Invalid arguments when calling complete(prefix)"
+      raise ArgumentError, "Invalid arguments when calling complete(completion)"
     end
   end
 end

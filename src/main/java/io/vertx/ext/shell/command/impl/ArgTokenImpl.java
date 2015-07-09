@@ -1,5 +1,8 @@
 package io.vertx.ext.shell.command.impl;
 
+import io.termd.core.readline.Quote;
+import io.termd.core.readline.QuoteResult;
+import io.termd.core.readline.Quoter;
 import io.vertx.ext.shell.command.ArgToken;
 
 import java.util.LinkedList;
@@ -56,6 +59,8 @@ public class ArgTokenImpl implements ArgToken {
     return "CliToken[text=" + text + ",value=" + value + "]";
   }
 
+
+
   public static List<ArgToken> tokenize(String s) {
 
     List<ArgToken> tokens = new LinkedList<>();
@@ -83,61 +88,41 @@ public class ArgTokenImpl implements ArgToken {
 
   private static int textToken(String s, int index, List<ArgToken> builder) {
     StringBuilder value = new StringBuilder();
+    Quoter quoter = new Quoter();
     boolean escaped = false;
-    int status = 0;
     int from = index;
     while (index < s.length()) {
       char c = s.charAt(index);
-      if (!escaped) {
-        if (c == '\\') {
-          if (status != 2) {
-            escaped = true;
-          } else {
-            value.append('\\');
+      QuoteResult result = quoter.update(c);
+      if (quoter.getQuote() == Quote.NONE && isBlank(c)) {
+        break;
+      }
+      switch (result) {
+        case UPDATED:
+          break;
+        case ESC:
+          escaped = true;
+          break;
+        case CODE_POINT:
+          if (escaped) {
+            if (quoter.getQuote() == Quote.WEAK) {
+              if (c != '"' && c != '\\') {
+                value.append('\\');
+              }
+            }
+            escaped = false;
           }
-        } else {
-          if (status == 0) {
-            if (isBlank(c)) {
-              break;
-            } else if (c == '"') {
-              status = 1;
-            } else if (c == '\'') {
-              status = 2;
-            } else {
-              value.append(c);
-            }
-          } else if (status == 1) {
-            if (c == '"') {
-              status = 0;
-            } else {
-              value.append(c);
-            }
-          } else {
-            if (c == '\'') {
-              status = 0;
-            } else {
-              value.append(c);
-            }
-          }
-        }
-      } else {
-        if (status == 0) {
           value.append(c);
-        } else {
-          if (c == '"') {
-            value.append('"');
-          } else {
-            value.append('\\').append(c);
-          }
-        }
-        escaped = false;
+          break;
       }
       index++;
     }
-    if (escaped || status > 0) {
+/*
+    if (quoter.getQuote() != Quote.NONE || escaped) {
       // Todo
       throw new UnsupportedOperationException();
     }
+*/
     builder.add(new ArgTokenImpl(true, s.substring(from, index), value.toString()));
     return index;
   }

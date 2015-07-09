@@ -14,43 +14,35 @@
  * under the License.
  */
 
-package io.vertx.rxjava.ext.shell;
-
-import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
-import rx.Observable;
-import java.util.List;
-
+package io.vertx.groovy.ext.shell.completion;
+import groovy.transform.CompileStatic
+import io.vertx.lang.groovy.InternalHelper
+import java.util.List
+import io.vertx.groovy.ext.shell.command.ArgToken
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
- *
- * <p/>
- * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.Completion original} non RX-ified interface using Vert.x codegen.
- */
-
+*/
+@CompileStatic
 public class Completion {
-
-  final io.vertx.ext.shell.Completion delegate;
-
-  public Completion(io.vertx.ext.shell.Completion delegate) {
+  final def io.vertx.ext.shell.completion.Completion delegate;
+  public Completion(io.vertx.ext.shell.completion.Completion delegate) {
     this.delegate = delegate;
   }
-
   public Object getDelegate() {
     return delegate;
   }
-
-  public String text() { 
-    String ret = this.delegate.text();
+  public String line() {
+    def ret = this.delegate.line();
     return ret;
   }
-
-  public void complete(List<String> candidates) { 
+  public List<ArgToken> lineTokens() {
+    def ret = this.delegate.lineTokens()?.collect({underpants -> new io.vertx.groovy.ext.shell.command.ArgToken(underpants)});
+      return ret;
+  }
+  public void complete(List<String> candidates) {
     this.delegate.complete(candidates);
   }
-
-
-  public static Completion newInstance(io.vertx.ext.shell.Completion arg) {
-    return arg != null ? new Completion(arg) : null;
+  public void complete(String value, boolean terminal) {
+    this.delegate.complete(value, terminal);
   }
 }
