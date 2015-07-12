@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package io.vertx.groovy.ext.shell.command;
+package io.vertx.groovy.ext.shell.cli;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import java.util.List
@@ -22,20 +22,20 @@ import java.util.List
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
-public class ArgToken {
-  final def io.vertx.ext.shell.command.ArgToken delegate;
-  public ArgToken(io.vertx.ext.shell.command.ArgToken delegate) {
+public class CliToken {
+  final def io.vertx.ext.shell.cli.CliToken delegate;
+  public CliToken(io.vertx.ext.shell.cli.CliToken delegate) {
     this.delegate = delegate;
   }
   public Object getDelegate() {
     return delegate;
   }
-  public static ArgToken createText(String s) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.ArgToken.createText(s), io.vertx.ext.shell.command.ArgToken.class, io.vertx.groovy.ext.shell.command.ArgToken.class);
+  public static CliToken createText(String s) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.cli.CliToken.createText(s), io.vertx.ext.shell.cli.CliToken.class, io.vertx.groovy.ext.shell.cli.CliToken.class);
     return ret;
   }
-  public static ArgToken createBlank(String s) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.ArgToken.createBlank(s), io.vertx.ext.shell.command.ArgToken.class, io.vertx.groovy.ext.shell.command.ArgToken.class);
+  public static CliToken createBlank(String s) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.cli.CliToken.createBlank(s), io.vertx.ext.shell.cli.CliToken.class, io.vertx.groovy.ext.shell.cli.CliToken.class);
     return ret;
   }
   public String raw() {
@@ -54,8 +54,8 @@ public class ArgToken {
     def ret = this.delegate.isBlank();
     return ret;
   }
-  public static List<ArgToken> tokenize(String s) {
-    def ret = io.vertx.ext.shell.command.ArgToken.tokenize(s)?.collect({underpants -> new io.vertx.groovy.ext.shell.command.ArgToken(underpants)});
+  public static List<CliToken> tokenize(String s) {
+    def ret = io.vertx.ext.shell.cli.CliToken.tokenize(s)?.collect({underpants -> new io.vertx.groovy.ext.shell.cli.CliToken(underpants)});
       return ret;
   }
 }

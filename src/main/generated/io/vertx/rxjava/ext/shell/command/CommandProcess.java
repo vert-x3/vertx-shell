@@ -21,6 +21,7 @@ import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
 import io.vertx.rxjava.ext.shell.Dimension;
+import io.vertx.rxjava.ext.shell.cli.CliToken;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.Stream;
 
@@ -43,8 +44,8 @@ public class CommandProcess {
     return delegate;
   }
 
-  public List<ArgToken> args() { 
-    List<ArgToken> ret = this.delegate.args().stream().map(ArgToken::newInstance).collect(java.util.stream.Collectors.toList());
+  public List<CliToken> args() { 
+    List<CliToken> ret = this.delegate.args().stream().map(CliToken::newInstance).collect(java.util.stream.Collectors.toList());
     return ret;
   }
 

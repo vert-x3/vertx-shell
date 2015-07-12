@@ -17,7 +17,7 @@
 /** @module vertx-shell-js/command_process */
 var utils = require('vertx-js/util/utils');
 var Dimension = require('vertx-shell-js/dimension');
-var ArgToken = require('vertx-shell-js/arg_token');
+var CliToken = require('vertx-shell-js/cli_token');
 var Stream = require('vertx-shell-js/stream');
 
 var io = Packages.io;
@@ -37,12 +37,12 @@ var CommandProcess = function(j_val) {
 
    @public
 
-   @return {Array.<ArgToken>}
+   @return {Array.<CliToken>}
    */
   this.args = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnListSetVertxGen(j_commandProcess["args()"](), ArgToken);
+      return utils.convReturnListSetVertxGen(j_commandProcess["args()"](), CliToken);
     } else utils.invalidArgs();
   };
 

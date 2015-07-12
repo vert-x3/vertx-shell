@@ -5,6 +5,7 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Stream;
+import io.vertx.ext.shell.cli.CliToken;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @VertxGen
 public interface CommandProcess {
 
-  List<ArgToken> args();
+  List<CliToken> args();
 
   Dimension windowSize();
 

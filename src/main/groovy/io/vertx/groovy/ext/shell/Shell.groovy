@@ -18,9 +18,9 @@ package io.vertx.groovy.ext.shell;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.groovy.ext.shell.command.CommandManager
+import io.vertx.groovy.ext.shell.cli.Completion
 import io.vertx.groovy.core.Vertx
 import io.vertx.core.AsyncResult
-import io.vertx.groovy.ext.shell.completion.Completion
 import io.vertx.core.Handler
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -52,6 +52,6 @@ public class Shell {
     });
   }
   public void complete(Completion completion) {
-    this.delegate.complete((io.vertx.ext.shell.completion.Completion)completion.getDelegate());
+    this.delegate.complete((io.vertx.ext.shell.cli.Completion)completion.getDelegate());
   }
 }

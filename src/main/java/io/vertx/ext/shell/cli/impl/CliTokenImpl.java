@@ -1,9 +1,9 @@
-package io.vertx.ext.shell.command.impl;
+package io.vertx.ext.shell.cli.impl;
 
 import io.termd.core.readline.Quote;
 import io.termd.core.readline.QuoteResult;
 import io.termd.core.readline.Quoter;
-import io.vertx.ext.shell.command.ArgToken;
+import io.vertx.ext.shell.cli.CliToken;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,17 +11,17 @@ import java.util.List;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class ArgTokenImpl implements ArgToken {
+public class CliTokenImpl implements CliToken {
 
   final boolean text;
   final String raw;
   final String value;
 
-  public ArgTokenImpl(boolean text, String value) {
+  public CliTokenImpl(boolean text, String value) {
     this(text, value, value);
   }
 
-  public ArgTokenImpl(boolean text, String raw, String value) {
+  public CliTokenImpl(boolean text, String raw, String value) {
     this.text = text;
     this.raw = raw;
     this.value = value;
@@ -47,8 +47,8 @@ public class ArgTokenImpl implements ArgToken {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof ArgTokenImpl) {
-      ArgTokenImpl that = (ArgTokenImpl) obj;
+    if (obj instanceof CliTokenImpl) {
+      CliTokenImpl that = (CliTokenImpl) obj;
       return text == that.text && value.equals(that.value);
     }
     return false;
@@ -61,9 +61,9 @@ public class ArgTokenImpl implements ArgToken {
 
 
 
-  public static List<ArgToken> tokenize(String s) {
+  public static List<CliToken> tokenize(String s) {
 
-    List<ArgToken> tokens = new LinkedList<>();
+    List<CliToken> tokens = new LinkedList<>();
 
     tokenize(s, 0, tokens);
 
@@ -71,7 +71,7 @@ public class ArgTokenImpl implements ArgToken {
 
   }
 
-  private static void tokenize(String s, int index, List<ArgToken> builder) {
+  private static void tokenize(String s, int index, List<CliToken> builder) {
     while (index < s.length()) {
       char c = s.charAt(index);
       switch (c) {
@@ -86,7 +86,7 @@ public class ArgTokenImpl implements ArgToken {
     }
   }
 
-  private static int textToken(String s, int index, List<ArgToken> builder) {
+  private static int textToken(String s, int index, List<CliToken> builder) {
     StringBuilder value = new StringBuilder();
     Quoter quoter = new Quoter();
     boolean escaped = false;
@@ -123,16 +123,16 @@ public class ArgTokenImpl implements ArgToken {
       throw new UnsupportedOperationException();
     }
 */
-    builder.add(new ArgTokenImpl(true, s.substring(from, index), value.toString()));
+    builder.add(new CliTokenImpl(true, s.substring(from, index), value.toString()));
     return index;
   }
 
-  private static int blankToken(String s, int index, List<ArgToken> builder) {
+  private static int blankToken(String s, int index, List<CliToken> builder) {
     int from = index;
     while (index < s.length() && isBlank(s.charAt(index))) {
       index++;
     }
-    builder.add(new ArgTokenImpl(false, s.substring(from, index)));
+    builder.add(new CliTokenImpl(false, s.substring(from, index)));
     return index;
   }
 

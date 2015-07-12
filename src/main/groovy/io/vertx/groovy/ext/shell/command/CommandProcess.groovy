@@ -19,6 +19,7 @@ import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import java.util.List
 import io.vertx.groovy.ext.shell.Dimension
+import io.vertx.groovy.ext.shell.cli.CliToken
 import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.Stream
 /**
@@ -33,8 +34,8 @@ public class CommandProcess {
   public Object getDelegate() {
     return delegate;
   }
-  public List<ArgToken> args() {
-    def ret = this.delegate.args()?.collect({underpants -> new io.vertx.groovy.ext.shell.command.ArgToken(underpants)});
+  public List<CliToken> args() {
+    def ret = this.delegate.args()?.collect({underpants -> new io.vertx.groovy.ext.shell.cli.CliToken(underpants)});
       return ret;
   }
   public Dimension windowSize() {

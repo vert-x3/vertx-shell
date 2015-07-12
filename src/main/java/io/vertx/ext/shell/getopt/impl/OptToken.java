@@ -1,6 +1,6 @@
 package io.vertx.ext.shell.getopt.impl;
 
-import io.vertx.ext.shell.command.ArgToken;
+import io.vertx.ext.shell.cli.CliToken;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,10 +51,10 @@ public class OptToken {
   }
 
   public static List<OptToken> tokenize(String s) {
-    return tokenize(ArgToken.tokenize(s));
+    return tokenize(CliToken.tokenize(s));
   }
 
-  public static List<OptToken> tokenize(List<ArgToken> tokens) {
+  public static List<OptToken> tokenize(List<CliToken> tokens) {
     return tokens.stream().map(t -> {
       OptTokenKind kind;
       String val = t.value();

@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package io.vertx.rxjava.ext.shell.command;
+package io.vertx.rxjava.ext.shell.cli;
 
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
@@ -25,14 +25,14 @@ import java.util.List;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  *
  * <p/>
- * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.command.ArgToken original} non RX-ified interface using Vert.x codegen.
+ * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.cli.CliToken original} non RX-ified interface using Vert.x codegen.
  */
 
-public class ArgToken {
+public class CliToken {
 
-  final io.vertx.ext.shell.command.ArgToken delegate;
+  final io.vertx.ext.shell.cli.CliToken delegate;
 
-  public ArgToken(io.vertx.ext.shell.command.ArgToken delegate) {
+  public CliToken(io.vertx.ext.shell.cli.CliToken delegate) {
     this.delegate = delegate;
   }
 
@@ -40,13 +40,13 @@ public class ArgToken {
     return delegate;
   }
 
-  public static ArgToken createText(String s) { 
-    ArgToken ret= ArgToken.newInstance(io.vertx.ext.shell.command.ArgToken.createText(s));
+  public static CliToken createText(String s) { 
+    CliToken ret= CliToken.newInstance(io.vertx.ext.shell.cli.CliToken.createText(s));
     return ret;
   }
 
-  public static ArgToken createBlank(String s) { 
-    ArgToken ret= ArgToken.newInstance(io.vertx.ext.shell.command.ArgToken.createBlank(s));
+  public static CliToken createBlank(String s) { 
+    CliToken ret= CliToken.newInstance(io.vertx.ext.shell.cli.CliToken.createBlank(s));
     return ret;
   }
 
@@ -70,13 +70,13 @@ public class ArgToken {
     return ret;
   }
 
-  public static List<ArgToken> tokenize(String s) { 
-    List<ArgToken> ret = io.vertx.ext.shell.command.ArgToken.tokenize(s).stream().map(ArgToken::newInstance).collect(java.util.stream.Collectors.toList());
+  public static List<CliToken> tokenize(String s) { 
+    List<CliToken> ret = io.vertx.ext.shell.cli.CliToken.tokenize(s).stream().map(CliToken::newInstance).collect(java.util.stream.Collectors.toList());
     return ret;
   }
 
 
-  public static ArgToken newInstance(io.vertx.ext.shell.command.ArgToken arg) {
-    return arg != null ? new ArgToken(arg) : null;
+  public static CliToken newInstance(io.vertx.ext.shell.cli.CliToken arg) {
+    return arg != null ? new CliToken(arg) : null;
   }
 }

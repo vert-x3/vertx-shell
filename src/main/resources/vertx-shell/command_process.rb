@@ -1,5 +1,5 @@
 require 'vertx-shell/dimension'
-require 'vertx-shell/arg_token'
+require 'vertx-shell/cli_token'
 require 'vertx-shell/stream'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.command.CommandProcess
@@ -16,10 +16,10 @@ module VertxShell
     def j_del
       @j_del
     end
-    # @return [Array<::VertxShell::ArgToken>]
+    # @return [Array<::VertxShell::CliToken>]
     def args
       if !block_given?
-        return @j_del.java_method(:args, []).call().to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::ArgToken) }
+        return @j_del.java_method(:args, []).call().to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::CliToken) }
       end
       raise ArgumentError, "Invalid arguments when calling args()"
     end

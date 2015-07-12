@@ -16,11 +16,11 @@
 
 /** @module vertx-shell-js/completion */
 var utils = require('vertx-js/util/utils');
-var ArgToken = require('vertx-shell-js/arg_token');
+var CliToken = require('vertx-shell-js/cli_token');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JCompletion = io.vertx.ext.shell.completion.Completion;
+var JCompletion = io.vertx.ext.shell.cli.Completion;
 
 /**
 
@@ -48,12 +48,12 @@ var Completion = function(j_val) {
 
    @public
 
-   @return {Array.<ArgToken>}
+   @return {Array.<CliToken>}
    */
   this.lineTokens = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnListSetVertxGen(j_completion["lineTokens()"](), ArgToken);
+      return utils.convReturnListSetVertxGen(j_completion["lineTokens()"](), CliToken);
     } else utils.invalidArgs();
   };
 

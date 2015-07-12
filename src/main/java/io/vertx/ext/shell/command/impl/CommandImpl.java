@@ -1,7 +1,7 @@
 package io.vertx.ext.shell.command.impl;
 
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.completion.Completion;
+import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandProcess;
 

@@ -2,10 +2,10 @@ package io.vertx.ext.shell.command.impl;
 
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.completion.Completion;
+import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Stream;
-import io.vertx.ext.shell.command.ArgToken;
+import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandProcess;
 import io.vertx.ext.shell.impl.Process;
 import io.vertx.ext.shell.impl.ProcessContext;
@@ -48,14 +48,14 @@ public class ManagedCommand {
     }
   }
 
-  public Process createProcess(List<ArgToken> args) {
+  public Process createProcess(List<CliToken> args) {
     return new Process() {
       public void execute(ProcessContext context) {
 
         CommandProcess process = new CommandProcess() {
 
           @Override
-          public List<ArgToken> args() {
+          public List<CliToken> args() {
             return args;
           }
 

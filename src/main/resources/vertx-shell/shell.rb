@@ -1,6 +1,6 @@
 require 'vertx-shell/command_manager'
-require 'vertx-shell/job'
 require 'vertx-shell/completion'
+require 'vertx-shell/job'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.Shell
 module VertxShell
@@ -38,7 +38,7 @@ module VertxShell
     # @return [void]
     def complete(completion=nil)
       if completion.class.method_defined?(:j_del) && !block_given?
-        return @j_del.java_method(:complete, [Java::IoVertxExtShellCompletion::Completion.java_class]).call(completion.j_del)
+        return @j_del.java_method(:complete, [Java::IoVertxExtShellCli::Completion.java_class]).call(completion.j_del)
       end
       raise ArgumentError, "Invalid arguments when calling complete(completion)"
     end

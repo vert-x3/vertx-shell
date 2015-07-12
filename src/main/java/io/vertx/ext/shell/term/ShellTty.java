@@ -6,12 +6,11 @@ import io.termd.core.readline.Readline;
 import io.termd.core.telnet.TelnetTtyConnection;
 import io.termd.core.tty.TtyConnection;
 import io.termd.core.util.Helper;
-import io.vertx.ext.shell.completion.Completion;
+import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Job;
 import io.vertx.ext.shell.Shell;
-import io.vertx.ext.shell.command.ArgToken;
-import io.vertx.ext.shell.completion.Entry;
+import io.vertx.ext.shell.cli.CliToken;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -109,14 +108,14 @@ public class ShellTty {
       });
     }, completion -> {
       String line = Helper.fromCodePoints(completion.line());
-      List<ArgToken> tokens = Collections.unmodifiableList(ArgToken.tokenize(line));
+      List<CliToken> tokens = Collections.unmodifiableList(CliToken.tokenize(line));
       Completion comp = new Completion() {
         @Override
         public String line() {
           return line;
         }
         @Override
-        public List<ArgToken> lineTokens() {
+        public List<CliToken> lineTokens() {
           return tokens;
         }
         @Override

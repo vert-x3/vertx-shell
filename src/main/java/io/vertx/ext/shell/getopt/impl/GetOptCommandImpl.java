@@ -3,7 +3,7 @@ package io.vertx.ext.shell.getopt.impl;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Stream;
-import io.vertx.ext.shell.command.ArgToken;
+import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.getopt.Option;
 import io.vertx.ext.shell.getopt.GetOptCommand;
@@ -52,7 +52,7 @@ public class GetOptCommandImpl implements GetOptCommand {
         OptRequest req = parser.parse(tokens.listIterator());
         cp.handle(new GetOptCommandProcess() {
           @Override
-          public List<ArgToken> args() {
+          public List<CliToken> args() {
             return a.args();
           }
           @Override

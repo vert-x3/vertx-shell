@@ -2,7 +2,7 @@ package io.vertx.ext.shell.command;
 
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.completion.Completion;
+import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.impl.CommandImpl;
 
 /**

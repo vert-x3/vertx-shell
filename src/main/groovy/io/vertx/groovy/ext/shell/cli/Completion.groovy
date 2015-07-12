@@ -14,18 +14,17 @@
  * under the License.
  */
 
-package io.vertx.groovy.ext.shell.completion;
+package io.vertx.groovy.ext.shell.cli;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import java.util.List
-import io.vertx.groovy.ext.shell.command.ArgToken
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
 public class Completion {
-  final def io.vertx.ext.shell.completion.Completion delegate;
-  public Completion(io.vertx.ext.shell.completion.Completion delegate) {
+  final def io.vertx.ext.shell.cli.Completion delegate;
+  public Completion(io.vertx.ext.shell.cli.Completion delegate) {
     this.delegate = delegate;
   }
   public Object getDelegate() {
@@ -35,8 +34,8 @@ public class Completion {
     def ret = this.delegate.line();
     return ret;
   }
-  public List<ArgToken> lineTokens() {
-    def ret = this.delegate.lineTokens()?.collect({underpants -> new io.vertx.groovy.ext.shell.command.ArgToken(underpants)});
+  public List<CliToken> lineTokens() {
+    def ret = this.delegate.lineTokens()?.collect({underpants -> new io.vertx.groovy.ext.shell.cli.CliToken(underpants)});
       return ret;
   }
   public void complete(List<String> candidates) {

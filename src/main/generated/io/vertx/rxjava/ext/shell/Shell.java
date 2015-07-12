@@ -20,9 +20,9 @@ import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.rxjava.ext.shell.command.CommandManager;
+import io.vertx.rxjava.ext.shell.cli.Completion;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.core.AsyncResult;
-import io.vertx.rxjava.ext.shell.completion.Completion;
 import io.vertx.core.Handler;
 
 /**
@@ -70,7 +70,7 @@ public class Shell {
   }
 
   public void complete(Completion completion) { 
-    this.delegate.complete((io.vertx.ext.shell.completion.Completion) completion.getDelegate());
+    this.delegate.complete((io.vertx.ext.shell.cli.Completion) completion.getDelegate());
   }
 
 

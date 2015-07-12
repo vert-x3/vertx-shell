@@ -5,7 +5,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.CommandManager;
-import io.vertx.ext.shell.completion.Completion;
+import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.impl.ShellImpl;
 
 /**

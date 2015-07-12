@@ -14,26 +14,25 @@
  * under the License.
  */
 
-package io.vertx.rxjava.ext.shell.completion;
+package io.vertx.rxjava.ext.shell.cli;
 
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
-import io.vertx.rxjava.ext.shell.command.ArgToken;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  *
  * <p/>
- * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.completion.Completion original} non RX-ified interface using Vert.x codegen.
+ * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.cli.Completion original} non RX-ified interface using Vert.x codegen.
  */
 
 public class Completion {
 
-  final io.vertx.ext.shell.completion.Completion delegate;
+  final io.vertx.ext.shell.cli.Completion delegate;
 
-  public Completion(io.vertx.ext.shell.completion.Completion delegate) {
+  public Completion(io.vertx.ext.shell.cli.Completion delegate) {
     this.delegate = delegate;
   }
 
@@ -46,8 +45,8 @@ public class Completion {
     return ret;
   }
 
-  public List<ArgToken> lineTokens() { 
-    List<ArgToken> ret = this.delegate.lineTokens().stream().map(ArgToken::newInstance).collect(java.util.stream.Collectors.toList());
+  public List<CliToken> lineTokens() { 
+    List<CliToken> ret = this.delegate.lineTokens().stream().map(CliToken::newInstance).collect(java.util.stream.Collectors.toList());
     return ret;
   }
 
@@ -60,7 +59,7 @@ public class Completion {
   }
 
 
-  public static Completion newInstance(io.vertx.ext.shell.completion.Completion arg) {
+  public static Completion newInstance(io.vertx.ext.shell.cli.Completion arg) {
     return arg != null ? new Completion(arg) : null;
   }
 }

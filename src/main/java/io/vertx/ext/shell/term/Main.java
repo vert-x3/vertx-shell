@@ -6,20 +6,15 @@ import io.termd.core.telnet.TelnetTtyConnection;
 import io.termd.core.telnet.vertx.VertxTelnetBootstrap;
 import io.vertx.core.Vertx;
 import io.vertx.core.file.FileProps;
-import io.vertx.core.file.FileSystem;
-import io.vertx.core.file.FileSystemException;
 import io.vertx.ext.shell.Shell;
-import io.vertx.ext.shell.command.ArgToken;
+import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandManager;
-import io.vertx.ext.shell.completion.Completion;
-import io.vertx.ext.shell.completion.Entry;
+import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.getopt.GetOptCommand;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -169,8 +164,8 @@ public class Main {
       String path = process.
           args().
           stream().
-          filter(ArgToken::isText).
-          map(ArgToken::value).
+          filter(CliToken::isText).
+          map(CliToken::value).
           findFirst().
           orElse(".");
       vertx.fileSystem().props(path, ar1 -> {

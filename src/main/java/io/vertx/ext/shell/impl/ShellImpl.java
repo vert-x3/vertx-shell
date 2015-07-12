@@ -6,12 +6,11 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.*;
 import io.vertx.ext.shell.Job;
-import io.vertx.ext.shell.command.ArgToken;
+import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandManager;
 import io.vertx.ext.shell.command.impl.ManagedCommand;
 import io.vertx.ext.shell.command.impl.CommandManagerImpl;
-import io.vertx.ext.shell.completion.Completion;
-import io.vertx.ext.shell.completion.Entry;
+import io.vertx.ext.shell.cli.Completion;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,15 +45,15 @@ public class ShellImpl implements Shell {
   }
 
   private Process makeRequest(String s) {
-    ListIterator<ArgToken> tokens = ArgToken.tokenize(s).listIterator();
+    ListIterator<CliToken> tokens = CliToken.tokenize(s).listIterator();
     while (tokens.hasNext()) {
-      ArgToken token = tokens.next();
+      CliToken token = tokens.next();
       if (token.isText()) {
         ManagedCommand command = manager.getCommand(token.value());
         if (command == null) {
           throw new IllegalArgumentException(token.value() + ": command not found");
         }
-        List<ArgToken> remaining = new ArrayList<>();
+        List<CliToken> remaining = new ArrayList<>();
         while (tokens.hasNext()) {
           remaining.add(tokens.next());
         }
@@ -66,9 +65,9 @@ public class ShellImpl implements Shell {
 
   @Override
   public void complete(Completion completion) {
-    List<ArgToken> tokens = new ArrayList<>(completion.lineTokens());
-    if (tokens.stream().filter(ArgToken::isText).count() == 1 && tokens.get(tokens.size() - 1).isText()) {
-      ArgToken last = tokens.get(tokens.size() - 1);
+    List<CliToken> tokens = new ArrayList<>(completion.lineTokens());
+    if (tokens.stream().filter(CliToken::isText).count() == 1 && tokens.get(tokens.size() - 1).isText()) {
+      CliToken last = tokens.get(tokens.size() - 1);
       List<String> names = manager.commands().
           stream().
           map(cmd -> cmd.command().name()).
@@ -77,13 +76,13 @@ public class ShellImpl implements Shell {
           collect(Collectors.toList());
       completion.complete(names);
       return;
-    } else if (tokens.stream().filter(ArgToken::isText).count() >= 1) {
-      ListIterator<ArgToken> it = tokens.listIterator();
+    } else if (tokens.stream().filter(CliToken::isText).count() >= 1) {
+      ListIterator<CliToken> it = tokens.listIterator();
       while (it.hasNext()) {
-        ArgToken ct = it.next();
+        CliToken ct = it.next();
         it.remove();
         if (ct.isText()) {
-          List<ArgToken> newTokens = new ArrayList<>();
+          List<CliToken> newTokens = new ArrayList<>();
           while (it.hasNext()) {
             newTokens.add(it.next());
           }
@@ -97,7 +96,7 @@ public class ShellImpl implements Shell {
               return line;
             }
             @Override
-            public List<ArgToken> lineTokens() {
+            public List<CliToken> lineTokens() {
               return newTokens;
             }
             @Override

@@ -1,6 +1,6 @@
-require 'vertx-shell/arg_token'
+require 'vertx-shell/cli_token'
 require 'vertx/util/utils.rb'
-# Generated from io.vertx.ext.shell.completion.Completion
+# Generated from io.vertx.ext.shell.cli.Completion
 module VertxShell
   #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
   class Completion
@@ -21,10 +21,10 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling line()"
     end
-    # @return [Array<::VertxShell::ArgToken>]
+    # @return [Array<::VertxShell::CliToken>]
     def line_tokens
       if !block_given?
-        return @j_del.java_method(:lineTokens, []).call().to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::ArgToken) }
+        return @j_del.java_method(:lineTokens, []).call().to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::CliToken) }
       end
       raise ArgumentError, "Invalid arguments when calling line_tokens()"
     end
