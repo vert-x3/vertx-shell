@@ -47,6 +47,10 @@ public class CommandManager {
     return ret;
   }
 
+  public void registerCommand(Command command) { 
+    this.delegate.registerCommand((io.vertx.ext.shell.command.Command) command.getDelegate());
+  }
+
   public void registerCommand(Command command, Handler<AsyncResult<Void>> handler) { 
     this.delegate.registerCommand((io.vertx.ext.shell.command.Command) command.getDelegate(), handler);
   }

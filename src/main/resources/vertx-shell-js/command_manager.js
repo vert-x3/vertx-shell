@@ -37,14 +37,16 @@ var CommandManager = function(j_val) {
    @param command {Command} 
    @param handler {function} 
    */
-  this.registerCommand = function(command, handler) {
+  this.registerCommand = function() {
     var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'function') {
-      j_commandManager["registerCommand(io.vertx.ext.shell.command.Command,io.vertx.core.Handler)"](command._jdel, function(ar) {
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      j_commandManager["registerCommand(io.vertx.ext.shell.command.Command)"](__args[0]._jdel);
+    }  else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'function') {
+      j_commandManager["registerCommand(io.vertx.ext.shell.command.Command,io.vertx.core.Handler)"](__args[0]._jdel, function(ar) {
       if (ar.succeeded()) {
-        handler(null, null);
+        __args[1](null, null);
       } else {
-        handler(null, ar.cause());
+        __args[1](null, ar.cause());
       }
     });
     } else utils.invalidArgs();

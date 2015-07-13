@@ -28,6 +28,11 @@ public class CommandManagerImpl implements CommandManager {
   }
 
   @Override
+  public void registerCommand(Command command) {
+    registerCommand(command, ar -> {});
+  }
+
+  @Override
   public void registerCommand(Command command, Handler<AsyncResult<Void>> handler) {
     Context context = vertx.getOrCreateContext();
     commandMap.put(command.name(), new ManagedCommand(context, (CommandImpl) command));

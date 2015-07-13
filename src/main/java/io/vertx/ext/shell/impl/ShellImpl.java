@@ -14,6 +14,7 @@ import io.vertx.ext.shell.cli.Completion;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Collectors;
@@ -65,18 +66,15 @@ public class ShellImpl implements Shell {
 
   @Override
   public void complete(Completion completion) {
-    List<CliToken> tokens = new ArrayList<>(completion.lineTokens());
-    if (tokens.stream().filter(CliToken::isText).count() == 1 && tokens.get(tokens.size() - 1).isText()) {
-      CliToken last = tokens.get(tokens.size() - 1);
-      List<String> names = manager.commands().
-          stream().
-          map(cmd -> cmd.command().name()).
-          filter(name -> name.startsWith(last.value())).
-          map(name -> name.substring(last.value().length())).
-          collect(Collectors.toList());
-      completion.complete(names);
-      return;
-    } else if (tokens.stream().filter(CliToken::isText).count() >= 1) {
+    LinkedList<CliToken> tokens = new LinkedList<>(completion.lineTokens());
+
+    // Remove any leading white space
+    while (tokens.size() > 0 && tokens.getFirst().isBlank()) {
+      tokens.removeFirst();
+    }
+
+    // > 1 means it's a text token followed by something else
+    if (tokens.size() > 1) {
       ListIterator<CliToken> it = tokens.listIterator();
       while (it.hasNext()) {
         CliToken ct = it.next();
@@ -90,28 +88,47 @@ public class ShellImpl implements Shell {
           newTokens.stream().forEach(token -> tmp.append(token.raw()));
           String line = tmp.toString();
           ManagedCommand command = manager.getCommand(ct.value());
-          command.complete(new Completion() {
-            @Override
-            public String line() {
-              return line;
-            }
-            @Override
-            public List<CliToken> lineTokens() {
-              return newTokens;
-            }
-            @Override
-            public void complete(List<String> candidates) {
-              completion.complete(candidates);
-            }
-            @Override
-            public void complete(String value, boolean terminal) {
-              completion.complete(value, terminal);
-            }
-          });
-          return;
+          if (command != null) {
+            command.complete(new Completion() {
+              @Override
+              public String line() {
+                return line;
+              }
+              @Override
+              public List<CliToken> lineTokens() {
+                return newTokens;
+              }
+              @Override
+              public void complete(List<String> candidates) {
+                completion.complete(candidates);
+              }
+              @Override
+              public void complete(String value, boolean terminal) {
+                completion.complete(value, terminal);
+              }
+            });
+          } else {
+            completion.complete(Collections.emptyList());
+          }
+        }
+      }
+    } else {
+      String prefix = tokens.size() > 0 ? tokens.getFirst().value() : "";
+      List<String> names = manager.commands().
+          stream().
+          map(cmd -> cmd.command().name()).
+          filter(name -> name.startsWith(prefix)).
+          collect(Collectors.toList());
+      if (names.size() == 1) {
+        completion.complete(names.get(0).substring(prefix.length()), true);
+      } else {
+        String commonPrefix = Completion.findLongestCommonPrefix(names);
+        if (commonPrefix.length() > prefix.length()) {
+          completion.complete(commonPrefix.substring(prefix.length()), false);
+        } else {
+          completion.complete(names);
         }
       }
     }
-    completion.complete(Collections.emptyList());
   }
 }

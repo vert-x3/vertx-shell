@@ -49,6 +49,7 @@ var Command = function(j_val) {
 
    @public
    @param handler {function} 
+   @return {Command}
    */
   this.processHandler = function(handler) {
     var __args = arguments;
@@ -56,6 +57,7 @@ var Command = function(j_val) {
       j_command["processHandler(io.vertx.core.Handler)"](function(jVal) {
       handler(utils.convReturnVertxGen(jVal, CommandProcess));
     });
+      return that;
     } else utils.invalidArgs();
   };
 
@@ -63,6 +65,7 @@ var Command = function(j_val) {
 
    @public
    @param handler {function} 
+   @return {Command}
    */
   this.completeHandler = function(handler) {
     var __args = arguments;
@@ -70,6 +73,7 @@ var Command = function(j_val) {
       j_command["completeHandler(io.vertx.core.Handler)"](function(jVal) {
       handler(utils.convReturnVertxGen(jVal, Completion));
     });
+      return that;
     } else utils.invalidArgs();
   };
 

@@ -24,13 +24,15 @@ public class CommandImpl implements Command {
   }
 
   @Override
-  public void processHandler(Handler<CommandProcess> handler) {
+  public CommandImpl processHandler(Handler<CommandProcess> handler) {
     processHandler = handler;
+    return this;
   }
 
   @Override
-  public void completeHandler(Handler<Completion> handler) {
+  public CommandImpl completeHandler(Handler<Completion> handler) {
     completeHandler = handler;
+    return this;
   }
 
   @Override

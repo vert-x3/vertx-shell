@@ -31,18 +31,20 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling name()"
     end
     # @yield 
-    # @return [void]
+    # @return [self]
     def process_handler
       if block_given?
-        return @j_del.java_method(:processHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(::Vertx::Util::Utils.safe_create(event,::VertxShell::CommandProcess)) }))
+        @j_del.java_method(:processHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(::Vertx::Util::Utils.safe_create(event,::VertxShell::CommandProcess)) }))
+        return self
       end
       raise ArgumentError, "Invalid arguments when calling process_handler()"
     end
     # @yield 
-    # @return [void]
+    # @return [self]
     def complete_handler
       if block_given?
-        return @j_del.java_method(:completeHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(::Vertx::Util::Utils.safe_create(event,::VertxShell::Completion)) }))
+        @j_del.java_method(:completeHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(::Vertx::Util::Utils.safe_create(event,::VertxShell::Completion)) }))
+        return self
       end
       raise ArgumentError, "Invalid arguments when calling complete_handler()"
     end

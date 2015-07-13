@@ -39,19 +39,21 @@ public class Command {
     def ret = this.delegate.name();
     return ret;
   }
-  public void processHandler(Handler<CommandProcess> handler) {
+  public Command processHandler(Handler<CommandProcess> handler) {
     this.delegate.processHandler(new Handler<io.vertx.ext.shell.command.CommandProcess>() {
       public void handle(io.vertx.ext.shell.command.CommandProcess event) {
         handler.handle(new io.vertx.groovy.ext.shell.command.CommandProcess(event));
       }
     });
+    return this;
   }
-  public void completeHandler(Handler<Completion> handler) {
+  public Command completeHandler(Handler<Completion> handler) {
     this.delegate.completeHandler(new Handler<io.vertx.ext.shell.cli.Completion>() {
       public void handle(io.vertx.ext.shell.cli.Completion event) {
         handler.handle(new io.vertx.groovy.ext.shell.cli.Completion(event));
       }
     });
+    return this;
   }
   public void unregister() {
     this.delegate.unregister();

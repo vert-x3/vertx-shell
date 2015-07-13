@@ -36,6 +36,9 @@ public class CommandManager {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandManager.create((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.ext.shell.command.CommandManager.class, io.vertx.groovy.ext.shell.command.CommandManager.class);
     return ret;
   }
+  public void registerCommand(Command command) {
+    this.delegate.registerCommand((io.vertx.ext.shell.command.Command)command.getDelegate());
+  }
   public void registerCommand(Command command, Handler<AsyncResult<Void>> handler) {
     this.delegate.registerCommand((io.vertx.ext.shell.command.Command)command.getDelegate(), handler);
   }

@@ -1,5 +1,6 @@
 package io.vertx.ext.shell.command;
 
+import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.cli.Completion;
@@ -17,9 +18,11 @@ public interface Command {
 
   String name();
 
-  void processHandler(Handler<CommandProcess> handler);
+  @Fluent
+  Command processHandler(Handler<CommandProcess> handler);
 
-  void completeHandler(Handler<Completion> handler);
+  @Fluent
+  Command completeHandler(Handler<Completion> handler);
 
   void unregister();
 

@@ -16,6 +16,8 @@ public interface CommandManager {
     return new CommandManagerImpl(vertx);
   }
 
+  void registerCommand(Command command);
+
   void registerCommand(Command command, Handler<AsyncResult<Void>> handler);
 
   void close();

@@ -9,6 +9,7 @@ import io.vertx.ext.shell.getopt.Option;
 import io.vertx.ext.shell.getopt.GetOptCommand;
 import io.vertx.ext.shell.getopt.GetOptCommandProcess;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,6 +47,7 @@ public class GetOptCommandImpl implements GetOptCommand {
     Command command = Command.create(name);
     Handler<GetOptCommandProcess> cp = handler;
     if (cp != null) {
+
       command.processHandler(a -> {
         List<OptToken> tokens = OptToken.tokenize(a.args());
         OptParser parser = new OptParser(options.values());
@@ -91,6 +93,11 @@ public class GetOptCommandImpl implements GetOptCommand {
             a.end(code);
           }
         });
+      });
+
+      // For now we complete with empty
+      command.completeHandler(completion -> {
+        completion.complete(Collections.emptyList());
       });
     }
     return command;
