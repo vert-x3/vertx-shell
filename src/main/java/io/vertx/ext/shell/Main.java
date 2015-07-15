@@ -1,21 +1,17 @@
-package io.vertx.ext.shell.term;
+package io.vertx.ext.shell;
 
-import io.termd.core.telnet.TelnetConnection;
-import io.termd.core.telnet.TelnetHandler;
-import io.termd.core.telnet.TelnetTtyConnection;
-import io.termd.core.telnet.vertx.VertxTelnetBootstrap;
 import io.vertx.core.Vertx;
 import io.vertx.core.file.FileProps;
-import io.vertx.ext.shell.Shell;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandManager;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.getopt.GetOptCommand;
+import io.vertx.ext.shell.getopt.GetOptCommandProcess;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -56,7 +52,7 @@ public class Main {
     Command windowCmd = Command.create("window");
     windowCmd.processHandler(process -> {
       process.write("[" + process.windowSize().width() + "," + process.windowSize().height() + "]\r\n");
-      process.eventHandler("RESIZE", v -> {
+      process.eventHandler("SIGWINCH", v -> {
         process.write("[" + process.windowSize().width() + "," + process.windowSize().height() + "]\r\n");
       });
       process.eventHandler("SIGINT", v -> {
@@ -66,32 +62,55 @@ public class Main {
     mgr.registerCommand(windowCmd, ar -> {
     });
 
-    GetOptCommand sleepCmd = GetOptCommand.create("sleep");
-    sleepCmd.processHandler(process -> {
-      if (process.arguments().isEmpty()) {
-        process.write("usage: sleep seconds\r\n");
-        process.end(0);
-      } else {
-        String arg = process.arguments().get(0);
-        int seconds = -1;
-        try {
-          seconds = Integer.parseInt(arg);
-        } catch (NumberFormatException ignore) {
+    class SleepImpl {
+
+      void run(GetOptCommandProcess process) {
+        if (process.arguments().isEmpty()) {
+          process.write("usage: sleep seconds\r\n");
+          process.end(0);
+        } else {
+          String arg = process.arguments().get(0);
+          int seconds = -1;
+          try {
+            seconds = Integer.parseInt(arg);
+          } catch (NumberFormatException ignore) {
+          }
+          scheduleSleep(process, seconds * 1000);
         }
-        if (seconds > 0) {
-          long id = vertx.setTimer(seconds * 1000, v -> {
+      }
+
+      void scheduleSleep(GetOptCommandProcess process, long millis) {
+        if (millis > 0) {
+          System.out.println("Scheduling timer " + millis);
+          long now = System.currentTimeMillis();
+          AtomicLong remaining = new AtomicLong(-1);
+          long id = vertx.setTimer(millis, v -> {
             process.end(0);
           });
           process.eventHandler("SIGINT", v -> {
             if (vertx.cancelTimer(id)) {
+              System.out.println("Cancelling timer");
               process.end(0);
             }
           });
-          return;
+          process.eventHandler("SIGTSTP", v -> {
+            if (vertx.cancelTimer(id)) {
+              remaining.set(millis - (System.currentTimeMillis() - now));
+              System.out.println("Suspending timer " + remaining.get());
+            }
+          });
+          process.eventHandler("SIGCONT", v -> {
+            scheduleSleep(process, remaining.get());
+          });
+        } else {
+          process.end(0);
         }
-        process.end(0);
       }
-    });
+    }
+
+    SleepImpl sleep = new SleepImpl();
+    GetOptCommand sleepCmd = GetOptCommand.create("sleep");
+    sleepCmd.processHandler(sleep::run);
     mgr.registerCommand(sleepCmd.build(), ar -> {
     });
 
@@ -191,30 +210,8 @@ public class Main {
     mgr.registerCommand(lsCmd, ar -> {
     });
 
-    Shell shell = Shell.create(vertx, mgr);
+    ShellService service = ShellService.create(vertx, mgr, 5000);
+    service.listen();
 
-    VertxTelnetBootstrap bootstrap = new VertxTelnetBootstrap(vertx, "localhost", 5000);
-    bootstrap.start(new Supplier<TelnetHandler>() {
-
-      @Override
-      public TelnetHandler get() {
-        return new TelnetTtyConnection() {
-
-          final ShellTty shellTty = new ShellTty(this, shell);
-
-          @Override
-          protected void onOpen(TelnetConnection conn) {
-            super.onOpen(conn);
-            shellTty.init();
-          }
-
-          @Override
-          protected void onClose() {
-            shellTty.close();
-            super.onClose();
-          }
-        };
-      }
-    });
   }
 }

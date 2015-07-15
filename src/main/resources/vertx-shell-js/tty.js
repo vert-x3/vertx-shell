@@ -14,68 +14,80 @@
  * under the License.
  */
 
-/** @module vertx-shell-js/job */
+/** @module vertx-shell-js/tty */
 var utils = require('vertx-js/util/utils');
-var Tty = require('vertx-shell-js/tty');
+var Dimension = require('vertx-shell-js/dimension');
+var Stream = require('vertx-shell-js/stream');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JJob = io.vertx.ext.shell.Job;
+var JTty = io.vertx.ext.shell.Tty;
 
 /**
 
  @class
 */
-var Job = function(j_val) {
+var Tty = function(j_val) {
 
-  var j_job = j_val;
+  var j_tty = j_val;
   var that = this;
 
   /**
 
    @public
-   @param tty {Tty} 
-   */
-  this.setTty = function(tty) {
-    var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_job["setTty(io.vertx.ext.shell.Tty)"](tty._jdel);
-    } else utils.invalidArgs();
-  };
 
-  /**
-
-   @public
-   @param beginHandler {function} 
+   @return {Dimension}
    */
-  this.run = function() {
+  this.windowSize = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      j_job["run()"]();
-    }  else if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_job["run(io.vertx.core.Handler)"](__args[0]);
+      return utils.convReturnVertxGen(j_tty["windowSize()"](), Dimension);
     } else utils.invalidArgs();
   };
 
   /**
 
    @public
+   @param stdin {Stream} 
+   */
+  this.setStdin = function(stdin) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      j_tty["setStdin(io.vertx.ext.shell.Stream)"](stdin._jdel);
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+
+   @return {Stream}
+   */
+  this.stdout = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return utils.convReturnVertxGen(j_tty["stdout()"](), Stream);
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+   @param event {string} 
    @param handler {function} 
    */
-  this.endHandler = function(handler) {
+  this.eventHandler = function(event, handler) {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_job["endHandler(io.vertx.core.Handler)"](function(jVal) {
-      handler(jVal);
-    });
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_tty["eventHandler(java.lang.String,io.vertx.core.Handler)"](event, handler);
     } else utils.invalidArgs();
   };
 
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
-  this._jdel = j_job;
+  this._jdel = j_tty;
 };
 
 // We export the Constructor function
-module.exports = Job;
+module.exports = Tty;

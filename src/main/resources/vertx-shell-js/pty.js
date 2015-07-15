@@ -14,68 +14,79 @@
  * under the License.
  */
 
-/** @module vertx-shell-js/job */
+/** @module vertx-shell-js/pty */
 var utils = require('vertx-js/util/utils');
-var Tty = require('vertx-shell-js/tty');
+var Dimension = require('vertx-shell-js/dimension');
+var Stream = require('vertx-shell-js/stream');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JJob = io.vertx.ext.shell.Job;
+var JPty = io.vertx.ext.shell.term.Pty;
 
 /**
 
  @class
 */
-var Job = function(j_val) {
+var Pty = function(j_val) {
 
-  var j_job = j_val;
+  var j_pty = j_val;
   var that = this;
 
   /**
 
    @public
-   @param tty {Tty} 
-   */
-  this.setTty = function(tty) {
-    var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_job["setTty(io.vertx.ext.shell.Tty)"](tty._jdel);
-    } else utils.invalidArgs();
-  };
 
-  /**
-
-   @public
-   @param beginHandler {function} 
+   @return {Stream}
    */
-  this.run = function() {
+  this.stdin = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      j_job["run()"]();
-    }  else if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_job["run(io.vertx.core.Handler)"](__args[0]);
+      return utils.convReturnVertxGen(j_pty["stdin()"](), Stream);
     } else utils.invalidArgs();
   };
 
   /**
 
    @public
-   @param handler {function} 
+   @param stdout {Stream} 
    */
-  this.endHandler = function(handler) {
+  this.setStdout = function(stdout) {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_job["endHandler(io.vertx.core.Handler)"](function(jVal) {
-      handler(jVal);
-    });
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      j_pty["setStdout(io.vertx.ext.shell.Stream)"](stdout._jdel);
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+   @param size {Dimension} 
+   */
+  this.setWindowSize = function(size) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      j_pty["setWindowSize(io.vertx.ext.shell.Dimension)"](size._jdel);
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+   @param event {string} 
+   @return {boolean}
+   */
+  this.sendEvent = function(event) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'string') {
+      return j_pty["sendEvent(java.lang.String)"](event);
     } else utils.invalidArgs();
   };
 
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
-  this._jdel = j_job;
+  this._jdel = j_pty;
 };
 
 // We export the Constructor function
-module.exports = Job;
+module.exports = Pty;

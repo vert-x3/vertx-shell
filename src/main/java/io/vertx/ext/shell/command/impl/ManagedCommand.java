@@ -7,8 +7,8 @@ import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Stream;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandProcess;
-import io.vertx.ext.shell.impl.Process;
-import io.vertx.ext.shell.impl.ProcessContext;
+import io.vertx.ext.shell.process.Process;
+import io.vertx.ext.shell.process.ProcessContext;
 
 import java.util.Collections;
 import java.util.List;
@@ -61,37 +61,37 @@ public class ManagedCommand {
 
           @Override
           public Dimension windowSize() {
-            return context.windowSize();
+            return context.tty().windowSize();
           }
 
           @Override
           public CommandProcess setStdin(Stream stdin) {
             if (stdin != null) {
-              context.setStdin(event -> ManagedCommand.this.context.runOnContext(v -> stdin.handle(event)));
+              context.tty().setStdin(event -> ManagedCommand.this.context.runOnContext(v -> stdin.handle(event)));
             } else {
-              context.setStdin(null);
+              context.tty().setStdin(null);
             }
             return this;
           }
           @Override
           public Stream stdout() {
-            return context.stdout();
+            return context.tty().stdout();
           }
           @Override
           public CommandProcess write(String text) {
-            context.stdout().handle(text);
+            context.tty().stdout().handle(text);
             return this;
           }
           @Override
           public CommandProcess eventHandler(String event, Handler<Void> handler) {
             if (handler != null) {
-              context.eventHandler(event, v -> {
+              context.tty().eventHandler(event, v -> {
                 ManagedCommand.this.context.runOnContext(v2 -> {
                   handler.handle(null);
                 });
               });
             } else {
-              context.eventHandler(event, null);
+              context.tty().eventHandler(event, null);
             }
             return this;
           }
@@ -102,7 +102,6 @@ public class ManagedCommand {
         };
         ManagedCommand.this.context.runOnContext(v -> {
           processHandler.handle(process);
-          context.begin();
         });
       }
     };

@@ -17,40 +17,25 @@
 package io.vertx.groovy.ext.shell;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
-import io.vertx.core.Handler
+import io.vertx.groovy.ext.shell.command.CommandManager
+import io.vertx.groovy.core.Vertx
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
-public class Job {
-  final def io.vertx.ext.shell.Job delegate;
-  public Job(io.vertx.ext.shell.Job delegate) {
+public class ShellService {
+  final def io.vertx.ext.shell.ShellService delegate;
+  public ShellService(io.vertx.ext.shell.ShellService delegate) {
     this.delegate = delegate;
   }
   public Object getDelegate() {
     return delegate;
   }
-  public Stream stdin() {
-    def ret= InternalHelper.safeCreate(this.delegate.stdin(), io.vertx.ext.shell.Stream.class, io.vertx.groovy.ext.shell.Stream.class);
+  public static ShellService create(Vertx vertx, CommandManager mgr, int port) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx)vertx.getDelegate(), (io.vertx.ext.shell.command.CommandManager)mgr.getDelegate(), port), io.vertx.ext.shell.ShellService.class, io.vertx.groovy.ext.shell.ShellService.class);
     return ret;
   }
-  public void setStdout(Stream stdout) {
-    this.delegate.setStdout((io.vertx.ext.shell.Stream)stdout.getDelegate());
-  }
-  public void run() {
-    this.delegate.run();
-  }
-  public void run(Handler<Void> beginHandler) {
-    this.delegate.run(beginHandler);
-  }
-  public boolean sendEvent(String event) {
-    def ret = this.delegate.sendEvent(event);
-    return ret;
-  }
-  public void endHandler(Handler<Integer> handler) {
-    this.delegate.endHandler(handler);
-  }
-  public void setWindowSize(Dimension size) {
-    this.delegate.setWindowSize((io.vertx.ext.shell.Dimension)size.getDelegate());
+  public void listen() {
+    this.delegate.listen();
   }
 }

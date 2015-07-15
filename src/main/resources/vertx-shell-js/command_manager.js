@@ -17,6 +17,9 @@
 /** @module vertx-shell-js/command_manager */
 var utils = require('vertx-js/util/utils');
 var Command = require('vertx-shell-js/command');
+var Completion = require('vertx-shell-js/completion');
+var CliToken = require('vertx-shell-js/cli_token');
+var Process = require('vertx-shell-js/process');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
@@ -30,6 +33,45 @@ var CommandManager = function(j_val) {
 
   var j_commandManager = j_val;
   var that = this;
+
+  /**
+
+   @public
+   @param line {Array.<CliToken>} 
+   @param handler {function} 
+   */
+  this.createProcess = function() {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_commandManager["createProcess(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+      if (ar.succeeded()) {
+        __args[1](utils.convReturnVertxGen(ar.result(), Process), null);
+      } else {
+        __args[1](null, ar.cause());
+      }
+    });
+    }  else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0] instanceof Array && typeof __args[1] === 'function') {
+      j_commandManager["createProcess(java.util.List,io.vertx.core.Handler)"](utils.convParamListVertxGen(__args[0]), function(ar) {
+      if (ar.succeeded()) {
+        __args[1](utils.convReturnVertxGen(ar.result(), Process), null);
+      } else {
+        __args[1](null, ar.cause());
+      }
+    });
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+   @param completion {Completion} 
+   */
+  this.complete = function(completion) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      j_commandManager["complete(io.vertx.ext.shell.cli.Completion)"](completion._jdel);
+    } else utils.invalidArgs();
+  };
 
   /**
 

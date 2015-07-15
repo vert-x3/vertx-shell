@@ -138,5 +138,19 @@
         </configuration>
       </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+
+        <!-- Execute with mvn java:exec -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>1.3.2</version>
+          <configuration>
+            <mainClass>io.vertx.ext.shell.Main</mainClass>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 </project>

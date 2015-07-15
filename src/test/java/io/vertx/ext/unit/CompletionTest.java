@@ -1,6 +1,5 @@
 package io.vertx.ext.unit;
 
-import io.vertx.ext.shell.Shell;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.Command;
@@ -42,9 +41,8 @@ public class CompletionTest {
 
   @Test
   public void testEnumerateCommands(TestContext context) {
-    Shell shell = Shell.create(rule.vertx(), mgr);
     Async async = context.async();
-    shell.complete(new TestCompletion(context, "") {
+    mgr.complete(new TestCompletion(context, "") {
       @Override
       public void complete(List<String> candidates) {
         context.assertEquals(Arrays.asList("bar", "baz", "foo"), candidates.stream().sorted().collect(Collectors.toList()));
@@ -55,9 +53,8 @@ public class CompletionTest {
 
   @Test
   public void testSingleCommand(TestContext context) {
-    Shell shell = Shell.create(rule.vertx(), mgr);
     Async async = context.async();
-    shell.complete(new TestCompletion(context, "f") {
+    mgr.complete(new TestCompletion(context, "f") {
       @Override
       public void complete(String value, boolean terminal) {
         context.assertTrue(terminal);
@@ -69,9 +66,8 @@ public class CompletionTest {
 
   @Test
   public void testExactCommand(TestContext context) {
-    Shell shell = Shell.create(rule.vertx(), mgr);
     Async async = context.async();
-    shell.complete(new TestCompletion(context, "foo") {
+    mgr.complete(new TestCompletion(context, "foo") {
       @Override
       public void complete(String value, boolean terminal) {
         context.assertTrue(terminal);
@@ -83,9 +79,8 @@ public class CompletionTest {
 
   @Test
   public void testAfterExactCommand(TestContext context) {
-    Shell shell = Shell.create(rule.vertx(), mgr);
     Async async = context.async();
-    shell.complete(new TestCompletion(context, "foo ") {
+    mgr.complete(new TestCompletion(context, "foo ") {
       @Override
       public void complete(String value, boolean terminal) {
         context.assertFalse(terminal);
@@ -97,9 +92,8 @@ public class CompletionTest {
 
   @Test
   public void testNotFoundCommand(TestContext context) {
-    Shell shell = Shell.create(rule.vertx(), mgr);
     Async async = context.async();
-    shell.complete(new TestCompletion(context, "not_found") {
+    mgr.complete(new TestCompletion(context, "not_found") {
       @Override
       public void complete(List<String> candidates) {
         context.assertEquals(Collections.emptyList(), candidates);
@@ -110,9 +104,8 @@ public class CompletionTest {
 
   @Test
   public void testAfterNotFoundCommand(TestContext context) {
-    Shell shell = Shell.create(rule.vertx(), mgr);
     Async async = context.async();
-    shell.complete(new TestCompletion(context, "not_found ") {
+    mgr.complete(new TestCompletion(context, "not_found ") {
       @Override
       public void complete(List<String> candidates) {
         context.assertEquals(Collections.emptyList(), candidates);
@@ -123,9 +116,8 @@ public class CompletionTest {
 
   @Test
   public void testCommandWithCommonPrefix(TestContext context) {
-    Shell shell = Shell.create(rule.vertx(), mgr);
     Async async = context.async();
-    shell.complete(new TestCompletion(context, "b") {
+    mgr.complete(new TestCompletion(context, "b") {
       @Override
       public void complete(String value, boolean terminal) {
         context.assertFalse(terminal);
@@ -137,9 +129,8 @@ public class CompletionTest {
 
   @Test
   public void testCommands(TestContext context) {
-    Shell shell = Shell.create(rule.vertx(), mgr);
     Async async = context.async();
-    shell.complete(new TestCompletion(context, "ba") {
+    mgr.complete(new TestCompletion(context, "ba") {
       @Override
       public void complete(List<String> candidates) {
         context.assertEquals(Arrays.asList("bar", "baz"), candidates.stream().sorted().collect(Collectors.toList()));

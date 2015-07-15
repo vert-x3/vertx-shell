@@ -14,68 +14,54 @@
  * under the License.
  */
 
-/** @module vertx-shell-js/job */
+/** @module vertx-shell-js/process_context */
 var utils = require('vertx-js/util/utils');
 var Tty = require('vertx-shell-js/tty');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JJob = io.vertx.ext.shell.Job;
+var JProcessContext = io.vertx.ext.shell.process.ProcessContext;
 
 /**
 
  @class
 */
-var Job = function(j_val) {
+var ProcessContext = function(j_val) {
 
-  var j_job = j_val;
+  var j_processContext = j_val;
   var that = this;
 
   /**
 
    @public
-   @param tty {Tty} 
-   */
-  this.setTty = function(tty) {
-    var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_job["setTty(io.vertx.ext.shell.Tty)"](tty._jdel);
-    } else utils.invalidArgs();
-  };
 
-  /**
-
-   @public
-   @param beginHandler {function} 
+   @return {Tty}
    */
-  this.run = function() {
+  this.tty = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      j_job["run()"]();
-    }  else if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_job["run(io.vertx.core.Handler)"](__args[0]);
+      return utils.convReturnVertxGen(j_processContext["tty()"](), Tty);
     } else utils.invalidArgs();
   };
 
   /**
+   End the process.
 
    @public
-   @param handler {function} 
+   @param status {number} the termination code 
    */
-  this.endHandler = function(handler) {
+  this.end = function(status) {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_job["endHandler(io.vertx.core.Handler)"](function(jVal) {
-      handler(jVal);
-    });
+    if (__args.length === 1 && typeof __args[0] ==='number') {
+      j_processContext["end(int)"](status);
     } else utils.invalidArgs();
   };
 
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
-  this._jdel = j_job;
+  this._jdel = j_processContext;
 };
 
 // We export the Constructor function
-module.exports = Job;
+module.exports = ProcessContext;

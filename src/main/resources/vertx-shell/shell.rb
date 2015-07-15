@@ -1,6 +1,6 @@
 require 'vertx-shell/command_manager'
 require 'vertx-shell/completion'
-require 'vertx-shell/job'
+require 'vertx-shell/process'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.Shell
 module VertxShell
@@ -30,7 +30,7 @@ module VertxShell
     # @return [void]
     def create_job(s=nil)
       if s.class == String && block_given?
-        return @j_del.java_method(:createJob, [Java::java.lang.String.java_class,Java::IoVertxCore::Handler.java_class]).call(s,(Proc.new { |ar| yield(ar.failed ? ar.cause : nil, ar.succeeded ? ::Vertx::Util::Utils.safe_create(ar.result,::VertxShell::Job) : nil) }))
+        return @j_del.java_method(:createProcess, [Java::java.lang.String.java_class,Java::IoVertxCore::Handler.java_class]).call(s,(Proc.new { |ar| yield(ar.failed ? ar.cause : nil, ar.succeeded ? ::Vertx::Util::Utils.safe_create(ar.result,::VertxShell::Process) : nil) }))
       end
       raise ArgumentError, "Invalid arguments when calling create_job(s)"
     end

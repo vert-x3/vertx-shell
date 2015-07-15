@@ -14,68 +14,40 @@
  * under the License.
  */
 
-/** @module vertx-shell-js/job */
+/** @module vertx-shell-js/process */
 var utils = require('vertx-js/util/utils');
-var Tty = require('vertx-shell-js/tty');
+var ProcessContext = require('vertx-shell-js/process_context');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JJob = io.vertx.ext.shell.Job;
+var JProcess = io.vertx.ext.shell.process.Process;
 
 /**
 
  @class
 */
-var Job = function(j_val) {
+var Process = function(j_val) {
 
-  var j_job = j_val;
+  var j_process = j_val;
   var that = this;
 
   /**
 
    @public
-   @param tty {Tty} 
+   @param context {ProcessContext} 
    */
-  this.setTty = function(tty) {
+  this.execute = function(context) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_job["setTty(io.vertx.ext.shell.Tty)"](tty._jdel);
-    } else utils.invalidArgs();
-  };
-
-  /**
-
-   @public
-   @param beginHandler {function} 
-   */
-  this.run = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      j_job["run()"]();
-    }  else if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_job["run(io.vertx.core.Handler)"](__args[0]);
-    } else utils.invalidArgs();
-  };
-
-  /**
-
-   @public
-   @param handler {function} 
-   */
-  this.endHandler = function(handler) {
-    var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_job["endHandler(io.vertx.core.Handler)"](function(jVal) {
-      handler(jVal);
-    });
+      j_process["execute(io.vertx.ext.shell.process.ProcessContext)"](context._jdel);
     } else utils.invalidArgs();
   };
 
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
-  this._jdel = j_job;
+  this._jdel = j_process;
 };
 
 // We export the Constructor function
-module.exports = Job;
+module.exports = Process;

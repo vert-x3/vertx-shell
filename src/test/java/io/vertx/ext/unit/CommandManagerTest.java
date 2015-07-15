@@ -5,7 +5,6 @@ import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandManager;
 import io.vertx.ext.shell.command.impl.CommandManagerImpl;
-import io.vertx.ext.shell.impl.ShellImpl;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,13 +28,13 @@ public class CommandManagerTest {
       process.end(0);
     });
     mgr.registerCommand(command, context.asyncAssertSuccess(v -> {
-      ShellImpl shell = new ShellImpl(vertx, mgr);
-      shell.createJob("hello world", context.asyncAssertSuccess(job -> {
+      mgr.createProcess("hello world", context.asyncAssertSuccess(job -> {
         Async async = context.async();
-        job.endHandler(code -> {
+        TestProcessContext ctx = new TestProcessContext();
+        ctx.endHandler(code -> {
           async.complete();
         });
-        job.run();
+        job.execute(ctx);
       }));
     }));
   }

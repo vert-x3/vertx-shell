@@ -19,9 +19,13 @@ package io.vertx.rxjava.ext.shell.command;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
+import java.util.List;
+import io.vertx.rxjava.ext.shell.cli.Completion;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
+import io.vertx.rxjava.ext.shell.cli.CliToken;
+import io.vertx.rxjava.ext.shell.process.Process;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -45,6 +49,50 @@ public class CommandManager {
   public static CommandManager create(Vertx vertx) { 
     CommandManager ret= CommandManager.newInstance(io.vertx.ext.shell.command.CommandManager.create((io.vertx.core.Vertx) vertx.getDelegate()));
     return ret;
+  }
+
+  public void createProcess(String s, Handler<AsyncResult<Process>> handler) { 
+    this.delegate.createProcess(s, new Handler<AsyncResult<io.vertx.ext.shell.process.Process>>() {
+      public void handle(AsyncResult<io.vertx.ext.shell.process.Process> event) {
+        AsyncResult<Process> f;
+        if (event.succeeded()) {
+          f = InternalHelper.<Process>result(new Process(event.result()));
+        } else {
+          f = InternalHelper.<Process>failure(event.cause());
+        }
+        handler.handle(f);
+      }
+    });
+  }
+
+  public Observable<Process> createProcessObservable(String s) { 
+    io.vertx.rx.java.ObservableFuture<Process> handler = io.vertx.rx.java.RxHelper.observableFuture();
+    createProcess(s, handler.toHandler());
+    return handler;
+  }
+
+  public void createProcess(List<CliToken> line, Handler<AsyncResult<Process>> handler) { 
+    this.delegate.createProcess(line.stream().map(element -> (io.vertx.ext.shell.cli.CliToken)element.getDelegate()).collect(java.util.stream.Collectors.toList()), new Handler<AsyncResult<io.vertx.ext.shell.process.Process>>() {
+      public void handle(AsyncResult<io.vertx.ext.shell.process.Process> event) {
+        AsyncResult<Process> f;
+        if (event.succeeded()) {
+          f = InternalHelper.<Process>result(new Process(event.result()));
+        } else {
+          f = InternalHelper.<Process>failure(event.cause());
+        }
+        handler.handle(f);
+      }
+    });
+  }
+
+  public Observable<Process> createProcessObservable(List<CliToken> line) { 
+    io.vertx.rx.java.ObservableFuture<Process> handler = io.vertx.rx.java.RxHelper.observableFuture();
+    createProcess(line, handler.toHandler());
+    return handler;
+  }
+
+  public void complete(Completion completion) { 
+    this.delegate.complete((io.vertx.ext.shell.cli.Completion) completion.getDelegate());
   }
 
   public void registerCommand(Command command) { 

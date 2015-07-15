@@ -14,68 +14,55 @@
  * under the License.
  */
 
-/** @module vertx-shell-js/job */
+/** @module vertx-shell-js/shell_service */
 var utils = require('vertx-js/util/utils');
-var Tty = require('vertx-shell-js/tty');
+var CommandManager = require('vertx-shell-js/command_manager');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JJob = io.vertx.ext.shell.Job;
+var JShellService = io.vertx.ext.shell.ShellService;
 
 /**
 
  @class
 */
-var Job = function(j_val) {
+var ShellService = function(j_val) {
 
-  var j_job = j_val;
+  var j_shellService = j_val;
   var that = this;
 
   /**
 
    @public
-   @param tty {Tty} 
-   */
-  this.setTty = function(tty) {
-    var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_job["setTty(io.vertx.ext.shell.Tty)"](tty._jdel);
-    } else utils.invalidArgs();
-  };
 
-  /**
-
-   @public
-   @param beginHandler {function} 
    */
-  this.run = function() {
+  this.listen = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      j_job["run()"]();
-    }  else if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_job["run(io.vertx.core.Handler)"](__args[0]);
-    } else utils.invalidArgs();
-  };
-
-  /**
-
-   @public
-   @param handler {function} 
-   */
-  this.endHandler = function(handler) {
-    var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_job["endHandler(io.vertx.core.Handler)"](function(jVal) {
-      handler(jVal);
-    });
+      j_shellService["listen()"]();
     } else utils.invalidArgs();
   };
 
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
-  this._jdel = j_job;
+  this._jdel = j_shellService;
+};
+
+/**
+
+ @memberof module:vertx-shell-js/shell_service
+ @param vertx {Vertx} 
+ @param mgr {CommandManager} 
+ @param port {number} 
+ @return {ShellService}
+ */
+ShellService.create = function(vertx, mgr, port) {
+  var __args = arguments;
+  if (__args.length === 3 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'object' && __args[1]._jdel && typeof __args[2] ==='number') {
+    return utils.convReturnVertxGen(JShellService["create(io.vertx.core.Vertx,io.vertx.ext.shell.command.CommandManager,int)"](vertx._jdel, mgr._jdel, port), ShellService);
+  } else utils.invalidArgs();
 };
 
 // We export the Constructor function
-module.exports = Job;
+module.exports = ShellService;
