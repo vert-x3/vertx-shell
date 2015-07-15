@@ -51,22 +51,28 @@ public class ShellTty {
       }
     });
     conn.setEventHandler(event -> {
-      Job job = currentJob.get();
+      Job foregroundJob = currentJob.get();
       switch (event) {
         case INTR:
-          if (job != null) {
-            job.sendEvent("SIGINT");
+          if (foregroundJob != null) {
+            foregroundJob.sendEvent("SIGINT");
           }
           break;
         case EOF:
-          if (job != null) {
+          if (foregroundJob != null) {
             // Pseudo signal
-            if (job.sendEvent("EOF")) {
+            if (foregroundJob.sendEvent("EOF")) {
               return;
             }
           }
           // Disconnect if not handled
           conn.close();
+          break;
+        case SUSP:
+          if (foregroundJob != null) {
+            foregroundJob.sendEvent("SIGTSTP");
+            throw new UnsupportedOperationException("Implement me");
+          }
           break;
       }
     });
