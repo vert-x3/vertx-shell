@@ -1,22 +1,24 @@
 # Vertx shell
 
-Status : early proof of concept
+Status : work in progress
 
-execute `io.vertx.ext.shell.term.Main` to see what's going on
+Test drive:
 
-requires termd-core library : https://github.com/termd/termd - normally there is a SNAPSHOT
-deployed in Sonatype OSS repository.
+> mvn compile exec:java
 
+in another shell:
+
+> telnet localhost 5000
 
 ## Features
 
 - commands
 - completion
-- job control
-
+- basic job control
 
 ## Todo
 
 - crlf mode for telnet
 - make builtin shell commands completable
 - fg/bg with id
+- SSHOptions
