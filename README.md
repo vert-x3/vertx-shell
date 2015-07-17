@@ -24,6 +24,7 @@ in another shell:
 - SSHOptions
 - stream redirection : echo abc >toto.txt
 - pipe command : a | b
+- man / help generation ?
 - process management
 - REPL ?
 - more OOTB commands
