@@ -28,18 +28,25 @@ public class Main {
 
     CommandManager mgr = CommandManager.get(vertx);
 
-    Command helloCmd = Command.create("hello");
-    helloCmd.processHandler(process -> {
-      process.write("hello world\r\n");
+    Command echoCmd = Command.create("echo");
+    echoCmd.processHandler(process -> {
+      process.args().forEach(token -> {
+        if (token.isText()) {
+          process.write(token.value());
+        } else {
+          process.write(" ");
+        }
+      });
+      process.write("\r\n");
       process.end(0);
     });
-    mgr.registerCommand(helloCmd, ar -> {
+    mgr.registerCommand(echoCmd, ar -> {
     });
 
     Command helpCmd = Command.create("help");
     helpCmd.processHandler(process -> {
       process.write("available commands:\r\n");
-      process.write("hello\r\n");
+      process.write("echo\r\n");
       process.write("help\r\n");
       process.write("ls\r\n");
       process.write("sleep\r\n");
