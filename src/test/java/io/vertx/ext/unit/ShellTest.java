@@ -111,7 +111,7 @@ public class ShellTest {
     latch3.await(10, TimeUnit.SECONDS);
     conn.read("hello");
     latch4.await(10, TimeUnit.SECONDS);
-    context.assertEquals("resumed", conn.out.toString());
+    conn.assertWritten("resumed");
   }
 
   @Test
