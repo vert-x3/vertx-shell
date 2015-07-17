@@ -38,6 +38,8 @@ public interface ShellService {
                 @Override
                 protected void onOpen(TelnetConnection conn) {
                   super.onOpen(conn);
+                  shell.setWelcome(options.getWelcomeMessage());
+                  shell.init();
                 }
 
                 @Override
