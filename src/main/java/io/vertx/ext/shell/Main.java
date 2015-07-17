@@ -126,7 +126,7 @@ public class Main {
       String last;
       int s = completion.lineTokens().size();
       if (s > 0 && completion.lineTokens().get(s - 1).isText()) {
-        last = completion.lineTokens().get(s - 1).raw();
+        last = completion.lineTokens().get(s - 1).value();
       } else {
         last = "";
       }
