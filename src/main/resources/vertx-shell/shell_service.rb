@@ -16,13 +16,13 @@ module VertxShell
     end
     # @param [::Vertx::Vertx] vertx 
     # @param [::VertxShell::CommandManager] mgr 
-    # @param [Fixnum] port 
+    # @param [Hash] options 
     # @return [::VertxShell::ShellService]
-    def self.create(vertx=nil,mgr=nil,port=nil)
-      if vertx.class.method_defined?(:j_del) && mgr.class.method_defined?(:j_del) && port.class == Fixnum && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShell::ShellService.java_method(:create, [Java::IoVertxCore::Vertx.java_class,Java::IoVertxExtShellCommand::CommandManager.java_class,Java::int.java_class]).call(vertx.j_del,mgr.j_del,port),::VertxShell::ShellService)
+    def self.create(vertx=nil,mgr=nil,options=nil)
+      if vertx.class.method_defined?(:j_del) && mgr.class.method_defined?(:j_del) && options.class == Hash && !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShell::ShellService.java_method(:create, [Java::IoVertxCore::Vertx.java_class,Java::IoVertxExtShellCommand::CommandManager.java_class,Java::IoVertxExtShell::ShellServiceOptions.java_class]).call(vertx.j_del,mgr.j_del,Java::IoVertxExtShell::ShellServiceOptions.new(::Vertx::Util::Utils.to_json_object(options))),::VertxShell::ShellService)
       end
-      raise ArgumentError, "Invalid arguments when calling create(vertx,mgr,port)"
+      raise ArgumentError, "Invalid arguments when calling create(vertx,mgr,options)"
     end
     # @return [void]
     def listen

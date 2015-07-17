@@ -210,7 +210,8 @@ public class Main {
     mgr.registerCommand(lsCmd, ar -> {
     });
 
-    ShellService service = ShellService.create(vertx, mgr, 5000);
+    ShellService service = ShellService.create(vertx, mgr, new ShellServiceOptions().
+        addConnector(new TelnetOptions().setPort(5000)));
     service.listen();
 
   }

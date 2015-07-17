@@ -18,6 +18,7 @@ package io.vertx.groovy.ext.shell;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.groovy.ext.shell.command.CommandManager
+import io.vertx.ext.shell.ShellServiceOptions
 import io.vertx.groovy.core.Vertx
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -31,8 +32,8 @@ public class ShellService {
   public Object getDelegate() {
     return delegate;
   }
-  public static ShellService create(Vertx vertx, CommandManager mgr, int port) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx)vertx.getDelegate(), (io.vertx.ext.shell.command.CommandManager)mgr.getDelegate(), port), io.vertx.ext.shell.ShellService.class, io.vertx.groovy.ext.shell.ShellService.class);
+  public static ShellService create(Vertx vertx, CommandManager mgr, Map<String, Object> options) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx)vertx.getDelegate(), (io.vertx.ext.shell.command.CommandManager)mgr.getDelegate(), options != null ? new io.vertx.ext.shell.ShellServiceOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.ext.shell.ShellService.class, io.vertx.groovy.ext.shell.ShellService.class);
     return ret;
   }
   public void listen() {
