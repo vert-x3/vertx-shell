@@ -13,3 +13,10 @@ deployed in Sonatype OSS repository.
 - commands
 - completion
 - job control
+
+
+## Todo
+
+- crlf mode for telnet
+- make builtin shell commands completable
+- fg/bg with id
