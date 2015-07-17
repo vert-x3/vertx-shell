@@ -20,5 +20,11 @@ in another shell:
 
 - crlf mode for telnet
 - make builtin shell commands completable
-- fg/bg with id
+- fg/bg with id : fg 3, bg 4
 - SSHOptions
+- stream redirection : echo abc >toto.txt
+- pipe command : a | b
+- process management
+- REPL ?
+- more OOTB commands
+- doc, examples
