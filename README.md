@@ -29,3 +29,4 @@ in another shell:
 - REPL ?
 - more OOTB commands
 - doc, examples
+- stream more than just text : any T should be streamable (in particular json)
