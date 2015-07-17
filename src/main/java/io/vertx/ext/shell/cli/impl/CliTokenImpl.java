@@ -94,7 +94,7 @@ public class CliTokenImpl implements CliToken {
     while (index < s.length()) {
       char c = s.charAt(index);
       QuoteResult result = quoter.update(c);
-      if (quoter.getQuote() == Quote.NONE && isBlank(c)) {
+      if (quoter.getQuote() == Quote.NONE && !escaped && isBlank(c)) {
         break;
       }
       switch (result) {

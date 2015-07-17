@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class ArgTokenTest {
+public class CliTokenTest {
 
   @Test
   public void testEmpty() {
@@ -46,7 +46,7 @@ public class ArgTokenTest {
 
   @Test
   public void testEscape() {
-    assertTokens("\\a", CliToken.createText("a"));
+    assertTokens("\\ ", CliToken.createText(" "));
     assertTokens("\\\"", CliToken.createText("\""));
     assertTokens("\\'", CliToken.createText("'"));
     assertTokens("\"a\"", CliToken.createText("a"));
