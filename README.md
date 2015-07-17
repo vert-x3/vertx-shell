@@ -21,7 +21,6 @@ in another shell:
 - crlf mode for telnet
 - make builtin shell commands completable
 - fg/bg with id : fg 3, bg 4
-- SSHOptions
 - stream redirection : echo abc >toto.txt
 - pipe command : a | b
 - man / help generation ?
@@ -30,3 +29,5 @@ in another shell:
 - more OOTB commands
 - doc, examples
 - stream more than just text : any T should be streamable (in particular json)
+- advanced option configuration (beyond host/port)
+- web connector
