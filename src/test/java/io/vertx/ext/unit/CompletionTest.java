@@ -29,7 +29,7 @@ public class CompletionTest {
 
   @Before
   public void before() {
-    mgr = CommandManager.create(rule.vertx());
+    mgr = CommandManager.get(rule.vertx());
     mgr.registerCommand(Command.create("foo").processHandler(proc -> {}).completeHandler(
         completion -> {
           completion.complete("completed_by_foo", false);

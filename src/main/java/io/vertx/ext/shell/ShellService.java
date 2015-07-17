@@ -18,13 +18,12 @@ import java.util.function.Supplier;
 @VertxGen
 public interface ShellService {
 
-  static ShellService create(Vertx vertx, CommandManager mgr, ShellServiceOptions options) {
+  static ShellService create(Vertx vertx, ShellServiceOptions options) {
+    CommandManager mgr = CommandManager.get(vertx);
     return () -> {
-
       options.getConnectors().forEach(connectorOptions -> {
         VertxTelnetBootstrap bootstrap = new VertxTelnetBootstrap(vertx, (NetServerOptions) connectorOptions);
         bootstrap.start(new Supplier<TelnetHandler>() {
-
           @Override
           public TelnetHandler get() {
             return new TelnetTtyConnection() {
@@ -47,7 +46,6 @@ public interface ShellService {
           }
         });
       });
-
     };
   }
 

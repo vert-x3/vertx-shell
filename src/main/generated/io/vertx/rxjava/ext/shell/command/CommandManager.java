@@ -46,8 +46,8 @@ public class CommandManager {
     return delegate;
   }
 
-  public static CommandManager create(Vertx vertx) { 
-    CommandManager ret= CommandManager.newInstance(io.vertx.ext.shell.command.CommandManager.create((io.vertx.core.Vertx) vertx.getDelegate()));
+  public static CommandManager get(Vertx vertx) { 
+    CommandManager ret= CommandManager.newInstance(io.vertx.ext.shell.command.CommandManager.get((io.vertx.core.Vertx) vertx.getDelegate()));
     return ret;
   }
 
@@ -109,8 +109,8 @@ public class CommandManager {
     return handler;
   }
 
-  public void close() { 
-    this.delegate.close();
+  public void release() { 
+    this.delegate.release();
   }
 
 

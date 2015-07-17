@@ -19,7 +19,6 @@ package io.vertx.rxjava.ext.shell;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
-import io.vertx.rxjava.ext.shell.command.CommandManager;
 import io.vertx.ext.shell.ShellServiceOptions;
 import io.vertx.rxjava.core.Vertx;
 
@@ -42,8 +41,8 @@ public class ShellService {
     return delegate;
   }
 
-  public static ShellService create(Vertx vertx, CommandManager mgr, ShellServiceOptions options) { 
-    ShellService ret= ShellService.newInstance(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx) vertx.getDelegate(), (io.vertx.ext.shell.command.CommandManager) mgr.getDelegate(), options));
+  public static ShellService create(Vertx vertx, ShellServiceOptions options) { 
+    ShellService ret= ShellService.newInstance(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx) vertx.getDelegate(), options));
     return ret;
   }
 

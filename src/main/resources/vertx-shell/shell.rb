@@ -21,7 +21,7 @@ module VertxShell
     # @return [::VertxShell::Shell]
     def self.create(vertx=nil,manager=nil)
       if vertx.class.method_defined?(:j_del) && manager.class.method_defined?(:j_del) && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShell::Shell.java_method(:create, [Java::IoVertxCore::Vertx.java_class,Java::IoVertxExtShellCommand::CommandManager.java_class]).call(vertx.j_del,manager.j_del),::VertxShell::Shell)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShell::Shell.java_method(:get, [Java::IoVertxCore::Vertx.java_class,Java::IoVertxExtShellCommand::CommandManager.java_class]).call(vertx.j_del,manager.j_del),::VertxShell::Shell)
       end
       raise ArgumentError, "Invalid arguments when calling create(vertx,manager)"
     end

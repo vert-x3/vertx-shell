@@ -25,7 +25,7 @@ public class ShellTest {
 
   @Test
   public void testExecuteProcess(TestContext context) {
-    CommandManager manager = CommandManager.create(vertx);
+    CommandManager manager = CommandManager.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
@@ -50,7 +50,7 @@ public class ShellTest {
 
   @Test
   public void testSuspendProcess(TestContext context) throws Exception {
-    CommandManager manager = CommandManager.create(vertx);
+    CommandManager manager = CommandManager.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
@@ -72,7 +72,7 @@ public class ShellTest {
 
   @Test
   public void testResumeProcessToForeground(TestContext context) throws Exception {
-    CommandManager manager = CommandManager.create(vertx);
+    CommandManager manager = CommandManager.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
@@ -116,7 +116,7 @@ public class ShellTest {
 
   @Test
   public void testResumeProcessToBackground(TestContext context) throws Exception {
-    CommandManager manager = CommandManager.create(vertx);
+    CommandManager manager = CommandManager.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
@@ -163,7 +163,7 @@ public class ShellTest {
 
   @Test
   public void backgroundToForeground(TestContext context) throws Exception {
-    CommandManager manager = CommandManager.create(vertx);
+    CommandManager manager = CommandManager.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();

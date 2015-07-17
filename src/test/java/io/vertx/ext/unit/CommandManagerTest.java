@@ -21,7 +21,7 @@ public class CommandManagerTest {
 
   @Test
   public void testEval(TestContext context) {
-    CommandManagerImpl mgr = (CommandManagerImpl) CommandManager.create(vertx);
+    CommandManagerImpl mgr = (CommandManagerImpl) CommandManager.get(vertx);
     Command command = Command.create("hello");
     command.processHandler(process -> {
       context.assertEquals(Arrays.asList(CliToken.createBlank(" "), CliToken.createText("world")), process.args());

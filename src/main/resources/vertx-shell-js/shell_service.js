@@ -16,7 +16,6 @@
 
 /** @module vertx-shell-js/shell_service */
 var utils = require('vertx-js/util/utils');
-var CommandManager = require('vertx-shell-js/command_manager');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
@@ -54,14 +53,13 @@ var ShellService = function(j_val) {
 
  @memberof module:vertx-shell-js/shell_service
  @param vertx {Vertx} 
- @param mgr {CommandManager} 
  @param options {Object} 
  @return {ShellService}
  */
-ShellService.create = function(vertx, mgr, options) {
+ShellService.create = function(vertx, options) {
   var __args = arguments;
-  if (__args.length === 3 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'object' && __args[1]._jdel && typeof __args[2] === 'object') {
-    return utils.convReturnVertxGen(JShellService["create(io.vertx.core.Vertx,io.vertx.ext.shell.command.CommandManager,io.vertx.ext.shell.ShellServiceOptions)"](vertx._jdel, mgr._jdel, options != null ? new ShellServiceOptions(new JsonObject(JSON.stringify(options))) : null), ShellService);
+  if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'object') {
+    return utils.convReturnVertxGen(JShellService["create(io.vertx.core.Vertx,io.vertx.ext.shell.ShellServiceOptions)"](vertx._jdel, options != null ? new ShellServiceOptions(new JsonObject(JSON.stringify(options))) : null), ShellService);
   } else utils.invalidArgs();
 };
 

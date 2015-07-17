@@ -26,7 +26,7 @@ public class Main {
 
     Vertx vertx = Vertx.vertx();
 
-    CommandManager mgr = CommandManager.create(vertx);
+    CommandManager mgr = CommandManager.get(vertx);
 
     Command helloCmd = Command.create("hello");
     helloCmd.processHandler(process -> {
@@ -210,9 +210,9 @@ public class Main {
     mgr.registerCommand(lsCmd, ar -> {
     });
 
-    ShellService service = ShellService.create(vertx, mgr, new ShellServiceOptions().
+    // Expose the shell
+    ShellService service = ShellService.create(vertx, new ShellServiceOptions().
         addConnector(new TelnetOptions().setPort(5000)));
     service.listen();
-
   }
 }

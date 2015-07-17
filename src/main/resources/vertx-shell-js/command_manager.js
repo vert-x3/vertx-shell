@@ -99,10 +99,10 @@ var CommandManager = function(j_val) {
    @public
 
    */
-  this.close = function() {
+  this.release = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      j_commandManager["close()"]();
+      j_commandManager["release()"]();
     } else utils.invalidArgs();
   };
 
@@ -118,10 +118,10 @@ var CommandManager = function(j_val) {
  @param vertx {Vertx} 
  @return {CommandManager}
  */
-CommandManager.create = function(vertx) {
+CommandManager.get = function(vertx) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-    return utils.convReturnVertxGen(JCommandManager["create(io.vertx.core.Vertx)"](vertx._jdel), CommandManager);
+    return utils.convReturnVertxGen(JCommandManager["get(io.vertx.core.Vertx)"](vertx._jdel), CommandManager);
   } else utils.invalidArgs();
 };
 

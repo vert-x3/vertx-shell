@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -25,6 +26,15 @@ import java.util.stream.Collectors;
  */
 public class CommandManagerImpl implements CommandManager {
 
+  private static ConcurrentHashMap<Vertx, CommandManagerImpl> managers = new ConcurrentHashMap<>();
+
+  public static CommandManager get(Vertx vertx) {
+    CommandManagerImpl mgr = managers.computeIfAbsent(vertx, CommandManagerImpl::new);
+    mgr.refCount.incrementAndGet();
+    return mgr;
+  }
+
+  private AtomicInteger refCount = new AtomicInteger();
   private final Vertx vertx;
   private final ConcurrentHashMap<String, ManagedCommand> commandMap = new ConcurrentHashMap<>();
 
@@ -54,8 +64,10 @@ public class CommandManagerImpl implements CommandManager {
   }
 
   @Override
-  public void close() {
-
+  public void release() {
+    if (refCount.decrementAndGet() == 0) {
+      managers.remove(vertx);
+    }
   }
 
   @Override

@@ -24,7 +24,7 @@ public class ShellServiceTest {
 
   @Test
   public void testRun(TestContext context) {
-    CommandManager manager = CommandManager.create(vertx);
+    CommandManager manager = CommandManager.get(vertx);
     Command cmd = Command.create("foo");
     cmd.processHandler(process -> {
       process.end(3);
@@ -42,7 +42,7 @@ public class ShellServiceTest {
 
   @Test
   public void testStdin(TestContext context) {
-    CommandManager manager = CommandManager.create(vertx);
+    CommandManager manager = CommandManager.get(vertx);
     Command cmd = Command.create("foo");
     CountDownLatch latch = new CountDownLatch(1);
     cmd.processHandler(process -> {
@@ -73,7 +73,7 @@ public class ShellServiceTest {
 
   @Test
   public void testStdout(TestContext context) {
-    CommandManager manager = CommandManager.create(vertx);
+    CommandManager manager = CommandManager.get(vertx);
     Command cmd = Command.create("foo");
     cmd.processHandler(process -> {
       process.stdout().handle("bye_world");
@@ -99,7 +99,7 @@ public class ShellServiceTest {
   public void testVertxContext(TestContext testContext) throws Exception {
     Context commandCtx = vertx.getOrCreateContext();
     Context shellCtx = vertx.getOrCreateContext();
-    CommandManager manager = CommandManager.create(vertx);
+    CommandManager manager = CommandManager.get(vertx);
     Async async = testContext.async();
     CountDownLatch latch = new CountDownLatch(1);
     commandCtx.runOnContext(v1 -> {
@@ -147,7 +147,7 @@ public class ShellServiceTest {
 
   @Test
   public void testSendEvent(TestContext context) {
-    CommandManager manager = CommandManager.create(vertx);
+    CommandManager manager = CommandManager.get(vertx);
     Command cmd = Command.create("foo");
     CountDownLatch latch = new CountDownLatch(1);
     cmd.processHandler(process -> {
@@ -176,7 +176,7 @@ public class ShellServiceTest {
 
   @Test
   public void testResize(TestContext context) {
-    CommandManager manager = CommandManager.create(vertx);
+    CommandManager manager = CommandManager.get(vertx);
     Command cmd = Command.create("foo");
     cmd.processHandler(process -> {
       context.assertEquals(20, process.windowSize().width());

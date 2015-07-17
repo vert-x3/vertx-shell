@@ -19,11 +19,11 @@ module VertxShell
     end
     # @param [::Vertx::Vertx] vertx 
     # @return [::VertxShell::CommandManager]
-    def self.create(vertx=nil)
+    def self.get(vertx=nil)
       if vertx.class.method_defined?(:j_del) && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandManager.java_method(:create, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::CommandManager)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandManager.java_method(:get, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::CommandManager)
       end
-      raise ArgumentError, "Invalid arguments when calling create(vertx)"
+      raise ArgumentError, "Invalid arguments when calling get(vertx)"
     end
     # @overload createProcess(s,handler)
     #   @param [String] s 
@@ -60,11 +60,11 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling register_command(command)"
     end
     # @return [void]
-    def close
+    def release
       if !block_given?
-        return @j_del.java_method(:close, []).call()
+        return @j_del.java_method(:release, []).call()
       end
-      raise ArgumentError, "Invalid arguments when calling close()"
+      raise ArgumentError, "Invalid arguments when calling release()"
     end
   end
 end

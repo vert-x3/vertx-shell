@@ -18,8 +18,8 @@ import java.util.List;
 @VertxGen
 public interface CommandManager {
 
-  static CommandManager create(Vertx vertx) {
-    return new CommandManagerImpl(vertx);
+  static CommandManager get(Vertx vertx) {
+    return CommandManagerImpl.get(vertx);
   }
 
   void createProcess(String s, Handler<AsyncResult<Process>> handler);
@@ -32,5 +32,5 @@ public interface CommandManager {
 
   void registerCommand(Command command, Handler<AsyncResult<Void>> handler);
 
-  void close();
+  void release();
 }

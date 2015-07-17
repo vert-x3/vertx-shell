@@ -36,8 +36,8 @@ public class CommandManager {
   public Object getDelegate() {
     return delegate;
   }
-  public static CommandManager create(Vertx vertx) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandManager.create((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.ext.shell.command.CommandManager.class, io.vertx.groovy.ext.shell.command.CommandManager.class);
+  public static CommandManager get(Vertx vertx) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandManager.get((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.ext.shell.command.CommandManager.class, io.vertx.groovy.ext.shell.command.CommandManager.class);
     return ret;
   }
   public void createProcess(String s, Handler<AsyncResult<Process>> handler) {
@@ -75,7 +75,7 @@ public class CommandManager {
   public void registerCommand(Command command, Handler<AsyncResult<Void>> handler) {
     this.delegate.registerCommand((io.vertx.ext.shell.command.Command)command.getDelegate(), handler);
   }
-  public void close() {
-    this.delegate.close();
+  public void release() {
+    this.delegate.release();
   }
 }
