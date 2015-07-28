@@ -15,12 +15,12 @@ public class TestTtyConnection implements TtyConnection {
   private Consumer<String> termHandler;
   private Consumer<Dimension> sizeHandler;
   private Consumer<TtyEvent> eventHandler;
-  private Consumer<int[]> readHandler;
+  private Consumer<int[]> stdinHandler;
   private Consumer<Void> closeHandler;
   public final StringBuilder out = new StringBuilder();
 
   @Override
-  public Consumer<String> termHandler() {
+  public Consumer<String> getTermHandler() {
     return termHandler;
   }
 
@@ -30,7 +30,7 @@ public class TestTtyConnection implements TtyConnection {
   }
 
   @Override
-  public Consumer<Dimension> sizeHandler() {
+  public Consumer<Dimension> getSizeHandler() {
     return sizeHandler;
   }
 
@@ -40,7 +40,7 @@ public class TestTtyConnection implements TtyConnection {
   }
 
   @Override
-  public Consumer<TtyEvent> eventHandler() {
+  public Consumer<TtyEvent> getEventHandler() {
     return eventHandler;
   }
 
@@ -50,17 +50,18 @@ public class TestTtyConnection implements TtyConnection {
   }
 
   @Override
-  public Consumer<int[]> readHandler() {
-    return readHandler;
+  public Consumer<int[]> getStdinHandler() {
+    return stdinHandler;
   }
 
   @Override
-  public void setReadHandler(Consumer<int[]> handler) {
-    readHandler = handler;
+  public void setStdinHandler(Consumer<int[]> consumer) {
+    this.stdinHandler = consumer;
   }
 
+
   @Override
-  public Consumer<int[]> writeHandler() {
+  public Consumer<int[]> stdoutHandler() {
     return codePoints -> {
       synchronized (TestTtyConnection.this) {
         Helper.appendCodePoints(out, codePoints);
@@ -70,13 +71,13 @@ public class TestTtyConnection implements TtyConnection {
   }
 
   @Override
-  public void setCloseHandler(Consumer<Void> handler) {
-    closeHandler = handler;
+  public Consumer<Void> getCloseHandler() {
+    return closeHandler;
   }
 
   @Override
-  public Consumer<Void> closeHandler() {
-    return closeHandler;
+  public void setCloseHandler(Consumer<Void> handler) {
+    closeHandler = handler;
   }
 
   @Override
@@ -94,7 +95,7 @@ public class TestTtyConnection implements TtyConnection {
   }
 
   public void read(String s) {
-    readHandler.accept(Helper.toCodePoints(s));
+    stdinHandler.accept(Helper.toCodePoints(s));
   }
 
   public synchronized void assertWritten(String s) {

@@ -65,7 +65,7 @@ public class Shell {
       readline.addFunction(function);
     }
     readline.setSizeHandler(resize -> {
-      size = Dimension.create(resize.getWidth(), resize.getHeight());
+      size = Dimension.create(resize.width(), resize.height());
       Job job = foregroundJob;
       if (job != null) {
         job.sendEvent("SIGWINCH");
@@ -152,7 +152,7 @@ public class Shell {
   }
 
   private void read(Readline readline) {
-    readline.readline(conn, "% ", line -> {
+    readline.readline("% ", line -> {
 
       List<CliToken> tokens = CliToken.tokenize(line);
 
