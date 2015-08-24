@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @DataObject
 public class ShellServiceOptions {
 
-  public static final String DEFAULT_WELCOME_MESSAGE = "Welcome to Vert.x Shell\r\n\r\n";
+  public static final String DEFAULT_WELCOME_MESSAGE = "Welcome to Vert.x Shell\n\n";
   public static final List<ConnectorOptions> DEFAULT_CONNECTORS = Collections.emptyList();
 
   private List<ConnectorOptions> connectors;

@@ -155,7 +155,7 @@ public class ShellTest {
     latch2.await(10, TimeUnit.SECONDS);
     conn.out.setLength(0);
     conn.read("bg\r");
-    conn.assertWritten("bg\r\n% ");
+    conn.assertWritten("bg\n% ");
     latch3.countDown();
     conn.read("hello");
     conn.assertWritten("hello");

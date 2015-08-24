@@ -21,9 +21,6 @@ public class Main {
 
   public static void main(String[] args) {
 
-    // Needed for telnet : find a better solution later
-    System.setProperty("line.separator","\r\n");
-
     Vertx vertx = Vertx.vertx();
 
     CommandManager mgr = CommandManager.get(vertx);

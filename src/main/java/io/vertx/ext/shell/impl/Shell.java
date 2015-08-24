@@ -122,7 +122,7 @@ public class Shell {
 
   private void jobs(Readline readline) {
     jobs.forEach((id, job) -> {
-      String line = "[" + id + "] " + job.line + " \r\n";
+      String line = "[" + id + "] " + job.line + " \n";
       conn.write(line);
     });
     read(readline);
@@ -146,7 +146,7 @@ public class Shell {
         read(readline);
       }
     } else {
-      conn.write("no such job\r\n");
+      conn.write("no such job\n");
       read(readline);
     }
   }
