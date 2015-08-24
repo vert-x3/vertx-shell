@@ -34,7 +34,7 @@ public class Main {
           process.write(" ");
         }
       });
-      process.write("\r\n");
+      process.write("\n");
       process.end(0);
     });
     mgr.registerCommand(echoCmd, ar -> {
@@ -42,12 +42,12 @@ public class Main {
 
     Command helpCmd = Command.create("help");
     helpCmd.processHandler(process -> {
-      process.write("available commands:\r\n");
-      process.write("echo\r\n");
-      process.write("help\r\n");
-      process.write("ls\r\n");
-      process.write("sleep\r\n");
-      process.write("window\r\n");
+      process.write("available commands:\n");
+      process.write("echo\n");
+      process.write("help\n");
+      process.write("ls\n");
+      process.write("sleep\n");
+      process.write("window\n");
       process.end(0);
     });
     mgr.registerCommand(helpCmd, ar -> {
@@ -55,9 +55,9 @@ public class Main {
 
     Command windowCmd = Command.create("window");
     windowCmd.processHandler(process -> {
-      process.write("[" + process.windowSize().width() + "," + process.windowSize().height() + "]\r\n");
+      process.write("[" + process.windowSize().width() + "," + process.windowSize().height() + "]\n");
       process.eventHandler("SIGWINCH", v -> {
-        process.write("[" + process.windowSize().width() + "," + process.windowSize().height() + "]\r\n");
+        process.write("[" + process.windowSize().width() + "," + process.windowSize().height() + "]\n");
       });
       process.eventHandler("SIGINT", v -> {
         process.end(0);
@@ -70,7 +70,7 @@ public class Main {
 
       void run(GetOptCommandProcess process) {
         if (process.arguments().isEmpty()) {
-          process.write("usage: sleep seconds\r\n");
+          process.write("usage: sleep seconds\n");
           process.end(0);
         } else {
           String arg = process.arguments().get(0);
@@ -198,7 +198,7 @@ public class Main {
               List<String> files = ar2.result();
               for (String file : files) {
                 String name = file.substring(file.lastIndexOf('/') + 1);
-                process.write(name + "\r\n");
+                process.write(name + "\n");
               }
             } else {
               ar1.cause().printStackTrace();
