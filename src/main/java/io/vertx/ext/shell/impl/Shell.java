@@ -65,7 +65,7 @@ public class Shell {
       readline.addFunction(function);
     }
     readline.setSizeHandler(resize -> {
-      size = Dimension.create(resize.width(), resize.height());
+      size = Dimension.create(resize.x(), resize.y());
       Job job = foregroundJob;
       if (job != null) {
         job.sendEvent("SIGWINCH");

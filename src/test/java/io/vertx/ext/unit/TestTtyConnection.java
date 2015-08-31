@@ -2,8 +2,8 @@ package io.vertx.ext.unit;
 
 import io.termd.core.tty.TtyConnection;
 import io.termd.core.tty.TtyEvent;
-import io.termd.core.util.Dimension;
 import io.termd.core.util.Helper;
+import io.termd.core.util.Vector;
 
 import java.util.function.Consumer;
 
@@ -13,11 +13,16 @@ import java.util.function.Consumer;
 public class TestTtyConnection implements TtyConnection {
 
   private Consumer<String> termHandler;
-  private Consumer<Dimension> sizeHandler;
+  private Consumer<Vector> sizeHandler;
   private Consumer<TtyEvent> eventHandler;
   private Consumer<int[]> stdinHandler;
   private Consumer<Void> closeHandler;
   public final StringBuilder out = new StringBuilder();
+
+  @Override
+  public Vector size() {
+    return new Vector(40, 20);
+  }
 
   @Override
   public Consumer<String> getTermHandler() {
@@ -30,12 +35,12 @@ public class TestTtyConnection implements TtyConnection {
   }
 
   @Override
-  public Consumer<Dimension> getSizeHandler() {
+  public Consumer<Vector> getSizeHandler() {
     return sizeHandler;
   }
 
   @Override
-  public void setSizeHandler(Consumer<Dimension> handler) {
+  public void setSizeHandler(Consumer<Vector> handler) {
     sizeHandler = handler;
   }
 
