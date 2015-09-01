@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -44,8 +45,38 @@ public class ShellTest {
   }
 
   @Test
-  public void testBufferRead(TestContext context) {
+  public void testHandleReadlineBuffered(TestContext context) {
+    CommandManager manager = CommandManager.get(vertx);
+    TestTtyConnection conn = new TestTtyConnection();
+    Shell shell = new Shell(vertx, conn, manager);
+    shell.init();
+    Async async = context.async();
+    manager.registerCommand(Command.create("read").processHandler(process -> {
+      process.setStdin(line -> {
+        context.assertEquals("the_line", line);
+        async.complete();
+      });
+    }), context.asyncAssertSuccess(v -> {
+      conn.read("read\rthe_line");
+    }));
+  }
 
+  @Test
+  public void testExecuteReadlineBuffered(TestContext context) {
+    CommandManager manager = CommandManager.get(vertx);
+    TestTtyConnection conn = new TestTtyConnection();
+    Shell shell = new Shell(vertx, conn, manager);
+    shell.init();
+    Async async = context.async();
+    AtomicInteger count = new AtomicInteger();
+    manager.registerCommand(Command.create("read").processHandler(process -> {
+      if (count.incrementAndGet() == 2) {
+        async.complete();
+      }
+      process.end(0);
+    }), context.asyncAssertSuccess(v -> {
+      conn.read("read\rread\r");
+    }));
   }
 
   @Test
@@ -157,6 +188,7 @@ public class ShellTest {
     conn.read("bg\r");
     conn.assertWritten("bg\n% ");
     latch3.countDown();
+    conn.assertWritten("resumed");
     conn.read("hello");
     conn.assertWritten("hello");
   }

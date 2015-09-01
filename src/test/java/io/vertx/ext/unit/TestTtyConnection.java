@@ -90,8 +90,13 @@ public class TestTtyConnection implements TtyConnection {
 
   }
 
+  private boolean reading = false;
+
   @Override
   public void schedule(Runnable task) {
+    if (reading) {
+      throw new AssertionError();
+    }
     task.run();
   }
 
@@ -100,7 +105,9 @@ public class TestTtyConnection implements TtyConnection {
   }
 
   public void read(String s) {
+    reading = true;
     stdinHandler.accept(Helper.toCodePoints(s));
+    reading = false;
   }
 
   public synchronized void assertWritten(String s) {

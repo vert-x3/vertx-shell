@@ -40,6 +40,19 @@ public class Main {
     mgr.registerCommand(echoCmd, ar -> {
     });
 
+    Command echoKeyboardCmd = Command.create("echo-keyboard");
+    echoKeyboardCmd.processHandler(process -> {
+      Stream stdout = process.stdout();
+      process.setStdin(line -> {
+        stdout.handle("-> " + line + "\n");
+      });
+      process.eventHandler("SIGINT", v -> {
+        process.end(0);
+      });
+    });
+    mgr.registerCommand(echoKeyboardCmd, ar -> {
+    });
+
     Command helpCmd = Command.create("help");
     helpCmd.processHandler(process -> {
       process.write("available commands:\n");
