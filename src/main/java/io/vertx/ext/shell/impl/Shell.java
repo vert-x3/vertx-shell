@@ -92,10 +92,11 @@ public class Shell {
           break;
         case SUSP:
           if (job != null) {
-            job.sendEvent("SIGTSTP");
+            foregroundJob = null;
+            readline.setReadHandler(null);
             job.stdout = null;
             job.status = JobStatus.STOPPED;
-            foregroundJob = null;
+            job.sendEvent("SIGTSTP");
             read(readline);
           }
           break;

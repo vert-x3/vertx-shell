@@ -102,6 +102,47 @@ public class ShellTest {
   }
 
   @Test
+  public void testSuspendedProcessDisconnectedFromTty(TestContext context) throws Exception {
+    CommandManager manager = CommandManager.get(vertx);
+    TestTtyConnection conn = new TestTtyConnection();
+    Shell shell = new Shell(vertx, conn, manager);
+    shell.init();
+    Async async = context.async();
+    CountDownLatch latch1 = new CountDownLatch(1);
+    CountDownLatch latch2 = new CountDownLatch(1);
+    CountDownLatch latch3 = new CountDownLatch(1);
+    manager.registerCommand(Command.create("read").processHandler(process -> {
+      process.setStdin(line -> {
+        context.fail("Should not process line " + line);
+      });
+      process.eventHandler("SIGTSTP", v -> {
+        context.assertNull(process.stdout());
+        latch2.countDown();
+      });
+      latch1.countDown();
+    }));
+    manager.registerCommand(Command.create("wait").processHandler(process -> {
+      // Do nothing, this command is used to escape from readline and make
+      // sure that the read data is not sent to the stopped command
+      latch3.countDown();
+      process.eventHandler("SIGTSTP", v -> {
+        process.end(0);
+      });
+    }));
+    manager.registerCommand(Command.create("end").processHandler(process -> {
+      async.complete();
+    }));
+    conn.read("read\r");
+    latch1.await(10, TimeUnit.SECONDS);
+    conn.sendEvent(TtyEvent.SUSP);
+    latch2.await(10, TimeUnit.SECONDS);
+    conn.read("wait\r");
+    latch3.await(10, TimeUnit.SECONDS);
+    conn.read("end\r");
+    conn.sendEvent(TtyEvent.SUSP);
+  }
+
+  @Test
   public void testResumeProcessToForeground(TestContext context) throws Exception {
     CommandManager manager = CommandManager.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
