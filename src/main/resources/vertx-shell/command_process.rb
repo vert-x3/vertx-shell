@@ -1,4 +1,3 @@
-require 'vertx-shell/dimension'
 require 'vertx-shell/cli_token'
 require 'vertx-shell/stream'
 require 'vertx/util/utils.rb'
@@ -23,12 +22,19 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling args()"
     end
-    # @return [::VertxShell::Dimension]
-    def window_size
+    # @return [Fixnum]
+    def width
       if !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:windowSize, []).call(),::VertxShell::Dimension)
+        return @j_del.java_method(:width, []).call()
       end
-      raise ArgumentError, "Invalid arguments when calling window_size()"
+      raise ArgumentError, "Invalid arguments when calling width()"
+    end
+    # @return [Fixnum]
+    def height
+      if !block_given?
+        return @j_del.java_method(:height, []).call()
+      end
+      raise ArgumentError, "Invalid arguments when calling height()"
     end
     # @param [::VertxShell::Stream] stdin 
     # @return [self]

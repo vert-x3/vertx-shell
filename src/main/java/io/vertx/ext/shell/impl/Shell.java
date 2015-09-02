@@ -5,9 +5,9 @@ import io.termd.core.readline.Keymap;
 import io.termd.core.readline.Readline;
 import io.termd.core.tty.TtyConnection;
 import io.termd.core.util.Helper;
+import io.termd.core.util.Vector;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.command.CommandManager;
 import io.vertx.ext.shell.cli.CliToken;
 
@@ -15,9 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,7 +32,7 @@ public class Shell {
   final TtyConnection conn;
   final Readline readline;
   final CommandManager mgr;
-  Dimension size;
+  Vector size;
   Job foregroundJob;
   final SortedMap<Integer, Job> jobs = new TreeMap<>();
   String welcome;
@@ -65,7 +63,7 @@ public class Shell {
       readline.addFunction(function);
     }
     readline.setSizeHandler(resize -> {
-      size = Dimension.create(resize.x(), resize.y());
+      size = resize;
       Job job = foregroundJob;
       if (job != null) {
         job.sendEvent("SIGWINCH");

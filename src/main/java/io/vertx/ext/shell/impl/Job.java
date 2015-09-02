@@ -3,7 +3,6 @@ package io.vertx.ext.shell.impl;
 import io.termd.core.util.Helper;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Stream;
 
 import io.vertx.ext.shell.process.*;
@@ -56,8 +55,12 @@ public class Job {
     Handler<Integer> endHandler = this.endHandler;
     Tty tty = new Tty() {
       @Override
-      public Dimension windowSize() {
-        return shell.size;
+      public int width() {
+        return shell.size.x();
+      }
+      @Override
+      public int height() {
+        return shell.size.y();
       }
       @Override
       public void setStdin(Stream stdin) {

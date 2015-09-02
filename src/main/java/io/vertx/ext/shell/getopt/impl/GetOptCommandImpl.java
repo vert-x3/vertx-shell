@@ -1,7 +1,6 @@
 package io.vertx.ext.shell.getopt.impl;
 
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Stream;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.Command;
@@ -66,8 +65,12 @@ public class GetOptCommandImpl implements GetOptCommand {
             return req.getOptions().get(name);
           }
           @Override
-          public Dimension windowSize() {
-            return a.windowSize();
+          public int width() {
+            return a.width();
+          }
+          @Override
+          public int height() {
+            return a.height();
           }
           @Override
           public GetOptCommandProcess setStdin(Stream stdin) {

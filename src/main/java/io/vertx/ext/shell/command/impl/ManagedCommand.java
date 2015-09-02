@@ -3,7 +3,6 @@ package io.vertx.ext.shell.command.impl;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Stream;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandProcess;
@@ -60,8 +59,13 @@ public class ManagedCommand {
           }
 
           @Override
-          public Dimension windowSize() {
-            return context.tty().windowSize();
+          public int width() {
+            return context.tty().width();
+          }
+
+          @Override
+          public int height() {
+            return context.tty().height();
           }
 
           @Override

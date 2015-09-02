@@ -40,8 +40,13 @@ public class Tty {
     return delegate;
   }
 
-  public Dimension windowSize() { 
-    Dimension ret= Dimension.newInstance(this.delegate.windowSize());
+  public int width() { 
+    int ret = this.delegate.width();
+    return ret;
+  }
+
+  public int height() { 
+    int ret = this.delegate.height();
     return ret;
   }
 

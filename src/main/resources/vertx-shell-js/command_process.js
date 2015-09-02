@@ -16,7 +16,6 @@
 
 /** @module vertx-shell-js/command_process */
 var utils = require('vertx-js/util/utils');
-var Dimension = require('vertx-shell-js/dimension');
 var CliToken = require('vertx-shell-js/cli_token');
 var Stream = require('vertx-shell-js/stream');
 
@@ -50,12 +49,25 @@ var CommandProcess = function(j_val) {
 
    @public
 
-   @return {Dimension}
+   @return {number}
    */
-  this.windowSize = function() {
+  this.width = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_commandProcess["windowSize()"](), Dimension);
+      return j_commandProcess["width()"]();
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+
+   @return {number}
+   */
+  this.height = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return j_commandProcess["height()"]();
     } else utils.invalidArgs();
   };
 

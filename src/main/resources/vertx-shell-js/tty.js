@@ -16,7 +16,6 @@
 
 /** @module vertx-shell-js/tty */
 var utils = require('vertx-js/util/utils');
-var Dimension = require('vertx-shell-js/dimension');
 var Stream = require('vertx-shell-js/stream');
 
 var io = Packages.io;
@@ -36,12 +35,25 @@ var Tty = function(j_val) {
 
    @public
 
-   @return {Dimension}
+   @return {number}
    */
-  this.windowSize = function() {
+  this.width = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_tty["windowSize()"](), Dimension);
+      return j_tty["width()"]();
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+
+   @return {number}
+   */
+  this.height = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return j_tty["height()"]();
     } else utils.invalidArgs();
   };
 

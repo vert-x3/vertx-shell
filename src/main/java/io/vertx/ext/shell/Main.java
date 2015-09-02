@@ -68,9 +68,9 @@ public class Main {
 
     Command windowCmd = Command.create("window");
     windowCmd.processHandler(process -> {
-      process.write("[" + process.windowSize().width() + "," + process.windowSize().height() + "]\n");
+      process.write("[" + process.width() + "," + process.height() + "]\n");
       process.eventHandler("SIGWINCH", v -> {
-        process.write("[" + process.windowSize().width() + "," + process.windowSize().height() + "]\n");
+        process.write("[" + process.width() + "," + process.height() + "]\n");
       });
       process.eventHandler("SIGINT", v -> {
         process.end(0);

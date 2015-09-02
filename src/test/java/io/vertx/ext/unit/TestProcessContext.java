@@ -3,7 +3,6 @@ package io.vertx.ext.unit;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.Stream;
 import io.vertx.ext.shell.process.ProcessContext;
 import io.vertx.ext.shell.Tty;
@@ -18,7 +17,7 @@ class TestProcessContext implements ProcessContext, Tty {
   private Handler<Integer> endHandler;
   final Context context = Vertx.currentContext();
   final HashMap<String, Handler<Void>> eventHandlers = new HashMap<>();
-  Dimension windowSize;
+  int width, height;
   Stream stdin;
   private Stream stdout;
 
@@ -40,12 +39,18 @@ class TestProcessContext implements ProcessContext, Tty {
   }
 
   @Override
-  public Dimension windowSize() {
-    return windowSize;
+  public int width() {
+    return width;
   }
 
-  public void setWindowSize(Dimension size) {
-    windowSize = size;
+  @Override
+  public int height() {
+    return height;
+  }
+
+  public void setWindowSize(int width, int height) {
+    this.width = width;
+    this.height = height;
     sendEvent("SIGWINCH");
   }
 

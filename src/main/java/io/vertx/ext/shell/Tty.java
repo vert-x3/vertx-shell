@@ -2,8 +2,6 @@ package io.vertx.ext.shell;
 
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.Dimension;
-import io.vertx.ext.shell.Stream;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -11,7 +9,9 @@ import io.vertx.ext.shell.Stream;
 @VertxGen
 public interface Tty {
 
-  Dimension windowSize();
+  int width();
+
+  int height();
 
   void setStdin(Stream stdin);
 

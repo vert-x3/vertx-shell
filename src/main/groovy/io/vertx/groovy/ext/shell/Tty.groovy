@@ -30,8 +30,12 @@ public class Tty {
   public Object getDelegate() {
     return delegate;
   }
-  public Dimension windowSize() {
-    def ret= InternalHelper.safeCreate(this.delegate.windowSize(), io.vertx.ext.shell.Dimension.class, io.vertx.groovy.ext.shell.Dimension.class);
+  public int width() {
+    def ret = this.delegate.width();
+    return ret;
+  }
+  public int height() {
+    def ret = this.delegate.height();
     return ret;
   }
   public void setStdin(Stream stdin) {

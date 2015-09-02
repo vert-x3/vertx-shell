@@ -2,7 +2,6 @@ package io.vertx.ext.unit;
 
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.Dimension;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandManager;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -179,11 +178,11 @@ public class ShellServiceTest {
     CommandManager manager = CommandManager.get(vertx);
     Command cmd = Command.create("foo");
     cmd.processHandler(process -> {
-      context.assertEquals(20, process.windowSize().width());
-      context.assertEquals(10, process.windowSize().height());
+      context.assertEquals(20, process.width());
+      context.assertEquals(10, process.height());
       process.eventHandler("SIGWINCH", v -> {
-        context.assertEquals(25, process.windowSize().width());
-        context.assertEquals(15, process.windowSize().height());
+        context.assertEquals(25, process.width());
+        context.assertEquals(15, process.height());
         process.end(0);
       });
       process.stdout().handle("ping");
@@ -195,9 +194,9 @@ public class ShellServiceTest {
         ctx.endHandler(status -> {
           async.complete();
         });
-        ctx.setWindowSize(Dimension.create(20, 10));
+        ctx.setWindowSize(20, 10);
         ctx.setStdout(text -> {
-          ctx.setWindowSize(Dimension.create(25, 15));
+          ctx.setWindowSize(25, 15);
         });
         job.execute(ctx);
       }));
