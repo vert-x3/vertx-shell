@@ -71,7 +71,7 @@ public class Shell {
         job.sendEvent("SIGWINCH");
       }
     });
-    conn.setEventHandler(event -> {
+    readline.setEventHandler(event -> {
       Job job = foregroundJob;
       switch (event) {
         case INTR:
