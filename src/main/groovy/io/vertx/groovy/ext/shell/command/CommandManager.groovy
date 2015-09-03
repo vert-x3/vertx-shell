@@ -40,6 +40,10 @@ public class CommandManager {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandManager.get((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.ext.shell.command.CommandManager.class, io.vertx.groovy.ext.shell.command.CommandManager.class);
     return ret;
   }
+  public List<ManagedCommand> commands() {
+    def ret = this.delegate.commands()?.collect({underpants -> new io.vertx.groovy.ext.shell.command.ManagedCommand(underpants)});
+      return ret;
+  }
   public void createProcess(String s, Handler<AsyncResult<Process>> handler) {
     this.delegate.createProcess(s, new Handler<AsyncResult<io.vertx.ext.shell.process.Process>>() {
       public void handle(AsyncResult<io.vertx.ext.shell.process.Process> event) {

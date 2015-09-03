@@ -22,6 +22,8 @@ public interface CommandManager {
     return CommandManagerImpl.get(vertx);
   }
 
+  List<ManagedCommand> commands();
+
   void createProcess(String s, Handler<AsyncResult<Process>> handler);
 
   void createProcess(List<CliToken> line, Handler<AsyncResult<Process>> handler);

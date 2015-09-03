@@ -18,6 +18,7 @@
 var utils = require('vertx-js/util/utils');
 var Command = require('vertx-shell-js/command');
 var Completion = require('vertx-shell-js/completion');
+var ManagedCommand = require('vertx-shell-js/managed_command');
 var CliToken = require('vertx-shell-js/cli_token');
 var Process = require('vertx-shell-js/process');
 
@@ -33,6 +34,19 @@ var CommandManager = function(j_val) {
 
   var j_commandManager = j_val;
   var that = this;
+
+  /**
+
+   @public
+
+   @return {Array.<ManagedCommand>}
+   */
+  this.commands = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return utils.convReturnListSetVertxGen(j_commandManager["commands()"](), ManagedCommand);
+    } else utils.invalidArgs();
+  };
 
   /**
 

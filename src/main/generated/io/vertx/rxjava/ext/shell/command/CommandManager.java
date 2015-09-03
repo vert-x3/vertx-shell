@@ -51,6 +51,11 @@ public class CommandManager {
     return ret;
   }
 
+  public List<ManagedCommand> commands() { 
+    List<ManagedCommand> ret = this.delegate.commands().stream().map(ManagedCommand::newInstance).collect(java.util.stream.Collectors.toList());
+    return ret;
+  }
+
   public void createProcess(String s, Handler<AsyncResult<Process>> handler) { 
     this.delegate.createProcess(s, new Handler<AsyncResult<io.vertx.ext.shell.process.Process>>() {
       public void handle(AsyncResult<io.vertx.ext.shell.process.Process> event) {

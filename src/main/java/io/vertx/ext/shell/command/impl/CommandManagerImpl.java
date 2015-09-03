@@ -43,8 +43,8 @@ public class CommandManagerImpl implements CommandManager {
     this.vertx = vertx;
   }
 
-  public Collection<ManagedCommand> commands() {
-    return commandMap.values();
+  public List<ManagedCommand> commands() {
+    return new ArrayList<>(commandMap.values());
   }
 
   @Override

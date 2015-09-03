@@ -1,5 +1,6 @@
 require 'vertx-shell/command'
 require 'vertx-shell/completion'
+require 'vertx-shell/managed_command'
 require 'vertx-shell/cli_token'
 require 'vertx-shell/process'
 require 'vertx/util/utils.rb'
@@ -24,6 +25,13 @@ module VertxShell
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandManager.java_method(:get, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::CommandManager)
       end
       raise ArgumentError, "Invalid arguments when calling get(vertx)"
+    end
+    # @return [Array<::VertxShell::ManagedCommand>]
+    def commands
+      if !block_given?
+        return @j_del.java_method(:commands, []).call().to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::ManagedCommand) }
+      end
+      raise ArgumentError, "Invalid arguments when calling commands()"
     end
     # @overload createProcess(s,handler)
     #   @param [String] s 

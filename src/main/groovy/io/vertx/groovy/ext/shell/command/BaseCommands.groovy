@@ -41,4 +41,8 @@ public class BaseCommands {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.BaseCommands.echo(), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
     return ret;
   }
+  public static Command help() {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.BaseCommands.help(), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
+    return ret;
+  }
 }

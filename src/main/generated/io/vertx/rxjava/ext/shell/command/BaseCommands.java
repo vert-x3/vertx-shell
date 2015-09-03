@@ -54,6 +54,11 @@ public class BaseCommands {
     return ret;
   }
 
+  public static Command help() { 
+    Command ret= Command.newInstance(io.vertx.ext.shell.command.BaseCommands.help());
+    return ret;
+  }
+
 
   public static BaseCommands newInstance(io.vertx.ext.shell.command.BaseCommands arg) {
     return arg != null ? new BaseCommands(arg) : null;

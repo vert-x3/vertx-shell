@@ -187,4 +187,18 @@ public interface BaseCommands {
     });
     return echo;
   }
+
+  static Command help() {
+    Command help = Command.command("help");
+    help.processHandler(process -> {
+      CommandManager manager = CommandManager.get(process.vertx());
+      manager.commands();
+      process.write("available commands:\n");
+      for (ManagedCommand command : manager.commands()) {
+        process.write(command.command().name()).write("\n");
+      }
+      process.end();
+    });
+    return help;
+  }
 }

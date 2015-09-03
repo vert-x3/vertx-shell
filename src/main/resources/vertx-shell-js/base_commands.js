@@ -76,5 +76,18 @@ BaseCommands.echo = function() {
   } else utils.invalidArgs();
 };
 
+/**
+
+ @memberof module:vertx-shell-js/base_commands
+
+ @return {Command}
+ */
+BaseCommands.help = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JBaseCommands["help()"](), Command);
+  } else utils.invalidArgs();
+};
+
 // We export the Constructor function
 module.exports = BaseCommands;

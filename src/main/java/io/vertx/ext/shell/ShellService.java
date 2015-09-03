@@ -7,6 +7,7 @@ import io.termd.core.telnet.TelnetTtyConnection;
 import io.termd.core.telnet.vertx.VertxTelnetBootstrap;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.command.BaseCommands;
 import io.vertx.ext.shell.command.CommandManager;
 import io.vertx.ext.shell.impl.Shell;
 import org.apache.sshd.SshServer;
@@ -23,6 +24,10 @@ public interface ShellService {
 
   static ShellService create(Vertx vertx, ShellServiceOptions options) {
     CommandManager mgr = CommandManager.get(vertx);
+    mgr.registerCommand(BaseCommands.echo());
+    mgr.registerCommand(BaseCommands.ls());
+    mgr.registerCommand(BaseCommands.sleep());
+    mgr.registerCommand(BaseCommands.help());
     return () -> {
       TelnetOptions telnetOptions = options.getTelnet();
       if (telnetOptions != null) {
