@@ -47,15 +47,30 @@ var CommandProcess = function(j_val) {
   };
 
   /**
+   @return the unparsed arguments tokens
 
    @public
 
    @return {Array.<CliToken>}
    */
+  this.argsTokens = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return utils.convReturnListSetVertxGen(j_commandProcess["argsTokens()"](), CliToken);
+    } else utils.invalidArgs();
+  };
+
+  /**
+   @return the actual string arguments of the command
+
+   @public
+
+   @return {Array.<string>}
+   */
   this.args = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnListSetVertxGen(j_commandProcess["args()"](), CliToken);
+      return j_commandProcess["args()"]();
     } else utils.invalidArgs();
   };
 

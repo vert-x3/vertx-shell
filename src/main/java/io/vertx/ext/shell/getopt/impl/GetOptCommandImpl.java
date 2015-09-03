@@ -49,7 +49,7 @@ public class GetOptCommandImpl implements GetOptCommand {
     if (cp != null) {
 
       command.processHandler(a -> {
-        List<OptToken> tokens = OptToken.tokenize(a.args());
+        List<OptToken> tokens = OptToken.tokenize(a.argsTokens());
         OptParser parser = new OptParser(options.values());
         OptRequest req = parser.parse(tokens.listIterator());
         cp.handle(new GetOptCommandProcess() {
@@ -59,7 +59,12 @@ public class GetOptCommandImpl implements GetOptCommand {
           }
 
           @Override
-          public List<CliToken> args() {
+          public List<CliToken> argsTokens() {
+            return a.argsTokens();
+          }
+
+          @Override
+          public List<String> args() {
             return a.args();
           }
 

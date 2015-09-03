@@ -14,6 +14,7 @@ import io.vertx.ext.shell.process.ProcessContext;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The command registered with a manager.
@@ -64,8 +65,13 @@ public class CommandRegistrationImpl implements CommandRegistration {
           }
 
           @Override
-          public List<CliToken> args() {
+          public List<CliToken> argsTokens() {
             return args;
+          }
+
+          @Override
+          public List<String> args() {
+            return args.stream().filter(CliToken::isText).map(CliToken::value).collect(Collectors.toList());
           }
 
           @Override

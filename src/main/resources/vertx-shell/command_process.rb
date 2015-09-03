@@ -23,10 +23,19 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling vertx()"
     end
+    #  @return the unparsed arguments tokens
     # @return [Array<::VertxShell::CliToken>]
+    def args_tokens
+      if !block_given?
+        return @j_del.java_method(:argsTokens, []).call().to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::CliToken) }
+      end
+      raise ArgumentError, "Invalid arguments when calling args_tokens()"
+    end
+    #  @return the actual string arguments of the command
+    # @return [Array<String>]
     def args
       if !block_given?
-        return @j_del.java_method(:args, []).call().to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::CliToken) }
+        return @j_del.java_method(:args, []).call().to_a.map { |elt| elt }
       end
       raise ArgumentError, "Invalid arguments when calling args()"
     end

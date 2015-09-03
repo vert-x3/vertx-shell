@@ -3,7 +3,6 @@ package io.vertx.ext.shell.command;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Vertx;
 import io.vertx.core.file.FileProps;
-import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.getopt.GetOptCommand;
 import io.vertx.ext.shell.getopt.GetOptCommandProcess;
@@ -89,13 +88,7 @@ public interface BaseCommands {
       });
     });
     cmd.processHandler(process -> {
-      String path = process.
-          args().
-          stream().
-          filter(CliToken::isText).
-          map(CliToken::value).
-          findFirst().
-          orElse(".");
+      String path = process.args().stream().findFirst().orElse(".");
       Vertx vertx = process.vertx();
       vertx.fileSystem().props(path, ar1 -> {
         if (ar1.succeeded()) {
@@ -177,7 +170,7 @@ public interface BaseCommands {
   static Command echo() {
     Command echo = Command.command("echo");
     echo.processHandler(process -> {
-      process.args().forEach(token -> {
+      process.argsTokens().forEach(token -> {
         if (token.isText()) {
           process.write(token.value());
         } else {

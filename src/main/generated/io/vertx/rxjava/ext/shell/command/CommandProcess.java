@@ -53,8 +53,22 @@ public class CommandProcess {
     return ret;
   }
 
-  public List<CliToken> args() { 
-    List<CliToken> ret = this.delegate.args().stream().map(CliToken::newInstance).collect(java.util.stream.Collectors.toList());
+  /**
+   * @return the unparsed arguments tokens
+   * @return 
+   */
+  public List<CliToken> argsTokens() { 
+    List<CliToken> ret = this.delegate.argsTokens().stream().map(CliToken::newInstance).collect(java.util.stream.Collectors.toList());
+    return ret;
+  }
+
+  /**
+   * @return the actual string arguments of the command
+   * @return 
+   */
+  public List<String> args() { 
+    List<String> ret = this.delegate.args();
+;
     return ret;
   }
 

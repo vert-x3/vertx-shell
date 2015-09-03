@@ -42,9 +42,21 @@ public class CommandProcess {
     def ret= InternalHelper.safeCreate(this.delegate.vertx(), io.vertx.core.Vertx.class, io.vertx.groovy.core.Vertx.class);
     return ret;
   }
-  public List<CliToken> args() {
-    def ret = this.delegate.args()?.collect({underpants -> new io.vertx.groovy.ext.shell.cli.CliToken(underpants)});
+  /**
+   * @return the unparsed arguments tokens
+   * @return 
+   */
+  public List<CliToken> argsTokens() {
+    def ret = this.delegate.argsTokens()?.collect({underpants -> new io.vertx.groovy.ext.shell.cli.CliToken(underpants)});
       return ret;
+  }
+  /**
+   * @return the actual string arguments of the command
+   * @return 
+   */
+  public List<String> args() {
+    def ret = this.delegate.args();
+    return ret;
   }
   public int width() {
     def ret = this.delegate.width();

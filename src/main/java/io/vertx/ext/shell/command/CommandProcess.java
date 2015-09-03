@@ -20,7 +20,15 @@ public interface CommandProcess {
    */
   Vertx vertx();
 
-  List<CliToken> args();
+  /**
+   * @return the unparsed arguments tokens
+   */
+  List<CliToken> argsTokens();
+
+  /**
+   * @return the actual string arguments of the command
+   */
+  List<String> args();
 
   int width();
 

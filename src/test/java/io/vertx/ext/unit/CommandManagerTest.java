@@ -24,7 +24,7 @@ public class CommandManagerTest {
     CommandRegistryImpl mgr = (CommandRegistryImpl) CommandRegistry.get(vertx);
     Command command = Command.command("hello");
     command.processHandler(process -> {
-      context.assertEquals(Arrays.asList(CliToken.createBlank(" "), CliToken.createText("world")), process.args());
+      context.assertEquals(Arrays.asList(CliToken.createBlank(" "), CliToken.createText("world")), process.argsTokens());
       process.end(0);
     });
     mgr.registerCommand(command, context.asyncAssertSuccess(v -> {
