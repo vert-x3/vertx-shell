@@ -8,6 +8,7 @@ import io.termd.core.telnet.vertx.VertxTelnetBootstrap;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.BaseCommands;
+import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.impl.Shell;
 import org.apache.sshd.SshServer;
@@ -28,6 +29,14 @@ public interface ShellService {
     mgr.registerCommand(BaseCommands.ls());
     mgr.registerCommand(BaseCommands.sleep());
     mgr.registerCommand(BaseCommands.help());
+
+    // Register noop commands so they are listed in help
+    // but they are builtins
+    mgr.registerCommand(Command.command("jobs").processHandler(process -> {}));
+    mgr.registerCommand(Command.command("fg").processHandler(process -> {}));
+    mgr.registerCommand(Command.command("bg").processHandler(process -> {}));
+
+    //
     return () -> {
       TelnetOptions telnetOptions = options.getTelnet();
       if (telnetOptions != null) {
