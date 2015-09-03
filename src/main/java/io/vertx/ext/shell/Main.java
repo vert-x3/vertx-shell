@@ -37,8 +37,7 @@ public class Main {
       process.write("\n");
       process.end();
     });
-    mgr.registerCommand(echoCmd, ar -> {
-    });
+    mgr.registerCommand(echoCmd);
 
     Command echoKeyboardCmd = Command.command("echo-keyboard");
     echoKeyboardCmd.processHandler(process -> {
@@ -48,8 +47,7 @@ public class Main {
       });
       process.eventHandler("SIGINT", v -> process.end());
     });
-    mgr.registerCommand(echoKeyboardCmd, ar -> {
-    });
+    mgr.registerCommand(echoKeyboardCmd);
 
     Command helpCmd = Command.command("help");
     helpCmd.processHandler(process -> {
@@ -61,8 +59,7 @@ public class Main {
       process.write("window\n");
       process.end();
     });
-    mgr.registerCommand(helpCmd, ar -> {
-    });
+    mgr.registerCommand(helpCmd);
 
     Command windowCmd = Command.command("window");
     windowCmd.processHandler(process -> {
@@ -74,8 +71,7 @@ public class Main {
         process.end();
       });
     });
-    mgr.registerCommand(windowCmd, ar -> {
-    });
+    mgr.registerCommand(windowCmd);
 
     class SleepImpl {
 
@@ -126,8 +122,7 @@ public class Main {
     SleepImpl sleep = new SleepImpl();
     GetOptCommand sleepCmd = GetOptCommand.create("sleep");
     sleepCmd.processHandler(sleep::run);
-    mgr.registerCommand(sleepCmd.build(), ar -> {
-    });
+    mgr.registerCommand(sleepCmd.build());
 
     Command lsCmd = Command.command("ls");
     lsCmd.completeHandler(completion -> {
@@ -222,8 +217,7 @@ public class Main {
         }
       });
     });
-    mgr.registerCommand(lsCmd, ar -> {
-    });
+    mgr.registerCommand(lsCmd);
 
     // Expose the shell
     ShellService service = ShellService.create(vertx, new ShellServiceOptions().
