@@ -59,6 +59,16 @@ public class BaseCommands {
     return ret;
   }
 
+  public static Command bus_send() { 
+    Command ret= Command.newInstance(io.vertx.ext.shell.command.BaseCommands.bus_send());
+    return ret;
+  }
+
+  public static Command bus_tail() { 
+    Command ret= Command.newInstance(io.vertx.ext.shell.command.BaseCommands.bus_tail());
+    return ret;
+  }
+
   public static Command ls() { 
     Command ret= Command.newInstance(io.vertx.ext.shell.command.BaseCommands.ls());
     return ret;

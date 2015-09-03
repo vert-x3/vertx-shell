@@ -43,6 +43,20 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling local_map_rm()"
     end
     # @return [::VertxShell::Command]
+    def self.bus_send
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::BaseCommands.java_method(:bus_send, []).call(),::VertxShell::Command)
+      end
+      raise ArgumentError, "Invalid arguments when calling bus_send()"
+    end
+    # @return [::VertxShell::Command]
+    def self.bus_tail
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::BaseCommands.java_method(:bus_tail, []).call(),::VertxShell::Command)
+      end
+      raise ArgumentError, "Invalid arguments when calling bus_tail()"
+    end
+    # @return [::VertxShell::Command]
     def self.ls
       if !block_given?
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::BaseCommands.java_method(:ls, []).call(),::VertxShell::Command)

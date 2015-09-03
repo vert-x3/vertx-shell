@@ -45,6 +45,14 @@ public class BaseCommands {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.BaseCommands.local_map_rm(), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
     return ret;
   }
+  public static Command bus_send() {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.BaseCommands.bus_send(), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
+    return ret;
+  }
+  public static Command bus_tail() {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.BaseCommands.bus_tail(), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
+    return ret;
+  }
   public static Command ls() {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.BaseCommands.ls(), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
     return ret;

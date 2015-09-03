@@ -95,6 +95,32 @@ BaseCommands.local_map_rm = function() {
 
  @return {Command}
  */
+BaseCommands.bus_send = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JBaseCommands["bus_send()"](), Command);
+  } else utils.invalidArgs();
+};
+
+/**
+
+ @memberof module:vertx-shell-js/base_commands
+
+ @return {Command}
+ */
+BaseCommands.bus_tail = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JBaseCommands["bus_tail()"](), Command);
+  } else utils.invalidArgs();
+};
+
+/**
+
+ @memberof module:vertx-shell-js/base_commands
+
+ @return {Command}
+ */
 BaseCommands.ls = function() {
   var __args = arguments;
   if (__args.length === 0) {

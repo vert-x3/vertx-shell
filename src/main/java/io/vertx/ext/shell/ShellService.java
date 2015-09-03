@@ -33,6 +33,8 @@ public interface ShellService {
     mgr.registerCommand(BaseCommands.local_map_get());
     mgr.registerCommand(BaseCommands.local_map_put());
     mgr.registerCommand(BaseCommands.local_map_rm());
+    mgr.registerCommand(BaseCommands.bus_send());
+    mgr.registerCommand(BaseCommands.bus_tail());
 
     // Register noop commands so they are listed in help
     // but they are builtins

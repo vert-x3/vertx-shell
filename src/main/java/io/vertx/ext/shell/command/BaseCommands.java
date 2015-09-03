@@ -2,6 +2,7 @@ package io.vertx.ext.shell.command;
 
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Vertx;
+import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.file.FileProps;
 import io.vertx.core.http.impl.HttpServerImpl;
 import io.vertx.core.impl.VertxInternal;
@@ -102,6 +103,42 @@ public interface BaseCommands {
         }
       }
       process.end();
+    });
+    return shared_data;
+  }
+
+  static Command bus_send() {
+    Command shared_data = Command.command("bus-send");
+    shared_data.processHandler(process -> {
+      List<String> args = process.args();
+      if (args.size() < 2) {
+        process.write("usage: bus-send address message\n");
+      } else {
+        String address = args.get(0);
+        String msg = args.get(1);
+        process.vertx().eventBus().send(address, msg);
+      }
+      process.end();
+    });
+    return shared_data;
+  }
+
+  static Command bus_tail() {
+    Command shared_data = Command.command("bus-tail");
+    shared_data.processHandler(process -> {
+      List<String> args = process.args();
+      if (args.size() < 1) {
+        process.write("usage: bus-tail address\n").end();
+      } else {
+        String address = args.get(0);
+        MessageConsumer<Object> consumer = process.vertx().eventBus().consumer(address, msg -> {
+          process.write("" + msg.body() + "\n");
+        });
+        process.eventHandler("SIGINT", done -> {
+          consumer.unregister();
+          process.end();
+        });
+      }
     });
     return shared_data;
   }
