@@ -20,6 +20,7 @@ import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
+import io.vertx.rxjava.core.Vertx;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -38,6 +39,15 @@ public class Completion {
 
   public Object getDelegate() {
     return delegate;
+  }
+
+  /**
+   * @return the current Vert.x instance
+   * @return 
+   */
+  public Vertx vertx() { 
+    Vertx ret= Vertx.newInstance(this.delegate.vertx());
+    return ret;
   }
 
   public String line() { 

@@ -18,6 +18,7 @@ package io.vertx.groovy.ext.shell.cli;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import java.util.List
+import io.vertx.groovy.core.Vertx
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
@@ -29,6 +30,14 @@ public class Completion {
   }
   public Object getDelegate() {
     return delegate;
+  }
+  /**
+   * @return the current Vert.x instance
+   * @return 
+   */
+  public Vertx vertx() {
+    def ret= InternalHelper.safeCreate(this.delegate.vertx(), io.vertx.core.Vertx.class, io.vertx.groovy.core.Vertx.class);
+    return ret;
   }
   public String line() {
     def ret = this.delegate.line();

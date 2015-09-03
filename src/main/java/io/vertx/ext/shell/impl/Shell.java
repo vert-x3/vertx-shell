@@ -209,6 +209,12 @@ public class Shell {
       String line = Helper.fromCodePoints(completion.line());
       List<CliToken> tokens = Collections.unmodifiableList(CliToken.tokenize(line));
       Completion comp = new Completion() {
+
+        @Override
+        public Vertx vertx() {
+          return vertx;
+        }
+
         @Override
         public String line() {
           return line;

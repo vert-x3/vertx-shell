@@ -133,6 +133,10 @@ public class CommandManagerImpl implements CommandManager {
           if (command != null) {
             command.complete(new Completion() {
               @Override
+              public Vertx vertx() {
+                return completion.vertx();
+              }
+              @Override
               public String line() {
                 return line;
               }
