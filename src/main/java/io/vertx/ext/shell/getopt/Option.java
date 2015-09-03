@@ -1,7 +1,7 @@
 package io.vertx.ext.shell.getopt;
 
 import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.ext.shell.command.impl.OptionImpl;
+import io.vertx.ext.shell.getopt.impl.OptionImpl;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>

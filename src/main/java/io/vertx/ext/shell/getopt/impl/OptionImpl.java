@@ -1,4 +1,4 @@
-package io.vertx.ext.shell.command.impl;
+package io.vertx.ext.shell.getopt.impl;
 
 import io.vertx.ext.shell.getopt.Option;
 
