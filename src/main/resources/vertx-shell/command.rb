@@ -15,13 +15,14 @@ module VertxShell
     def j_del
       @j_del
     end
-    # @param [String] name 
-    # @return [::VertxShell::Command]
-    def self.create(name=nil)
+    #  Create a new commmand.
+    # @param [String] name the command name
+    # @return [::VertxShell::Command] the command object
+    def self.command(name=nil)
       if name.class == String && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::Command.java_method(:create, [Java::java.lang.String.java_class]).call(name),::VertxShell::Command)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::Command.java_method(:command, [Java::java.lang.String.java_class]).call(name),::VertxShell::Command)
       end
-      raise ArgumentError, "Invalid arguments when calling create(name)"
+      raise ArgumentError, "Invalid arguments when calling command(name)"
     end
     # @return [String]
     def name
@@ -47,13 +48,6 @@ module VertxShell
         return self
       end
       raise ArgumentError, "Invalid arguments when calling complete_handler()"
-    end
-    # @return [void]
-    def unregister
-      if !block_given?
-        return @j_del.java_method(:unregister, []).call()
-      end
-      raise ArgumentError, "Invalid arguments when calling unregister()"
     end
   end
 end

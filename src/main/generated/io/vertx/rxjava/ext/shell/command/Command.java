@@ -41,8 +41,13 @@ public class Command {
     return delegate;
   }
 
-  public static Command create(String name) { 
-    Command ret= Command.newInstance(io.vertx.ext.shell.command.Command.create(name));
+  /**
+   * Create a new commmand.
+   * @param name the command name
+   * @return the command object
+   */
+  public static Command command(String name) { 
+    Command ret= Command.newInstance(io.vertx.ext.shell.command.Command.command(name));
     return ret;
   }
 
@@ -67,10 +72,6 @@ public class Command {
       }
     });
     return this;
-  }
-
-  public void unregister() { 
-    this.delegate.unregister();
   }
 
 

@@ -77,18 +77,6 @@ var Command = function(j_val) {
     } else utils.invalidArgs();
   };
 
-  /**
-
-   @public
-
-   */
-  this.unregister = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      j_command["unregister()"]();
-    } else utils.invalidArgs();
-  };
-
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
@@ -96,15 +84,16 @@ var Command = function(j_val) {
 };
 
 /**
+ Create a new commmand.
 
  @memberof module:vertx-shell-js/command
- @param name {string} 
- @return {Command}
+ @param name {string} the command name 
+ @return {Command} the command object
  */
-Command.create = function(name) {
+Command.command = function(name) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnVertxGen(JCommand["create(java.lang.String)"](name), Command);
+    return utils.convReturnVertxGen(JCommand["command(java.lang.String)"](name), Command);
   } else utils.invalidArgs();
 };
 

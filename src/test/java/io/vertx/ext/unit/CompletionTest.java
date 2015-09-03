@@ -30,13 +30,13 @@ public class CompletionTest {
   @Before
   public void before() {
     mgr = CommandManager.get(rule.vertx());
-    mgr.registerCommand(Command.create("foo").processHandler(proc -> {}).completeHandler(
+    mgr.registerCommand(Command.command("foo").processHandler(proc -> {}).completeHandler(
         completion -> {
           completion.complete("completed_by_foo", false);
         }
     ));
-    mgr.registerCommand(Command.create("bar").processHandler(proc -> {}));
-    mgr.registerCommand(Command.create("baz").processHandler(proc -> {}));
+    mgr.registerCommand(Command.command("bar").processHandler(proc -> {}));
+    mgr.registerCommand(Command.command("baz").processHandler(proc -> {}));
   }
 
   @Test

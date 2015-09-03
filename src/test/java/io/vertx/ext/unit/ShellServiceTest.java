@@ -24,7 +24,7 @@ public class ShellServiceTest {
   @Test
   public void testRun(TestContext context) {
     CommandManager manager = CommandManager.get(vertx);
-    Command cmd = Command.create("foo");
+    Command cmd = Command.command("foo");
     cmd.processHandler(process -> {
       process.end(3);
     });
@@ -42,7 +42,7 @@ public class ShellServiceTest {
   @Test
   public void testStdin(TestContext context) {
     CommandManager manager = CommandManager.get(vertx);
-    Command cmd = Command.create("foo");
+    Command cmd = Command.command("foo");
     CountDownLatch latch = new CountDownLatch(1);
     cmd.processHandler(process -> {
       process.setStdin(data -> {
@@ -73,7 +73,7 @@ public class ShellServiceTest {
   @Test
   public void testStdout(TestContext context) {
     CommandManager manager = CommandManager.get(vertx);
-    Command cmd = Command.create("foo");
+    Command cmd = Command.command("foo");
     cmd.processHandler(process -> {
       process.stdout().handle("bye_world");
       process.end(0);
@@ -102,7 +102,7 @@ public class ShellServiceTest {
     Async async = testContext.async();
     CountDownLatch latch = new CountDownLatch(1);
     commandCtx.runOnContext(v1 -> {
-      Command command = Command.create("foo");
+      Command command = Command.command("foo");
       command.processHandler(process -> {
         testContext.assertTrue(commandCtx == Vertx.currentContext());
         process.setStdin(text -> {
@@ -147,7 +147,7 @@ public class ShellServiceTest {
   @Test
   public void testSendEvent(TestContext context) {
     CommandManager manager = CommandManager.get(vertx);
-    Command cmd = Command.create("foo");
+    Command cmd = Command.command("foo");
     CountDownLatch latch = new CountDownLatch(1);
     cmd.processHandler(process -> {
       process.eventHandler("SIGTERM", v -> {
@@ -176,7 +176,7 @@ public class ShellServiceTest {
   @Test
   public void testResize(TestContext context) {
     CommandManager manager = CommandManager.get(vertx);
-    Command cmd = Command.create("foo");
+    Command cmd = Command.command("foo");
     cmd.processHandler(process -> {
       context.assertEquals(20, process.width());
       context.assertEquals(10, process.height());

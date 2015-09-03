@@ -31,8 +31,13 @@ public class Command {
   public Object getDelegate() {
     return delegate;
   }
-  public static Command create(String name) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.Command.create(name), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
+  /**
+   * Create a new commmand.
+   * @param name the command name
+   * @return the command object
+   */
+  public static Command command(String name) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.Command.command(name), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
     return ret;
   }
   public String name() {
@@ -54,8 +59,5 @@ public class Command {
       }
     });
     return this;
-  }
-  public void unregister() {
-    this.delegate.unregister();
   }
 }

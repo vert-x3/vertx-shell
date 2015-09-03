@@ -43,7 +43,7 @@ public class GetOptCommandImpl implements GetOptCommand {
 
   @Override
   public Command build() {
-    Command command = Command.create(name);
+    Command command = Command.command(name);
     Handler<GetOptCommandProcess> cp = handler;
     if (cp != null) {
 

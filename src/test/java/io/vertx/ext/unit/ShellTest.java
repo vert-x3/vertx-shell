@@ -33,7 +33,7 @@ public class ShellTest {
     context.assertNull(shell.foregroundJob());
     context.assertEquals(Collections.emptyMap(), shell.jobs());
     Async async = context.async();
-    manager.registerCommand(Command.create("foo").processHandler(process -> {
+    manager.registerCommand(Command.command("foo").processHandler(process -> {
       context.assertEquals(1, shell.jobs().size());
       Job job = shell.getJob(1);
       context.assertEquals(job, shell.foregroundJob());
@@ -51,7 +51,7 @@ public class ShellTest {
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
     Async async = context.async();
-    manager.registerCommand(Command.create("read").processHandler(process -> {
+    manager.registerCommand(Command.command("read").processHandler(process -> {
       process.setStdin(line -> {
         context.assertEquals("the_line", line);
         async.complete();
@@ -69,7 +69,7 @@ public class ShellTest {
     shell.init();
     Async async = context.async();
     AtomicInteger count = new AtomicInteger();
-    manager.registerCommand(Command.create("read").processHandler(process -> {
+    manager.registerCommand(Command.command("read").processHandler(process -> {
       if (count.incrementAndGet() == 2) {
         async.complete();
       }
@@ -87,7 +87,7 @@ public class ShellTest {
     shell.init();
     Async async = context.async();
     CountDownLatch latch = new CountDownLatch(1);
-    manager.registerCommand(Command.create("foo").processHandler(process -> {
+    manager.registerCommand(Command.command("foo").processHandler(process -> {
       Job job = shell.getJob(1);
       process.eventHandler("SIGTSTP", v -> {
         context.assertEquals(JobStatus.STOPPED, job.status());
@@ -111,7 +111,7 @@ public class ShellTest {
     CountDownLatch latch1 = new CountDownLatch(1);
     CountDownLatch latch2 = new CountDownLatch(1);
     CountDownLatch latch3 = new CountDownLatch(1);
-    manager.registerCommand(Command.create("read").processHandler(process -> {
+    manager.registerCommand(Command.command("read").processHandler(process -> {
       process.setStdin(line -> {
         context.fail("Should not process line " + line);
       });
@@ -121,7 +121,7 @@ public class ShellTest {
       });
       latch1.countDown();
     }));
-    manager.registerCommand(Command.create("wait").processHandler(process -> {
+    manager.registerCommand(Command.command("wait").processHandler(process -> {
       // Do nothing, this command is used to escape from readline and make
       // sure that the read data is not sent to the stopped command
       latch3.countDown();
@@ -129,7 +129,7 @@ public class ShellTest {
         process.end(0);
       });
     }));
-    manager.registerCommand(Command.create("end").processHandler(process -> {
+    manager.registerCommand(Command.command("end").processHandler(process -> {
       async.complete();
     }));
     conn.read("read\r");
@@ -152,7 +152,7 @@ public class ShellTest {
     CountDownLatch latch2 = new CountDownLatch(1);
     CountDownLatch latch3 = new CountDownLatch(1);
     CountDownLatch latch4 = new CountDownLatch(1);
-    manager.registerCommand(Command.create("foo").processHandler(process -> {
+    manager.registerCommand(Command.command("foo").processHandler(process -> {
       Job job = shell.getJob(1);
       process.eventHandler("SIGTSTP", v -> {
         context.assertEquals(0L, latch1.getCount());
@@ -195,7 +195,7 @@ public class ShellTest {
     CountDownLatch latch1 = new CountDownLatch(1);
     CountDownLatch latch2 = new CountDownLatch(1);
     CountDownLatch latch3 = new CountDownLatch(1);
-    manager.registerCommand(Command.create("foo").processHandler(process -> {
+    manager.registerCommand(Command.command("foo").processHandler(process -> {
       Job job = shell.getJob(1);
       process.eventHandler("SIGTSTP", v -> {
         context.assertEquals(0L, latch1.getCount());
@@ -243,7 +243,7 @@ public class ShellTest {
     CountDownLatch latch1 = new CountDownLatch(1);
     CountDownLatch latch2 = new CountDownLatch(1);
     CountDownLatch latch3 = new CountDownLatch(1);
-    manager.registerCommand(Command.create("foo").processHandler(process -> {
+    manager.registerCommand(Command.command("foo").processHandler(process -> {
       process.eventHandler("SIGTSTP", v -> {
         latch2.countDown();
       });

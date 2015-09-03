@@ -12,7 +12,13 @@ import io.vertx.ext.shell.command.impl.CommandImpl;
 @VertxGen
 public interface Command {
 
-  static Command create(String name) {
+  /**
+   * Create a new commmand.
+   *
+   * @param name the command name
+   * @return the command object
+   */
+  static Command command(String name) {
     return new CommandImpl(name);
   }
 
@@ -23,7 +29,5 @@ public interface Command {
 
   @Fluent
   Command completeHandler(Handler<Completion> handler);
-
-  void unregister();
 
 }

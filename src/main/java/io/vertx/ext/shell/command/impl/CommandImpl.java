@@ -34,9 +34,4 @@ public class CommandImpl implements Command {
     completeHandler = handler;
     return this;
   }
-
-  @Override
-  public void unregister() {
-
-  }
 }

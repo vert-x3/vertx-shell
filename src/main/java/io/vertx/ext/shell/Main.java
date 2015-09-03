@@ -25,7 +25,7 @@ public class Main {
 
     CommandManager mgr = CommandManager.get(vertx);
 
-    Command echoCmd = Command.create("echo");
+    Command echoCmd = Command.command("echo");
     echoCmd.processHandler(process -> {
       process.args().forEach(token -> {
         if (token.isText()) {
@@ -40,7 +40,7 @@ public class Main {
     mgr.registerCommand(echoCmd, ar -> {
     });
 
-    Command echoKeyboardCmd = Command.create("echo-keyboard");
+    Command echoKeyboardCmd = Command.command("echo-keyboard");
     echoKeyboardCmd.processHandler(process -> {
       Stream stdout = process.stdout();
       process.setStdin(line -> {
@@ -53,7 +53,7 @@ public class Main {
     mgr.registerCommand(echoKeyboardCmd, ar -> {
     });
 
-    Command helpCmd = Command.create("help");
+    Command helpCmd = Command.command("help");
     helpCmd.processHandler(process -> {
       process.write("available commands:\n");
       process.write("echo\n");
@@ -66,7 +66,7 @@ public class Main {
     mgr.registerCommand(helpCmd, ar -> {
     });
 
-    Command windowCmd = Command.create("window");
+    Command windowCmd = Command.command("window");
     windowCmd.processHandler(process -> {
       process.write("[" + process.width() + "," + process.height() + "]\n");
       process.eventHandler("SIGWINCH", v -> {
@@ -131,7 +131,7 @@ public class Main {
     mgr.registerCommand(sleepCmd.build(), ar -> {
     });
 
-    Command lsCmd = Command.create("ls");
+    Command lsCmd = Command.command("ls");
     lsCmd.completeHandler(completion -> {
       String last;
       int s = completion.lineTokens().size();
