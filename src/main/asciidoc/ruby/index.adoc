@@ -1,1 +1,135 @@
-Todo
+= Vert.x Shell
+
+Vert.x Shell is a command line interface for the Vert.x runtime available from regular
+terminals using different protocols.
+
+Vert.x Shell provides a variety of commands for interacting live with Vert.x services.
+
+Vert.x Shell can be extended with custom commands in the language of your choice.
+
+== Using Vert.x Shell
+
+todo.
+
+== Shell Service
+
+todo.
+
+== Base commands
+
+todo.
+
+== Extending Vert.x Shell
+
+[source,ruby]
+----
+require 'vertx-shell/command'
+require 'vertx-shell/command_registry'
+
+command = VertxShell::Command.command("my-command")
+command.process_handler() { |process|
+
+  # Write a message to the console
+  process.write("Hello World")
+
+  # End the process
+  process.end()
+}
+
+# Register the command
+registry = VertxShell::CommandRegistry.get(vertx)
+registry.register_command(command)
+
+----
+
+The `link:yardoc/VertxShell/CommandProcess.html[CommandProcess]` object can be used for interacting with the shell.
+
+=== Command arguments
+
+The `link:yardoc/VertxShell/CommandProcess.html#args-instance_method[args]` returns the command arguments:
+
+[source,ruby]
+----
+command.process_handler() { |process|
+
+  process.args().each do |arg|
+    # Print each argument on the console
+    process.write("Argument #{arg}")
+  end
+
+  process.end()
+}
+
+----
+
+=== Terminal size
+
+The current terminal size can be obtained using `link:yardoc/VertxShell/CommandProcess.html#width-instance_method[width]` and
+`link:yardoc/VertxShell/CommandProcess.html#height-instance_method[height]`.
+
+[source,ruby]
+----
+command.process_handler() { |process|
+  process.write("Current terminal size: (#{process.width()}, #{process.height()})").end()
+}
+
+----
+
+=== Process termination
+
+Calling `link:yardoc/VertxShell/CommandProcess.html#end-instance_method[end]` ends the current process. It can be called directly
+in the invocation of the command handler or any time later:
+
+[source,ruby]
+----
+command.process_handler() { |process|
+  vertx = process.vertx()
+
+  # Set a timer
+  vertx.set_timer(1000) { |id|
+
+    # End the command when the timer is fired
+    process.end()
+  }
+}
+
+----
+
+=== Process events
+
+A command can subscribe to a few process events, named after the posix signals.
+
+==== `SIGINT` event
+
+The `SIGINT` event is fired when the process is interrupted, this event is fired when the user press
+_Ctrl+C_ during the execution of a command. This handler can be used for interrupting commands _blocking_ the CLI and
+gracefully ending the command process:
+
+[source,ruby]
+----
+command.process_handler() { |process|
+  vertx = process.vertx()
+
+  # Every second print a message on the console
+  periodicId = vertx.set_periodic(1000) { |id|
+    process.write("tick\n")
+  }
+
+  # When user press Ctrl+C: cancel the timer and end the process
+  process.event_handler("SIGINT") { |event|
+    vertx.cancel_timer?(periodicId)
+    process.end()
+  }
+}
+
+----
+
+When no `SIGINT` handler is registered, pressing _Ctrl+C_ will have no effect.
+
+==== `SIGTSTP`/`SIGCONT` events
+
+todo.
+
+==== `SIGWINCH` event
+
+todo.

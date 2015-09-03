@@ -1,1 +1,135 @@
-Todo
+= Vert.x Shell
+
+Vert.x Shell is a command line interface for the Vert.x runtime available from regular
+terminals using different protocols.
+
+Vert.x Shell provides a variety of commands for interacting live with Vert.x services.
+
+Vert.x Shell can be extended with custom commands in the language of your choice.
+
+== Using Vert.x Shell
+
+todo.
+
+== Shell Service
+
+todo.
+
+== Base commands
+
+todo.
+
+== Extending Vert.x Shell
+
+[source,js]
+----
+var Command = require("vertx-shell-js/command");
+var CommandRegistry = require("vertx-shell-js/command_registry");
+
+var command = Command.command("my-command");
+command.processHandler(function (process) {
+
+  // Write a message to the console
+  process.write("Hello World");
+
+  // End the process
+  process.end();
+});
+
+// Register the command
+var registry = CommandRegistry.get(vertx);
+registry.registerCommand(command);
+
+----
+
+The `link:jsdoc/command_process-CommandProcess.html[CommandProcess]` object can be used for interacting with the shell.
+
+=== Command arguments
+
+The `link:jsdoc/command_process-CommandProcess.html#args[args]` returns the command arguments:
+
+[source,js]
+----
+command.processHandler(function (process) {
+
+  Array.prototype.forEach.call(process.args(), function(arg) {
+    // Print each argument on the console
+    process.write("Argument " + arg);
+  });
+
+  process.end();
+});
+
+----
+
+=== Terminal size
+
+The current terminal size can be obtained using `link:jsdoc/command_process-CommandProcess.html#width[width]` and
+`link:jsdoc/command_process-CommandProcess.html#height[height]`.
+
+[source,js]
+----
+command.processHandler(function (process) {
+  process.write("Current terminal size: (" + process.width() + ", " + process.height() + ")").end();
+});
+
+----
+
+=== Process termination
+
+Calling `link:jsdoc/command_process-CommandProcess.html#end[end]` ends the current process. It can be called directly
+in the invocation of the command handler or any time later:
+
+[source,js]
+----
+command.processHandler(function (process) {
+  var vertx = process.vertx();
+
+  // Set a timer
+  vertx.setTimer(1000, function (id) {
+
+    // End the command when the timer is fired
+    process.end();
+  });
+});
+
+----
+
+=== Process events
+
+A command can subscribe to a few process events, named after the posix signals.
+
+==== `SIGINT` event
+
+The `SIGINT` event is fired when the process is interrupted, this event is fired when the user press
+_Ctrl+C_ during the execution of a command. This handler can be used for interrupting commands _blocking_ the CLI and
+gracefully ending the command process:
+
+[source,js]
+----
+command.processHandler(function (process) {
+  var vertx = process.vertx();
+
+  // Every second print a message on the console
+  var periodicId = vertx.setPeriodic(1000, function (id) {
+    process.write("tick\n");
+  });
+
+  // When user press Ctrl+C: cancel the timer and end the process
+  process.eventHandler("SIGINT", function (event) {
+    vertx.cancelTimer(periodicId);
+    process.end();
+  });
+});
+
+----
+
+When no `SIGINT` handler is registered, pressing _Ctrl+C_ will have no effect.
+
+==== `SIGTSTP`/`SIGCONT` events
+
+todo.
+
+==== `SIGWINCH` event
+
+todo.
