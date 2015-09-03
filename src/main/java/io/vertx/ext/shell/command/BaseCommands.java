@@ -143,8 +143,8 @@ public interface BaseCommands {
     return shared_data;
   }
 
-  static Command ls() {
-    Command cmd = Command.command("ls");
+  static Command fs_ls() {
+    Command cmd = Command.command("fs-ls");
     cmd.completeHandler(completion -> {
       String last;
       int s = completion.lineTokens().size();

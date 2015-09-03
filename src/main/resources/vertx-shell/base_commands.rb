@@ -57,11 +57,11 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling bus_tail()"
     end
     # @return [::VertxShell::Command]
-    def self.ls
+    def self.fs_ls
       if !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::BaseCommands.java_method(:ls, []).call(),::VertxShell::Command)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::BaseCommands.java_method(:fs_ls, []).call(),::VertxShell::Command)
       end
-      raise ArgumentError, "Invalid arguments when calling ls()"
+      raise ArgumentError, "Invalid arguments when calling fs_ls()"
     end
     # @return [::VertxShell::Command]
     def self.sleep

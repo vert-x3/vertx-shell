@@ -121,10 +121,10 @@ BaseCommands.bus_tail = function() {
 
  @return {Command}
  */
-BaseCommands.ls = function() {
+BaseCommands.fs_ls = function() {
   var __args = arguments;
   if (__args.length === 0) {
-    return utils.convReturnVertxGen(JBaseCommands["ls()"](), Command);
+    return utils.convReturnVertxGen(JBaseCommands["fs_ls()"](), Command);
   } else utils.invalidArgs();
 };
 
