@@ -18,31 +18,23 @@ public class ShellServiceOptions {
   public static final String DEFAULT_WELCOME_MESSAGE = "Welcome to Vert.x Shell\n\n";
   public static final List<ConnectorOptions> DEFAULT_CONNECTORS = Collections.emptyList();
 
-  private List<ConnectorOptions> connectors;
   private String welcomeMessage;
+  private TelnetOptions telnet;
+  private SSHOptions ssh;
 
   public ShellServiceOptions() {
-    connectors = new ArrayList<>(DEFAULT_CONNECTORS);
     welcomeMessage = DEFAULT_WELCOME_MESSAGE;
   }
 
   public ShellServiceOptions(ShellServiceOptions that) {
-    this.connectors = new ArrayList<>(that.connectors);
+    this.telnet = that.telnet != null ? new TelnetOptions(that.telnet) : null;
     this.welcomeMessage = that.welcomeMessage;
   }
 
   public ShellServiceOptions(JsonObject json) {
     welcomeMessage = json.getString("welcomeMessage", DEFAULT_WELCOME_MESSAGE);
-    connectors = json.getJsonArray("connectors", new JsonArray()).stream().map(obj -> (JsonObject)obj).map(TelnetOptions::new).collect(Collectors.toList());
-  }
-
-  public List<ConnectorOptions> getConnectors() {
-    return connectors;
-  }
-
-  public ShellServiceOptions addConnector(ConnectorOptions connector) {
-    connectors.add(connector);
-    return this;
+    telnet = json.getJsonObject("telnet") != null ? new TelnetOptions(json.getJsonObject("telnet")) : null;
+    ssh = json.getJsonObject("ssh") != null ? new SSHOptions(json.getJsonObject("ssh")) : null;
   }
 
   public String getWelcomeMessage() {
@@ -51,6 +43,24 @@ public class ShellServiceOptions {
 
   public ShellServiceOptions setWelcomeMessage(String welcomeMessage) {
     this.welcomeMessage = welcomeMessage;
+    return this;
+  }
+
+  public TelnetOptions getTelnet() {
+    return telnet;
+  }
+
+  public ShellServiceOptions setTelnet(TelnetOptions telnet) {
+    this.telnet = telnet;
+    return this;
+  }
+
+  public SSHOptions getSSH() {
+    return ssh;
+  }
+
+  public ShellServiceOptions setSSH(SSHOptions ssh) {
+    this.ssh = ssh;
     return this;
   }
 }

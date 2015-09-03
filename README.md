@@ -10,6 +10,11 @@ in another shell:
 
 > telnet localhost 5000
 
+or
+
+> ssh -p 4000 whatever@localhost
+
+
 # Test drive with Vert.x 3.0
 
 > mvn install
@@ -18,6 +23,10 @@ in another shell:
 in another shell:
 
 > telnet localhost 5000
+
+or
+
+> ssh -p 4000 whatever@localhost
 
 ## Features
 

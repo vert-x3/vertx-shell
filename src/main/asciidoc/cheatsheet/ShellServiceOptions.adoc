@@ -10,9 +10,12 @@
 |===
 ^|Name | Type ^| Description
 
-|[[connectors]]`connectors`
-|`Array of link:ConnectorOptions.html[ConnectorOptions]`
-|-
 |[[welcomeMessage]]`welcomeMessage`
 |`String`
+|-
+|[[telnet]]`telnet`
+|`link:TelnetOptions.html[TelnetOptions]`
+|-
+|[[ssh]]`ssh`
+|`link:SSHOptions.html[SSHOptions]`
 |-|===
