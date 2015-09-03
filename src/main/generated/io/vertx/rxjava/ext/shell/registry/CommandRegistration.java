@@ -14,11 +14,12 @@
  * under the License.
  */
 
-package io.vertx.rxjava.ext.shell.command;
+package io.vertx.rxjava.ext.shell.registry;
 
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
+import io.vertx.rxjava.ext.shell.command.Command;
 import java.util.List;
 import io.vertx.rxjava.ext.shell.cli.Completion;
 import io.vertx.rxjava.ext.shell.cli.CliToken;
@@ -28,14 +29,14 @@ import io.vertx.rxjava.ext.shell.process.Process;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  *
  * <p/>
- * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.command.ManagedCommand original} non RX-ified interface using Vert.x codegen.
+ * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.registry.CommandRegistration original} non RX-ified interface using Vert.x codegen.
  */
 
-public class ManagedCommand {
+public class CommandRegistration {
 
-  final io.vertx.ext.shell.command.ManagedCommand delegate;
+  final io.vertx.ext.shell.registry.CommandRegistration delegate;
 
-  public ManagedCommand(io.vertx.ext.shell.command.ManagedCommand delegate) {
+  public CommandRegistration(io.vertx.ext.shell.registry.CommandRegistration delegate) {
     this.delegate = delegate;
   }
 
@@ -58,7 +59,7 @@ public class ManagedCommand {
   }
 
 
-  public static ManagedCommand newInstance(io.vertx.ext.shell.command.ManagedCommand arg) {
-    return arg != null ? new ManagedCommand(arg) : null;
+  public static CommandRegistration newInstance(io.vertx.ext.shell.registry.CommandRegistration arg) {
+    return arg != null ? new CommandRegistration(arg) : null;
   }
 }

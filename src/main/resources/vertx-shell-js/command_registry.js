@@ -14,37 +14,38 @@
  * under the License.
  */
 
-/** @module vertx-shell-js/command_manager */
+/** @module vertx-shell-js/command_registry */
 var utils = require('vertx-js/util/utils');
+var CommandRegistration = require('vertx-shell-js/command_registration');
 var Command = require('vertx-shell-js/command');
 var Completion = require('vertx-shell-js/completion');
-var ManagedCommand = require('vertx-shell-js/managed_command');
 var CliToken = require('vertx-shell-js/cli_token');
 var Process = require('vertx-shell-js/process');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JCommandManager = io.vertx.ext.shell.command.CommandManager;
+var JCommandRegistry = io.vertx.ext.shell.registry.CommandRegistry;
 
 /**
 
  @class
 */
-var CommandManager = function(j_val) {
+var CommandRegistry = function(j_val) {
 
-  var j_commandManager = j_val;
+  var j_commandRegistry = j_val;
   var that = this;
 
   /**
+   @return the current command registrations
 
    @public
 
-   @return {Array.<ManagedCommand>}
+   @return {Array.<CommandRegistration>}
    */
-  this.commands = function() {
+  this.registrations = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnListSetVertxGen(j_commandManager["commands()"](), ManagedCommand);
+      return utils.convReturnListSetVertxGen(j_commandRegistry["registrations()"](), CommandRegistration);
     } else utils.invalidArgs();
   };
 
@@ -57,7 +58,7 @@ var CommandManager = function(j_val) {
   this.createProcess = function() {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_commandManager["createProcess(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+      j_commandRegistry["createProcess(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
       if (ar.succeeded()) {
         __args[1](utils.convReturnVertxGen(ar.result(), Process), null);
       } else {
@@ -65,7 +66,7 @@ var CommandManager = function(j_val) {
       }
     });
     }  else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0] instanceof Array && typeof __args[1] === 'function') {
-      j_commandManager["createProcess(java.util.List,io.vertx.core.Handler)"](utils.convParamListVertxGen(__args[0]), function(ar) {
+      j_commandRegistry["createProcess(java.util.List,io.vertx.core.Handler)"](utils.convParamListVertxGen(__args[0]), function(ar) {
       if (ar.succeeded()) {
         __args[1](utils.convReturnVertxGen(ar.result(), Process), null);
       } else {
@@ -83,7 +84,7 @@ var CommandManager = function(j_val) {
   this.complete = function(completion) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_commandManager["complete(io.vertx.ext.shell.cli.Completion)"](completion._jdel);
+      j_commandRegistry["complete(io.vertx.ext.shell.cli.Completion)"](completion._jdel);
     } else utils.invalidArgs();
   };
 
@@ -96,9 +97,9 @@ var CommandManager = function(j_val) {
   this.registerCommand = function() {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_commandManager["registerCommand(io.vertx.ext.shell.command.Command)"](__args[0]._jdel);
+      j_commandRegistry["registerCommand(io.vertx.ext.shell.command.Command)"](__args[0]._jdel);
     }  else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'function') {
-      j_commandManager["registerCommand(io.vertx.ext.shell.command.Command,io.vertx.core.Handler)"](__args[0]._jdel, function(ar) {
+      j_commandRegistry["registerCommand(io.vertx.ext.shell.command.Command,io.vertx.core.Handler)"](__args[0]._jdel, function(ar) {
       if (ar.succeeded()) {
         __args[1](null, null);
       } else {
@@ -116,28 +117,28 @@ var CommandManager = function(j_val) {
   this.release = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      j_commandManager["release()"]();
+      j_commandRegistry["release()"]();
     } else utils.invalidArgs();
   };
 
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
-  this._jdel = j_commandManager;
+  this._jdel = j_commandRegistry;
 };
 
 /**
 
- @memberof module:vertx-shell-js/command_manager
+ @memberof module:vertx-shell-js/command_registry
  @param vertx {Vertx} 
- @return {CommandManager}
+ @return {CommandRegistry}
  */
-CommandManager.get = function(vertx) {
+CommandRegistry.get = function(vertx) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-    return utils.convReturnVertxGen(JCommandManager["get(io.vertx.core.Vertx)"](vertx._jdel), CommandManager);
+    return utils.convReturnVertxGen(JCommandRegistry["get(io.vertx.core.Vertx)"](vertx._jdel), CommandRegistry);
   } else utils.invalidArgs();
 };
 
 // We export the Constructor function
-module.exports = CommandManager;
+module.exports = CommandRegistry;

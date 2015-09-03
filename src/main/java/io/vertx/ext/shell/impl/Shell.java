@@ -8,7 +8,7 @@ import io.termd.core.util.Helper;
 import io.termd.core.util.Vector;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.command.CommandManager;
+import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.cli.CliToken;
 
 import java.io.IOException;
@@ -31,14 +31,14 @@ public class Shell {
   final Vertx vertx;
   final TtyConnection conn;
   final Readline readline;
-  final CommandManager mgr;
+  final CommandRegistry mgr;
   Vector size;
   Job foregroundJob;
   final SortedMap<Integer, Job> jobs = new TreeMap<>();
   String welcome;
 
 
-  public Shell(Vertx vertx, TtyConnection conn, CommandManager mgr) {
+  public Shell(Vertx vertx, TtyConnection conn, CommandRegistry mgr) {
 
     InputStream inputrc = KeyDecoder.class.getResourceAsStream("inputrc");
     Keymap keymap = new Keymap(inputrc);

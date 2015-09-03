@@ -1,4 +1,4 @@
-package io.vertx.ext.shell.command.impl;
+package io.vertx.ext.shell.registry.impl;
 
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
@@ -7,7 +7,8 @@ import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.Stream;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandProcess;
-import io.vertx.ext.shell.command.ManagedCommand;
+import io.vertx.ext.shell.command.impl.CommandImpl;
+import io.vertx.ext.shell.registry.CommandRegistration;
 import io.vertx.ext.shell.process.Process;
 import io.vertx.ext.shell.process.ProcessContext;
 
@@ -19,7 +20,7 @@ import java.util.List;
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class ManagedCommandImpl implements ManagedCommand {
+public class CommandRegistrationImpl implements CommandRegistration {
 
   final Vertx vertx;
   final Context context;
@@ -27,7 +28,7 @@ public class ManagedCommandImpl implements ManagedCommand {
   final Handler<CommandProcess> processHandler;
   final Handler<Completion> completionHandler;
 
-  public ManagedCommandImpl(Vertx vertx, Context context, CommandImpl command) {
+  public CommandRegistrationImpl(Vertx vertx, Context context, CommandImpl command) {
     this.vertx = vertx;
     this.context = context;
     this.command = command;
@@ -80,7 +81,7 @@ public class ManagedCommandImpl implements ManagedCommand {
           @Override
           public CommandProcess setStdin(Stream stdin) {
             if (stdin != null) {
-              context.tty().setStdin(event -> ManagedCommandImpl.this.context.runOnContext(v -> stdin.handle(event)));
+              context.tty().setStdin(event -> CommandRegistrationImpl.this.context.runOnContext(v -> stdin.handle(event)));
             } else {
               context.tty().setStdin(null);
             }
@@ -99,7 +100,7 @@ public class ManagedCommandImpl implements ManagedCommand {
           public CommandProcess eventHandler(String event, Handler<Void> handler) {
             if (handler != null) {
               context.tty().eventHandler(event, v -> {
-                ManagedCommandImpl.this.context.runOnContext(v2 -> {
+                CommandRegistrationImpl.this.context.runOnContext(v2 -> {
                   handler.handle(null);
                 });
               });
@@ -119,7 +120,7 @@ public class ManagedCommandImpl implements ManagedCommand {
             context.end(status);
           }
         };
-        ManagedCommandImpl.this.context.runOnContext(v -> {
+        CommandRegistrationImpl.this.context.runOnContext(v -> {
           processHandler.handle(process);
         });
       }

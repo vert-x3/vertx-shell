@@ -11,8 +11,8 @@ import io.vertx.ext.shell.command.CommandProcess;
 public class CommandImpl implements Command {
 
   final String name;
-  Handler<CommandProcess> processHandler;
-  Handler<Completion> completeHandler;
+  public Handler<CommandProcess> processHandler;
+  public Handler<Completion> completeHandler;
 
   public CommandImpl(String name) {
     this.name = name;

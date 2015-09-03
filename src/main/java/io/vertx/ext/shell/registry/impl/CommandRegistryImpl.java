@@ -1,4 +1,4 @@
-package io.vertx.ext.shell.command.impl;
+package io.vertx.ext.shell.registry.impl;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
@@ -8,12 +8,12 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.command.CommandManager;
-import io.vertx.ext.shell.command.ManagedCommand;
+import io.vertx.ext.shell.command.impl.CommandImpl;
+import io.vertx.ext.shell.registry.CommandRegistry;
+import io.vertx.ext.shell.registry.CommandRegistration;
 import io.vertx.ext.shell.process.Process;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,25 +25,25 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class CommandManagerImpl implements CommandManager {
+public class CommandRegistryImpl implements CommandRegistry {
 
-  private static ConcurrentHashMap<Vertx, CommandManagerImpl> managers = new ConcurrentHashMap<>();
+  private static ConcurrentHashMap<Vertx, CommandRegistryImpl> managers = new ConcurrentHashMap<>();
 
-  public static CommandManager get(Vertx vertx) {
-    CommandManagerImpl mgr = managers.computeIfAbsent(vertx, CommandManagerImpl::new);
+  public static CommandRegistry get(Vertx vertx) {
+    CommandRegistryImpl mgr = managers.computeIfAbsent(vertx, CommandRegistryImpl::new);
     mgr.refCount.incrementAndGet();
     return mgr;
   }
 
   private AtomicInteger refCount = new AtomicInteger();
   private final Vertx vertx;
-  private final ConcurrentHashMap<String, ManagedCommand> commandMap = new ConcurrentHashMap<>();
+  private final ConcurrentHashMap<String, CommandRegistration> commandMap = new ConcurrentHashMap<>();
 
-  public CommandManagerImpl(Vertx vertx) {
+  public CommandRegistryImpl(Vertx vertx) {
     this.vertx = vertx;
   }
 
-  public List<ManagedCommand> commands() {
+  public List<CommandRegistration> registrations() {
     return new ArrayList<>(commandMap.values());
   }
 
@@ -56,11 +56,11 @@ public class CommandManagerImpl implements CommandManager {
   @Override
   public void registerCommand(Command command, Handler<AsyncResult<Void>> handler) {
     Context context = vertx.getOrCreateContext();
-    commandMap.put(command.name(), new ManagedCommandImpl(vertx, context, (CommandImpl) command));
+    commandMap.put(command.name(), new CommandRegistrationImpl(vertx, context, (CommandImpl) command));
     handler.handle(Future.succeededFuture());
   }
 
-  public ManagedCommand getCommand(String name) {
+  public CommandRegistration getCommand(String name) {
     return commandMap.get(name);
   }
 
@@ -93,7 +93,7 @@ public class CommandManagerImpl implements CommandManager {
     while (tokens.hasNext()) {
       CliToken token = tokens.next();
       if (token.isText()) {
-        ManagedCommand command = getCommand(token.value());
+        CommandRegistration command = getCommand(token.value());
         if (command == null) {
           throw new IllegalArgumentException(token.value() + ": command not found");
         }
@@ -130,7 +130,7 @@ public class CommandManagerImpl implements CommandManager {
           StringBuilder tmp = new StringBuilder();
           newTokens.stream().forEach(token -> tmp.append(token.raw()));
           String line = tmp.toString();
-          ManagedCommand command = getCommand(ct.value());
+          CommandRegistration command = getCommand(ct.value());
           if (command != null) {
             command.complete(new Completion() {
               @Override
@@ -161,7 +161,7 @@ public class CommandManagerImpl implements CommandManager {
       }
     } else {
       String prefix = tokens.size() > 0 ? tokens.getFirst().value() : "";
-      List<String> names = commands().
+      List<String> names = registrations().
           stream().
           map(cmd -> cmd.command().name()).
           filter(name -> name.startsWith(prefix)).

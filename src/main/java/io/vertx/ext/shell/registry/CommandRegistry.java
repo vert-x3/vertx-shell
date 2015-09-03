@@ -1,4 +1,4 @@
-package io.vertx.ext.shell.command;
+package io.vertx.ext.shell.registry;
 
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
@@ -6,8 +6,8 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.command.impl.CommandManagerImpl;
-import io.vertx.ext.shell.process.*;
+import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.registry.impl.CommandRegistryImpl;
 import io.vertx.ext.shell.process.Process;
 
 import java.util.List;
@@ -16,13 +16,16 @@ import java.util.List;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
-public interface CommandManager {
+public interface CommandRegistry {
 
-  static CommandManager get(Vertx vertx) {
-    return CommandManagerImpl.get(vertx);
+  static CommandRegistry get(Vertx vertx) {
+    return CommandRegistryImpl.get(vertx);
   }
 
-  List<ManagedCommand> commands();
+  /**
+   * @return the current command registrations
+   */
+  List<CommandRegistration> registrations();
 
   void createProcess(String s, Handler<AsyncResult<Process>> handler);
 

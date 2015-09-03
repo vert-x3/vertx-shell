@@ -8,7 +8,7 @@ import io.termd.core.telnet.vertx.VertxTelnetBootstrap;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.BaseCommands;
-import io.vertx.ext.shell.command.CommandManager;
+import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.impl.Shell;
 import org.apache.sshd.SshServer;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 public interface ShellService {
 
   static ShellService create(Vertx vertx, ShellServiceOptions options) {
-    CommandManager mgr = CommandManager.get(vertx);
+    CommandRegistry mgr = CommandRegistry.get(vertx);
     mgr.registerCommand(BaseCommands.echo());
     mgr.registerCommand(BaseCommands.ls());
     mgr.registerCommand(BaseCommands.sleep());

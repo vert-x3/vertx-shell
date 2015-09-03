@@ -1,37 +1,38 @@
+require 'vertx-shell/command_registration'
 require 'vertx-shell/command'
 require 'vertx-shell/completion'
-require 'vertx-shell/managed_command'
 require 'vertx-shell/cli_token'
 require 'vertx-shell/process'
 require 'vertx/util/utils.rb'
-# Generated from io.vertx.ext.shell.command.CommandManager
+# Generated from io.vertx.ext.shell.registry.CommandRegistry
 module VertxShell
   #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
-  class CommandManager
+  class CommandRegistry
     # @private
-    # @param j_del [::VertxShell::CommandManager] the java delegate
+    # @param j_del [::VertxShell::CommandRegistry] the java delegate
     def initialize(j_del)
       @j_del = j_del
     end
     # @private
-    # @return [::VertxShell::CommandManager] the underlying java delegate
+    # @return [::VertxShell::CommandRegistry] the underlying java delegate
     def j_del
       @j_del
     end
     # @param [::Vertx::Vertx] vertx 
-    # @return [::VertxShell::CommandManager]
+    # @return [::VertxShell::CommandRegistry]
     def self.get(vertx=nil)
       if vertx.class.method_defined?(:j_del) && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandManager.java_method(:get, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::CommandManager)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellRegistry::CommandRegistry.java_method(:get, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::CommandRegistry)
       end
       raise ArgumentError, "Invalid arguments when calling get(vertx)"
     end
-    # @return [Array<::VertxShell::ManagedCommand>]
-    def commands
+    #  @return the current command registrations
+    # @return [Array<::VertxShell::CommandRegistration>]
+    def registrations
       if !block_given?
-        return @j_del.java_method(:commands, []).call().to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::ManagedCommand) }
+        return @j_del.java_method(:registrations, []).call().to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::CommandRegistration) }
       end
-      raise ArgumentError, "Invalid arguments when calling commands()"
+      raise ArgumentError, "Invalid arguments when calling registrations()"
     end
     # @overload createProcess(s,handler)
     #   @param [String] s 

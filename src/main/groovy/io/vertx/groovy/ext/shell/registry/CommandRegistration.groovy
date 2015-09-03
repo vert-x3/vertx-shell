@@ -14,9 +14,10 @@
  * under the License.
  */
 
-package io.vertx.groovy.ext.shell.command;
+package io.vertx.groovy.ext.shell.registry;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import io.vertx.groovy.ext.shell.command.Command
 import java.util.List
 import io.vertx.groovy.ext.shell.cli.Completion
 import io.vertx.groovy.ext.shell.cli.CliToken
@@ -25,9 +26,9 @@ import io.vertx.groovy.ext.shell.process.Process
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
-public class ManagedCommand {
-  final def io.vertx.ext.shell.command.ManagedCommand delegate;
-  public ManagedCommand(io.vertx.ext.shell.command.ManagedCommand delegate) {
+public class CommandRegistration {
+  final def io.vertx.ext.shell.registry.CommandRegistration delegate;
+  public CommandRegistration(io.vertx.ext.shell.registry.CommandRegistration delegate) {
     this.delegate = delegate;
   }
   public Object getDelegate() {

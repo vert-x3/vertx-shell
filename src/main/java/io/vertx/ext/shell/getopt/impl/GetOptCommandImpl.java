@@ -57,49 +57,60 @@ public class GetOptCommandImpl implements GetOptCommand {
           public Vertx vertx() {
             return a.vertx();
           }
+
           @Override
           public List<CliToken> args() {
             return a.args();
           }
+
           @Override
           public List<String> arguments() {
             return req.getArguments();
           }
+
           @Override
           public List<String> getOption(String name) {
             return req.getOptions().get(name);
           }
+
           @Override
           public int width() {
             return a.width();
           }
+
           @Override
           public int height() {
             return a.height();
           }
+
           @Override
           public GetOptCommandProcess setStdin(Stream stdin) {
             a.setStdin(stdin);
             return this;
           }
+
           @Override
           public GetOptCommandProcess eventHandler(String event, Handler<Void> handler) {
             a.eventHandler(event, handler);
             return this;
           }
+
           @Override
           public Stream stdout() {
             return a.stdout();
           }
+
           @Override
           public GetOptCommandProcess write(String text) {
             a.write(text);
             return this;
           }
+
           @Override
           public void end() {
             a.end();
           }
+
           @Override
           public void end(int status) {
             a.end(status);

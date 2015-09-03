@@ -4,7 +4,7 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.command.CommandManager;
+import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.unit.junit.RunTestOnContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.Before;
@@ -26,18 +26,21 @@ public class CompletionTest {
   @Rule
   public final RunTestOnContext rule = new RunTestOnContext();
 
-  private CommandManager mgr;
+  private CommandRegistry mgr;
 
   @Before
   public void before() {
-    mgr = CommandManager.get(rule.vertx());
-    mgr.registerCommand(Command.command("foo").processHandler(proc -> {}).completeHandler(
+    mgr = CommandRegistry.get(rule.vertx());
+    mgr.registerCommand(Command.command("foo").processHandler(proc -> {
+    }).completeHandler(
         completion -> {
           completion.complete("completed_by_foo", false);
         }
     ));
-    mgr.registerCommand(Command.command("bar").processHandler(proc -> {}));
-    mgr.registerCommand(Command.command("baz").processHandler(proc -> {}));
+    mgr.registerCommand(Command.command("bar").processHandler(proc -> {
+    }));
+    mgr.registerCommand(Command.command("baz").processHandler(proc -> {
+    }));
   }
 
   @Test

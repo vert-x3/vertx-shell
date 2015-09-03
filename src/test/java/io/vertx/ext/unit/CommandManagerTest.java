@@ -3,8 +3,8 @@ package io.vertx.ext.unit;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.command.CommandManager;
-import io.vertx.ext.shell.command.impl.CommandManagerImpl;
+import io.vertx.ext.shell.registry.CommandRegistry;
+import io.vertx.ext.shell.registry.impl.CommandRegistryImpl;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +21,7 @@ public class CommandManagerTest {
 
   @Test
   public void testEval(TestContext context) {
-    CommandManagerImpl mgr = (CommandManagerImpl) CommandManager.get(vertx);
+    CommandRegistryImpl mgr = (CommandRegistryImpl) CommandRegistry.get(vertx);
     Command command = Command.command("hello");
     command.processHandler(process -> {
       context.assertEquals(Arrays.asList(CliToken.createBlank(" "), CliToken.createText("world")), process.args());

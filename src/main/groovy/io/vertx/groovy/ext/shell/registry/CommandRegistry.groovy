@@ -14,10 +14,11 @@
  * under the License.
  */
 
-package io.vertx.groovy.ext.shell.command;
+package io.vertx.groovy.ext.shell.registry;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import java.util.List
+import io.vertx.groovy.ext.shell.command.Command
 import io.vertx.groovy.ext.shell.cli.Completion
 import io.vertx.groovy.core.Vertx
 import io.vertx.core.AsyncResult
@@ -28,20 +29,24 @@ import io.vertx.groovy.ext.shell.process.Process
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
-public class CommandManager {
-  final def io.vertx.ext.shell.command.CommandManager delegate;
-  public CommandManager(io.vertx.ext.shell.command.CommandManager delegate) {
+public class CommandRegistry {
+  final def io.vertx.ext.shell.registry.CommandRegistry delegate;
+  public CommandRegistry(io.vertx.ext.shell.registry.CommandRegistry delegate) {
     this.delegate = delegate;
   }
   public Object getDelegate() {
     return delegate;
   }
-  public static CommandManager get(Vertx vertx) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandManager.get((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.ext.shell.command.CommandManager.class, io.vertx.groovy.ext.shell.command.CommandManager.class);
+  public static CommandRegistry get(Vertx vertx) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.registry.CommandRegistry.get((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.ext.shell.registry.CommandRegistry.class, io.vertx.groovy.ext.shell.registry.CommandRegistry.class);
     return ret;
   }
-  public List<ManagedCommand> commands() {
-    def ret = this.delegate.commands()?.collect({underpants -> new io.vertx.groovy.ext.shell.command.ManagedCommand(underpants)});
+  /**
+   * @return the current command registrations
+   * @return 
+   */
+  public List<CommandRegistration> registrations() {
+    def ret = this.delegate.registrations()?.collect({underpants -> new io.vertx.groovy.ext.shell.registry.CommandRegistration(underpants)});
       return ret;
   }
   public void createProcess(String s, Handler<AsyncResult<Process>> handler) {

@@ -2,7 +2,7 @@ package io.vertx.ext.shell;
 
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.command.CommandManager;
+import io.vertx.ext.shell.registry.CommandRegistry;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -13,7 +13,7 @@ public class Main {
 
     Vertx vertx = Vertx.vertx();
 
-    CommandManager mgr = CommandManager.get(vertx);
+    CommandRegistry mgr = CommandRegistry.get(vertx);
 
     Command echoKeyboardCmd = Command.command("echo-keyboard");
     echoKeyboardCmd.processHandler(process -> {

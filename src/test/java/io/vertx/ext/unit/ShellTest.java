@@ -3,7 +3,7 @@ package io.vertx.ext.unit;
 import io.termd.core.tty.TtyEvent;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.command.CommandManager;
+import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.impl.Job;
 import io.vertx.ext.shell.impl.JobStatus;
 import io.vertx.ext.shell.impl.Shell;
@@ -26,7 +26,7 @@ public class ShellTest {
 
   @Test
   public void testVertx(TestContext context) {
-    CommandManager manager = CommandManager.get(vertx);
+    CommandRegistry manager = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
@@ -40,7 +40,7 @@ public class ShellTest {
 
   @Test
   public void testExecuteProcess(TestContext context) {
-    CommandManager manager = CommandManager.get(vertx);
+    CommandRegistry manager = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
@@ -60,7 +60,7 @@ public class ShellTest {
 
   @Test
   public void testHandleReadlineBuffered(TestContext context) {
-    CommandManager manager = CommandManager.get(vertx);
+    CommandRegistry manager = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
@@ -77,7 +77,7 @@ public class ShellTest {
 
   @Test
   public void testExecuteReadlineBuffered(TestContext context) {
-    CommandManager manager = CommandManager.get(vertx);
+    CommandRegistry manager = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
@@ -95,7 +95,7 @@ public class ShellTest {
 
   @Test
   public void testSuspendProcess(TestContext context) throws Exception {
-    CommandManager manager = CommandManager.get(vertx);
+    CommandRegistry manager = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
@@ -117,7 +117,7 @@ public class ShellTest {
 
   @Test
   public void testSuspendedProcessDisconnectedFromTty(TestContext context) throws Exception {
-    CommandManager manager = CommandManager.get(vertx);
+    CommandRegistry manager = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
@@ -158,7 +158,7 @@ public class ShellTest {
 
   @Test
   public void testResumeProcessToForeground(TestContext context) throws Exception {
-    CommandManager manager = CommandManager.get(vertx);
+    CommandRegistry manager = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
@@ -202,7 +202,7 @@ public class ShellTest {
 
   @Test
   public void testResumeProcessToBackground(TestContext context) throws Exception {
-    CommandManager manager = CommandManager.get(vertx);
+    CommandRegistry manager = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
@@ -250,7 +250,7 @@ public class ShellTest {
 
   @Test
   public void backgroundToForeground(TestContext context) throws Exception {
-    CommandManager manager = CommandManager.get(vertx);
+    CommandRegistry manager = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();

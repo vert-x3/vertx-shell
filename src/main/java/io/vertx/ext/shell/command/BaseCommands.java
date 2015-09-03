@@ -7,6 +7,8 @@ import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.getopt.GetOptCommand;
 import io.vertx.ext.shell.getopt.GetOptCommandProcess;
+import io.vertx.ext.shell.registry.CommandRegistration;
+import io.vertx.ext.shell.registry.CommandRegistry;
 
 import java.util.Collections;
 import java.util.List;
@@ -191,10 +193,10 @@ public interface BaseCommands {
   static Command help() {
     Command help = Command.command("help");
     help.processHandler(process -> {
-      CommandManager manager = CommandManager.get(process.vertx());
-      manager.commands();
+      CommandRegistry manager = CommandRegistry.get(process.vertx());
+      manager.registrations();
       process.write("available commands:\n");
-      for (ManagedCommand command : manager.commands()) {
+      for (CommandRegistration command : manager.registrations()) {
         process.write(command.command().name()).write("\n");
       }
       process.end();

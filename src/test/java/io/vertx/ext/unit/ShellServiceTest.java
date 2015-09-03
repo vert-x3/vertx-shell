@@ -3,7 +3,7 @@ package io.vertx.ext.unit;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.command.CommandManager;
+import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +23,7 @@ public class ShellServiceTest {
 
   @Test
   public void testRun(TestContext context) {
-    CommandManager manager = CommandManager.get(vertx);
+    CommandRegistry manager = CommandRegistry.get(vertx);
     Command cmd = Command.command("foo");
     cmd.processHandler(process -> {
       process.end(3);
@@ -41,7 +41,7 @@ public class ShellServiceTest {
 
   @Test
   public void testStdin(TestContext context) {
-    CommandManager manager = CommandManager.get(vertx);
+    CommandRegistry manager = CommandRegistry.get(vertx);
     Command cmd = Command.command("foo");
     CountDownLatch latch = new CountDownLatch(1);
     cmd.processHandler(process -> {
@@ -72,7 +72,7 @@ public class ShellServiceTest {
 
   @Test
   public void testStdout(TestContext context) {
-    CommandManager manager = CommandManager.get(vertx);
+    CommandRegistry manager = CommandRegistry.get(vertx);
     Command cmd = Command.command("foo");
     cmd.processHandler(process -> {
       process.stdout().handle("bye_world");
@@ -98,7 +98,7 @@ public class ShellServiceTest {
   public void testVertxContext(TestContext testContext) throws Exception {
     Context commandCtx = vertx.getOrCreateContext();
     Context shellCtx = vertx.getOrCreateContext();
-    CommandManager manager = CommandManager.get(vertx);
+    CommandRegistry manager = CommandRegistry.get(vertx);
     Async async = testContext.async();
     CountDownLatch latch = new CountDownLatch(1);
     commandCtx.runOnContext(v1 -> {
@@ -146,7 +146,7 @@ public class ShellServiceTest {
 
   @Test
   public void testSendEvent(TestContext context) {
-    CommandManager manager = CommandManager.get(vertx);
+    CommandRegistry manager = CommandRegistry.get(vertx);
     Command cmd = Command.command("foo");
     CountDownLatch latch = new CountDownLatch(1);
     cmd.processHandler(process -> {
@@ -175,7 +175,7 @@ public class ShellServiceTest {
 
   @Test
   public void testResize(TestContext context) {
-    CommandManager manager = CommandManager.get(vertx);
+    CommandRegistry manager = CommandRegistry.get(vertx);
     Command cmd = Command.command("foo");
     cmd.processHandler(process -> {
       context.assertEquals(20, process.width());

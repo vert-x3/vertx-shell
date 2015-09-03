@@ -3,17 +3,17 @@ require 'vertx-shell/completion'
 require 'vertx-shell/cli_token'
 require 'vertx-shell/process'
 require 'vertx/util/utils.rb'
-# Generated from io.vertx.ext.shell.command.ManagedCommand
+# Generated from io.vertx.ext.shell.registry.CommandRegistration
 module VertxShell
   #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
-  class ManagedCommand
+  class CommandRegistration
     # @private
-    # @param j_del [::VertxShell::ManagedCommand] the java delegate
+    # @param j_del [::VertxShell::CommandRegistration] the java delegate
     def initialize(j_del)
       @j_del = j_del
     end
     # @private
-    # @return [::VertxShell::ManagedCommand] the underlying java delegate
+    # @return [::VertxShell::CommandRegistration] the underlying java delegate
     def j_del
       @j_del
     end

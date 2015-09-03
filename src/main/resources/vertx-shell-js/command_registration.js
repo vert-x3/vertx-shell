@@ -14,7 +14,7 @@
  * under the License.
  */
 
-/** @module vertx-shell-js/managed_command */
+/** @module vertx-shell-js/command_registration */
 var utils = require('vertx-js/util/utils');
 var Command = require('vertx-shell-js/command');
 var Completion = require('vertx-shell-js/completion');
@@ -23,15 +23,15 @@ var Process = require('vertx-shell-js/process');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JManagedCommand = io.vertx.ext.shell.command.ManagedCommand;
+var JCommandRegistration = io.vertx.ext.shell.registry.CommandRegistration;
 
 /**
 
  @class
 */
-var ManagedCommand = function(j_val) {
+var CommandRegistration = function(j_val) {
 
-  var j_managedCommand = j_val;
+  var j_commandRegistration = j_val;
   var that = this;
 
   /**
@@ -43,7 +43,7 @@ var ManagedCommand = function(j_val) {
   this.command = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_managedCommand["command()"](), Command);
+      return utils.convReturnVertxGen(j_commandRegistration["command()"](), Command);
     } else utils.invalidArgs();
   };
 
@@ -55,7 +55,7 @@ var ManagedCommand = function(j_val) {
   this.complete = function(completion) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_managedCommand["complete(io.vertx.ext.shell.cli.Completion)"](completion._jdel);
+      j_commandRegistration["complete(io.vertx.ext.shell.cli.Completion)"](completion._jdel);
     } else utils.invalidArgs();
   };
 
@@ -68,15 +68,15 @@ var ManagedCommand = function(j_val) {
   this.createProcess = function(args) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0] instanceof Array) {
-      return utils.convReturnVertxGen(j_managedCommand["createProcess(java.util.List)"](utils.convParamListVertxGen(args)), Process);
+      return utils.convReturnVertxGen(j_commandRegistration["createProcess(java.util.List)"](utils.convParamListVertxGen(args)), Process);
     } else utils.invalidArgs();
   };
 
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
-  this._jdel = j_managedCommand;
+  this._jdel = j_commandRegistration;
 };
 
 // We export the Constructor function
-module.exports = ManagedCommand;
+module.exports = CommandRegistration;

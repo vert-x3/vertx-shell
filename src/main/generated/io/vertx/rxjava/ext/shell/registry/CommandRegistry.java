@@ -14,12 +14,13 @@
  * under the License.
  */
 
-package io.vertx.rxjava.ext.shell.command;
+package io.vertx.rxjava.ext.shell.registry;
 
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
+import io.vertx.rxjava.ext.shell.command.Command;
 import io.vertx.rxjava.ext.shell.cli.Completion;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.core.AsyncResult;
@@ -31,14 +32,14 @@ import io.vertx.rxjava.ext.shell.process.Process;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  *
  * <p/>
- * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.command.CommandManager original} non RX-ified interface using Vert.x codegen.
+ * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.registry.CommandRegistry original} non RX-ified interface using Vert.x codegen.
  */
 
-public class CommandManager {
+public class CommandRegistry {
 
-  final io.vertx.ext.shell.command.CommandManager delegate;
+  final io.vertx.ext.shell.registry.CommandRegistry delegate;
 
-  public CommandManager(io.vertx.ext.shell.command.CommandManager delegate) {
+  public CommandRegistry(io.vertx.ext.shell.registry.CommandRegistry delegate) {
     this.delegate = delegate;
   }
 
@@ -46,13 +47,17 @@ public class CommandManager {
     return delegate;
   }
 
-  public static CommandManager get(Vertx vertx) { 
-    CommandManager ret= CommandManager.newInstance(io.vertx.ext.shell.command.CommandManager.get((io.vertx.core.Vertx) vertx.getDelegate()));
+  public static CommandRegistry get(Vertx vertx) { 
+    CommandRegistry ret= CommandRegistry.newInstance(io.vertx.ext.shell.registry.CommandRegistry.get((io.vertx.core.Vertx) vertx.getDelegate()));
     return ret;
   }
 
-  public List<ManagedCommand> commands() { 
-    List<ManagedCommand> ret = this.delegate.commands().stream().map(ManagedCommand::newInstance).collect(java.util.stream.Collectors.toList());
+  /**
+   * @return the current command registrations
+   * @return 
+   */
+  public List<CommandRegistration> registrations() { 
+    List<CommandRegistration> ret = this.delegate.registrations().stream().map(CommandRegistration::newInstance).collect(java.util.stream.Collectors.toList());
     return ret;
   }
 
@@ -119,7 +124,7 @@ public class CommandManager {
   }
 
 
-  public static CommandManager newInstance(io.vertx.ext.shell.command.CommandManager arg) {
-    return arg != null ? new CommandManager(arg) : null;
+  public static CommandRegistry newInstance(io.vertx.ext.shell.registry.CommandRegistry arg) {
+    return arg != null ? new CommandRegistry(arg) : null;
   }
 }
