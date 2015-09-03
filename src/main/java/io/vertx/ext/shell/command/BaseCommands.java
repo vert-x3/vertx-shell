@@ -3,6 +3,13 @@ package io.vertx.ext.shell.command;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Vertx;
 import io.vertx.core.file.FileProps;
+import io.vertx.core.http.impl.HttpServerImpl;
+import io.vertx.core.impl.VertxInternal;
+import io.vertx.core.net.impl.NetServerImpl;
+import io.vertx.core.net.impl.ServerID;
+import io.vertx.core.shareddata.LocalMap;
+import io.vertx.core.shareddata.SharedData;
+import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.getopt.GetOptCommand;
 import io.vertx.ext.shell.getopt.GetOptCommandProcess;
@@ -10,7 +17,9 @@ import io.vertx.ext.shell.registry.CommandRegistration;
 import io.vertx.ext.shell.registry.CommandRegistry;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -19,6 +28,83 @@ import java.util.stream.Collectors;
  */
 @VertxGen
 public interface BaseCommands {
+
+  static Command server_ls() {
+    Command server_ls = Command.command("server-ls");
+    server_ls.processHandler(process -> {
+      VertxInternal vertx = (VertxInternal) process.vertx();
+      process.write("\nNet Servers:\n");
+      for (Map.Entry<ServerID, NetServerImpl> server : vertx.sharedNetServers().entrySet()) {
+        process.write(server.getKey().host + ":" + server.getKey().port + "\n");
+      }
+      process.write("\nHttp Servers:\n");
+      for (Map.Entry<ServerID, HttpServerImpl> server : vertx.sharedHttpServers().entrySet()) {
+        process.write(server.getKey().host + ":" + server.getKey().port + "\n");
+      }
+      process.end();
+    });
+    return server_ls;
+  }
+
+  static Command local_map_get() {
+    Command shared_data = Command.command("local-map-get");
+    shared_data.processHandler(process -> {
+      Iterator<String> it = process.args().iterator();
+      if (!it.hasNext()) {
+        process.write("usage: local-map-get map keys...\n");
+      } else {
+        Vertx vertx = process.vertx();
+        SharedData sharedData = vertx.sharedData();
+        LocalMap<Object, Object> map = sharedData.getLocalMap(it.next());
+        while (it.hasNext()) {
+          String key = it.next();
+          Object value = map.get(key);
+          process.write(key + ": " + value + "\n");
+        }
+      }
+      process.end();
+    });
+    return shared_data;
+  }
+
+  static Command local_map_put() {
+    Command shared_data = Command.command("local-map-put");
+    shared_data.processHandler(process -> {
+      List<String> args = process.args();
+      if (args.size() < 3) {
+        process.write("usage: local-map-put map key value\n");
+      } else {
+        Vertx vertx = process.vertx();
+        SharedData sharedData = vertx.sharedData();
+        LocalMap<Object, Object> map = sharedData.getLocalMap(args.get(0));
+        String key = args.get(1);
+        String value = args.get(2);
+        map.put(key, value);
+      }
+      process.end();
+    });
+    return shared_data;
+  }
+
+  static Command local_map_rm() {
+    Command shared_data = Command.command("local-map-rm");
+    shared_data.processHandler(process -> {
+      Iterator<String> it = process.args().iterator();
+      if (!it.hasNext()) {
+        process.write("usage: local-map-rm map keys...\n");
+      } else {
+        Vertx vertx = process.vertx();
+        SharedData sharedData = vertx.sharedData();
+        LocalMap<Object, Object> map = sharedData.getLocalMap(it.next());
+        while (it.hasNext()) {
+          String key = it.next();
+          map.remove(key);
+        }
+      }
+      process.end();
+    });
+    return shared_data;
+  }
 
   static Command ls() {
     Command cmd = Command.command("ls");

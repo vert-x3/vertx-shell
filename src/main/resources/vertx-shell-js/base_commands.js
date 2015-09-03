@@ -43,6 +43,58 @@ var BaseCommands = function(j_val) {
 
  @return {Command}
  */
+BaseCommands.server_ls = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JBaseCommands["server_ls()"](), Command);
+  } else utils.invalidArgs();
+};
+
+/**
+
+ @memberof module:vertx-shell-js/base_commands
+
+ @return {Command}
+ */
+BaseCommands.local_map_get = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JBaseCommands["local_map_get()"](), Command);
+  } else utils.invalidArgs();
+};
+
+/**
+
+ @memberof module:vertx-shell-js/base_commands
+
+ @return {Command}
+ */
+BaseCommands.local_map_put = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JBaseCommands["local_map_put()"](), Command);
+  } else utils.invalidArgs();
+};
+
+/**
+
+ @memberof module:vertx-shell-js/base_commands
+
+ @return {Command}
+ */
+BaseCommands.local_map_rm = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JBaseCommands["local_map_rm()"](), Command);
+  } else utils.invalidArgs();
+};
+
+/**
+
+ @memberof module:vertx-shell-js/base_commands
+
+ @return {Command}
+ */
 BaseCommands.ls = function() {
   var __args = arguments;
   if (__args.length === 0) {

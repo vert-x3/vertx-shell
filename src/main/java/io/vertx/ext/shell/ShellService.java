@@ -29,12 +29,17 @@ public interface ShellService {
     mgr.registerCommand(BaseCommands.ls());
     mgr.registerCommand(BaseCommands.sleep());
     mgr.registerCommand(BaseCommands.help());
+    mgr.registerCommand(BaseCommands.server_ls());
+    mgr.registerCommand(BaseCommands.local_map_get());
+    mgr.registerCommand(BaseCommands.local_map_put());
+    mgr.registerCommand(BaseCommands.local_map_rm());
 
     // Register noop commands so they are listed in help
     // but they are builtins
     mgr.registerCommand(Command.command("jobs").processHandler(process -> {}));
     mgr.registerCommand(Command.command("fg").processHandler(process -> {}));
-    mgr.registerCommand(Command.command("bg").processHandler(process -> {}));
+    mgr.registerCommand(Command.command("bg").processHandler(process -> {
+    }));
 
     //
     return () -> {

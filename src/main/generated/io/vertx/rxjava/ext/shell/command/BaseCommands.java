@@ -39,6 +39,26 @@ public class BaseCommands {
     return delegate;
   }
 
+  public static Command server_ls() { 
+    Command ret= Command.newInstance(io.vertx.ext.shell.command.BaseCommands.server_ls());
+    return ret;
+  }
+
+  public static Command local_map_get() { 
+    Command ret= Command.newInstance(io.vertx.ext.shell.command.BaseCommands.local_map_get());
+    return ret;
+  }
+
+  public static Command local_map_put() { 
+    Command ret= Command.newInstance(io.vertx.ext.shell.command.BaseCommands.local_map_put());
+    return ret;
+  }
+
+  public static Command local_map_rm() { 
+    Command ret= Command.newInstance(io.vertx.ext.shell.command.BaseCommands.local_map_rm());
+    return ret;
+  }
+
   public static Command ls() { 
     Command ret= Command.newInstance(io.vertx.ext.shell.command.BaseCommands.ls());
     return ret;

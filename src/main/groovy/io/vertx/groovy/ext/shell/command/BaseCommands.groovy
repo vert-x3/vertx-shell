@@ -29,6 +29,22 @@ public class BaseCommands {
   public Object getDelegate() {
     return delegate;
   }
+  public static Command server_ls() {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.BaseCommands.server_ls(), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
+    return ret;
+  }
+  public static Command local_map_get() {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.BaseCommands.local_map_get(), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
+    return ret;
+  }
+  public static Command local_map_put() {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.BaseCommands.local_map_put(), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
+    return ret;
+  }
+  public static Command local_map_rm() {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.BaseCommands.local_map_rm(), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
+    return ret;
+  }
   public static Command ls() {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.BaseCommands.ls(), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
     return ret;
