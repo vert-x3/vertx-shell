@@ -181,6 +181,22 @@
           </excludes>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-jar</id>
+            <phase>process-classes</phase>
+            <configuration>
+              <archive>
+                <manifestEntries>
+                  <Main-Verticle>service:io.vertx.ext.shell</Main-Verticle>
+                </manifestEntries>
+              </archive>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>

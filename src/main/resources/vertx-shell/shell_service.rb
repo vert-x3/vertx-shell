@@ -23,11 +23,11 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling create(vertx,options)"
     end
     # @return [void]
-    def listen
+    def start
       if !block_given?
-        return @j_del.java_method(:listen, []).call()
+        return @j_del.java_method(:start, []).call()
       end
-      raise ArgumentError, "Invalid arguments when calling listen()"
+      raise ArgumentError, "Invalid arguments when calling start()"
     end
   end
 end

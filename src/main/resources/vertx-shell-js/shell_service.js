@@ -36,10 +36,10 @@ var ShellService = function(j_val) {
    @public
 
    */
-  this.listen = function() {
+  this.start = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      j_shellService["listen()"]();
+      j_shellService["start()"]();
     } else utils.invalidArgs();
   };
 

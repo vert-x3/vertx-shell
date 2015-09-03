@@ -1,0 +1,12 @@
+{
+  "main": "io.vertx.ext.shell.ShellVerticle",
+  "options": {
+    "config": {
+      "connectors": [
+        {
+          "port": 5000
+        }
+      ]
+    }
+  }
+}

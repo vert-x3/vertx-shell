@@ -223,6 +223,6 @@ public class Main {
     ShellService service = ShellService.create(vertx, new ShellServiceOptions().
         addConnector(new TelnetOptions().setPort(5000)).
         addConnector(new SSHOptions().setPort(5001)));
-    service.listen();
+    service.start();
   }
 }

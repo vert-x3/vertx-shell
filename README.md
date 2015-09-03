@@ -2,9 +2,18 @@
 
 Status : work in progress
 
-Test drive:
+# Test drive with maven project
 
 > mvn compile exec:java
+
+in another shell:
+
+> telnet localhost 5000
+
+# Test drive with Vert.x 3.0
+
+> mvn install
+> vertx run maven:io.vertx:vertx-shell:3.0.0-SNAPSHOT
 
 in another shell:
 
