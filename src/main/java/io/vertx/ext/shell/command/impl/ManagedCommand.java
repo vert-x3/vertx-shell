@@ -99,9 +99,15 @@ public class ManagedCommand {
             }
             return this;
           }
+
           @Override
-          public void end(int code) {
-            context.end(code);
+          public void end() {
+            context.end(0);
+          }
+
+          @Override
+          public void end(int status) {
+            context.end(status);
           }
         };
         ManagedCommand.this.context.runOnContext(v -> {

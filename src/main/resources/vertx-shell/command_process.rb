@@ -71,13 +71,16 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling write(text)"
     end
-    # @param [Fixnum] code 
+    #  End the process.
+    # @param [Fixnum] status the exit status.
     # @return [void]
-    def end(code=nil)
-      if code.class == Fixnum && !block_given?
-        return @j_del.java_method(:end, [Java::int.java_class]).call(code)
+    def end(status=nil)
+      if !block_given? && status == nil
+        return @j_del.java_method(:end, []).call()
+      elsif status.class == Fixnum && !block_given?
+        return @j_del.java_method(:end, [Java::int.java_class]).call(status)
       end
-      raise ArgumentError, "Invalid arguments when calling end(code)"
+      raise ArgumentError, "Invalid arguments when calling end(status)"
     end
   end
 end

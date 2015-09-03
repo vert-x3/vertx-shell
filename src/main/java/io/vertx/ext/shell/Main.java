@@ -35,7 +35,7 @@ public class Main {
         }
       });
       process.write("\n");
-      process.end(0);
+      process.end();
     });
     mgr.registerCommand(echoCmd, ar -> {
     });
@@ -46,9 +46,7 @@ public class Main {
       process.setStdin(line -> {
         stdout.handle("-> " + line + "\n");
       });
-      process.eventHandler("SIGINT", v -> {
-        process.end(0);
-      });
+      process.eventHandler("SIGINT", v -> process.end());
     });
     mgr.registerCommand(echoKeyboardCmd, ar -> {
     });
@@ -61,7 +59,7 @@ public class Main {
       process.write("ls\n");
       process.write("sleep\n");
       process.write("window\n");
-      process.end(0);
+      process.end();
     });
     mgr.registerCommand(helpCmd, ar -> {
     });
@@ -73,7 +71,7 @@ public class Main {
         process.write("[" + process.width() + "," + process.height() + "]\n");
       });
       process.eventHandler("SIGINT", v -> {
-        process.end(0);
+        process.end();
       });
     });
     mgr.registerCommand(windowCmd, ar -> {
@@ -84,7 +82,7 @@ public class Main {
       void run(GetOptCommandProcess process) {
         if (process.arguments().isEmpty()) {
           process.write("usage: sleep seconds\n");
-          process.end(0);
+          process.end();
         } else {
           String arg = process.arguments().get(0);
           int seconds = -1;
@@ -102,12 +100,12 @@ public class Main {
           long now = System.currentTimeMillis();
           AtomicLong remaining = new AtomicLong(-1);
           long id = vertx.setTimer(millis, v -> {
-            process.end(0);
+            process.end();
           });
           process.eventHandler("SIGINT", v -> {
             if (vertx.cancelTimer(id)) {
               System.out.println("Cancelling timer");
-              process.end(0);
+              process.end();
             }
           });
           process.eventHandler("SIGTSTP", v -> {
@@ -120,7 +118,7 @@ public class Main {
             scheduleSleep(process, remaining.get());
           });
         } else {
-          process.end(0);
+          process.end();
         }
       }
     }
@@ -216,11 +214,11 @@ public class Main {
             } else {
               ar1.cause().printStackTrace();
             }
-            process.end(0);
+            process.end();
           });
         } else {
           process.write("ls: " + path + ": No such file or directory");
-          process.end(0);
+          process.end();
         }
       });
     });

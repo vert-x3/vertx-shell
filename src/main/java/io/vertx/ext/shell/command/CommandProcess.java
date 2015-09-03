@@ -31,6 +31,16 @@ public interface CommandProcess {
   @Fluent
   CommandProcess write(String text);
 
-  void end(int code);
+  /**
+   * End the process with the exit status {@literal 0}
+   */
+  void end();
+
+  /**
+   * End the process.
+   *
+   * @param status the exit status.
+   */
+  void end(int status);
 
 }

@@ -128,14 +128,17 @@ var CommandProcess = function(j_val) {
   };
 
   /**
+   End the process.
 
    @public
-   @param code {number} 
+   @param status {number} the exit status. 
    */
-  this.end = function(code) {
+  this.end = function() {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] ==='number') {
-      j_commandProcess["end(int)"](code);
+    if (__args.length === 0) {
+      j_commandProcess["end()"]();
+    }  else if (__args.length === 1 && typeof __args[0] ==='number') {
+      j_commandProcess["end(int)"](__args[0]);
     } else utils.invalidArgs();
   };
 

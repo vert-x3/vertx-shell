@@ -61,7 +61,17 @@ public class CommandProcess {
     this.delegate.write(text);
     return this;
   }
-  public void end(int code) {
-    this.delegate.end(code);
+  /**
+   * End the process with the exit status 
+   */
+  public void end() {
+    this.delegate.end();
+  }
+  /**
+   * End the process.
+   * @param status the exit status.
+   */
+  public void end(int status) {
+    this.delegate.end(status);
   }
 }

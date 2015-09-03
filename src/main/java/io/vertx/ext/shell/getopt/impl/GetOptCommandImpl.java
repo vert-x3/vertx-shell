@@ -92,8 +92,12 @@ public class GetOptCommandImpl implements GetOptCommand {
             return this;
           }
           @Override
-          public void end(int code) {
-            a.end(code);
+          public void end() {
+            a.end();
+          }
+          @Override
+          public void end(int status) {
+            a.end(status);
           }
         });
       });
