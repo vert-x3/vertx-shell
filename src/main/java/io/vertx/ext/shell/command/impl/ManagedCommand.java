@@ -2,6 +2,7 @@ package io.vertx.ext.shell.command.impl;
 
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.Stream;
 import io.vertx.ext.shell.cli.CliToken;
@@ -19,12 +20,14 @@ import java.util.List;
  */
 public class ManagedCommand {
 
+  final Vertx vertx;
   final Context context;
   final CommandImpl command;
   final Handler<CommandProcess> processHandler;
   final Handler<Completion> completionHandler;
 
-  public ManagedCommand(Context context, CommandImpl command) {
+  public ManagedCommand(Vertx vertx, Context context, CommandImpl command) {
+    this.vertx = vertx;
     this.context = context;
     this.command = command;
     this.processHandler = command.processHandler;
@@ -52,6 +55,11 @@ public class ManagedCommand {
       public void execute(ProcessContext context) {
 
         CommandProcess process = new CommandProcess() {
+
+          @Override
+          public Vertx vertx() {
+            return vertx;
+          }
 
           @Override
           public List<CliToken> args() {

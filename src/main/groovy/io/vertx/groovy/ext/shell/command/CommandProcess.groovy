@@ -18,6 +18,7 @@ package io.vertx.groovy.ext.shell.command;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import java.util.List
+import io.vertx.groovy.core.Vertx
 import io.vertx.groovy.ext.shell.cli.CliToken
 import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.Stream
@@ -32,6 +33,14 @@ public class CommandProcess {
   }
   public Object getDelegate() {
     return delegate;
+  }
+  /**
+   * @return the current Vert.x instance
+   * @return 
+   */
+  public Vertx vertx() {
+    def ret= InternalHelper.safeCreate(this.delegate.vertx(), io.vertx.core.Vertx.class, io.vertx.groovy.core.Vertx.class);
+    return ret;
   }
   public List<CliToken> args() {
     def ret = this.delegate.args()?.collect({underpants -> new io.vertx.groovy.ext.shell.cli.CliToken(underpants)});

@@ -20,6 +20,7 @@ import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
+import io.vertx.rxjava.core.Vertx;
 import io.vertx.rxjava.ext.shell.cli.CliToken;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.Stream;
@@ -41,6 +42,15 @@ public class CommandProcess {
 
   public Object getDelegate() {
     return delegate;
+  }
+
+  /**
+   * @return the current Vert.x instance
+   * @return 
+   */
+  public Vertx vertx() { 
+    Vertx ret= Vertx.newInstance(this.delegate.vertx());
+    return ret;
   }
 
   public List<CliToken> args() { 

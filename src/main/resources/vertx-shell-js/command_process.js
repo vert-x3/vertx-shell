@@ -33,6 +33,20 @@ var CommandProcess = function(j_val) {
   var that = this;
 
   /**
+   @return the current Vert.x instance
+
+   @public
+
+   @return {Vertx}
+   */
+  this.vertx = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return utils.convReturnVertxGen(j_commandProcess["vertx()"](), Vertx);
+    } else utils.invalidArgs();
+  };
+
+  /**
 
    @public
 

@@ -3,6 +3,7 @@ package io.vertx.ext.shell.command;
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
 import io.vertx.ext.shell.Stream;
 import io.vertx.ext.shell.cli.CliToken;
 
@@ -13,6 +14,11 @@ import java.util.List;
  */
 @VertxGen
 public interface CommandProcess {
+
+  /**
+   * @return the current Vert.x instance
+   */
+  Vertx vertx();
 
   List<CliToken> args();
 

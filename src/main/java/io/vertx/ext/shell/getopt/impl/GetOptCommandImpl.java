@@ -1,6 +1,7 @@
 package io.vertx.ext.shell.getopt.impl;
 
 import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
 import io.vertx.ext.shell.Stream;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.Command;
@@ -52,6 +53,10 @@ public class GetOptCommandImpl implements GetOptCommand {
         OptParser parser = new OptParser(options.values());
         OptRequest req = parser.parse(tokens.listIterator());
         cp.handle(new GetOptCommandProcess() {
+          @Override
+          public Vertx vertx() {
+            return a.vertx();
+          }
           @Override
           public List<CliToken> args() {
             return a.args();

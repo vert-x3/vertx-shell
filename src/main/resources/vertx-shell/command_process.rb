@@ -15,6 +15,14 @@ module VertxShell
     def j_del
       @j_del
     end
+    #  @return the current Vert.x instance
+    # @return [::Vertx::Vertx]
+    def vertx
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:vertx, []).call(),::Vertx::Vertx)
+      end
+      raise ArgumentError, "Invalid arguments when calling vertx()"
+    end
     # @return [Array<::VertxShell::CliToken>]
     def args
       if !block_given?

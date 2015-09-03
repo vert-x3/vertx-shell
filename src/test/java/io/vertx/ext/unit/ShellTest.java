@@ -25,6 +25,20 @@ public class ShellTest {
   Vertx vertx = Vertx.vertx();
 
   @Test
+  public void testVertx(TestContext context) {
+    CommandManager manager = CommandManager.get(vertx);
+    TestTtyConnection conn = new TestTtyConnection();
+    Shell shell = new Shell(vertx, conn, manager);
+    shell.init();
+    Async async = context.async();
+    manager.registerCommand(Command.command("foo").processHandler(process -> {
+      context.assertEquals(vertx, process.vertx());
+      async.complete();
+    }));
+    conn.read("foo\r");
+  }
+
+  @Test
   public void testExecuteProcess(TestContext context) {
     CommandManager manager = CommandManager.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
