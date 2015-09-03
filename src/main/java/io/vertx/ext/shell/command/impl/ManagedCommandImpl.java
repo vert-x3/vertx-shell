@@ -7,6 +7,7 @@ import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.Stream;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandProcess;
+import io.vertx.ext.shell.command.ManagedCommand;
 import io.vertx.ext.shell.process.Process;
 import io.vertx.ext.shell.process.ProcessContext;
 
@@ -18,7 +19,7 @@ import java.util.List;
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class ManagedCommand {
+public class ManagedCommandImpl implements ManagedCommand {
 
   final Vertx vertx;
   final Context context;
@@ -26,7 +27,7 @@ public class ManagedCommand {
   final Handler<CommandProcess> processHandler;
   final Handler<Completion> completionHandler;
 
-  public ManagedCommand(Vertx vertx, Context context, CommandImpl command) {
+  public ManagedCommandImpl(Vertx vertx, Context context, CommandImpl command) {
     this.vertx = vertx;
     this.context = context;
     this.command = command;
@@ -79,7 +80,7 @@ public class ManagedCommand {
           @Override
           public CommandProcess setStdin(Stream stdin) {
             if (stdin != null) {
-              context.tty().setStdin(event -> ManagedCommand.this.context.runOnContext(v -> stdin.handle(event)));
+              context.tty().setStdin(event -> ManagedCommandImpl.this.context.runOnContext(v -> stdin.handle(event)));
             } else {
               context.tty().setStdin(null);
             }
@@ -98,7 +99,7 @@ public class ManagedCommand {
           public CommandProcess eventHandler(String event, Handler<Void> handler) {
             if (handler != null) {
               context.tty().eventHandler(event, v -> {
-                ManagedCommand.this.context.runOnContext(v2 -> {
+                ManagedCommandImpl.this.context.runOnContext(v2 -> {
                   handler.handle(null);
                 });
               });
@@ -118,7 +119,7 @@ public class ManagedCommand {
             context.end(status);
           }
         };
-        ManagedCommand.this.context.runOnContext(v -> {
+        ManagedCommandImpl.this.context.runOnContext(v -> {
           processHandler.handle(process);
         });
       }

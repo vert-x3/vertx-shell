@@ -9,6 +9,7 @@ import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandManager;
+import io.vertx.ext.shell.command.ManagedCommand;
 import io.vertx.ext.shell.process.Process;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class CommandManagerImpl implements CommandManager {
   @Override
   public void registerCommand(Command command, Handler<AsyncResult<Void>> handler) {
     Context context = vertx.getOrCreateContext();
-    commandMap.put(command.name(), new ManagedCommand(vertx, context, (CommandImpl) command));
+    commandMap.put(command.name(), new ManagedCommandImpl(vertx, context, (CommandImpl) command));
     handler.handle(Future.succeededFuture());
   }
 
