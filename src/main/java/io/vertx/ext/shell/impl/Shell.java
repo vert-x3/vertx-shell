@@ -103,7 +103,7 @@ public class Shell {
           break;
         case SUSP:
           echo(cp, '\n');
-          echo(Helper.toCodePoints("[" + job.id + "] Stopped " + job.line + "\n"));
+          echo(Helper.toCodePoints(job.statusLine() + "\n"));
           foregroundJob = null;
           job.stdout = null;
           job.status = JobStatus.STOPPED;
@@ -166,13 +166,13 @@ public class Shell {
 
   private void jobs(Readline readline) {
     jobs.forEach((id, job) -> {
-      String line = "[" + id + "] " + job.line + " \n";
+      String line = job.statusLine() + "\n";
       conn.write(line);
     });
     read(readline);
   }
 
-  private Job findJob() {
+  Job findJob() {
     return jobs.
         values().
         stream().
@@ -224,7 +224,7 @@ public class Shell {
                 job.stdout = conn::write; // We set stdout whether or not it's background (maybe do something different)
                 job.status = JobStatus.RUNNING;
                 job.sendEvent("SIGCONT");
-                echo(Helper.toCodePoints("[" + job.id + "]+ " + job.line + " &\n"));
+                echo(Helper.toCodePoints(job.statusLine() + "\n"));
               } else {
                 conn.write("job " + job.id + " already in background\n");
               }

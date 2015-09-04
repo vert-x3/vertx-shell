@@ -248,7 +248,7 @@ public class ShellTest {
     latch2.await(10, TimeUnit.SECONDS);
     conn.out.setLength(0);
     conn.read("bg\r");
-    conn.assertWritten("bg\n[1]+ foo &\n% ");
+    conn.assertWritten("bg\n[1]+ Running foo\n% ");
     latch3.countDown();
     conn.assertWritten("resumed");
     conn.read("hello");

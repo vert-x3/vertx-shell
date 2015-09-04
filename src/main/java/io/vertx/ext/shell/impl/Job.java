@@ -50,6 +50,16 @@ public class Job {
     return line;
   }
 
+  public String statusLine() {
+    StringBuilder sb = new StringBuilder("[").append(id).append("]");
+    if (shell.findJob() == this) {
+      sb.append("+");
+    }
+    sb.append(" ").append(Character.toUpperCase(status.name().charAt(0))).append(status.name().substring(1).toLowerCase());
+    sb.append(" ").append(line);
+    return sb.toString();
+  }
+
   public void run() {
     status = JobStatus.RUNNING;
     Context context = shell.vertx.getOrCreateContext(); // Maybe just a current context since it may run with SSHD
