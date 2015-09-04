@@ -186,7 +186,7 @@ public class Shell {
       List<CliToken> tokens = CliToken.tokenize(line);
 
       if (tokens.stream().filter(CliToken::isText).count() == 0) {
-        // For now do like this 
+        // For now do like this
         read(readline);
         return;
       }
@@ -249,23 +249,8 @@ public class Shell {
           job.stdout = conn::write;
           jobs.put(id, job);
           job.run();
-
-
         } else {
-          ar.cause().printStackTrace(new PrintWriter(new Writer() {
-            @Override
-            public void write(char[] cbuf, int off, int len) throws IOException {
-              conn.write(new String(cbuf, off, len));
-            }
-
-            @Override
-            public void flush() throws IOException {
-            }
-
-            @Override
-            public void close() throws IOException {
-            }
-          }));
+          echo(Helper.toCodePoints(line + ": command not found\n"));
           read(readline);
         }
       });
