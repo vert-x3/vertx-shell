@@ -36,7 +36,6 @@ or
 
 ## Todo
 
-- crlf mode for telnet
 - make builtin shell commands completable
 - fg/bg with id : fg 3, bg 4
 - stream redirection : echo abc >toto.txt
