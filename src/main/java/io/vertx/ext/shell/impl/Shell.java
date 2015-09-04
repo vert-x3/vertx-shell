@@ -185,6 +185,12 @@ public class Shell {
 
       List<CliToken> tokens = CliToken.tokenize(line);
 
+      if (tokens.stream().filter(CliToken::isText).count() == 0) {
+        // For now do like this 
+        read(readline);
+        return;
+      }
+
       Optional<CliToken> first = tokens.stream().filter(CliToken::isText).findFirst();
       if (first.isPresent()) {
         String name = first.get().value();
