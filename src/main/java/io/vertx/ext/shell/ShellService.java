@@ -36,8 +36,9 @@ public interface ShellService {
     mgr.registerCommand(BaseCommands.bus_send());
     mgr.registerCommand(BaseCommands.bus_tail());
 
-    // Register noop commands so they are listed in help
-    // but they are builtins
+    // Register builtin commands so they are listed in help
+    mgr.registerCommand(Command.command("exit").processHandler(process -> {}));
+    mgr.registerCommand(Command.command("logout").processHandler(process -> {}));
     mgr.registerCommand(Command.command("jobs").processHandler(process -> {}));
     mgr.registerCommand(Command.command("fg").processHandler(process -> {}));
     mgr.registerCommand(Command.command("bg").processHandler(process -> {

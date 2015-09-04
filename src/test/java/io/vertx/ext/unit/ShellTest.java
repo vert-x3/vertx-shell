@@ -11,6 +11,7 @@ import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -335,4 +336,17 @@ public class ShellTest {
     }));
     conn.read("foo\r");
   }
+
+  @Test
+  public void testExit(TestContext context) throws Exception {
+    for (String cmd : Arrays.asList("exit", "logout")) {
+      CommandRegistry manager = CommandRegistry.get(vertx);
+      TestTtyConnection conn = new TestTtyConnection();
+      Shell shell = new Shell(vertx, conn, manager);
+      shell.init();
+      conn.read(cmd + "\r");
+      context.assertTrue(conn.closed);
+    }
+  }
+
 }

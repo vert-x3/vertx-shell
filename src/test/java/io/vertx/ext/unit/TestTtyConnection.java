@@ -19,6 +19,7 @@ public class TestTtyConnection implements TtyConnection {
   private Consumer<int[]> stdinHandler;
   private Consumer<Void> closeHandler;
   public final StringBuilder out = new StringBuilder();
+  boolean closed;
 
   @Override
   public Vector size() {
@@ -88,7 +89,7 @@ public class TestTtyConnection implements TtyConnection {
 
   @Override
   public void close() {
-
+    closed = true;
   }
 
   private boolean reading = false;

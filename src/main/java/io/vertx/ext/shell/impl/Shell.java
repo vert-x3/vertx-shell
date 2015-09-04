@@ -197,6 +197,11 @@ public class Shell {
       if (first.isPresent()) {
         String name = first.get().value();
         switch (name) {
+          case "exit":
+          case "logout":
+            // Should clean stuff before!!!
+            conn.close();
+            break;
           case "jobs":
             jobs(readline);
             return;
