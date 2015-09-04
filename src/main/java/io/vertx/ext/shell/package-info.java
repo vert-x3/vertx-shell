@@ -65,7 +65,7 @@
  *
  * === Process I/O
  *
- * A command can set a {@link io.vertx.ext.shell.command.CommandProcess#setStdin(io.vertx.ext.shell.Stream)} handler
+ * A command can set a {@link io.vertx.ext.shell.command.CommandProcess#setStdin} handler
  * to be notified when the shell receives data, e.g the user uses his keyboard:
  *
  * [source,$lang]

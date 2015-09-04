@@ -32,6 +32,7 @@ var Tty = function(j_val) {
   var that = this;
 
   /**
+   @return the current width, the number of rows
 
    @public
 
@@ -45,6 +46,7 @@ var Tty = function(j_val) {
   };
 
   /**
+   @return the current height, the number of columns
 
    @public
 
@@ -60,12 +62,16 @@ var Tty = function(j_val) {
   /**
 
    @public
-   @param stdin {Stream} 
+   @param stdin {function} 
+   @return {Tty}
    */
   this.setStdin = function(stdin) {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_tty["setStdin(io.vertx.ext.shell.Stream)"](stdin._jdel);
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_tty["setStdin(io.vertx.core.Handler)"](function(jVal) {
+      stdin(jVal);
+    });
+      return that;
     } else utils.invalidArgs();
   };
 
@@ -87,11 +93,13 @@ var Tty = function(j_val) {
    @public
    @param event {string} 
    @param handler {function} 
+   @return {Tty}
    */
   this.eventHandler = function(event, handler) {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
       j_tty["eventHandler(java.lang.String,io.vertx.core.Handler)"](event, handler);
+      return that;
     } else utils.invalidArgs();
   };
 

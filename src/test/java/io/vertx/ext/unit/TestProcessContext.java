@@ -18,7 +18,7 @@ class TestProcessContext implements ProcessContext, Tty {
   final Context context = Vertx.currentContext();
   final HashMap<String, Handler<Void>> eventHandlers = new HashMap<>();
   int width, height;
-  Stream stdin;
+  Handler<String> stdin;
   private Stream stdout;
 
   @Override
@@ -55,8 +55,9 @@ class TestProcessContext implements ProcessContext, Tty {
   }
 
   @Override
-  public void setStdin(Stream stdin) {
+  public TestProcessContext setStdin(Handler<String> stdin) {
     this.stdin = stdin;
+    return this;
   }
 
   @Override
@@ -70,12 +71,13 @@ class TestProcessContext implements ProcessContext, Tty {
   }
 
   @Override
-  public void eventHandler(String event, Handler<Void> handler) {
+  public TestProcessContext eventHandler(String event, Handler<Void> handler) {
     if (handler != null) {
       eventHandlers.put(event, handler);
     } else {
       eventHandlers.remove(event);
     }
+    return this;
   }
 
   public boolean sendEvent(String event) {

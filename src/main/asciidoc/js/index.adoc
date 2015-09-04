@@ -91,8 +91,8 @@ command.processHandler(function (process) {
 
 === Terminal size
 
-The current terminal size can be obtained using `link:jsdoc/command_process-CommandProcess.html#width[width]` and
-`link:jsdoc/command_process-CommandProcess.html#height[height]`.
+The current terminal size can be obtained using `link:jsdoc/tty-Tty.html#width[width]` and
+`link:jsdoc/tty-Tty.html#height[height]`.
 
 [source,js]
 ----
@@ -117,7 +117,7 @@ command.processHandler(function (process) {
 
 ----
 
-A command can use the `link:jsdoc/command_process-CommandProcess.html#stdout[stdout]` to write to the standard output.
+A command can use the `link:jsdoc/tty-Tty.html#stdout[stdout]` to write to the standard output.
 
 [source,js]
 ----
@@ -225,4 +225,4 @@ command.processHandler(function (process) {
 ==== `SIGWINCH` event
 
 The `SIGWINCH` event is fired when the size of the terminal changes, the new terminal size can be obtained
-with `link:jsdoc/command_process-CommandProcess.html#width[width]` and `link:jsdoc/command_process-CommandProcess.html#height[height]`.
+with `link:jsdoc/tty-Tty.html#width[width]` and `link:jsdoc/tty-Tty.html#height[height]`.

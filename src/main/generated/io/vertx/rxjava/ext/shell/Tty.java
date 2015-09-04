@@ -40,18 +40,27 @@ public class Tty {
     return delegate;
   }
 
+  /**
+   * @return the current width, the number of rows
+   * @return 
+   */
   public int width() { 
     int ret = this.delegate.width();
     return ret;
   }
 
+  /**
+   * @return the current height, the number of columns
+   * @return 
+   */
   public int height() { 
     int ret = this.delegate.height();
     return ret;
   }
 
-  public void setStdin(Stream stdin) { 
-    this.delegate.setStdin((io.vertx.ext.shell.Stream) stdin.getDelegate());
+  public Tty setStdin(Handler<String> stdin) { 
+    this.delegate.setStdin(stdin);
+    return this;
   }
 
   public Stream stdout() { 
@@ -59,8 +68,9 @@ public class Tty {
     return ret;
   }
 
-  public void eventHandler(String event, Handler<Void> handler) { 
+  public Tty eventHandler(String event, Handler<Void> handler) { 
     this.delegate.eventHandler(event, handler);
+    return this;
   }
 
 

@@ -1,4 +1,3 @@
-require 'vertx-shell/stream'
 require 'vertx-shell/command_process'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.getopt.GetOptCommandProcess
@@ -31,14 +30,14 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling get_option(name)"
     end
-    # @param [::VertxShell::Stream] stdin 
+    # @yield 
     # @return [self]
-    def set_stdin(stdin=nil)
-      if stdin.class.method_defined?(:j_del) && !block_given?
-        @j_del.java_method(:setStdin, [Java::IoVertxExtShell::Stream.java_class]).call(stdin.j_del)
+    def set_stdin
+      if block_given?
+        @j_del.java_method(:setStdin, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling set_stdin(stdin)"
+      raise ArgumentError, "Invalid arguments when calling set_stdin()"
     end
     # @param [String] event 
     # @yield 

@@ -1,13 +1,14 @@
+require 'vertx-shell/tty'
 require 'vertx-shell/cli_token'
-require 'vertx-shell/stream'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.command.CommandProcess
 module VertxShell
   #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
-  class CommandProcess
+  class CommandProcess < ::VertxShell::Tty
     # @private
     # @param j_del [::VertxShell::CommandProcess] the java delegate
     def initialize(j_del)
+      super(j_del)
       @j_del = j_del
     end
     # @private
@@ -39,28 +40,14 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling args()"
     end
-    # @return [Fixnum]
-    def width
-      if !block_given?
-        return @j_del.java_method(:width, []).call()
-      end
-      raise ArgumentError, "Invalid arguments when calling width()"
-    end
-    # @return [Fixnum]
-    def height
-      if !block_given?
-        return @j_del.java_method(:height, []).call()
-      end
-      raise ArgumentError, "Invalid arguments when calling height()"
-    end
-    # @param [::VertxShell::Stream] stdin 
+    # @yield 
     # @return [self]
-    def set_stdin(stdin=nil)
-      if stdin.class.method_defined?(:j_del) && !block_given?
-        @j_del.java_method(:setStdin, [Java::IoVertxExtShell::Stream.java_class]).call(stdin.j_del)
+    def set_stdin
+      if block_given?
+        @j_del.java_method(:setStdin, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling set_stdin(stdin)"
+      raise ArgumentError, "Invalid arguments when calling set_stdin()"
     end
     # @param [String] event 
     # @yield 
@@ -71,13 +58,6 @@ module VertxShell
         return self
       end
       raise ArgumentError, "Invalid arguments when calling event_handler(event)"
-    end
-    # @return [::VertxShell::Stream]
-    def stdout
-      if !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:stdout, []).call(),::VertxShell::Stream)
-      end
-      raise ArgumentError, "Invalid arguments when calling stdout()"
     end
     # @param [String] text 
     # @return [self]

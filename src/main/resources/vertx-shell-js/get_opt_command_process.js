@@ -16,7 +16,6 @@
 
 /** @module vertx-shell-js/get_opt_command_process */
 var utils = require('vertx-js/util/utils');
-var Stream = require('vertx-shell-js/stream');
 var CommandProcess = require('vertx-shell-js/command_process');
 
 var io = Packages.io;
@@ -62,13 +61,15 @@ var GetOptCommandProcess = function(j_val) {
   /**
 
    @public
-   @param stdin {Stream} 
+   @param stdin {function} 
    @return {GetOptCommandProcess}
    */
   this.setStdin = function(stdin) {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_getOptCommandProcess["setStdin(io.vertx.ext.shell.Stream)"](stdin._jdel);
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_getOptCommandProcess["setStdin(io.vertx.core.Handler)"](function(jVal) {
+      stdin(jVal);
+    });
       return that;
     } else utils.invalidArgs();
   };

@@ -21,7 +21,6 @@ import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
 import io.vertx.core.Handler;
-import io.vertx.rxjava.ext.shell.Stream;
 import io.vertx.rxjava.ext.shell.command.CommandProcess;
 
 /**
@@ -56,8 +55,8 @@ public class GetOptCommandProcess extends CommandProcess {
     return ret;
   }
 
-  public GetOptCommandProcess setStdin(Stream stdin) { 
-    this.delegate.setStdin((io.vertx.ext.shell.Stream) stdin.getDelegate());
+  public GetOptCommandProcess setStdin(Handler<String> stdin) { 
+    this.delegate.setStdin(stdin);
     return this;
   }
 

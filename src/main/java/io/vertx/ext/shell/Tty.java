@@ -1,5 +1,6 @@
 package io.vertx.ext.shell;
 
+import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 
@@ -9,14 +10,22 @@ import io.vertx.core.Handler;
 @VertxGen
 public interface Tty {
 
+  /**
+   * @return the current width, the number of rows
+   */
   int width();
 
+  /**
+   * @return the current height, the number of columns
+   */
   int height();
 
-  void setStdin(Stream stdin);
+  @Fluent
+  Tty setStdin(Handler<String> stdin);
 
   Stream stdout();
 
-  void eventHandler(String event, Handler<Void> handler);
+  @Fluent
+  Tty eventHandler(String event, Handler<Void> handler);
 
 }

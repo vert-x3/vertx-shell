@@ -85,7 +85,7 @@ public class CommandRegistrationImpl implements CommandRegistration {
           }
 
           @Override
-          public CommandProcess setStdin(Stream stdin) {
+          public CommandProcess setStdin(Handler<String> stdin) {
             if (stdin != null) {
               context.tty().setStdin(event -> CommandRegistrationImpl.this.context.runOnContext(v -> stdin.handle(event)));
             } else {

@@ -5,6 +5,7 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.Stream;
+import io.vertx.ext.shell.Tty;
 import io.vertx.ext.shell.cli.CliToken;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
-public interface CommandProcess {
+public interface CommandProcess extends Tty {
 
   /**
    * @return the current Vert.x instance
@@ -30,17 +31,11 @@ public interface CommandProcess {
    */
   List<String> args();
 
-  int width();
-
-  int height();
-
   @Fluent
-  CommandProcess setStdin(Stream stdin);
+  CommandProcess setStdin(Handler<String> stdin);
 
   @Fluent
   CommandProcess eventHandler(String event, Handler<Void> handler);
-
-  Stream stdout();
 
   @Fluent
   CommandProcess write(String text);

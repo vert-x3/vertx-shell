@@ -23,7 +23,7 @@ public class Job {
   volatile JobStatus status;
   volatile long lastStopped; // When the job was last stopped
   volatile Stream stdout;
-  volatile Stream stdin;
+  volatile Handler<String> stdin;
 
   public Job(int id, Shell shell, Process process, String line) {
     this.id = id;
@@ -73,11 +73,12 @@ public class Job {
         return shell.size.y();
       }
       @Override
-      public void setStdin(Stream stdin) {
+      public Tty setStdin(Handler<String> stdin) {
         Job.this.stdin = stdin;
         if (shell.foregroundJob == Job.this) {
           shell.checkPending();
         }
+        return this;
       }
       @Override
       public Stream stdout() {
@@ -91,12 +92,13 @@ public class Job {
         return stdout;
       }
       @Override
-      public void eventHandler(String event, Handler<Void> handler) {
+      public Tty eventHandler(String event, Handler<Void> handler) {
         if (handler != null) {
           eventHandlers.put(event, handler);
         } else {
           eventHandlers.remove(event);
         }
+        return this;
       }
     };
     ProcessContext processContext = new ProcessContext() {

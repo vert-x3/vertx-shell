@@ -89,7 +89,7 @@ public class GetOptCommandImpl implements GetOptCommand {
           }
 
           @Override
-          public GetOptCommandProcess setStdin(Stream stdin) {
+          public GetOptCommandProcess setStdin(Handler<String> stdin) {
             a.setStdin(stdin);
             return this;
           }

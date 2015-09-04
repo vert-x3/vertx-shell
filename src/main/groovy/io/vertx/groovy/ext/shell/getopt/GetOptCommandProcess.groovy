@@ -19,7 +19,6 @@ import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import java.util.List
 import io.vertx.core.Handler
-import io.vertx.groovy.ext.shell.Stream
 import io.vertx.groovy.ext.shell.command.CommandProcess
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -42,8 +41,8 @@ public class GetOptCommandProcess extends CommandProcess {
     def ret = this.delegate.getOption(name);
     return ret;
   }
-  public GetOptCommandProcess setStdin(Stream stdin) {
-    this.delegate.setStdin((io.vertx.ext.shell.Stream)stdin.getDelegate());
+  public GetOptCommandProcess setStdin(Handler<String> stdin) {
+    this.delegate.setStdin(stdin);
     return this;
   }
   public GetOptCommandProcess eventHandler(String event, Handler<Void> handler) {

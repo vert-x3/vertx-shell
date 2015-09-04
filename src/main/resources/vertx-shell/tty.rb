@@ -14,6 +14,7 @@ module VertxShell
     def j_del
       @j_del
     end
+    #  @return the current width, the number of rows
     # @return [Fixnum]
     def width
       if !block_given?
@@ -21,6 +22,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling width()"
     end
+    #  @return the current height, the number of columns
     # @return [Fixnum]
     def height
       if !block_given?
@@ -28,13 +30,14 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling height()"
     end
-    # @param [::VertxShell::Stream] stdin 
-    # @return [void]
-    def set_stdin(stdin=nil)
-      if stdin.class.method_defined?(:j_del) && !block_given?
-        return @j_del.java_method(:setStdin, [Java::IoVertxExtShell::Stream.java_class]).call(stdin.j_del)
+    # @yield 
+    # @return [self]
+    def set_stdin
+      if block_given?
+        @j_del.java_method(:setStdin, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
+        return self
       end
-      raise ArgumentError, "Invalid arguments when calling set_stdin(stdin)"
+      raise ArgumentError, "Invalid arguments when calling set_stdin()"
     end
     # @return [::VertxShell::Stream]
     def stdout
@@ -45,10 +48,11 @@ module VertxShell
     end
     # @param [String] event 
     # @yield 
-    # @return [void]
+    # @return [self]
     def event_handler(event=nil)
       if event.class == String && block_given?
-        return @j_del.java_method(:eventHandler, [Java::java.lang.String.java_class,Java::IoVertxCore::Handler.java_class]).call(event,Proc.new { yield })
+        @j_del.java_method(:eventHandler, [Java::java.lang.String.java_class,Java::IoVertxCore::Handler.java_class]).call(event,Proc.new { yield })
+        return self
       end
       raise ArgumentError, "Invalid arguments when calling event_handler(event)"
     end

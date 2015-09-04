@@ -37,6 +37,9 @@ public class Main {
     });
     mgr.registerCommand(windowCmd);
 
+    // JS command
+    vertx.deployVerticle("command.js");
+
     // Expose the shell
     ShellService service = ShellService.create(vertx, new ShellServiceOptions().
         setTelnet(new TelnetOptions().setPort(5000)).

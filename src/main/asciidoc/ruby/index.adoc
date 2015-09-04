@@ -91,8 +91,8 @@ command.process_handler() { |process|
 
 === Terminal size
 
-The current terminal size can be obtained using `link:yardoc/VertxShell/CommandProcess.html#width-instance_method[width]` and
-`link:yardoc/VertxShell/CommandProcess.html#height-instance_method[height]`.
+The current terminal size can be obtained using `link:yardoc/VertxShell/Tty.html#width-instance_method[width]` and
+`link:yardoc/VertxShell/Tty.html#height-instance_method[height]`.
 
 [source,ruby]
 ----
@@ -110,14 +110,14 @@ to be notified when the shell receives data, e.g the user uses his keyboard:
 [source,ruby]
 ----
 command.process_handler() { |process|
-  process.set_stdin(lambda { |data|
+  process.set_stdin() { |data|
     puts "Received #{data}"
-  })
+  }
 }
 
 ----
 
-A command can use the `link:yardoc/VertxShell/CommandProcess.html#stdout-instance_method[stdout]` to write to the standard output.
+A command can use the `link:yardoc/VertxShell/Tty.html#stdout-instance_method[stdout]` to write to the standard output.
 
 [source,ruby]
 ----
@@ -225,4 +225,4 @@ command.process_handler() { |process|
 ==== `SIGWINCH` event
 
 The `SIGWINCH` event is fired when the size of the terminal changes, the new terminal size can be obtained
-with `link:yardoc/VertxShell/CommandProcess.html#width-instance_method[width]` and `link:yardoc/VertxShell/CommandProcess.html#height-instance_method[height]`.
+with `link:yardoc/VertxShell/Tty.html#width-instance_method[width]` and `link:yardoc/VertxShell/Tty.html#height-instance_method[height]`.

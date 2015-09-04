@@ -30,22 +30,32 @@ public class Tty {
   public Object getDelegate() {
     return delegate;
   }
+  /**
+   * @return the current width, the number of rows
+   * @return 
+   */
   public int width() {
     def ret = this.delegate.width();
     return ret;
   }
+  /**
+   * @return the current height, the number of columns
+   * @return 
+   */
   public int height() {
     def ret = this.delegate.height();
     return ret;
   }
-  public void setStdin(Stream stdin) {
-    this.delegate.setStdin((io.vertx.ext.shell.Stream)stdin.getDelegate());
+  public Tty setStdin(Handler<String> stdin) {
+    this.delegate.setStdin(stdin);
+    return this;
   }
   public Stream stdout() {
     def ret= InternalHelper.safeCreate(this.delegate.stdout(), io.vertx.ext.shell.Stream.class, io.vertx.groovy.ext.shell.Stream.class);
     return ret;
   }
-  public void eventHandler(String event, Handler<Void> handler) {
+  public Tty eventHandler(String event, Handler<Void> handler) {
     this.delegate.eventHandler(event, handler);
+    return this;
   }
 }

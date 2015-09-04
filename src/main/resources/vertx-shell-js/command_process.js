@@ -16,8 +16,8 @@
 
 /** @module vertx-shell-js/command_process */
 var utils = require('vertx-js/util/utils');
+var Tty = require('vertx-shell-js/tty');
 var CliToken = require('vertx-shell-js/cli_token');
-var Stream = require('vertx-shell-js/stream');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
@@ -31,6 +31,7 @@ var CommandProcess = function(j_val) {
 
   var j_commandProcess = j_val;
   var that = this;
+  Tty.call(this, j_val);
 
   /**
    @return the current Vert.x instance
@@ -77,39 +78,15 @@ var CommandProcess = function(j_val) {
   /**
 
    @public
-
-   @return {number}
-   */
-  this.width = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      return j_commandProcess["width()"]();
-    } else utils.invalidArgs();
-  };
-
-  /**
-
-   @public
-
-   @return {number}
-   */
-  this.height = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      return j_commandProcess["height()"]();
-    } else utils.invalidArgs();
-  };
-
-  /**
-
-   @public
-   @param stdin {Stream} 
+   @param stdin {function} 
    @return {CommandProcess}
    */
   this.setStdin = function(stdin) {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_commandProcess["setStdin(io.vertx.ext.shell.Stream)"](stdin._jdel);
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_commandProcess["setStdin(io.vertx.core.Handler)"](function(jVal) {
+      stdin(jVal);
+    });
       return that;
     } else utils.invalidArgs();
   };
@@ -126,19 +103,6 @@ var CommandProcess = function(j_val) {
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
       j_commandProcess["eventHandler(java.lang.String,io.vertx.core.Handler)"](event, handler);
       return that;
-    } else utils.invalidArgs();
-  };
-
-  /**
-
-   @public
-
-   @return {Stream}
-   */
-  this.stdout = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_commandProcess["stdout()"](), Stream);
     } else utils.invalidArgs();
   };
 

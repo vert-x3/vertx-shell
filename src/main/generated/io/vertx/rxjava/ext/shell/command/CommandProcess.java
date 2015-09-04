@@ -21,9 +21,9 @@ import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
 import io.vertx.rxjava.core.Vertx;
+import io.vertx.rxjava.ext.shell.Tty;
 import io.vertx.rxjava.ext.shell.cli.CliToken;
 import io.vertx.core.Handler;
-import io.vertx.rxjava.ext.shell.Stream;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -32,11 +32,12 @@ import io.vertx.rxjava.ext.shell.Stream;
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.command.CommandProcess original} non RX-ified interface using Vert.x codegen.
  */
 
-public class CommandProcess {
+public class CommandProcess extends Tty {
 
   final io.vertx.ext.shell.command.CommandProcess delegate;
 
   public CommandProcess(io.vertx.ext.shell.command.CommandProcess delegate) {
+    super(delegate);
     this.delegate = delegate;
   }
 
@@ -72,29 +73,14 @@ public class CommandProcess {
     return ret;
   }
 
-  public int width() { 
-    int ret = this.delegate.width();
-    return ret;
-  }
-
-  public int height() { 
-    int ret = this.delegate.height();
-    return ret;
-  }
-
-  public CommandProcess setStdin(Stream stdin) { 
-    this.delegate.setStdin((io.vertx.ext.shell.Stream) stdin.getDelegate());
+  public CommandProcess setStdin(Handler<String> stdin) { 
+    this.delegate.setStdin(stdin);
     return this;
   }
 
   public CommandProcess eventHandler(String event, Handler<Void> handler) { 
     this.delegate.eventHandler(event, handler);
     return this;
-  }
-
-  public Stream stdout() { 
-    Stream ret= Stream.newInstance(this.delegate.stdout());
-    return ret;
   }
 
   public CommandProcess write(String text) { 

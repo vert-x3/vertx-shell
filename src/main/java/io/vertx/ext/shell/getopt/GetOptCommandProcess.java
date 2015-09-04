@@ -18,7 +18,7 @@ public interface GetOptCommandProcess extends CommandProcess {
   List<String> getOption(String name);
 
   @Override
-  GetOptCommandProcess setStdin(Stream stdin);
+  GetOptCommandProcess setStdin(Handler<String> stdin);
 
   @Override
   GetOptCommandProcess eventHandler(String event, Handler<Void> handler);
