@@ -75,9 +75,7 @@ public class Job {
         if (stdout != null) {
           Stream tmp = stdout;
           stdout = txt -> {
-            context.runOnContext(v ->
-                tmp.handle(txt)
-            );
+            tmp.handle(txt);
           };
         }
         return stdout;

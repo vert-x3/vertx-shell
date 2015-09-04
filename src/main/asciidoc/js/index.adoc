@@ -42,6 +42,8 @@ Or via the service facility:
 
 == Base commands
 
+To find out the available commands you can use the _help_ builtin command.
+
 todo.
 
 == Extending Vert.x Shell
