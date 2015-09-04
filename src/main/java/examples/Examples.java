@@ -1,6 +1,10 @@
 package examples;
 
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.SSHOptions;
+import io.vertx.ext.shell.ShellService;
+import io.vertx.ext.shell.ShellServiceOptions;
+import io.vertx.ext.shell.TelnetOptions;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.registry.CommandRegistry;
 
@@ -8,6 +12,20 @@ import io.vertx.ext.shell.registry.CommandRegistry;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 public class Examples {
+
+  public void runService(Vertx vertx) {
+    ShellService service = ShellService.create(vertx,
+        new ShellServiceOptions().setSSH(
+            new SSHOptions().
+                setHost("localhost").
+                setPort(5000)).setTelnet(
+            new TelnetOptions().
+                setHost("localhost").
+                setPort(4000)
+        )
+    );
+    service.start();
+  }
 
   public void helloWorld(Vertx vertx) {
 
@@ -34,6 +52,28 @@ public class Examples {
         process.write("Argument " + arg);
       }
 
+      process.end();
+    });
+  }
+
+  public void readStdin(Command command) {
+    command.processHandler(process -> {
+      process.setStdin(data -> {
+        System.out.println("Received " + data);
+      });
+    });
+  }
+
+  public void writeStdout(Command command) {
+    command.processHandler(process -> {
+      process.stdout().handle("Hello World");
+      process.end();
+    });
+  }
+
+  public void write(Command command) {
+    command.processHandler(process -> {
+      process.write("Hello World");
       process.end();
     });
   }
@@ -70,6 +110,21 @@ public class Examples {
       process.eventHandler("SIGINT", event -> {
         vertx.cancelTimer(periodicId);
         process.end();
+      });
+    });
+  }
+
+  public void SIGTSTP_SIGCONT(Command command) {
+    command.processHandler(process -> {
+
+      // Command is suspended
+      process.eventHandler("SIGTSTP", event -> {
+        System.out.println("Suspended");
+      });
+
+      // Command is resumed
+      process.eventHandler("SIGCONT", event -> {
+        System.out.println("Resumed");
       });
     });
   }

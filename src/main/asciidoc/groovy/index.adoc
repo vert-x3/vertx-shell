@@ -13,7 +13,32 @@ todo.
 
 == Shell Service
 
-todo.
+The `link:groovydoc/io/vertx/groovy/ext/shell/ShellService.html[ShellService]` takes care of starting an instance of Vert.x Shell. It can be started
+programmatically or as a service from the command line.
+
+[source,groovy]
+----
+import io.vertx.groovy.ext.shell.ShellService
+def service = ShellService.create(vertx, [
+  sSH:[
+    host:"localhost",
+    port:5000
+  ],
+  telnet:[
+    host:"localhost",
+    port:4000
+  ]
+])
+service.start()
+
+----
+
+Or via the service facility:
+
+[source]
+----
+> vertx run maven:io.vertx:vertx-shell:3.0.0-SNAPSHOT
+----
 
 == Base commands
 
@@ -75,6 +100,43 @@ command.processHandler({ process ->
 
 ----
 
+=== Process I/O
+
+A command can set a `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#setStdin(io.vertx.ext.shell.Stream)[setStdin]` handler
+to be notified when the shell receives data, e.g the user uses his keyboard:
+
+[source,groovy]
+----
+command.processHandler({ process ->
+  process.setStdin({ data ->
+    println("Received ${data}")
+  })
+})
+
+----
+
+A command can use the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#stdout()[stdout]` to write to the standard output.
+
+[source,groovy]
+----
+command.processHandler({ process ->
+  process.stdout().handle("Hello World")
+  process.end()
+})
+
+----
+
+Or it can use the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#write(java.lang.String)[write]` method:
+
+[source,groovy]
+----
+command.processHandler({ process ->
+  process.write("Hello World")
+  process.end()
+})
+
+----
+
 === Process termination
 
 Calling `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#end()[end]` ends the current process. It can be called directly
@@ -124,12 +186,41 @@ command.processHandler({ process ->
 
 ----
 
-When no `SIGINT` handler is registered, pressing _Ctrl+C_ will have no effect.
+When no `SIGINT` handler is registered, pressing _Ctrl+C_ will have no effect on the current process and the event
+will be delayed and will likely be handled by the shell, like printing a new line on the console.
 
 ==== `SIGTSTP`/`SIGCONT` events
 
-todo.
+The `SIGSTP` event is fired when the process is running and the user press _Ctrl+Z_: the command
+is _suspended_:
+
+- the command can receive the `SIGSTP` event when it has registered an handler for this event
+- the command will not receive anymore data from the standard input
+- the shell prompt the user for input
+
+The `SIGCONT` event is fired when the process is resumed, usually when the user types _fg_:
+
+- the command can receive the `SIGCONT` event when it has registered an handler for this event
+- the command will receive anymore data from the standard input when it has registered an stdin handler
+
+[source,groovy]
+----
+command.processHandler({ process ->
+
+  // Command is suspended
+  process.eventHandler("SIGTSTP", { event ->
+    println("Suspended")
+  })
+
+  // Command is resumed
+  process.eventHandler("SIGCONT", { event ->
+    println("Resumed")
+  })
+})
+
+----
 
 ==== `SIGWINCH` event
 
-todo.
+The `SIGWINCH` event is fired when the size of the terminal changes, the new terminal size can be obtained
+with `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#width()[width]` and `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#height()[height]`.

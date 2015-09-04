@@ -14,9 +14,24 @@
  *
  * == Shell Service
  *
- * todo.
+ * The {@link io.vertx.ext.shell.ShellService} takes care of starting an instance of Vert.x Shell. It can be started
+ * programmatically or as a service from the command line.
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#runService}
+ * ----
+ *
+ * Or via the service facility:
+ *
+ * [source]
+ * ----
+ * > vertx run maven:io.vertx:vertx-shell:3.0.0-SNAPSHOT
+ * ----
  *
  * == Base commands
+ *
+ * To find out the available commands you can use the _help_ builtin command.
  *
  * todo.
  *
@@ -48,6 +63,30 @@
  * {@link examples.Examples#terminalSize}
  * ----
  *
+ * === Process I/O
+ *
+ * A command can set a {@link io.vertx.ext.shell.command.CommandProcess#setStdin(io.vertx.ext.shell.Stream)} handler
+ * to be notified when the shell receives data, e.g the user uses his keyboard:
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#readStdin}
+ * ----
+ *
+ * A command can use the {@link io.vertx.ext.shell.command.CommandProcess#stdout()} to write to the standard output.
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#writeStdout}
+ * ----
+ *
+ * Or it can use the {@link io.vertx.ext.shell.command.CommandProcess#write(java.lang.String)} method:
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#write}
+ * ----
+ *
  * === Process termination
  *
  * Calling {@link io.vertx.ext.shell.command.CommandProcess#end()} ends the current process. It can be called directly
@@ -73,15 +112,32 @@
  * {@link examples.Examples#SIGINT}
  * ----
  *
- * When no `SIGINT` handler is registered, pressing _Ctrl+C_ will have no effect.
+ * When no `SIGINT` handler is registered, pressing _Ctrl+C_ will have no effect on the current process and the event
+ * will be delayed and will likely be handled by the shell, like printing a new line on the console.
  *
  * ==== `SIGTSTP`/`SIGCONT` events
  *
- * todo.
+ * The `SIGSTP` event is fired when the process is running and the user press _Ctrl+Z_: the command
+ * is _suspended_:
+ *
+ * - the command can receive the `SIGSTP` event when it has registered an handler for this event
+ * - the command will not receive anymore data from the standard input
+ * - the shell prompt the user for input
+ *
+ * The `SIGCONT` event is fired when the process is resumed, usually when the user types _fg_:
+ *
+ * - the command can receive the `SIGCONT` event when it has registered an handler for this event
+ * - the command will receive anymore data from the standard input when it has registered an stdin handler
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#SIGTSTP_SIGCONT}
+ * ----
  *
  * ==== `SIGWINCH` event
  *
- * todo.
+ * The `SIGWINCH` event is fired when the size of the terminal changes, the new terminal size can be obtained
+ * with {@link io.vertx.ext.shell.command.CommandProcess#width()} and {@link io.vertx.ext.shell.command.CommandProcess#height()}.
  *
  */
 @GenModule(name = "vertx-shell")
