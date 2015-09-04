@@ -168,24 +168,12 @@ public class Shell {
     read(readline);
   }
 
-  private void resume(Readline readline, boolean toForeground) {
-    Optional<Job> j = jobs.values().stream().filter(job -> job != foregroundJob).sorted((j1, j2) -> ((Long) j1.lastStopped).compareTo(j2.lastStopped)).findFirst();
-    if (j.isPresent()) {
-      // A bit hackish, find a better way to do that
-      Job job = j.get();
-      if (toForeground) {
-        foregroundJob = job;
-      }
-      job.stdout = conn::write; // We set stdout whether or not it's background (maybe do something different)
-      job.status = JobStatus.RUNNING;
-      job.sendEvent("SIGCONT");
-      if (!toForeground) {
-        read(readline);
-      }
-    } else {
-      conn.write("no such job\n");
-      read(readline);
-    }
+  private Job findJob() {
+    return jobs.
+        values().
+        stream().
+        filter(job -> job != foregroundJob).sorted((j1, j2) -> ((Long) j1.lastStopped).compareTo(j2.lastStopped)).
+        findFirst().orElse(null);
   }
 
   void read(Readline readline) {
@@ -205,12 +193,39 @@ public class Shell {
           case "jobs":
             jobs(readline);
             return;
-          case "fg":
-            resume(readline, true);
+          case "fg": {
+            Job job = findJob();
+            if (job == null) {
+              conn.write("no such job\n");
+              read(readline);
+            } else {
+              foregroundJob = job;
+              if (job.status == JobStatus.STOPPED) {
+                job.stdout = conn::write; // We set stdout whether or not it's background (maybe do something different)
+                job.status = JobStatus.RUNNING;
+                job.sendEvent("SIGCONT");
+              } else {
+                // BG -> FG : nothing to do for now
+              }
+            }
             return;
-          case "bg":
-            resume(readline, false);
+          }
+          case "bg": {
+            Job job = findJob();
+            if (job == null) {
+              conn.write("no such job\n");
+            } else {
+              if (job.status == JobStatus.STOPPED) {
+                job.stdout = conn::write; // We set stdout whether or not it's background (maybe do something different)
+                job.status = JobStatus.RUNNING;
+                job.sendEvent("SIGCONT");
+              } else {
+                conn.write("job " + job.id + " already in background\n");
+              }
+            }
+            read(readline);
             return;
+          }
         }
       }
 

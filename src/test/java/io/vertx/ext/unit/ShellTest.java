@@ -264,17 +264,18 @@ public class ShellTest {
     CountDownLatch latch1 = new CountDownLatch(1);
     CountDownLatch latch2 = new CountDownLatch(1);
     CountDownLatch latch3 = new CountDownLatch(1);
+    Async async = context.async();
     manager.registerCommand(Command.command("foo").processHandler(process -> {
       process.eventHandler("SIGTSTP", v -> {
+        context.assertEquals(1L, latch2.getCount());
         latch2.countDown();
       });
       process.eventHandler("SIGCONT", v -> {
+        context.assertEquals(1L, latch3.getCount());
         latch3.countDown();
       });
-      process.setStdin(txt -> {
-        context.assertEquals(0L, latch3.getCount());
-        context.assertEquals("hello", txt);
-        latch3.countDown();
+      process.setStdin(line -> {
+        async.complete();
       });
       latch1.countDown();
     }));
@@ -287,6 +288,8 @@ public class ShellTest {
     conn.read("fg\r");
     context.assertNotNull(shell.foregroundJob());
     context.assertEquals(shell.getJob(1), shell.foregroundJob());
+    latch3.await();
+    conn.read("whatever");
   }
 
   @Test
