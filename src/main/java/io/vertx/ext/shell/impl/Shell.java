@@ -90,6 +90,8 @@ public class Shell {
           if (!job.sendEvent("SIGINT")) {
             echo(cp);
             readline.queueEvent(event, cp);
+          } else {
+            echo(cp, '\n');
           }
           break;
         case EOT:
@@ -100,6 +102,8 @@ public class Shell {
           }
           break;
         case SUSP:
+          echo(cp, '\n');
+          echo(Helper.toCodePoints("[" + job.id + "] Stopped " + job.line + "\n"));
           foregroundJob = null;
           job.stdout = null;
           job.status = JobStatus.STOPPED;
@@ -200,6 +204,7 @@ public class Shell {
               read(readline);
             } else {
               foregroundJob = job;
+              echo(Helper.toCodePoints(job.line + "\n"));
               if (job.status == JobStatus.STOPPED) {
                 job.stdout = conn::write; // We set stdout whether or not it's background (maybe do something different)
                 job.status = JobStatus.RUNNING;
@@ -219,6 +224,7 @@ public class Shell {
                 job.stdout = conn::write; // We set stdout whether or not it's background (maybe do something different)
                 job.status = JobStatus.RUNNING;
                 job.sendEvent("SIGCONT");
+                echo(Helper.toCodePoints("[" + job.id + "]+ " + job.line + " &\n"));
               } else {
                 conn.write("job " + job.id + " already in background\n");
               }
