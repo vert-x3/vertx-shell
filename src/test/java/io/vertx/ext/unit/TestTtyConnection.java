@@ -5,6 +5,7 @@ import io.termd.core.tty.TtyEvent;
 import io.termd.core.util.Helper;
 import io.termd.core.util.Vector;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -14,7 +15,7 @@ public class TestTtyConnection implements TtyConnection {
 
   private Consumer<String> termHandler;
   private Consumer<Vector> sizeHandler;
-  private Consumer<TtyEvent> eventHandler;
+  private BiConsumer<TtyEvent, Integer> eventHandler;
   private Consumer<int[]> stdinHandler;
   private Consumer<Void> closeHandler;
   public final StringBuilder out = new StringBuilder();
@@ -45,12 +46,12 @@ public class TestTtyConnection implements TtyConnection {
   }
 
   @Override
-  public Consumer<TtyEvent> getEventHandler() {
+  public BiConsumer<TtyEvent, Integer> getEventHandler() {
     return eventHandler;
   }
 
   @Override
-  public void setEventHandler(Consumer<TtyEvent> handler) {
+  public void setEventHandler(BiConsumer<TtyEvent, Integer> handler) {
     eventHandler = handler;
   }
 
@@ -101,7 +102,21 @@ public class TestTtyConnection implements TtyConnection {
   }
 
   public void sendEvent(TtyEvent event) {
-    eventHandler.accept(event);
+    int c;
+    switch (event) {
+      case INTR:
+        c = 'C' - 64;
+        break;
+      case SUSP:
+        c = 'Z' - 64;
+        break;
+      case EOT:
+        c = 'D' - 64;
+        break;
+      default:
+        throw new AssertionError();
+    }
+    eventHandler.accept(event, c);
   }
 
   public void read(String s) {
@@ -110,7 +125,7 @@ public class TestTtyConnection implements TtyConnection {
     reading = false;
   }
 
-  public synchronized void assertWritten(String s) {
+  public synchronized String checkWritten(String s) {
     while (true) {
       int l = Math.min(s.length(), out.length());
       String actual = out.substring(0, l);
@@ -119,7 +134,7 @@ public class TestTtyConnection implements TtyConnection {
         out.replace(0, l, "");
         s = s.substring(l);
       } else {
-        throw new AssertionError("Was expecting <" + actual + "> to be equals to <" + expected + ">");
+        return "Was expecting <" + actual + "> to be equals to <" + expected + ">";
       }
       if (s.length() == 0) {
         break;
@@ -131,6 +146,14 @@ public class TestTtyConnection implements TtyConnection {
           throw new AssertionError(e);
         }
       }
+    }
+    return null;
+  }
+
+  public synchronized void assertWritten(String s) {
+    String report = checkWritten(s);
+    if (report != null) {
+      throw new AssertionError(report);
     }
   }
 }

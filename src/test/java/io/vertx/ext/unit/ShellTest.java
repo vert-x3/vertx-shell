@@ -65,13 +65,19 @@ public class ShellTest {
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
     Async async = context.async();
+    manager.registerCommand(Command.command("_not_consumed").processHandler(process -> {
+      async.complete();
+    }));
     manager.registerCommand(Command.command("read").processHandler(process -> {
+      StringBuilder buffer = new StringBuilder();
       process.setStdin(line -> {
-        context.assertEquals("the_line", line);
-        async.complete();
+        buffer.append(line);
+        if (buffer.toString().equals("the_line")) {
+          process.end();
+        }
       });
     }), context.asyncAssertSuccess(v -> {
-      conn.read("read\rthe_line");
+      conn.read("read\rthe_line_not_consumed\r");
     }));
   }
 
@@ -152,8 +158,8 @@ public class ShellTest {
     latch2.await(10, TimeUnit.SECONDS);
     conn.read("wait\r");
     latch3.await(10, TimeUnit.SECONDS);
-    conn.read("end\r");
     conn.sendEvent(TtyEvent.SUSP);
+    conn.read("end\r");
   }
 
   @Test
@@ -280,5 +286,53 @@ public class ShellTest {
     conn.read("fg\r");
     context.assertNotNull(shell.foregroundJob());
     context.assertEquals(shell.getJob(1), shell.foregroundJob());
+  }
+
+  @Test
+  public void testExecuteBufferedCommand(TestContext context) throws Exception {
+    CommandRegistry manager = CommandRegistry.get(vertx);
+    TestTtyConnection conn = new TestTtyConnection();
+    Shell shell = new Shell(vertx, conn, manager);
+    shell.init();
+    CountDownLatch latch = new CountDownLatch(1);
+    Async async = context.async();
+    manager.registerCommand(Command.command("foo").processHandler(process -> {
+      context.assertEquals(null, conn.checkWritten("% foo\n"));
+      conn.read("bar");
+      context.assertNull(conn.checkWritten("bar"));
+      process.end();
+      latch.countDown();
+    }));
+    manager.registerCommand(Command.command("bar").processHandler(process -> {
+      context.assertEquals(null, conn.checkWritten("% bar\n"));
+      async.complete();
+    }));
+    conn.read("foo\r");
+    latch.await(10, TimeUnit.SECONDS);
+    conn.read("\r");
+  }
+
+  @Test
+  public void testEchoCharsDuringExecute(TestContext context) throws Exception {
+    CommandRegistry manager = CommandRegistry.get(vertx);
+    TestTtyConnection conn = new TestTtyConnection();
+    Shell shell = new Shell(vertx, conn, manager);
+    shell.init();
+    Async async = context.async();
+    manager.registerCommand(Command.command("foo").processHandler(process -> {
+      context.assertEquals(null, conn.checkWritten("% foo\n"));
+      conn.read("\u0007");
+      context.assertNull(conn.checkWritten("^G"));
+      conn.read("A");
+      context.assertNull(conn.checkWritten("A"));
+      conn.read("\r");
+      context.assertNull(conn.checkWritten("\n"));
+      conn.read("\003");
+      context.assertNull(conn.checkWritten("^C"));
+      conn.read("\004");
+      context.assertNull(conn.checkWritten("^D"));
+      async.complete();
+    }));
+    conn.read("foo\r");
   }
 }

@@ -1,6 +1,5 @@
 package io.vertx.ext.shell.impl;
 
-import io.termd.core.util.Helper;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.Stream;
@@ -21,7 +20,6 @@ public class Job {
   final io.vertx.ext.shell.process.Process process;
   final String line;
   final HashMap<String, Handler<Void>> eventHandlers = new HashMap<>();
-  volatile Handler<Integer> endHandler;
   volatile JobStatus status;
   volatile long lastStopped; // When the job was last stopped
   volatile Stream stdout;
@@ -34,10 +32,13 @@ public class Job {
     this.line = line;
   }
 
-  void sendEvent(String event) {
+  boolean sendEvent(String event) {
     Handler<Void> handler = eventHandlers.get(event);
     if (handler != null) {
       handler.handle(null);
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -52,7 +53,6 @@ public class Job {
   public void run() {
     status = JobStatus.RUNNING;
     Context context = shell.vertx.getOrCreateContext(); // Maybe just a current context since it may run with SSHD
-    Handler<Integer> endHandler = this.endHandler;
     Tty tty = new Tty() {
       @Override
       public int width() {
@@ -64,16 +64,9 @@ public class Job {
       }
       @Override
       public void setStdin(Stream stdin) {
-        // Maybe translate the thread ?
         Job.this.stdin = stdin;
         if (shell.foregroundJob == Job.this) {
-          if (stdin != null) {
-            shell.readline.
-                setReadHandler(codePoints -> stdin.handle(Helper.fromCodePoints(codePoints))).
-                schedulePending();
-          } else {
-            shell.readline.setReadHandler(null);
-          }
+          shell.checkPending();
         }
       }
       @Override
@@ -107,15 +100,13 @@ public class Job {
       public void end(int status) {
         Job.this.status = JobStatus.TERMINATED;
         shell.jobs.remove(Job.this.id);
-        if (endHandler != null) {
-          context.runOnContext(v -> endHandler.handle(status));
+        stdout = null;
+        if (shell.foregroundJob == Job.this) {
+          shell.foregroundJob = null;
+          shell.read(shell.readline);
         }
       }
     };
     process.execute(processContext);
-  }
-
-  public void endHandler(Handler<Integer> handler) {
-    endHandler = handler;
   }
 }

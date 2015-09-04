@@ -1,6 +1,5 @@
 package io.vertx.ext.shell.impl;
 
-import io.termd.core.readline.KeyDecoder;
 import io.termd.core.readline.Keymap;
 import io.termd.core.readline.Readline;
 import io.termd.core.tty.TtyConnection;
@@ -21,6 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -29,18 +29,18 @@ import java.util.stream.Collectors;
 public class Shell {
 
   final Vertx vertx;
-  final TtyConnection conn;
+  private final TtyConnection conn;
   final Readline readline;
   final CommandRegistry mgr;
   Vector size;
-  Job foregroundJob;
+  Job foregroundJob; // The currently running job
   final SortedMap<Integer, Job> jobs = new TreeMap<>();
   String welcome;
 
 
   public Shell(Vertx vertx, TtyConnection conn, CommandRegistry mgr) {
 
-    InputStream inputrc = KeyDecoder.class.getResourceAsStream("inputrc");
+    InputStream inputrc = Keymap.class.getResourceAsStream("inputrc");
     Keymap keymap = new Keymap(inputrc);
     Readline readline = new Readline(keymap);
 
@@ -62,49 +62,90 @@ public class Shell {
     for (io.termd.core.readline.Function function : Helper.loadServices(Thread.currentThread().getContextClassLoader(), io.termd.core.readline.Function.class)) {
       readline.addFunction(function);
     }
-    readline.setSizeHandler(resize -> {
+    conn.setStdinHandler(codePoints -> {
+      if (foregroundJob == null) {
+        // Bug ???
+      } else {
+        if (foregroundJob.stdin != null) {
+          // Forward
+          foregroundJob.stdin.handle(Helper.fromCodePoints(codePoints));
+        } else {
+          // Echo
+          echo(codePoints);
+          readline.queueCodePoints(codePoints);
+        }
+      }
+    });
+    conn.setSizeHandler(resize -> {
       size = resize;
       Job job = foregroundJob;
       if (job != null) {
         job.sendEvent("SIGWINCH");
       }
     });
-    readline.setEventHandler(event -> {
+    conn.setEventHandler((event, cp) -> {
       Job job = foregroundJob;
       switch (event) {
         case INTR:
-          if (job != null) {
-            job.sendEvent("SIGINT");
-          } else {
-            // New line
+          if (!job.sendEvent("SIGINT")) {
+            echo(cp);
+            readline.queueEvent(event, cp);
           }
           break;
         case EOT:
-          if (job != null) {
-            // Pseudo signal
-            job.sendEvent("EOT");
-          }  else {
-            // Disconnect if not handled
-            conn.close();
+          // Pseudo signal
+          if (!job.sendEvent("EOT")) {
+            echo(cp);
+            readline.queueEvent(event, cp);
           }
           break;
         case SUSP:
-          if (job != null) {
-            foregroundJob = null;
-            readline.setReadHandler(null);
-            job.stdout = null;
-            job.status = JobStatus.STOPPED;
-            job.sendEvent("SIGTSTP");
-            read(readline);
-          }
+          foregroundJob = null;
+          job.stdout = null;
+          job.status = JobStatus.STOPPED;
+          job.sendEvent("SIGTSTP");
+          read(readline);
           break;
       }
     });
-    readline.install(conn);
     if (welcome != null) {
       conn.write(welcome);
     }
     read(readline);
+  }
+
+  private void echo(int... codePoints) {
+    Consumer<int[]> out = conn.stdoutHandler();
+    for (int codePoint : codePoints) {
+      if (codePoint < 32) {
+        if (codePoint == '\t') {
+          out.accept(new int[]{'\t'});
+        } else if (codePoint == '\b') {
+          out.accept(new int[]{'\b',' ','\b'});
+        } else if (codePoint == '\r' || codePoint == '\n') {
+          out.accept(new int[]{'\n'});
+        } else {
+          out.accept(new int[]{'^', codePoint + 64});
+        }
+      } else {
+        if (codePoint == 127) {
+          out.accept(new int[]{'\b',' ','\b'});
+        } else {
+          out.accept(new int[]{codePoint});
+        }
+      }
+    }
+  }
+
+  void checkPending() {
+    if (foregroundJob != null && foregroundJob.stdin != null) {
+      if (readline.hasCodePoints()) {
+        foregroundJob.stdin.handle(Helper.fromCodePoints(readline.nextCodePoints()));
+        vertx.runOnContext(v -> {
+          checkPending();
+        });
+      }
+    }
   }
 
   public Job foregroundJob() {
@@ -134,11 +175,8 @@ public class Shell {
       Job job = j.get();
       if (toForeground) {
         foregroundJob = job;
-        if (job.stdin != null) {
-          readline.setReadHandler(codePoints -> job.stdin.handle(Helper.fromCodePoints(codePoints))).schedulePending();
-        }
       }
-      job.stdout = conn::write; // We should somehow buffer the output
+      job.stdout = conn::write; // We set stdout whether or not it's background (maybe do something different)
       job.status = JobStatus.RUNNING;
       job.sendEvent("SIGCONT");
       if (!toForeground) {
@@ -150,8 +188,8 @@ public class Shell {
     }
   }
 
-  private void read(Readline readline) {
-    readline.readline("% ", line -> {
+  void read(Readline readline) {
+    readline.readline(conn, "% ", line -> {
 
       List<CliToken> tokens = CliToken.tokenize(line);
 
@@ -176,12 +214,6 @@ public class Shell {
           int id = jobs.isEmpty() ? 1 : jobs.lastKey() + 1;
           Job job = new Job(id, this, ar.result(), line);
           foregroundJob = job;
-          job.endHandler(code -> {
-            foregroundJob = null;
-            readline.setReadHandler(null);
-            job.stdout = null;
-            read(readline);
-          });
           job.stdout = conn::write;
           jobs.put(id, job);
           job.run();
@@ -242,10 +274,8 @@ public class Shell {
       };
       mgr.complete(comp);
     });
-    readline.schedulePending();
   }
 
   public void close() {
-    readline.uninstall();
   }
 }
