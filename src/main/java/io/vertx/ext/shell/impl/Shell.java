@@ -10,10 +10,7 @@ import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.cli.CliToken;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +69,7 @@ public class Shell {
         } else {
           // Echo
           echo(codePoints);
-          readline.queueCodePoints(codePoints);
+          readline.queueEvent(codePoints);
         }
       }
     });
@@ -143,8 +140,8 @@ public class Shell {
 
   void checkPending() {
     if (foregroundJob != null && foregroundJob.stdin != null) {
-      if (readline.hasCodePoints()) {
-        foregroundJob.stdin.handle(Helper.fromCodePoints(readline.nextCodePoints()));
+      if (readline.hasEvent()) {
+        foregroundJob.stdin.handle(Helper.fromCodePoints(readline.nextEvent().buffer().array()));
         vertx.runOnContext(v -> {
           checkPending();
         });
