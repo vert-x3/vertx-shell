@@ -1,3 +1,4 @@
+require 'vertx-shell/session'
 require 'vertx-shell/tty'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.process.ProcessContext
@@ -14,6 +15,7 @@ module VertxShell
     def j_del
       @j_del
     end
+    #  @return the tty assocated with this process
     # @return [::VertxShell::Tty]
     def tty
       if !block_given?
@@ -21,8 +23,16 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling tty()"
     end
+    #  @return the shell session
+    # @return [::VertxShell::Session]
+    def session
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:session, []).call(),::VertxShell::Session)
+      end
+      raise ArgumentError, "Invalid arguments when calling session()"
+    end
     #  End the process.
-    # @param [Fixnum] status the termination code
+    # @param [Fixnum] status the termination status
     # @return [void]
     def end(status=nil)
       if status.class == Fixnum && !block_given?

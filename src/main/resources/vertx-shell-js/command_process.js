@@ -16,6 +16,7 @@
 
 /** @module vertx-shell-js/command_process */
 var utils = require('vertx-js/util/utils');
+var Session = require('vertx-shell-js/session');
 var Tty = require('vertx-shell-js/tty');
 var CliToken = require('vertx-shell-js/cli_token');
 
@@ -72,6 +73,20 @@ var CommandProcess = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return j_commandProcess["args()"]();
+    } else utils.invalidArgs();
+  };
+
+  /**
+   @return the shell session
+
+   @public
+
+   @return {Session}
+   */
+  this.session = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return utils.convReturnVertxGen(j_commandProcess["session()"](), Session);
     } else utils.invalidArgs();
   };
 

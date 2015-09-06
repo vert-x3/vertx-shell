@@ -2,6 +2,7 @@ package io.vertx.ext.shell.impl;
 
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
+import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.Stream;
 
 import io.vertx.ext.shell.process.*;
@@ -102,10 +103,17 @@ public class Job {
       }
     };
     ProcessContext processContext = new ProcessContext() {
+
       @Override
       public Tty tty() {
         return tty;
       }
+
+      @Override
+      public Session session() {
+        return shell.session;
+      }
+
       @Override
       public void end(int status) {
         Job.this.status = JobStatus.TERMINATED;

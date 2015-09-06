@@ -76,6 +76,16 @@
  * {@link examples.Examples#terminalSize}
  * ----
  *
+ * === Shell session
+ *
+ * The shell is a connected service that naturally maintains a session with the client, this session can be
+ * used in commands to scope data. A command can get the session with {@link io.vertx.ext.shell.process.ProcessContext#session()}:
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#session}
+ * ----
+ *
  * === Process I/O
  *
  * A command can set a {@link io.vertx.ext.shell.command.CommandProcess#setStdin} handler

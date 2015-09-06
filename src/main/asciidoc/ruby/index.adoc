@@ -115,6 +115,26 @@ command.process_handler() { |process|
 
 ----
 
+=== Shell session
+
+The shell is a connected service that naturally maintains a session with the client, this session can be
+used in commands to scope data. A command can get the session with `link:yardoc/VertxShell/ProcessContext.html#session-instance_method[session]`:
+
+[source,ruby]
+----
+command.process_handler() { |process|
+
+  session = process.session()
+
+  if (session.get("my_key") == nil)
+    session.put("my key", "my value")
+  end
+
+  process.end()
+}
+
+----
+
 === Process I/O
 
 A command can set a `link:yardoc/VertxShell/CommandProcess.html#set_stdin-instance_method[setStdin]` handler

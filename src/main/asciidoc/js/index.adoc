@@ -115,6 +115,26 @@ command.processHandler(function (process) {
 
 ----
 
+=== Shell session
+
+The shell is a connected service that naturally maintains a session with the client, this session can be
+used in commands to scope data. A command can get the session with `link:jsdoc/process_context-ProcessContext.html#session[session]`:
+
+[source,js]
+----
+command.processHandler(function (process) {
+
+  var session = process.session();
+
+  if (session.get("my_key") === null) {
+    session.put("my key", "my value");
+  }
+
+  process.end();
+});
+
+----
+
 === Process I/O
 
 A command can set a `link:jsdoc/command_process-CommandProcess.html#setStdin[setStdin]` handler

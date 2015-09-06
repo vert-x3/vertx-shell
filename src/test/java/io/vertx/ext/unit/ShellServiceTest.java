@@ -2,6 +2,7 @@ package io.vertx.ext.unit;
 
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -200,6 +201,77 @@ public class ShellServiceTest {
         });
         job.execute(ctx);
       }));
+    }));
+  }
+
+  @Test
+  public void testSessionGet(TestContext context) throws Exception {
+    CommandRegistry manager = CommandRegistry.get(vertx);
+    Command cmd = Command.command("foo");
+    Async async = context.async();
+    cmd.processHandler(process -> {
+      Session session = process.session();
+      context.assertNotNull(session);
+      context.assertEquals("the_value", session.get("the_key"));
+      process.end();
+    });
+    manager.registerCommand(cmd);
+    manager.createProcess("foo", context.asyncAssertSuccess(process -> {
+      TestProcessContext ctx = new TestProcessContext();
+      ctx.session.put("the_key", "the_value");
+      ctx.endHandler(status -> {
+        context.assertEquals(0, status);
+        async.complete();
+      });
+      process.execute(ctx);
+    }));
+  }
+
+  @Test
+  public void testSessionPut(TestContext context) throws Exception {
+    CommandRegistry manager = CommandRegistry.get(vertx);
+    Command cmd = Command.command("foo");
+    Async async = context.async();
+    cmd.processHandler(process -> {
+      Session session = process.session();
+      context.assertNotNull(session);
+      context.assertNull(session.get("the_key"));
+      session.put("the_key", "the_value");
+      process.end();
+    });
+    manager.registerCommand(cmd);
+    manager.createProcess("foo", context.asyncAssertSuccess(process -> {
+      TestProcessContext ctx = new TestProcessContext();
+      ctx.endHandler(status -> {
+        context.assertEquals(0, status);
+        context.assertEquals("the_value", ctx.session.get("the_key"));
+        async.complete();
+      });
+      process.execute(ctx);
+    }));
+  }
+
+  @Test
+  public void testSessionRemove(TestContext context) throws Exception {
+    CommandRegistry manager = CommandRegistry.get(vertx);
+    Command cmd = Command.command("foo");
+    Async async = context.async();
+    cmd.processHandler(process -> {
+      Session session = process.session();
+      context.assertNotNull(session);
+      context.assertEquals("the_value", session.remove("the_key"));
+      process.end();
+    });
+    manager.registerCommand(cmd);
+    manager.createProcess("foo", context.asyncAssertSuccess(process -> {
+      TestProcessContext ctx = new TestProcessContext();
+      ctx.session.put("the_key", "the_value");
+      ctx.endHandler(status -> {
+        context.assertEquals(0, status);
+        context.assertNull(ctx.session.get("the_key"));
+        async.complete();
+      });
+      process.execute(ctx);
     }));
   }
 

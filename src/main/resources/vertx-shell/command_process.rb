@@ -1,3 +1,4 @@
+require 'vertx-shell/session'
 require 'vertx-shell/tty'
 require 'vertx-shell/cli_token'
 require 'vertx/util/utils.rb'
@@ -39,6 +40,14 @@ module VertxShell
         return @j_del.java_method(:args, []).call().to_a.map { |elt| elt }
       end
       raise ArgumentError, "Invalid arguments when calling args()"
+    end
+    #  @return the shell session
+    # @return [::VertxShell::Session]
+    def session
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:session, []).call(),::VertxShell::Session)
+      end
+      raise ArgumentError, "Invalid arguments when calling session()"
     end
     # @yield 
     # @return [self]

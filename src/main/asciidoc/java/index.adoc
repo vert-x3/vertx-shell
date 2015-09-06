@@ -107,6 +107,25 @@ command.processHandler(process -> {
 });
 ----
 
+=== Shell session
+
+The shell is a connected service that naturally maintains a session with the client, this session can be
+used in commands to scope data. A command can get the session with `link:../../apidocs/io/vertx/ext/shell/process/ProcessContext.html#session--[session]`:
+
+[source,java]
+----
+command.processHandler(process -> {
+
+  Session session = process.session();
+
+  if (session.get("my_key") == null) {
+    session.put("my key", "my value");
+  }
+
+  process.end();
+});
+----
+
 === Process I/O
 
 A command can set a `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html#setStdin-io.vertx.core.Handler-[setStdin]` handler

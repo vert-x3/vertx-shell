@@ -20,6 +20,7 @@ import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
+import io.vertx.rxjava.ext.shell.Session;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.rxjava.ext.shell.Tty;
 import io.vertx.rxjava.ext.shell.cli.CliToken;
@@ -70,6 +71,15 @@ public class CommandProcess extends Tty {
   public List<String> args() { 
     List<String> ret = this.delegate.args();
 ;
+    return ret;
+  }
+
+  /**
+   * @return the shell session
+   * @return 
+   */
+  public Session session() { 
+    Session ret= Session.newInstance(this.delegate.session());
     return ret;
   }
 

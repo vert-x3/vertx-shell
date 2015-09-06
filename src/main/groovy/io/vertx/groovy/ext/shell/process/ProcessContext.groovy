@@ -17,6 +17,7 @@
 package io.vertx.groovy.ext.shell.process;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import io.vertx.groovy.ext.shell.Session
 import io.vertx.groovy.ext.shell.Tty
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -30,13 +31,25 @@ public class ProcessContext {
   public Object getDelegate() {
     return delegate;
   }
+  /**
+   * @return the tty assocated with this process
+   * @return 
+   */
   public Tty tty() {
     def ret= InternalHelper.safeCreate(this.delegate.tty(), io.vertx.ext.shell.Tty.class, io.vertx.groovy.ext.shell.Tty.class);
     return ret;
   }
   /**
+   * @return the shell session
+   * @return 
+   */
+  public Session session() {
+    def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.ext.shell.Session.class, io.vertx.groovy.ext.shell.Session.class);
+    return ret;
+  }
+  /**
    * End the process.
-   * @param status the termination code
+   * @param status the termination status
    */
   public void end(int status) {
     this.delegate.end(status);

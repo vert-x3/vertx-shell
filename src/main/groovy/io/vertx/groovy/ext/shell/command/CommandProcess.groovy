@@ -18,6 +18,7 @@ package io.vertx.groovy.ext.shell.command;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import java.util.List
+import io.vertx.groovy.ext.shell.Session
 import io.vertx.groovy.core.Vertx
 import io.vertx.groovy.ext.shell.Tty
 import io.vertx.groovy.ext.shell.cli.CliToken
@@ -57,6 +58,14 @@ public class CommandProcess extends Tty {
    */
   public List<String> args() {
     def ret = this.delegate.args();
+    return ret;
+  }
+  /**
+   * @return the shell session
+   * @return 
+   */
+  public Session session() {
+    def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.ext.shell.Session.class, io.vertx.groovy.ext.shell.Session.class);
     return ret;
   }
   public CommandProcess setStdin(Handler<String> stdin) {

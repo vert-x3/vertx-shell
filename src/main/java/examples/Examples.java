@@ -2,6 +2,7 @@ package examples;
 
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.SSHOptions;
+import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.ShellService;
 import io.vertx.ext.shell.ShellServiceOptions;
 import io.vertx.ext.shell.TelnetOptions;
@@ -55,6 +56,20 @@ public class Examples {
       process.end();
     });
   }
+
+  public void session(Command command) {
+    command.processHandler(process -> {
+
+      Session session = process.session();
+
+      if (session.get("my_key") == null) {
+        session.put("my key", "my value");
+      }
+
+      process.end();
+    });
+  }
+
 
   public void readStdin(Command command) {
     command.processHandler(process -> {

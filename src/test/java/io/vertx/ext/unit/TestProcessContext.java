@@ -3,7 +3,9 @@ package io.vertx.ext.unit;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.Stream;
+import io.vertx.ext.shell.impl.SessionImpl;
 import io.vertx.ext.shell.process.ProcessContext;
 import io.vertx.ext.shell.Tty;
 
@@ -14,6 +16,7 @@ import java.util.HashMap;
 */
 class TestProcessContext implements ProcessContext, Tty {
 
+  final SessionImpl session = new SessionImpl();
   private Handler<Integer> endHandler;
   final Context context = Vertx.currentContext();
   final HashMap<String, Handler<Void>> eventHandlers = new HashMap<>();
@@ -78,6 +81,11 @@ class TestProcessContext implements ProcessContext, Tty {
       eventHandlers.remove(event);
     }
     return this;
+  }
+
+  @Override
+  public Session session() {
+    return session;
   }
 
   public boolean sendEvent(String event) {

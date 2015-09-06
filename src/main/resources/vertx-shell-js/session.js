@@ -14,70 +14,72 @@
  * under the License.
  */
 
-/** @module vertx-shell-js/process_context */
+/** @module vertx-shell-js/session */
 var utils = require('vertx-js/util/utils');
-var Session = require('vertx-shell-js/session');
-var Tty = require('vertx-shell-js/tty');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JProcessContext = io.vertx.ext.shell.process.ProcessContext;
+var JSession = io.vertx.ext.shell.Session;
 
 /**
+ A shell session.
 
  @class
 */
-var ProcessContext = function(j_val) {
+var Session = function(j_val) {
 
-  var j_processContext = j_val;
+  var j_session = j_val;
   var that = this;
 
   /**
-   @return the tty assocated with this process
+   Put some data in a session
 
    @public
-
-   @return {Tty}
+   @param key {string} the key for the data 
+   @param obj {Object} the data 
+   @return {Session} a reference to this, so the API can be used fluently
    */
-  this.tty = function() {
+  this.put = function(key, obj) {
     var __args = arguments;
-    if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_processContext["tty()"](), Tty);
+    if (__args.length === 2 && typeof __args[0] === 'string' && true) {
+      j_session["put(java.lang.String,java.lang.Object)"](key, utils.convParamTypeUnknown(obj));
+      return that;
     } else utils.invalidArgs();
   };
 
   /**
-   @return the shell session
+   Get some data from the session
 
    @public
-
-   @return {Session}
+   @param key {string} the key of the data 
+   @return {Object} the data
    */
-  this.session = function() {
+  this.get = function(key) {
     var __args = arguments;
-    if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_processContext["session()"](), Session);
+    if (__args.length === 1 && typeof __args[0] === 'string') {
+      return utils.convReturnTypeUnknown(j_session["get(java.lang.String)"](key));
     } else utils.invalidArgs();
   };
 
   /**
-   End the process.
+   Remove some data from the session
 
    @public
-   @param status {number} the termination status 
+   @param key {string} the key of the data 
+   @return {Object} the data that was there or null if none there
    */
-  this.end = function(status) {
+  this.remove = function(key) {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] ==='number') {
-      j_processContext["end(int)"](status);
+    if (__args.length === 1 && typeof __args[0] === 'string') {
+      return utils.convReturnTypeUnknown(j_session["remove(java.lang.String)"](key));
     } else utils.invalidArgs();
   };
 
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
-  this._jdel = j_processContext;
+  this._jdel = j_session;
 };
 
 // We export the Constructor function
-module.exports = ProcessContext;
+module.exports = Session;

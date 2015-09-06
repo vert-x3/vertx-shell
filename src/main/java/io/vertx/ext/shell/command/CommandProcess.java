@@ -4,6 +4,7 @@ import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.Stream;
 import io.vertx.ext.shell.Tty;
 import io.vertx.ext.shell.cli.CliToken;
@@ -30,6 +31,11 @@ public interface CommandProcess extends Tty {
    * @return the actual string arguments of the command
    */
   List<String> args();
+
+  /**
+   * @return the shell session
+   */
+  Session session();
 
   @Fluent
   CommandProcess setStdin(Handler<String> stdin);

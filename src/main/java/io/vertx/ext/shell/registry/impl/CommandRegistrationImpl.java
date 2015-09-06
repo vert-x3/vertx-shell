@@ -3,6 +3,7 @@ package io.vertx.ext.shell.registry.impl;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.Stream;
 import io.vertx.ext.shell.cli.CliToken;
@@ -72,6 +73,11 @@ public class CommandRegistrationImpl implements CommandRegistration {
           @Override
           public List<String> args() {
             return args.stream().filter(CliToken::isText).map(CliToken::value).collect(Collectors.toList());
+          }
+
+          @Override
+          public Session session() {
+            return context.session();
           }
 
           @Override

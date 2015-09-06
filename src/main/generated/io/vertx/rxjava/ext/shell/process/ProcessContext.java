@@ -19,6 +19,7 @@ package io.vertx.rxjava.ext.shell.process;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
+import io.vertx.rxjava.ext.shell.Session;
 import io.vertx.rxjava.ext.shell.Tty;
 
 /**
@@ -40,14 +41,27 @@ public class ProcessContext {
     return delegate;
   }
 
+  /**
+   * @return the tty assocated with this process
+   * @return 
+   */
   public Tty tty() { 
     Tty ret= Tty.newInstance(this.delegate.tty());
     return ret;
   }
 
   /**
+   * @return the shell session
+   * @return 
+   */
+  public Session session() { 
+    Session ret= Session.newInstance(this.delegate.session());
+    return ret;
+  }
+
+  /**
    * End the process.
-   * @param status the termination code
+   * @param status the termination status
    */
   public void end(int status) { 
     this.delegate.end(status);

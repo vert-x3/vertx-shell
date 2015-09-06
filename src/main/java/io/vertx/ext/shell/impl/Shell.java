@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
  */
 public class Shell {
 
+  final SessionImpl session = new SessionImpl();
   final Vertx vertx;
   private final TtyConnection conn;
   final Readline readline;
