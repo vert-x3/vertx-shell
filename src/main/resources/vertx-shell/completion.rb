@@ -1,3 +1,4 @@
+require 'vertx-shell/session'
 require 'vertx-shell/cli_token'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.cli.Completion
@@ -21,6 +22,13 @@ module VertxShell
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:vertx, []).call(),::Vertx::Vertx)
       end
       raise ArgumentError, "Invalid arguments when calling vertx()"
+    end
+    # @return [::VertxShell::Session]
+    def session
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:session, []).call(),::VertxShell::Session)
+      end
+      raise ArgumentError, "Invalid arguments when calling session()"
     end
     # @return [String]
     def line

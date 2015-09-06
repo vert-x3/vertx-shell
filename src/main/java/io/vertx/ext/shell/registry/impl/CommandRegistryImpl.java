@@ -5,6 +5,7 @@ import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.Command;
@@ -156,6 +157,10 @@ public class CommandRegistryImpl implements CommandRegistry {
               @Override
               public Vertx vertx() {
                 return completion.vertx();
+              }
+              @Override
+              public Session session() {
+                return completion.session();
               }
               @Override
               public String line() {

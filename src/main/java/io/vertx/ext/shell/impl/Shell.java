@@ -6,6 +6,7 @@ import io.termd.core.tty.TtyConnection;
 import io.termd.core.util.Helper;
 import io.termd.core.util.Vector;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.cli.CliToken;
@@ -266,6 +267,11 @@ public class Shell {
         @Override
         public Vertx vertx() {
           return vertx;
+        }
+
+        @Override
+        public Session session() {
+          return session;
         }
 
         @Override

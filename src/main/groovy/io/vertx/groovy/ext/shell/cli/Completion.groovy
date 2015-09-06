@@ -18,6 +18,7 @@ package io.vertx.groovy.ext.shell.cli;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import java.util.List
+import io.vertx.groovy.ext.shell.Session
 import io.vertx.groovy.core.Vertx
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -37,6 +38,10 @@ public class Completion {
    */
   public Vertx vertx() {
     def ret= InternalHelper.safeCreate(this.delegate.vertx(), io.vertx.core.Vertx.class, io.vertx.groovy.core.Vertx.class);
+    return ret;
+  }
+  public Session session() {
+    def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.ext.shell.Session.class, io.vertx.groovy.ext.shell.Session.class);
     return ret;
   }
   public String line() {

@@ -1,6 +1,7 @@
 package io.vertx.ext.unit;
 
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.Command;
@@ -153,6 +154,10 @@ public class CompletionTest {
     @Override
     public Vertx vertx() {
       return rule.vertx();
+    }
+    @Override
+    public Session session() {
+      return null;
     }
     @Override
     public String line() {

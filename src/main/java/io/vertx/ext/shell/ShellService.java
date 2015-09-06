@@ -26,6 +26,8 @@ public interface ShellService {
   static ShellService create(Vertx vertx, ShellServiceOptions options) {
     CommandRegistry mgr = CommandRegistry.get(vertx);
     mgr.registerCommand(BaseCommands.echo());
+    mgr.registerCommand(BaseCommands.fs_cd());
+    mgr.registerCommand(BaseCommands.fs_pwd());
     mgr.registerCommand(BaseCommands.fs_ls());
     mgr.registerCommand(BaseCommands.sleep());
     mgr.registerCommand(BaseCommands.help());

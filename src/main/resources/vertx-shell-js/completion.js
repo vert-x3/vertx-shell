@@ -16,6 +16,7 @@
 
 /** @module vertx-shell-js/completion */
 var utils = require('vertx-js/util/utils');
+var Session = require('vertx-shell-js/session');
 var CliToken = require('vertx-shell-js/cli_token');
 
 var io = Packages.io;
@@ -42,6 +43,19 @@ var Completion = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return utils.convReturnVertxGen(j_completion["vertx()"](), Vertx);
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+
+   @return {Session}
+   */
+  this.session = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return utils.convReturnVertxGen(j_completion["session()"](), Session);
     } else utils.invalidArgs();
   };
 

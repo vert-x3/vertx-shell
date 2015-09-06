@@ -4,6 +4,7 @@ import io.termd.core.util.Helper;
 import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.Session;
 
 import java.util.Collection;
 import java.util.List;
@@ -26,6 +27,8 @@ public interface Completion {
    * @return the current Vert.x instance
    */
   Vertx vertx();
+
+  Session session();
 
   String line();
 
