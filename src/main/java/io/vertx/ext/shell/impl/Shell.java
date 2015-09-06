@@ -1,8 +1,10 @@
 package io.vertx.ext.shell.impl;
 
+import io.termd.core.readline.Function;
 import io.termd.core.readline.Keymap;
 import io.termd.core.readline.Readline;
 import io.termd.core.tty.TtyConnection;
+import io.termd.core.tty.TtyEvent;
 import io.termd.core.util.Helper;
 import io.termd.core.util.Vector;
 import io.vertx.core.Vertx;
@@ -91,7 +93,7 @@ public class Shell {
             echo(cp, '\n');
           }
           break;
-        case EOT:
+        case EOF:
           // Pseudo signal
           if (!job.sendEvent("EOT")) {
             echo(cp);

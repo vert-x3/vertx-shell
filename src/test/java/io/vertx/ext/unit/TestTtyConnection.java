@@ -111,7 +111,7 @@ public class TestTtyConnection implements TtyConnection {
       case SUSP:
         c = 'Z' - 64;
         break;
-      case EOT:
+      case EOF:
         c = 'D' - 64;
         break;
       default:
