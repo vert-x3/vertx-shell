@@ -352,4 +352,14 @@ public class ShellTest {
     }
   }
 
+  @Test
+  public void testEOF(TestContext context) throws Exception {
+    CommandRegistry manager = CommandRegistry.get(vertx);
+    TestTtyConnection conn = new TestTtyConnection();
+    Shell shell = new Shell(vertx, conn, manager);
+    shell.init();
+    conn.read("\u0004");
+    context.assertTrue(conn.closed);
+  }
+
 }

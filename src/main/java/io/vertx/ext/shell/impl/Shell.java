@@ -1,10 +1,8 @@
 package io.vertx.ext.shell.impl;
 
-import io.termd.core.readline.Function;
 import io.termd.core.readline.Keymap;
 import io.termd.core.readline.Readline;
 import io.termd.core.tty.TtyConnection;
-import io.termd.core.tty.TtyEvent;
 import io.termd.core.util.Helper;
 import io.termd.core.util.Vector;
 import io.vertx.core.Vertx;
@@ -88,16 +86,16 @@ public class Shell {
         case INTR:
           if (!job.sendEvent("SIGINT")) {
             echo(cp);
-            readline.queueEvent(event, cp);
+            readline.queueEvent(new int[]{cp});
           } else {
             echo(cp, '\n');
           }
           break;
         case EOF:
           // Pseudo signal
-          if (!job.sendEvent("EOT")) {
+          if (!job.sendEvent("EOF")) {
             echo(cp);
-            readline.queueEvent(event, cp);
+            readline.queueEvent(new int[]{cp});
           }
           break;
         case SUSP:
@@ -181,6 +179,12 @@ public class Shell {
 
   void read(Readline readline) {
     readline.readline(conn, "% ", line -> {
+
+      if (line == null) {
+        // EOF
+        conn.close();
+        return;
+      }
 
       List<CliToken> tokens = CliToken.tokenize(line);
 
