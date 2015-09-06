@@ -69,6 +69,16 @@ public class BaseCommands {
     return ret;
   }
 
+  public static Command fs_cd() { 
+    Command ret= Command.newInstance(io.vertx.ext.shell.command.BaseCommands.fs_cd());
+    return ret;
+  }
+
+  public static Command fs_pwd() { 
+    Command ret= Command.newInstance(io.vertx.ext.shell.command.BaseCommands.fs_pwd());
+    return ret;
+  }
+
   public static Command fs_ls() { 
     Command ret= Command.newInstance(io.vertx.ext.shell.command.BaseCommands.fs_ls());
     return ret;

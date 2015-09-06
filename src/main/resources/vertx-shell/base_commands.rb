@@ -57,6 +57,20 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling bus_tail()"
     end
     # @return [::VertxShell::Command]
+    def self.fs_cd
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::BaseCommands.java_method(:fs_cd, []).call(),::VertxShell::Command)
+      end
+      raise ArgumentError, "Invalid arguments when calling fs_cd()"
+    end
+    # @return [::VertxShell::Command]
+    def self.fs_pwd
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::BaseCommands.java_method(:fs_pwd, []).call(),::VertxShell::Command)
+      end
+      raise ArgumentError, "Invalid arguments when calling fs_pwd()"
+    end
+    # @return [::VertxShell::Command]
     def self.fs_ls
       if !block_given?
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::BaseCommands.java_method(:fs_ls, []).call(),::VertxShell::Command)

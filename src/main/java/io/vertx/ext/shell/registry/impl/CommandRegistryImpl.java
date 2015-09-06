@@ -54,10 +54,30 @@ public class CommandRegistryImpl implements CommandRegistry {
   }
 
   @Override
-  public void registerCommand(Command command, Handler<AsyncResult<Void>> handler) {
+  public void registerCommand(Command command, Handler<AsyncResult<CommandRegistration>> doneHandler) {
     Context context = vertx.getOrCreateContext();
-    commandMap.put(command.name(), new CommandRegistrationImpl(vertx, context, (CommandImpl) command));
-    handler.handle(Future.succeededFuture());
+    CommandRegistrationImpl registration = new CommandRegistrationImpl(vertx, context, (CommandImpl) command);
+    String name = command.name();
+    if (commandMap.containsKey(name)) {
+      doneHandler.handle(Future.failedFuture("Command " + name + " already registered"));
+    } else {
+      commandMap.put(name, registration);
+      doneHandler.handle(Future.succeededFuture(registration));
+    }
+  }
+
+  @Override
+  public void unregisterCommand(String commandName) {
+    unregisterCommand(commandName, done -> {});
+  }
+
+  @Override
+  public void unregisterCommand(String name, Handler<AsyncResult<Void>> doneHandler) {
+    if (commandMap.remove(name) != null) {
+      doneHandler.handle(Future.succeededFuture());
+    } else {
+      doneHandler.handle(Future.failedFuture("Command " + name + " not registered"));
+    }
   }
 
   public CommandRegistration getCommand(String name) {

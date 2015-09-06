@@ -81,8 +81,24 @@ public class CommandRegistry {
   public void registerCommand(Command command) {
     this.delegate.registerCommand((io.vertx.ext.shell.command.Command)command.getDelegate());
   }
-  public void registerCommand(Command command, Handler<AsyncResult<Void>> handler) {
-    this.delegate.registerCommand((io.vertx.ext.shell.command.Command)command.getDelegate(), handler);
+  public void registerCommand(Command command, Handler<AsyncResult<CommandRegistration>> doneHandler) {
+    this.delegate.registerCommand((io.vertx.ext.shell.command.Command)command.getDelegate(), new Handler<AsyncResult<io.vertx.ext.shell.registry.CommandRegistration>>() {
+      public void handle(AsyncResult<io.vertx.ext.shell.registry.CommandRegistration> event) {
+        AsyncResult<CommandRegistration> f
+        if (event.succeeded()) {
+          f = InternalHelper.<CommandRegistration>result(new CommandRegistration(event.result()))
+        } else {
+          f = InternalHelper.<CommandRegistration>failure(event.cause())
+        }
+        doneHandler.handle(f)
+      }
+    });
+  }
+  public void unregisterCommand(String commandName) {
+    this.delegate.unregisterCommand(commandName);
+  }
+  public void unregisterCommand(String commandName, Handler<AsyncResult<Void>> doneHandler) {
+    this.delegate.unregisterCommand(commandName, doneHandler);
   }
   public void release() {
     this.delegate.release();

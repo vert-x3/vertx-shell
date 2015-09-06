@@ -121,6 +121,32 @@ BaseCommands.bus_tail = function() {
 
  @return {Command}
  */
+BaseCommands.fs_cd = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JBaseCommands["fs_cd()"](), Command);
+  } else utils.invalidArgs();
+};
+
+/**
+
+ @memberof module:vertx-shell-js/base_commands
+
+ @return {Command}
+ */
+BaseCommands.fs_pwd = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JBaseCommands["fs_pwd()"](), Command);
+  } else utils.invalidArgs();
+};
+
+/**
+
+ @memberof module:vertx-shell-js/base_commands
+
+ @return {Command}
+ */
 BaseCommands.fs_ls = function() {
   var __args = arguments;
   if (__args.length === 0) {

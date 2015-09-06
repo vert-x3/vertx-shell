@@ -64,9 +64,20 @@ module VertxShell
       if command.class.method_defined?(:j_del) && !block_given?
         return @j_del.java_method(:registerCommand, [Java::IoVertxExtShellCommand::Command.java_class]).call(command.j_del)
       elsif command.class.method_defined?(:j_del) && block_given?
-        return @j_del.java_method(:registerCommand, [Java::IoVertxExtShellCommand::Command.java_class,Java::IoVertxCore::Handler.java_class]).call(command.j_del,(Proc.new { |ar| yield(ar.failed ? ar.cause : nil) }))
+        return @j_del.java_method(:registerCommand, [Java::IoVertxExtShellCommand::Command.java_class,Java::IoVertxCore::Handler.java_class]).call(command.j_del,(Proc.new { |ar| yield(ar.failed ? ar.cause : nil, ar.succeeded ? ::Vertx::Util::Utils.safe_create(ar.result,::VertxShell::CommandRegistration) : nil) }))
       end
       raise ArgumentError, "Invalid arguments when calling register_command(command)"
+    end
+    # @param [String] commandName 
+    # @yield 
+    # @return [void]
+    def unregister_command(commandName=nil)
+      if commandName.class == String && !block_given?
+        return @j_del.java_method(:unregisterCommand, [Java::java.lang.String.java_class]).call(commandName)
+      elsif commandName.class == String && block_given?
+        return @j_del.java_method(:unregisterCommand, [Java::java.lang.String.java_class,Java::IoVertxCore::Handler.java_class]).call(commandName,(Proc.new { |ar| yield(ar.failed ? ar.cause : nil) }))
+      end
+      raise ArgumentError, "Invalid arguments when calling unregister_command(commandName)"
     end
     # @return [void]
     def release

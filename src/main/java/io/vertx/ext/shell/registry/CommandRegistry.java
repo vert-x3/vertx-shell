@@ -35,7 +35,11 @@ public interface CommandRegistry {
 
   void registerCommand(Command command);
 
-  void registerCommand(Command command, Handler<AsyncResult<Void>> handler);
+  void registerCommand(Command command, Handler<AsyncResult<CommandRegistration>> doneHandler);
+
+  void unregisterCommand(String commandName);
+
+  void unregisterCommand(String commandName, Handler<AsyncResult<Void>> doneHandler);
 
   void release();
 }

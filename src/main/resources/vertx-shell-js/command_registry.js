@@ -92,7 +92,7 @@ var CommandRegistry = function(j_val) {
 
    @public
    @param command {Command} 
-   @param handler {function} 
+   @param doneHandler {function} 
    */
   this.registerCommand = function() {
     var __args = arguments;
@@ -100,6 +100,27 @@ var CommandRegistry = function(j_val) {
       j_commandRegistry["registerCommand(io.vertx.ext.shell.command.Command)"](__args[0]._jdel);
     }  else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'function') {
       j_commandRegistry["registerCommand(io.vertx.ext.shell.command.Command,io.vertx.core.Handler)"](__args[0]._jdel, function(ar) {
+      if (ar.succeeded()) {
+        __args[1](utils.convReturnVertxGen(ar.result(), CommandRegistration), null);
+      } else {
+        __args[1](null, ar.cause());
+      }
+    });
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+   @param commandName {string} 
+   @param doneHandler {function} 
+   */
+  this.unregisterCommand = function() {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'string') {
+      j_commandRegistry["unregisterCommand(java.lang.String)"](__args[0]);
+    }  else if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_commandRegistry["unregisterCommand(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
       if (ar.succeeded()) {
         __args[1](null, null);
       } else {
