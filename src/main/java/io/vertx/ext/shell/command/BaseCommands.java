@@ -293,13 +293,14 @@ public interface BaseCommands {
   static Command echo() {
     Command echo = Command.command("echo");
     echo.processHandler(process -> {
-      process.argsTokens().forEach(token -> {
-        if (token.isText()) {
-          process.write(token.value());
-        } else {
+      boolean first = true;
+      for (String token : process.args()) {
+        if (!first) {
           process.write(" ");
         }
-      });
+        process.write(token);
+        first = false;
+      }
       process.write("\n");
       process.end();
     });
