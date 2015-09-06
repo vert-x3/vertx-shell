@@ -48,6 +48,12 @@ todo.
 
 == Extending Vert.x Shell
 
+Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
+
+A command is created by the `link:yardoc/VertxShell/Command.html#command-class_method[Command.command]` method: the command process handler is called
+by the shell when the command is executed, this handler can be set with the `link:yardoc/VertxShell/Command.html#process_handler-instance_method[processHandler]`
+method:
+
 [source,ruby]
 ----
 require 'vertx-shell/command'
@@ -69,7 +75,14 @@ registry.register_command(command)
 
 ----
 
+After a command is created, it needs to be registed to a `link:yardoc/VertxShell/CommandRegistry.html[CommandRegistry]`. The
+command registry holds all the commands for a Vert.x instance.
+
+NOTE: Command callbacks are invoked in the `io.vertx.core.Context` when the command is registered in the
+registry. Keep this in mind if you maintain state in a command.
+
 The `link:yardoc/VertxShell/CommandProcess.html[CommandProcess]` object can be used for interacting with the shell.
+
 
 === Command arguments
 

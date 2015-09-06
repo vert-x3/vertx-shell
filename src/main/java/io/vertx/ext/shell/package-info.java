@@ -37,12 +37,25 @@
  *
  * == Extending Vert.x Shell
  *
+ * Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
+ *
+ * A command is created by the {@link io.vertx.ext.shell.command.Command#command} method: the command process handler is called
+ * by the shell when the command is executed, this handler can be set with the {@link io.vertx.ext.shell.command.Command#processHandler}
+ * method:
+ *
  * [source,$lang]
  * ----
  * {@link examples.Examples#helloWorld}
  * ----
  *
+ * After a command is created, it needs to be registed to a {@link io.vertx.ext.shell.registry.CommandRegistry}. The
+ * command registry holds all the commands for a Vert.x instance.
+ *
+ * NOTE: Command callbacks are invoked in the {@literal io.vertx.core.Context} when the command is registered in the
+ * registry. Keep this in mind if you maintain state in a command.
+ *
  * The {@link io.vertx.ext.shell.command.CommandProcess} object can be used for interacting with the shell.
+ *
  *
  * === Command arguments
  *
