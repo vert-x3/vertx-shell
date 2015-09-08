@@ -39,6 +39,26 @@ public class BaseCommands {
     return delegate;
   }
 
+  public static Command verticle_ls() { 
+    Command ret= Command.newInstance(io.vertx.ext.shell.command.BaseCommands.verticle_ls());
+    return ret;
+  }
+
+  public static Command verticle_deploy() { 
+    Command ret= Command.newInstance(io.vertx.ext.shell.command.BaseCommands.verticle_deploy());
+    return ret;
+  }
+
+  public static Command verticle_undeploy() { 
+    Command ret= Command.newInstance(io.vertx.ext.shell.command.BaseCommands.verticle_undeploy());
+    return ret;
+  }
+
+  public static Command verticle_factories() { 
+    Command ret= Command.newInstance(io.vertx.ext.shell.command.BaseCommands.verticle_factories());
+    return ret;
+  }
+
   public static Command server_ls() { 
     Command ret= Command.newInstance(io.vertx.ext.shell.command.BaseCommands.server_ls());
     return ret;

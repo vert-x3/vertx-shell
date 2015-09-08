@@ -43,6 +43,58 @@ var BaseCommands = function(j_val) {
 
  @return {Command}
  */
+BaseCommands.verticle_ls = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JBaseCommands["verticle_ls()"](), Command);
+  } else utils.invalidArgs();
+};
+
+/**
+
+ @memberof module:vertx-shell-js/base_commands
+
+ @return {Command}
+ */
+BaseCommands.verticle_deploy = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JBaseCommands["verticle_deploy()"](), Command);
+  } else utils.invalidArgs();
+};
+
+/**
+
+ @memberof module:vertx-shell-js/base_commands
+
+ @return {Command}
+ */
+BaseCommands.verticle_undeploy = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JBaseCommands["verticle_undeploy()"](), Command);
+  } else utils.invalidArgs();
+};
+
+/**
+
+ @memberof module:vertx-shell-js/base_commands
+
+ @return {Command}
+ */
+BaseCommands.verticle_factories = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JBaseCommands["verticle_factories()"](), Command);
+  } else utils.invalidArgs();
+};
+
+/**
+
+ @memberof module:vertx-shell-js/base_commands
+
+ @return {Command}
+ */
 BaseCommands.server_ls = function() {
   var __args = arguments;
   if (__args.length === 0) {

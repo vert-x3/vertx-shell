@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -96,14 +97,14 @@ public class FsTest {
     context.assertTrue(new File(file_E).createNewFile());
     context.assertTrue(new File(file_F).createNewFile());
     context.assertTrue(new File(file_G).createNewFile());
-    helper.ls(vertx, null, ".", context.asyncAssertSuccess(files -> context.assertEquals(Arrays.asList(dir_A, dir_C, file_B), new ArrayList<>(files.keySet()))));
-    helper.ls(vertx, null, "dir_C", context.asyncAssertSuccess(files -> context.assertEquals(Arrays.asList(dir_D, file_E), new ArrayList<>(files.keySet()))));
-    helper.ls(vertx, null, "./dir_C", context.asyncAssertSuccess(files -> context.assertEquals(Arrays.asList(dir_D, file_E), new ArrayList<>(files.keySet()))));
-    helper.ls(vertx, null, "./dir_C/..", context.asyncAssertSuccess(files -> context.assertEquals(Arrays.asList(dir_A, dir_C, file_B), new ArrayList<>(files.keySet()))));
-    helper.ls(vertx, root.getAbsolutePath(), ".", context.asyncAssertSuccess(files -> context.assertEquals(Arrays.asList(dir_A, dir_C, file_B), new ArrayList<>(files.keySet()))));
-    helper.ls(vertx, root.getAbsolutePath(), dir_C, context.asyncAssertSuccess(files -> context.assertEquals(Arrays.asList(dir_D, file_E), new ArrayList<>(files.keySet()))));
-    helper.ls(vertx, root.getAbsolutePath(), "dir_C/dir_D", context.asyncAssertSuccess(files -> context.assertEquals(Arrays.asList(file_F, file_G), new ArrayList<>(files.keySet()))));
-    helper.ls(vertx, root.getAbsolutePath(), "./dir_C/dir_D", context.asyncAssertSuccess(files -> context.assertEquals(Arrays.asList(file_F, file_G), new ArrayList<>(files.keySet()))));
+    helper.ls(vertx, null, ".", context.asyncAssertSuccess(files -> context.assertEquals(new HashSet<>(Arrays.asList(dir_A, dir_C, file_B)), new HashSet<>(files.keySet()))));
+    helper.ls(vertx, null, "dir_C", context.asyncAssertSuccess(files -> context.assertEquals(new HashSet<>(Arrays.asList(dir_D, file_E)), new HashSet<>(files.keySet()))));
+    helper.ls(vertx, null, "./dir_C", context.asyncAssertSuccess(files -> context.assertEquals(new HashSet<>(Arrays.asList(dir_D, file_E)), new HashSet<>(files.keySet()))));
+    helper.ls(vertx, null, "./dir_C/..", context.asyncAssertSuccess(files -> context.assertEquals(new HashSet<>(Arrays.asList(dir_A, dir_C, file_B)), new HashSet<>(files.keySet()))));
+    helper.ls(vertx, root.getAbsolutePath(), ".", context.asyncAssertSuccess(files -> context.assertEquals(new HashSet<>(Arrays.asList(dir_A, dir_C, file_B)), new HashSet<>(files.keySet()))));
+    helper.ls(vertx, root.getAbsolutePath(), dir_C, context.asyncAssertSuccess(files -> context.assertEquals(new HashSet<>(Arrays.asList(dir_D, file_E)), new HashSet<>(files.keySet()))));
+    helper.ls(vertx, root.getAbsolutePath(), "dir_C/dir_D", context.asyncAssertSuccess(files -> context.assertEquals(new HashSet<>(Arrays.asList(file_F, file_G)), new HashSet<>(files.keySet()))));
+    helper.ls(vertx, root.getAbsolutePath(), "./dir_C/dir_D", context.asyncAssertSuccess(files -> context.assertEquals(new HashSet<>(Arrays.asList(file_F, file_G)), new HashSet<>(files.keySet()))));
   }
 
   @Test

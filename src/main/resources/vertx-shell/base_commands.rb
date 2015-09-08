@@ -15,6 +15,34 @@ module VertxShell
       @j_del
     end
     # @return [::VertxShell::Command]
+    def self.verticle_ls
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::BaseCommands.java_method(:verticle_ls, []).call(),::VertxShell::Command)
+      end
+      raise ArgumentError, "Invalid arguments when calling verticle_ls()"
+    end
+    # @return [::VertxShell::Command]
+    def self.verticle_deploy
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::BaseCommands.java_method(:verticle_deploy, []).call(),::VertxShell::Command)
+      end
+      raise ArgumentError, "Invalid arguments when calling verticle_deploy()"
+    end
+    # @return [::VertxShell::Command]
+    def self.verticle_undeploy
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::BaseCommands.java_method(:verticle_undeploy, []).call(),::VertxShell::Command)
+      end
+      raise ArgumentError, "Invalid arguments when calling verticle_undeploy()"
+    end
+    # @return [::VertxShell::Command]
+    def self.verticle_factories
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::BaseCommands.java_method(:verticle_factories, []).call(),::VertxShell::Command)
+      end
+      raise ArgumentError, "Invalid arguments when calling verticle_factories()"
+    end
+    # @return [::VertxShell::Command]
     def self.server_ls
       if !block_given?
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::BaseCommands.java_method(:server_ls, []).call(),::VertxShell::Command)

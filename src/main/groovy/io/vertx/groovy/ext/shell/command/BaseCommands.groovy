@@ -29,6 +29,22 @@ public class BaseCommands {
   public Object getDelegate() {
     return delegate;
   }
+  public static Command verticle_ls() {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.BaseCommands.verticle_ls(), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
+    return ret;
+  }
+  public static Command verticle_deploy() {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.BaseCommands.verticle_deploy(), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
+    return ret;
+  }
+  public static Command verticle_undeploy() {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.BaseCommands.verticle_undeploy(), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
+    return ret;
+  }
+  public static Command verticle_factories() {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.BaseCommands.verticle_factories(), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
+    return ret;
+  }
   public static Command server_ls() {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.BaseCommands.server_ls(), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
     return ret;
