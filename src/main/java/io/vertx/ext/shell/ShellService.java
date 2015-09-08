@@ -37,6 +37,10 @@ public interface ShellService {
     mgr.registerCommand(BaseCommands.local_map_rm());
     mgr.registerCommand(BaseCommands.bus_send());
     mgr.registerCommand(BaseCommands.bus_tail());
+    mgr.registerCommand(BaseCommands.verticle_ls());
+    mgr.registerCommand(BaseCommands.verticle_deploy());
+    mgr.registerCommand(BaseCommands.verticle_undeploy());
+    mgr.registerCommand(BaseCommands.verticle_factories());
 
     // Register builtin commands so they are listed in help
     mgr.registerCommand(Command.command("exit").processHandler(process -> {}));
