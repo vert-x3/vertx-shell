@@ -1,22 +1,18 @@
 package io.vertx.ext.shell;
 
-import io.termd.core.ssh.SshTtyConnection;
-import io.termd.core.telnet.TelnetConnection;
-import io.termd.core.telnet.TelnetHandler;
 import io.termd.core.telnet.TelnetTtyConnection;
 import io.termd.core.telnet.vertx.VertxTelnetBootstrap;
+import io.termd.core.tty.TtyConnection;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Vertx;
+import io.vertx.core.impl.VertxInternal;
 import io.vertx.ext.shell.command.BaseCommands;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.impl.SSHConnector;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.impl.Shell;
-import org.apache.sshd.server.SshServer;
-import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -48,58 +44,33 @@ public interface ShellService {
     mgr.registerCommand(Command.command("logout").processHandler(process -> {}));
     mgr.registerCommand(Command.command("jobs").processHandler(process -> {}));
     mgr.registerCommand(Command.command("fg").processHandler(process -> {}));
-    mgr.registerCommand(Command.command("bg").processHandler(process -> {
-    }));
+    mgr.registerCommand(Command.command("bg").processHandler(process -> {}));
+
+    Consumer<TtyConnection> shellInitializer = conn -> {
+      Shell shell = new Shell(vertx, conn, mgr);
+      conn.setCloseHandler(v -> {
+        shell.close();
+      });
+      shell.setWelcome(options.getWelcomeMessage());
+      shell.init();
+    };
 
     //
     return () -> {
       TelnetOptions telnetOptions = options.getTelnet();
       if (telnetOptions != null) {
         VertxTelnetBootstrap bootstrap = new VertxTelnetBootstrap(vertx, telnetOptions);
-        bootstrap.start(new Supplier<TelnetHandler>() {
-          @Override
-          public TelnetHandler get() {
-            return new TelnetTtyConnection() {
+        bootstrap.start(() -> new TelnetTtyConnection(shellInitializer));
 
-              final Shell shell = new Shell(vertx, this, mgr);
-
-              @Override
-              protected void onOpen(TelnetConnection conn) {
-                super.onOpen(conn);
-                shell.setWelcome(options.getWelcomeMessage());
-                shell.init();
-              }
-
-              @Override
-              protected void onClose() {
-                shell.close();
-                super.onClose();
-              }
-            };
-          }
-        });
-      }
-      SSHOptions sshOptions = options.getSSH();
-      if (sshOptions != null) {
-        try {
-          SshServer sshd = SshServer.setUpDefaultServer();
-          sshd.setShellFactory(() -> new SshTtyConnection(conn -> {
-            Shell shell = new Shell(vertx, conn, mgr);
-            shell.setWelcome(options.getWelcomeMessage());
-            shell.init();
-          }));
-          sshd.setHost(sshOptions.getHost());
-          sshd.setPort(sshOptions.getPort());
-          sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(new File("hostkey.ser").toPath()));
-          sshd.setPasswordAuthenticator((username, password, session) -> true);
-          sshd.start();
-        } catch (IOException e) {
-          e.printStackTrace();
+        SSHOptions sshOptions = options.getSSH();
+        if (sshOptions != null) {
+          SSHConnector connector = new SSHConnector(sshOptions);
+          connector.start((VertxInternal) vertx, shellInitializer);
         }
       }
     };
   }
 
-  void start();
+  void start() throws Exception;
 
 }

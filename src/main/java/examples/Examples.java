@@ -1,6 +1,7 @@
 package examples;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.net.JksOptions;
 import io.vertx.ext.shell.SSHOptions;
 import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.ShellService;
@@ -14,12 +15,16 @@ import io.vertx.ext.shell.registry.CommandRegistry;
  */
 public class Examples {
 
-  public void runService(Vertx vertx) {
+  public void runService(Vertx vertx) throws Exception {
     ShellService service = ShellService.create(vertx,
         new ShellServiceOptions().setSSH(
             new SSHOptions().
                 setHost("localhost").
-                setPort(5000)).setTelnet(
+                setPort(5000).
+                setKeyStoreOptions(new JksOptions().
+                    setPath("server-keystore.jks").
+                    setPassword("wibble")
+                )).setTelnet(
             new TelnetOptions().
                 setHost("localhost").
                 setPort(4000)

@@ -22,7 +22,11 @@ import io.vertx.groovy.ext.shell.ShellService
 def service = ShellService.create(vertx, [
   sSH:[
     host:"localhost",
-    port:5000
+    port:5000,
+    keyStoreOptions:[
+      path:"server-keystore.jks",
+      password:"wibble"
+    ]
   ],
   telnet:[
     host:"localhost",

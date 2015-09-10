@@ -22,7 +22,11 @@ ShellService service = ShellService.create(vertx,
     new ShellServiceOptions().setSSH(
         new SSHOptions().
             setHost("localhost").
-            setPort(5000)).setTelnet(
+            setPort(5000).
+            setKeyStoreOptions(new JksOptions().
+                setPath("server-keystore.jks").
+                setPassword("wibble")
+            )).setTelnet(
         new TelnetOptions().
             setHost("localhost").
             setPort(4000)

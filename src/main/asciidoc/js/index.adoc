@@ -22,7 +22,11 @@ var ShellService = require("vertx-shell-js/shell_service");
 var service = ShellService.create(vertx, {
   "sSH" : {
     "host" : "localhost",
-    "port" : 5000
+    "port" : 5000,
+    "keyStoreOptions" : {
+      "path" : "server-keystore.jks",
+      "password" : "wibble"
+    }
   },
   "telnet" : {
     "host" : "localhost",

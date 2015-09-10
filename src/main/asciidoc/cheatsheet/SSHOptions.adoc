@@ -15,4 +15,19 @@
 |-
 |[[port]]`port`
 |`Number`
-|-|===
+|-
+|[[keyStoreOptions]]`keyStoreOptions`
+|`link:JksOptions.html[JksOptions]`
+|+++
+Set the key/cert options in jks format, aka Java keystore.+++
+
+|[[pfxKeyCertOptions]]`pfxKeyCertOptions`
+|`link:PfxOptions.html[PfxOptions]`
+|+++
+Set the key/cert options in pfx format.+++
+
+|[[pemKeyCertOptions]]`pemKeyCertOptions`
+|`link:PemKeyCertOptions.html[PemKeyCertOptions]`
+|+++
+Set the key/cert store options in pem format.+++
+|===

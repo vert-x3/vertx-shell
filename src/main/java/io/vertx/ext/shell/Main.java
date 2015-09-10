@@ -1,6 +1,9 @@
 package io.vertx.ext.shell;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.net.JksOptions;
+import io.vertx.core.net.PemKeyCertOptions;
+import io.vertx.core.net.PfxOptions;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.registry.CommandRegistry;
 
@@ -9,7 +12,7 @@ import io.vertx.ext.shell.registry.CommandRegistry;
  */
 public class Main {
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
 
     Vertx vertx = Vertx.vertx();
 
@@ -38,12 +41,17 @@ public class Main {
     mgr.registerCommand(windowCmd);
 
     // JS command
-    vertx.deployVerticle("command.js");
+    // vertx.deployVerticle("command.js");
 
     // Expose the shell
+    SSHOptions options = new SSHOptions().setPort(5001);
+    options.setKeyStoreOptions(new JksOptions().
+        setPath("src/test/resources/server-keystore.jks").
+        setPassword("wibble"));
     ShellService service = ShellService.create(vertx, new ShellServiceOptions().
         setTelnet(new TelnetOptions().setPort(5000)).
-        setSSH(new SSHOptions().setPort(5001)));
+        setSSH(options));
     service.start();
+
   }
 }
