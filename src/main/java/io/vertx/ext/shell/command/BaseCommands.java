@@ -31,8 +31,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public interface BaseCommands {
 
   static Command verticle_ls() {
-    Command deployments = Command.command("verticle-ls");
-    deployments.processHandler(process -> {
+    Command cmd = Command.command("verticle-ls");
+    cmd.processHandler(process -> {
       VertxInternal vertx = (VertxInternal) process.vertx();
       for (String id : vertx.deploymentIDs()) {
         Deployment deployment = vertx.getDeployment(id);
@@ -42,12 +42,12 @@ public interface BaseCommands {
       process.end();
 
     });
-    return deployments;
+    return cmd;
   }
 
   static Command verticle_deploy() {
-    Command deploy = Command.command("verticle-deploy");
-    deploy.processHandler(process -> {
+    Command cmd = Command.command("verticle-deploy");
+    cmd.processHandler(process -> {
       if (process.args().isEmpty()) {
         process.write("no verticle name specified\n").end();
         return;
@@ -65,12 +65,12 @@ public interface BaseCommands {
         }
       });
     });
-    return deploy;
+    return cmd;
   }
 
   static Command verticle_undeploy() {
-    Command deploy = Command.command("verticle-undeploy");
-    deploy.processHandler(process -> {
+    Command cmd = Command.command("verticle-undeploy");
+    cmd.processHandler(process -> {
       if (process.args().isEmpty()) {
         process.write("no deployment ID specified\n").end();
         return;
@@ -88,24 +88,24 @@ public interface BaseCommands {
         }
       });
     });
-    return deploy;
+    return cmd;
   }
 
   static Command verticle_factories() {
-    Command deploy = Command.command("verticle-factories");
-    deploy.processHandler(process -> {
+    Command cmd = Command.command("verticle-factories");
+    cmd.processHandler(process -> {
       VertxInternal vertx = (VertxInternal) process.vertx();
       for (VerticleFactory factory : vertx.verticleFactories()) {
         process.write(factory.getClass().getName() + ": prefix=" + factory.prefix() + ", order=" + factory.order() + ", requiresResolve=" + factory.requiresResolve() + "\n");
       }
       process.end();
     });
-    return deploy;
+    return cmd;
   }
 
   static Command server_ls() {
-    Command server_ls = Command.command("server-ls");
-    server_ls.processHandler(process -> {
+    Command cmd = Command.command("server-ls");
+    cmd.processHandler(process -> {
       VertxInternal vertx = (VertxInternal) process.vertx();
       process.write("\nNet Servers:\n");
       for (Map.Entry<ServerID, NetServerImpl> server : vertx.sharedNetServers().entrySet()) {
@@ -117,12 +117,12 @@ public interface BaseCommands {
       }
       process.end();
     });
-    return server_ls;
+    return cmd;
   }
 
   static Command local_map_get() {
-    Command shared_data = Command.command("local-map-get");
-    shared_data.processHandler(process -> {
+    Command cmd = Command.command("local-map-get");
+    cmd.processHandler(process -> {
       Iterator<String> it = process.args().iterator();
       if (!it.hasNext()) {
         process.write("usage: local-map-get map keys...\n");
@@ -138,12 +138,12 @@ public interface BaseCommands {
       }
       process.end();
     });
-    return shared_data;
+    return cmd;
   }
 
   static Command local_map_put() {
-    Command shared_data = Command.command("local-map-put");
-    shared_data.processHandler(process -> {
+    Command cmd = Command.command("local-map-put");
+    cmd.processHandler(process -> {
       List<String> args = process.args();
       if (args.size() < 3) {
         process.write("usage: local-map-put map key value\n");
@@ -157,12 +157,12 @@ public interface BaseCommands {
       }
       process.end();
     });
-    return shared_data;
+    return cmd;
   }
 
   static Command local_map_rm() {
-    Command shared_data = Command.command("local-map-rm");
-    shared_data.processHandler(process -> {
+    Command cmd = Command.command("local-map-rm");
+    cmd.processHandler(process -> {
       Iterator<String> it = process.args().iterator();
       if (!it.hasNext()) {
         process.write("usage: local-map-rm map keys...\n");
@@ -177,12 +177,12 @@ public interface BaseCommands {
       }
       process.end();
     });
-    return shared_data;
+    return cmd;
   }
 
   static Command bus_send() {
-    Command shared_data = Command.command("bus-send");
-    shared_data.processHandler(process -> {
+    Command cmd = Command.command("bus-send");
+    cmd.processHandler(process -> {
       List<String> args = process.args();
       if (args.size() < 2) {
         process.write("usage: bus-send address message\n");
@@ -193,12 +193,12 @@ public interface BaseCommands {
       }
       process.end();
     });
-    return shared_data;
+    return cmd;
   }
 
   static Command bus_tail() {
-    Command shared_data = Command.command("bus-tail");
-    shared_data.processHandler(process -> {
+    Command cmd = Command.command("bus-tail");
+    cmd.processHandler(process -> {
       List<String> args = process.args();
       if (args.size() < 1) {
         process.write("usage: bus-tail address\n").end();
@@ -213,7 +213,7 @@ public interface BaseCommands {
         });
       }
     });
-    return shared_data;
+    return cmd;
   }
 
   static Command fs_cd() {
@@ -329,8 +329,8 @@ public interface BaseCommands {
   }
 
   static Command echo() {
-    Command echo = Command.command("echo");
-    echo.processHandler(process -> {
+    Command cmd = Command.command("echo");
+    cmd.processHandler(process -> {
       boolean first = true;
       for (String token : process.args()) {
         if (!first) {
@@ -342,12 +342,12 @@ public interface BaseCommands {
       process.write("\n");
       process.end();
     });
-    return echo;
+    return cmd;
   }
 
   static Command help() {
-    Command help = Command.command("help");
-    help.processHandler(process -> {
+    Command cmd = Command.command("help");
+    cmd.processHandler(process -> {
       CommandRegistry manager = CommandRegistry.get(process.vertx());
       manager.registrations();
       process.write("available commands:\n");
@@ -356,6 +356,6 @@ public interface BaseCommands {
       }
       process.end();
     });
-    return help;
+    return cmd;
   }
 }
