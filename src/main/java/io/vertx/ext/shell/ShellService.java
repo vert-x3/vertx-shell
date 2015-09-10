@@ -11,9 +11,10 @@ import io.vertx.ext.shell.command.BaseCommands;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.impl.Shell;
-import org.apache.sshd.SshServer;
+import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.function.Supplier;
 
@@ -89,7 +90,7 @@ public interface ShellService {
           }));
           sshd.setHost(sshOptions.getHost());
           sshd.setPort(sshOptions.getPort());
-          sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider("hostkey.ser"));
+          sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(new File("hostkey.ser").toPath()));
           sshd.setPasswordAuthenticator((username, password, session) -> true);
           sshd.start();
         } catch (IOException e) {
