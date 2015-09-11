@@ -17,6 +17,7 @@ public class TelnetServer {
 
   private final TelnetOptions options;
   private Consumer<TtyConnection> handler;
+  private VertxTelnetBootstrap server;
 
   public TelnetServer(TelnetOptions options) {
     this.options = options;
@@ -32,7 +33,13 @@ public class TelnetServer {
   }
 
   public void listen(Vertx vertx) {
-    VertxTelnetBootstrap bootstrap = new VertxTelnetBootstrap(vertx, options);
-    bootstrap.start(() -> new TelnetTtyConnection(handler));
+    server = new VertxTelnetBootstrap(vertx, options);
+    server.start(() -> new TelnetTtyConnection(handler));
+  }
+
+  public void close() {
+    if (server != null) {
+      server.stop();
+    }
   }
 }

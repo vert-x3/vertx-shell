@@ -29,5 +29,12 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling start()"
     end
+    # @return [void]
+    def close
+      if !block_given?
+        return @j_del.java_method(:close, []).call()
+      end
+      raise ArgumentError, "Invalid arguments when calling close()"
+    end
   end
 end

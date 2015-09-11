@@ -111,7 +111,7 @@ public class Shell {
           break;
       }
     });
-    if (welcome != null) {
+    if (welcome != null && welcome.length() > 0) {
       conn.write(welcome);
     }
     read(readline);

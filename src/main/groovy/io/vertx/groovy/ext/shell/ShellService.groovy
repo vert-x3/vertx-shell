@@ -38,4 +38,7 @@ public class ShellService {
   public void start() {
     this.delegate.start();
   }
+  public void close() {
+    this.delegate.close();
+  }
 }

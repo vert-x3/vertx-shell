@@ -54,22 +54,39 @@ public interface ShellService {
     };
 
     //
-    return () -> {
-      TelnetOptions telnetOptions = options.getTelnet();
-      if (telnetOptions != null) {
-        TelnetServer telnet = new TelnetServer(telnetOptions);
-        telnet.setHandler(shellBoostrap);
-        telnet.listen(vertx);
+    return new ShellService() {
+      TelnetServer telnet;
+      SSHServer ssh;
+      @Override
+      public void start() throws Exception {
+        TelnetOptions telnetOptions = options.getTelnet();
+        if (telnetOptions != null) {
+          telnet = new TelnetServer(telnetOptions);
+          telnet.setHandler(shellBoostrap);
+          telnet.listen(vertx);
+        }
+        SSHOptions sshOptions = options.getSSH();
+        if (sshOptions != null) {
+          ssh = new SSHServer(sshOptions);
+          ssh.setHandler(shellBoostrap);
+          ssh.listen(vertx);
+        }
       }
-      SSHOptions sshOptions = options.getSSH();
-      if (sshOptions != null) {
-        SSHServer connector = new SSHServer(sshOptions);
-        connector.setHandler(shellBoostrap);
-        connector.listen(vertx);
+
+      @Override
+      public void close() {
+        if (telnet != null) {
+          telnet.close();
+        }
+        if (ssh != null) {
+          ssh.close();
+        }
       }
     };
   }
 
   void start() throws Exception;
+
+  void close();
 
 }

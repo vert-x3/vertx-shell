@@ -1,9 +1,12 @@
 package io.vertx.ext.shell;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.core.net.PfxOptions;
+import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
+import io.vertx.ext.shell.auth.ShiroAuthOptions;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.registry.CommandRegistry;
 
@@ -47,7 +50,12 @@ public class Main {
     SSHOptions options = new SSHOptions().setPort(5001);
     options.setKeyStoreOptions(new JksOptions().
         setPath("src/test/resources/server-keystore.jks").
-        setPassword("wibble"));
+        setPassword("wibble")).
+        setShiroAuthOptions(
+            new ShiroAuthOptions().
+                setType(ShiroAuthRealmType.PROPERTIES).
+                setConfig(new JsonObject().put("properties_path", "file:src/test/resources/test-auth.properties"))
+    );
     ShellService service = ShellService.create(vertx, new ShellServiceOptions().
         setTelnet(new TelnetOptions().setPort(5000)).
         setSSH(options));

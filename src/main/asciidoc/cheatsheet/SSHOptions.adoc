@@ -30,4 +30,7 @@ Set the key/cert options in pfx format.+++
 |`link:PemKeyCertOptions.html[PemKeyCertOptions]`
 |+++
 Set the key/cert store options in pem format.+++
-|===
+
+|[[shiroAuthOptions]]`shiroAuthOptions`
+|`link:ShiroAuthOptions.html[ShiroAuthOptions]`
+|-|===

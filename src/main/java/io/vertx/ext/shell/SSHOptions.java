@@ -6,6 +6,8 @@ import io.vertx.core.net.JksOptions;
 import io.vertx.core.net.KeyCertOptions;
 import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.core.net.PfxOptions;
+import io.vertx.ext.shell.auth.AuthOptions;
+import io.vertx.ext.shell.auth.ShiroAuthOptions;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -19,6 +21,7 @@ public class SSHOptions implements ConnectorOptions {
   private String host;
   private int port;
   private KeyCertOptions keyCertOptions;
+  private AuthOptions authOptions;
 
   public SSHOptions() {
     host = DEFAULT_HOST;
@@ -28,12 +31,14 @@ public class SSHOptions implements ConnectorOptions {
   public SSHOptions(SSHOptions that) {
     this.host = that.host;
     this.port = that.port;
-    this.keyCertOptions = that.keyCertOptions.clone();
+    this.keyCertOptions = that.keyCertOptions != null ? that.keyCertOptions.clone() : null;
+    this.authOptions = that.authOptions != null ? that.authOptions.clone() : null;
   }
 
   public SSHOptions(JsonObject json) {
     this.host = json.getString("host", DEFAULT_HOST);
     this.port = json.getInteger("port", DEFAULT_PORT);
+    this.authOptions = json.getJsonObject("shiroAuthOptions") != null ? new ShiroAuthOptions(json.getJsonObject("shiroAuthOptions")) : null;
   }
 
   public String getHost() {
@@ -88,6 +93,15 @@ public class SSHOptions implements ConnectorOptions {
    */
   public SSHOptions setPemKeyCertOptions(PemKeyCertOptions options) {
     this.keyCertOptions = options;
+    return this;
+  }
+
+  public AuthOptions getAuthOptions() {
+    return authOptions;
+  }
+
+  public SSHOptions setShiroAuthOptions(ShiroAuthOptions authOptions) {
+    this.authOptions = authOptions;
     return this;
   }
 }
