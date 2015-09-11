@@ -1,4 +1,4 @@
-package io.vertx.ext.shell;
+package io.vertx.ext.shell.io;
 
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;

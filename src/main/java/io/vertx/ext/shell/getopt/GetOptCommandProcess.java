@@ -2,7 +2,6 @@ package io.vertx.ext.shell.getopt;
 
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.Stream;
 import io.vertx.ext.shell.command.CommandProcess;
 
 import java.util.List;

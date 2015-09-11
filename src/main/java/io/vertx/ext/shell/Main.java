@@ -6,6 +6,7 @@ import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.net.SSHOptions;
 import io.vertx.ext.shell.net.TelnetOptions;
 import io.vertx.ext.shell.registry.CommandRegistry;

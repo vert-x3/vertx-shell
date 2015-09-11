@@ -3,7 +3,7 @@ package io.vertx.ext.shell.getopt.impl;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.Session;
-import io.vertx.ext.shell.Stream;
+import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.getopt.Option;

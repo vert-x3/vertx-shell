@@ -5,8 +5,7 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.Session;
-import io.vertx.ext.shell.Stream;
-import io.vertx.ext.shell.Tty;
+import io.vertx.ext.shell.io.Tty;
 import io.vertx.ext.shell.cli.CliToken;
 
 import java.util.List;

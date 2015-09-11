@@ -1,5 +1,5 @@
 require 'vertx/util/utils.rb'
-# Generated from io.vertx.ext.shell.Stream
+# Generated from io.vertx.ext.shell.io.Stream
 module VertxShell
   #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
   class Stream

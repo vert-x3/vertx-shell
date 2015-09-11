@@ -5,7 +5,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.Stream;
+import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandProcess;
 import io.vertx.ext.shell.command.impl.CommandImpl;

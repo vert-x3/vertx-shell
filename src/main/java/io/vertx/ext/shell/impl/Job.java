@@ -3,11 +3,11 @@ package io.vertx.ext.shell.impl;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.Session;
-import io.vertx.ext.shell.Stream;
+import io.vertx.ext.shell.io.Stream;
 
 import io.vertx.ext.shell.process.*;
 import io.vertx.ext.shell.process.Process;
-import io.vertx.ext.shell.Tty;
+import io.vertx.ext.shell.io.Tty;
 
 import java.util.HashMap;
 

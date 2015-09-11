@@ -18,7 +18,7 @@ package io.vertx.groovy.ext.shell.process;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.groovy.ext.shell.Session
-import io.vertx.groovy.ext.shell.Tty
+import io.vertx.groovy.ext.shell.io.Tty
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
@@ -36,7 +36,7 @@ public class ProcessContext {
    * @return 
    */
   public Tty tty() {
-    def ret= InternalHelper.safeCreate(this.delegate.tty(), io.vertx.ext.shell.Tty.class, io.vertx.groovy.ext.shell.Tty.class);
+    def ret= InternalHelper.safeCreate(this.delegate.tty(), io.vertx.ext.shell.io.Tty.class, io.vertx.groovy.ext.shell.io.Tty.class);
     return ret;
   }
   /**

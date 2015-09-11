@@ -19,8 +19,8 @@ import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import java.util.List
 import io.vertx.groovy.ext.shell.Session
+import io.vertx.groovy.ext.shell.io.Tty
 import io.vertx.groovy.core.Vertx
-import io.vertx.groovy.ext.shell.Tty
 import io.vertx.groovy.ext.shell.cli.CliToken
 import io.vertx.core.Handler
 /**

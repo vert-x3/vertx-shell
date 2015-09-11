@@ -122,8 +122,8 @@ command.processHandler({ process ->
 
 === Terminal size
 
-The current terminal size can be obtained using `link:groovydoc/io/vertx/groovy/ext/shell/Tty.html#width()[width]` and
-`link:groovydoc/io/vertx/groovy/ext/shell/Tty.html#height()[height]`.
+The current terminal size can be obtained using `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#width()[width]` and
+`link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#height()[height]`.
 
 [source,groovy]
 ----
@@ -168,7 +168,7 @@ command.processHandler({ process ->
 
 ----
 
-A command can use the `link:groovydoc/io/vertx/groovy/ext/shell/Tty.html#stdout()[stdout]` to write to the standard output.
+A command can use the `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#stdout()[stdout]` to write to the standard output.
 
 [source,groovy]
 ----
@@ -276,4 +276,4 @@ command.processHandler({ process ->
 ==== `SIGWINCH` event
 
 The `SIGWINCH` event is fired when the size of the terminal changes, the new terminal size can be obtained
-with `link:groovydoc/io/vertx/groovy/ext/shell/Tty.html#width()[width]` and `link:groovydoc/io/vertx/groovy/ext/shell/Tty.html#height()[height]`.
+with `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#width()[width]` and `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#height()[height]`.

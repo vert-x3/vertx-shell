@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package io.vertx.groovy.ext.shell;
+package io.vertx.groovy.ext.shell.io;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.Handler
@@ -22,15 +22,40 @@ import io.vertx.core.Handler
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
-public class Stream implements Handler<String> {
-  final def io.vertx.ext.shell.Stream delegate;
-  public Stream(io.vertx.ext.shell.Stream delegate) {
+public class Tty {
+  final def io.vertx.ext.shell.io.Tty delegate;
+  public Tty(io.vertx.ext.shell.io.Tty delegate) {
     this.delegate = delegate;
   }
   public Object getDelegate() {
     return delegate;
   }
-  public void handle(String event) {
-    this.delegate.handle(event);
+  /**
+   * @return the current width, the number of rows
+   * @return 
+   */
+  public int width() {
+    def ret = this.delegate.width();
+    return ret;
+  }
+  /**
+   * @return the current height, the number of columns
+   * @return 
+   */
+  public int height() {
+    def ret = this.delegate.height();
+    return ret;
+  }
+  public Tty setStdin(Handler<String> stdin) {
+    this.delegate.setStdin(stdin);
+    return this;
+  }
+  public Stream stdout() {
+    def ret= InternalHelper.safeCreate(this.delegate.stdout(), io.vertx.ext.shell.io.Stream.class, io.vertx.groovy.ext.shell.io.Stream.class);
+    return ret;
+  }
+  public Tty eventHandler(String event, Handler<Void> handler) {
+    this.delegate.eventHandler(event, handler);
+    return this;
   }
 }

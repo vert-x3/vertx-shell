@@ -130,8 +130,8 @@ command.processHandler(process -> {
 
 === Terminal size
 
-The current terminal size can be obtained using `link:../../apidocs/io/vertx/ext/shell/Tty.html#width--[width]` and
-`link:../../apidocs/io/vertx/ext/shell/Tty.html#height--[height]`.
+The current terminal size can be obtained using `link:../../apidocs/io/vertx/ext/shell/io/Tty.html#width--[width]` and
+`link:../../apidocs/io/vertx/ext/shell/io/Tty.html#height--[height]`.
 
 [source,java]
 ----
@@ -173,7 +173,7 @@ command.processHandler(process -> {
 });
 ----
 
-A command can use the `link:../../apidocs/io/vertx/ext/shell/Tty.html#stdout--[stdout]` to write to the standard output.
+A command can use the `link:../../apidocs/io/vertx/ext/shell/io/Tty.html#stdout--[stdout]` to write to the standard output.
 
 [source,java]
 ----
@@ -276,4 +276,4 @@ command.processHandler(process -> {
 ==== `SIGWINCH` event
 
 The `SIGWINCH` event is fired when the size of the terminal changes, the new terminal size can be obtained
-with `link:../../apidocs/io/vertx/ext/shell/Tty.html#width--[width]` and `link:../../apidocs/io/vertx/ext/shell/Tty.html#height--[height]`.
+with `link:../../apidocs/io/vertx/ext/shell/io/Tty.html#width--[width]` and `link:../../apidocs/io/vertx/ext/shell/io/Tty.html#height--[height]`.
