@@ -1,14 +1,12 @@
 package io.vertx.ext.shell;
 
-import io.termd.core.telnet.TelnetTtyConnection;
-import io.termd.core.telnet.vertx.VertxTelnetBootstrap;
 import io.termd.core.tty.TtyConnection;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Vertx;
-import io.vertx.core.impl.VertxInternal;
 import io.vertx.ext.shell.command.BaseCommands;
 import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.impl.SSHConnector;
+import io.vertx.ext.shell.impl.SSHServer;
+import io.vertx.ext.shell.impl.TelnetServer;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.impl.Shell;
 
@@ -46,7 +44,7 @@ public interface ShellService {
     mgr.registerCommand(Command.command("fg").processHandler(process -> {}));
     mgr.registerCommand(Command.command("bg").processHandler(process -> {}));
 
-    Consumer<TtyConnection> shellInitializer = conn -> {
+    Consumer<TtyConnection> shellBoostrap = conn -> {
       Shell shell = new Shell(vertx, conn, mgr);
       conn.setCloseHandler(v -> {
         shell.close();
@@ -59,14 +57,15 @@ public interface ShellService {
     return () -> {
       TelnetOptions telnetOptions = options.getTelnet();
       if (telnetOptions != null) {
-        VertxTelnetBootstrap bootstrap = new VertxTelnetBootstrap(vertx, telnetOptions);
-        bootstrap.start(() -> new TelnetTtyConnection(shellInitializer));
-
-        SSHOptions sshOptions = options.getSSH();
-        if (sshOptions != null) {
-          SSHConnector connector = new SSHConnector(sshOptions);
-          connector.start((VertxInternal) vertx, shellInitializer);
-        }
+        TelnetServer telnet = new TelnetServer(telnetOptions);
+        telnet.setHandler(shellBoostrap);
+        telnet.listen(vertx);
+      }
+      SSHOptions sshOptions = options.getSSH();
+      if (sshOptions != null) {
+        SSHServer connector = new SSHServer(sshOptions);
+        connector.setHandler(shellBoostrap);
+        connector.listen(vertx);
       }
     };
   }

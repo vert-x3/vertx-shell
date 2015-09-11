@@ -2,6 +2,7 @@ package io.vertx.ext.shell.impl;
 
 import io.termd.core.ssh.SshTtyConnection;
 import io.termd.core.tty.TtyConnection;
+import io.vertx.core.Vertx;
 import io.vertx.core.impl.VertxInternal;
 import io.vertx.core.net.impl.KeyStoreHelper;
 import io.vertx.ext.shell.SSHOptions;
@@ -23,19 +24,35 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
+ * Encapsulate the SSH server setup.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class SSHConnector {
+public class SSHServer {
 
-  final SSHOptions options;
+  private final SSHOptions options;
+  private Consumer<TtyConnection> handler;
 
-  public SSHConnector(SSHOptions options) {
+  public SSHServer(SSHOptions options) {
     this.options = new SSHOptions(options);
   }
 
-  public void start(VertxInternal vertx, Consumer<TtyConnection> handler) throws Exception {
+  public SSHOptions getOptions() {
+    return options;
+  }
 
-    KeyStoreHelper keyStoreHelper = KeyStoreHelper.create(vertx, options.getKeyCertOptions());
+  public Consumer<TtyConnection> getHandler() {
+    return handler;
+  }
+
+  public SSHServer setHandler(Consumer<TtyConnection> handler) {
+    this.handler = handler;
+    return this;
+  }
+
+  public void listen(Vertx vertx) throws Exception {
+
+    KeyStoreHelper keyStoreHelper = KeyStoreHelper.create((VertxInternal) vertx, options.getKeyCertOptions());
 
     // Make this possible in KeyStoreHelper
     Field passwordField = KeyStoreHelper.class.getDeclaredField("password");
