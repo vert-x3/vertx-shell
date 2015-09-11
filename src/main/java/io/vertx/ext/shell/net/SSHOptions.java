@@ -6,7 +6,6 @@ import io.vertx.core.net.JksOptions;
 import io.vertx.core.net.KeyCertOptions;
 import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.core.net.PfxOptions;
-import io.vertx.ext.shell.ConnectorOptions;
 import io.vertx.ext.shell.auth.AuthOptions;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
 
@@ -14,7 +13,7 @@ import io.vertx.ext.shell.auth.ShiroAuthOptions;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @DataObject
-public class SSHOptions implements ConnectorOptions {
+public class SSHOptions {
 
   private static final String DEFAULT_HOST = "localhost";
   private static final int DEFAULT_PORT = 4000;

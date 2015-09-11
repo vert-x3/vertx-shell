@@ -8,13 +8,12 @@ import io.vertx.core.net.NetServerOptions;
 import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.core.net.PemTrustOptions;
 import io.vertx.core.net.PfxOptions;
-import io.vertx.ext.shell.ConnectorOptions;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @DataObject
-public class TelnetOptions extends NetServerOptions implements ConnectorOptions {
+public class TelnetOptions extends NetServerOptions {
 
   public TelnetOptions() {
   }

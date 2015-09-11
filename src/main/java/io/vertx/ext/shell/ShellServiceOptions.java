@@ -5,9 +5,6 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.shell.net.SSHOptions;
 import io.vertx.ext.shell.net.TelnetOptions;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
@@ -15,7 +12,6 @@ import java.util.List;
 public class ShellServiceOptions {
 
   public static final String DEFAULT_WELCOME_MESSAGE = "Welcome to Vert.x Shell\n\n";
-  public static final List<ConnectorOptions> DEFAULT_CONNECTORS = Collections.emptyList();
 
   private String welcomeMessage;
   private TelnetOptions telnet;
