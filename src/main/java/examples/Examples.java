@@ -1,12 +1,15 @@
 package examples;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
+import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.shell.SSHOptions;
 import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.ShellService;
 import io.vertx.ext.shell.ShellServiceOptions;
 import io.vertx.ext.shell.TelnetOptions;
+import io.vertx.ext.shell.auth.ShiroAuthOptions;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.registry.CommandRegistry;
 
@@ -15,19 +18,30 @@ import io.vertx.ext.shell.registry.CommandRegistry;
  */
 public class Examples {
 
-  public void runService(Vertx vertx) throws Exception {
+  public void runTelnetService(Vertx vertx) throws Exception {
+    ShellService service = ShellService.create(vertx,
+        new ShellServiceOptions().setTelnet(
+            new TelnetOptions().
+                setHost("localhost").
+                setPort(4000)
+        )
+    );
+    service.start();
+  }
+
+  public void runSSHService(Vertx vertx) throws Exception {
     ShellService service = ShellService.create(vertx,
         new ShellServiceOptions().setSSH(
             new SSHOptions().
                 setHost("localhost").
                 setPort(5000).
                 setKeyStoreOptions(new JksOptions().
-                    setPath("server-keystore.jks").
-                    setPassword("wibble")
-                )).setTelnet(
-            new TelnetOptions().
-                setHost("localhost").
-                setPort(4000)
+                        setPath("server-keystore.jks").
+                        setPassword("wibble")
+                ).
+                setShiroAuthOptions(new ShiroAuthOptions().
+                    setType(ShiroAuthRealmType.PROPERTIES).
+                    setConfig(new JsonObject("file:/path/to/my/auth.properties")))
         )
     );
     service.start();

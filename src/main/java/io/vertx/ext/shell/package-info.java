@@ -17,10 +17,32 @@
  * The {@link io.vertx.ext.shell.ShellService} takes care of starting an instance of Vert.x Shell. It can be started
  * programmatically or as a service from the command line.
  *
+ * Starting a shell service available via SSH:
+ *
  * [source,$lang]
  * ----
- * {@link examples.Examples#runService}
+ * {@link examples.Examples#runSSHService(io.vertx.core.Vertx)}
  * ----
+ *
+ * The server key configuration reuses the key store configuration scheme provided by _Vert.x Core_.
+ *
+ * User authenticates via login/password (no key authentication for now) and is based on _Vert.x Auth_ component supporting:
+ *
+ * - Shiro Authentication : _properties_ configuration or _ldap_ configuration
+ * - JDBC Authentication : todo
+ * - Mongo Authentication : todo
+ *
+ * Starting a shell service available via Telnet:
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#runTelnetService}
+ * ----
+ *
+ * The {@link io.vertx.ext.shell.TelnetOptions} extends the Vert.x Core `NetServerOptions` as the Telnet server
+ * implementation is based on a `NetServer`.
+ *
+ * CAUTION: Telnet does not provide any authentication nor encryption at all.
  *
  * Or via the service facility:
  *

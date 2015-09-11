@@ -111,18 +111,20 @@
         </exclusion>
       </exclusions>
     </dependency>
+<!--
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.52</version>
+      <version>1.49</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15on</artifactId>
-      <version>1.52</version>
+      <version>1.49</version>
       <optional>true</optional>
     </dependency>
+-->
     <dependency>
       <groupId>org.apache.mina</groupId>
       <artifactId>mina-core</artifactId>
