@@ -13,18 +13,22 @@ import io.vertx.ext.shell.SSHOptions;
 import io.vertx.ext.shell.ShellService;
 import io.vertx.ext.shell.ShellServiceOptions;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
+import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 
 import java.io.InputStream;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
+@RunWith(VertxUnitRunner.class)
 public class SSHTest {
 
   ShellService service;
@@ -36,11 +40,11 @@ public class SSHTest {
   }
 
   @After
-  public void after() {
+  public void after(TestContext context) {
     if (service != null) {
-      service.close();
+      service.close(context.asyncAssertSuccess());
     }
-    vertx.close();
+    vertx.close(context.asyncAssertSuccess());
   }
 
   private void startShell() throws Exception {
@@ -56,8 +60,16 @@ public class SSHTest {
             setShiroAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
                 new JsonObject().put("properties_path", "classpath:test-auth.properties")))));
 
-
-    service.start();
+    // Remove this when we can use Async.await()
+    CompletableFuture<Void> fut = new CompletableFuture<>();
+    service.start(ar -> {
+      if (ar.succeeded()) {
+        fut.complete(null);
+      } else {
+        fut.completeExceptionally(ar.cause());
+      }
+    });
+    fut.get();
   }
 
   private Session createSession(String username, String password) throws Exception {

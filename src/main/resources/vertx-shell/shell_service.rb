@@ -22,17 +22,19 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling create(vertx,options)"
     end
+    # @yield 
     # @return [void]
     def start
-      if !block_given?
-        return @j_del.java_method(:start, []).call()
+      if block_given?
+        return @j_del.java_method(:start, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |ar| yield(ar.failed ? ar.cause : nil) }))
       end
       raise ArgumentError, "Invalid arguments when calling start()"
     end
+    # @yield 
     # @return [void]
     def close
-      if !block_given?
-        return @j_del.java_method(:close, []).call()
+      if block_given?
+        return @j_del.java_method(:close, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |ar| yield(ar.failed ? ar.cause : nil) }))
       end
       raise ArgumentError, "Invalid arguments when calling close()"
     end

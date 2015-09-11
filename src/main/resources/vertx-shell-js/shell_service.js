@@ -34,24 +34,36 @@ var ShellService = function(j_val) {
   /**
 
    @public
-
+   @param startHandler {function} 
    */
-  this.start = function() {
+  this.start = function(startHandler) {
     var __args = arguments;
-    if (__args.length === 0) {
-      j_shellService["start()"]();
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_shellService["start(io.vertx.core.Handler)"](function(ar) {
+      if (ar.succeeded()) {
+        startHandler(null, null);
+      } else {
+        startHandler(null, ar.cause());
+      }
+    });
     } else utils.invalidArgs();
   };
 
   /**
 
    @public
-
+   @param closeHandler {function} 
    */
-  this.close = function() {
+  this.close = function(closeHandler) {
     var __args = arguments;
-    if (__args.length === 0) {
-      j_shellService["close()"]();
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_shellService["close(io.vertx.core.Handler)"](function(ar) {
+      if (ar.succeeded()) {
+        closeHandler(null, null);
+      } else {
+        closeHandler(null, ar.cause());
+      }
+    });
     } else utils.invalidArgs();
   };
 

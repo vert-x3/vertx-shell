@@ -19,6 +19,8 @@ import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.ext.shell.ShellServiceOptions
 import io.vertx.groovy.core.Vertx
+import io.vertx.core.AsyncResult
+import io.vertx.core.Handler
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
@@ -35,10 +37,10 @@ public class ShellService {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx)vertx.getDelegate(), options != null ? new io.vertx.ext.shell.ShellServiceOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.ext.shell.ShellService.class, io.vertx.groovy.ext.shell.ShellService.class);
     return ret;
   }
-  public void start() {
-    this.delegate.start();
+  public void start(Handler<AsyncResult<Void>> startHandler) {
+    this.delegate.start(startHandler);
   }
-  public void close() {
-    this.delegate.close();
+  public void close(Handler<AsyncResult<Void>> closeHandler) {
+    this.delegate.close(closeHandler);
   }
 }
