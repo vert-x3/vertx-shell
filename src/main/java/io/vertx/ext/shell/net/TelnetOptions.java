@@ -1,4 +1,4 @@
-package io.vertx.ext.shell;
+package io.vertx.ext.shell.net;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.buffer.Buffer;
@@ -8,6 +8,7 @@ import io.vertx.core.net.NetServerOptions;
 import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.core.net.PemTrustOptions;
 import io.vertx.core.net.PfxOptions;
+import io.vertx.ext.shell.ConnectorOptions;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>

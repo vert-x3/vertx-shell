@@ -1,4 +1,4 @@
-package io.vertx.ext.shell.net;
+package io.vertx.ext.shell.net.impl;
 
 import io.termd.core.ssh.SshTtyConnection;
 import io.termd.core.tty.TtyConnection;
@@ -13,8 +13,8 @@ import io.vertx.core.net.impl.KeyStoreHelper;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.User;
 import io.vertx.ext.auth.shiro.ShiroAuth;
-import io.vertx.ext.shell.SSHOptions;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
+import io.vertx.ext.shell.net.SSHOptions;
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.apache.sshd.server.SshServer;

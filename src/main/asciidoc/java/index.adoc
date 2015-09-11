@@ -59,7 +59,7 @@ ShellService service = ShellService.create(vertx,
 service.start();
 ----
 
-The `link:../../apidocs/io/vertx/ext/shell/TelnetOptions.html[TelnetOptions]` extends the Vert.x Core `NetServerOptions` as the Telnet server
+The `link:../../apidocs/io/vertx/ext/shell/net/TelnetOptions.html[TelnetOptions]` extends the Vert.x Core `NetServerOptions` as the Telnet server
 implementation is based on a `NetServer`.
 
 CAUTION: Telnet does not provide any authentication nor encryption at all.

@@ -1,4 +1,4 @@
-package io.vertx.ext.shell;
+package io.vertx.ext.shell.net;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
@@ -6,6 +6,7 @@ import io.vertx.core.net.JksOptions;
 import io.vertx.core.net.KeyCertOptions;
 import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.core.net.PfxOptions;
+import io.vertx.ext.shell.ConnectorOptions;
 import io.vertx.ext.shell.auth.AuthOptions;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
 

@@ -3,11 +3,11 @@ package io.vertx.ext.shell;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
-import io.vertx.core.net.PemKeyCertOptions;
-import io.vertx.core.net.PfxOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.net.SSHOptions;
+import io.vertx.ext.shell.net.TelnetOptions;
 import io.vertx.ext.shell.registry.CommandRegistry;
 
 /**

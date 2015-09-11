@@ -5,12 +5,12 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.SSHOptions;
+import io.vertx.ext.shell.net.SSHOptions;
 import io.vertx.ext.shell.ShellService;
 import io.vertx.ext.shell.ShellServiceOptions;
-import io.vertx.ext.shell.TelnetOptions;
-import io.vertx.ext.shell.net.SSHServer;
-import io.vertx.ext.shell.net.TelnetServer;
+import io.vertx.ext.shell.net.TelnetOptions;
+import io.vertx.ext.shell.net.impl.SSHServer;
+import io.vertx.ext.shell.net.impl.TelnetServer;
 import io.vertx.ext.shell.registry.CommandRegistry;
 
 import java.util.concurrent.atomic.AtomicInteger;

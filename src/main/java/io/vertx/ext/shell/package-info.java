@@ -39,7 +39,7 @@
  * {@link examples.Examples#runTelnetService}
  * ----
  *
- * The {@link io.vertx.ext.shell.TelnetOptions} extends the Vert.x Core `NetServerOptions` as the Telnet server
+ * The {@link io.vertx.ext.shell.net.TelnetOptions} extends the Vert.x Core `NetServerOptions` as the Telnet server
  * implementation is based on a `NetServer`.
  *
  * CAUTION: Telnet does not provide any authentication nor encryption at all.
