@@ -27,7 +27,7 @@ public interface CliToken {
 
   boolean isBlank();
 
-  public static List<CliToken> tokenize(String s) {
+  static List<CliToken> tokenize(String s) {
     return CliTokenImpl.tokenize(s);
   }
 }

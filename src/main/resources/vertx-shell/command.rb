@@ -42,12 +42,12 @@ module VertxShell
     end
     # @yield 
     # @return [self]
-    def complete_handler
+    def completion_handler
       if block_given?
-        @j_del.java_method(:completeHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(::Vertx::Util::Utils.safe_create(event,::VertxShell::Completion)) }))
+        @j_del.java_method(:completionHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(::Vertx::Util::Utils.safe_create(event,::VertxShell::Completion)) }))
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling complete_handler()"
+      raise ArgumentError, "Invalid arguments when calling completion_handler()"
     end
   end
 end

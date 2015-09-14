@@ -67,10 +67,10 @@ var Command = function(j_val) {
    @param handler {function} 
    @return {Command}
    */
-  this.completeHandler = function(handler) {
+  this.completionHandler = function(handler) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_command["completeHandler(io.vertx.core.Handler)"](function(jVal) {
+      j_command["completionHandler(io.vertx.core.Handler)"](function(jVal) {
       handler(utils.convReturnVertxGen(jVal, Completion));
     });
       return that;

@@ -1,8 +1,6 @@
 package io.vertx.ext.shell.cli.impl;
 
-import io.termd.core.readline.Quote;
-import io.termd.core.readline.QuoteResult;
-import io.termd.core.readline.Quoter;
+import io.termd.core.readline.LineStatus;
 import io.vertx.ext.shell.cli.CliToken;
 
 import java.util.LinkedList;
@@ -86,43 +84,25 @@ public class CliTokenImpl implements CliToken {
     }
   }
 
+  // Todo use code points and not chars
   private static int textToken(String s, int index, List<CliToken> builder) {
-    StringBuilder value = new StringBuilder();
-    Quoter quoter = new Quoter();
-    boolean escaped = false;
+    LineStatus quoter = new LineStatus();
     int from = index;
+    StringBuilder value = new StringBuilder();
     while (index < s.length()) {
       char c = s.charAt(index);
-      QuoteResult result = quoter.update(c);
-      if (quoter.getQuote() == Quote.NONE && !escaped && isBlank(c)) {
+      quoter.accept(c);
+      if (!quoter.isQuoted() && !quoter.isEscaped() && isBlank(c)) {
         break;
       }
-      switch (result) {
-        case UPDATED:
-          break;
-        case ESC:
-          escaped = true;
-          break;
-        case CODE_POINT:
-          if (escaped) {
-            if (quoter.getQuote() == Quote.WEAK) {
-              if (c != '"' && c != '\\') {
-                value.append('\\');
-              }
-            }
-            escaped = false;
-          }
-          value.append(c);
-          break;
+      if (quoter.isCodePoint()) {
+        if (quoter.isEscaped() && quoter.isWeaklyQuoted() && c != '"') {
+          value.append('\\');
+        }
+        value.append(c);
       }
       index++;
     }
-/*
-    if (quoter.getQuote() != Quote.NONE || escaped) {
-      // Todo
-      throw new UnsupportedOperationException();
-    }
-*/
     builder.add(new CliTokenImpl(true, s.substring(from, index), value.toString()));
     return index;
   }

@@ -44,8 +44,12 @@ public class Completion {
     def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.ext.shell.Session.class, io.vertx.groovy.ext.shell.Session.class);
     return ret;
   }
-  public String line() {
-    def ret = this.delegate.line();
+  /**
+   * @return the current line being completed in raw format, i.e without any char escape performed
+   * @return 
+   */
+  public String rawLine() {
+    def ret = this.delegate.rawLine();
     return ret;
   }
   public List<CliToken> lineTokens() {

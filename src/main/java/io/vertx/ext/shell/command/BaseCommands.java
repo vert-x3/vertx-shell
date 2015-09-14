@@ -218,7 +218,7 @@ public interface BaseCommands {
 
   static Command fs_cd() {
     Command cmd = Command.command("cd");
-    cmd.completeHandler(new FsHelper().completionHandler());
+    cmd.completionHandler(new FsHelper().completionHandler());
     cmd.processHandler(process -> {
       if (process.args().size() > 0) {
         String pathArg = process.args().get(0);
@@ -254,7 +254,7 @@ public interface BaseCommands {
 
   static Command fs_ls() {
     Command cmd = Command.command("ls");
-    cmd.completeHandler(new FsHelper().completionHandler());
+    cmd.completionHandler(new FsHelper().completionHandler());
     cmd.processHandler(process -> {
       new FsHelper().ls(process.vertx(),
           process.session().get("path"),

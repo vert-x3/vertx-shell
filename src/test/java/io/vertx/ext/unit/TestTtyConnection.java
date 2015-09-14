@@ -71,7 +71,7 @@ public class TestTtyConnection implements TtyConnection {
   public Consumer<int[]> stdoutHandler() {
     return codePoints -> {
       synchronized (TestTtyConnection.this) {
-        Helper.appendCodePoints(out, codePoints);
+        Helper.appendCodePoints(codePoints, out);
         notify();
       }
     };

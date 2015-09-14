@@ -30,7 +30,7 @@ public class CommandImpl implements Command {
   }
 
   @Override
-  public CommandImpl completeHandler(Handler<Completion> handler) {
+  public CommandImpl completionHandler(Handler<Completion> handler) {
     completeHandler = handler;
     return this;
   }

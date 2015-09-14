@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -163,7 +164,7 @@ public class CommandRegistryImpl implements CommandRegistry {
                 return completion.session();
               }
               @Override
-              public String line() {
+              public String rawLine() {
                 return line;
               }
               @Override

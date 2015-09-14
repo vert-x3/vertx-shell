@@ -30,12 +30,13 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling session()"
     end
+    #  @return the current line being completed in raw format, i.e without any char escape performed
     # @return [String]
-    def line
+    def raw_line
       if !block_given?
-        return @j_del.java_method(:line, []).call()
+        return @j_del.java_method(:rawLine, []).call()
       end
-      raise ArgumentError, "Invalid arguments when calling line()"
+      raise ArgumentError, "Invalid arguments when calling raw_line()"
     end
     # @return [Array<::VertxShell::CliToken>]
     def line_tokens

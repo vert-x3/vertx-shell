@@ -12,6 +12,7 @@ import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.cli.CliToken;
 
 import java.io.InputStream;
+import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -275,7 +276,7 @@ public class Shell {
         }
 
         @Override
-        public String line() {
+        public String rawLine() {
           return line;
         }
 
@@ -286,17 +287,14 @@ public class Shell {
 
         @Override
         public void complete(List<String> candidates) {
-          if (candidates.size() > 0) {
-            completion.suggest(candidates.stream().
-                map(Helper::toCodePoints).
-                collect(Collectors.toList()));
-          }
-          completion.end();
+          completion.suggest(candidates.stream().
+              map(Helper::toCodePoints).
+              collect(Collectors.toList()));
         }
 
         @Override
         public void complete(String value, boolean terminal) {
-          completion.complete(Helper.toCodePoints(value), terminal).end();
+          completion.complete(Helper.toCodePoints(value), terminal);
         }
       };
       mgr.complete(comp);

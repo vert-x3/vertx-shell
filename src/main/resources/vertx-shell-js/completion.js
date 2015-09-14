@@ -60,15 +60,16 @@ var Completion = function(j_val) {
   };
 
   /**
+   @return the current line being completed in raw format, i.e without any char escape performed
 
    @public
 
    @return {string}
    */
-  this.line = function() {
+  this.rawLine = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return j_completion["line()"]();
+      return j_completion["rawLine()"]();
     } else utils.invalidArgs();
   };
 

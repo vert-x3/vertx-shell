@@ -277,3 +277,19 @@ command.processHandler({ process ->
 
 The `SIGWINCH` event is fired when the size of the terminal changes, the new terminal size can be obtained
 with `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#width()[width]` and `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#height()[height]`.
+
+=== Command completion
+
+A command can provide a completion handler when the want to provide contextual command line interface completion.
+
+Like the process handler, the `link:groovydoc/io/vertx/groovy/ext/shell/command/Command.html#completionHandler(io.vertx.core.Handler)[completion
+handler]` is non blocking because the implementation may use Vert.x services, e.g the file system.
+
+The `link:groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#lineTokens()[lineTokens]` returns a list of `link:groovydoc/io/vertx/groovy/ext/shell/cli/CliToken.html[tokens]`
+from the beginning of the line to the cursor position. The list can be empty if the cursor when the cursor is at the
+beginning of the line.
+
+The `link:groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#rawLine()[rawLine]` returns the current completed from the beginning
+of the line to the cursor position, in raw format, i.e without any char escape performed.
+
+Completion ends with a call to `link:groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#complete(java.util.List)[complete]`.

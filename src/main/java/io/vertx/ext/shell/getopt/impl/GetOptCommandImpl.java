@@ -130,7 +130,7 @@ public class GetOptCommandImpl implements GetOptCommand {
       });
 
       // For now we complete with empty
-      command.completeHandler(completion -> {
+      command.completionHandler(completion -> {
         completion.complete(Collections.emptyList());
       });
     }

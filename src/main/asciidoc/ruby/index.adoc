@@ -277,3 +277,19 @@ command.process_handler() { |process|
 
 The `SIGWINCH` event is fired when the size of the terminal changes, the new terminal size can be obtained
 with `link:yardoc/VertxShell/Tty.html#width-instance_method[width]` and `link:yardoc/VertxShell/Tty.html#height-instance_method[height]`.
+
+=== Command completion
+
+A command can provide a completion handler when the want to provide contextual command line interface completion.
+
+Like the process handler, the `link:yardoc/VertxShell/Command.html#completion_handler-instance_method[completion
+handler]` is non blocking because the implementation may use Vert.x services, e.g the file system.
+
+The `link:yardoc/VertxShell/Completion.html#line_tokens-instance_method[lineTokens]` returns a list of `link:yardoc/VertxShell/CliToken.html[tokens]`
+from the beginning of the line to the cursor position. The list can be empty if the cursor when the cursor is at the
+beginning of the line.
+
+The `link:yardoc/VertxShell/Completion.html#raw_line-instance_method[rawLine]` returns the current completed from the beginning
+of the line to the cursor position, in raw format, i.e without any char escape performed.
+
+Completion ends with a call to `link:yardoc/VertxShell/Completion.html#complete-instance_method[complete]`.

@@ -277,3 +277,19 @@ command.processHandler(function (process) {
 
 The `SIGWINCH` event is fired when the size of the terminal changes, the new terminal size can be obtained
 with `link:jsdoc/tty-Tty.html#width[width]` and `link:jsdoc/tty-Tty.html#height[height]`.
+
+=== Command completion
+
+A command can provide a completion handler when the want to provide contextual command line interface completion.
+
+Like the process handler, the `link:jsdoc/command-Command.html#completionHandler[completion
+handler]` is non blocking because the implementation may use Vert.x services, e.g the file system.
+
+The `link:jsdoc/completion-Completion.html#lineTokens[lineTokens]` returns a list of `link:jsdoc/cli_token-CliToken.html[tokens]`
+from the beginning of the line to the cursor position. The list can be empty if the cursor when the cursor is at the
+beginning of the line.
+
+The `link:jsdoc/completion-Completion.html#rawLine[rawLine]` returns the current completed from the beginning
+of the line to the cursor position, in raw format, i.e without any char escape performed.
+
+Completion ends with a call to `link:jsdoc/completion-Completion.html#complete[complete]`.

@@ -52,8 +52,8 @@ public class Command {
     });
     return this;
   }
-  public Command completeHandler(Handler<Completion> handler) {
-    this.delegate.completeHandler(new Handler<io.vertx.ext.shell.cli.Completion>() {
+  public Command completionHandler(Handler<Completion> handler) {
+    this.delegate.completionHandler(new Handler<io.vertx.ext.shell.cli.Completion>() {
       public void handle(io.vertx.ext.shell.cli.Completion event) {
         handler.handle(new io.vertx.groovy.ext.shell.cli.Completion(event));
       }

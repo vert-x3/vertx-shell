@@ -28,6 +28,6 @@ public interface Command {
   Command processHandler(Handler<CommandProcess> handler);
 
   @Fluent
-  Command completeHandler(Handler<Completion> handler);
+  Command completionHandler(Handler<Completion> handler);
 
 }

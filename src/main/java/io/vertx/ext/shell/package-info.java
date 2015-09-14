@@ -184,6 +184,22 @@
  * The `SIGWINCH` event is fired when the size of the terminal changes, the new terminal size can be obtained
  * with {@link io.vertx.ext.shell.command.CommandProcess#width()} and {@link io.vertx.ext.shell.command.CommandProcess#height()}.
  *
+ * === Command completion
+ *
+ * A command can provide a completion handler when the want to provide contextual command line interface completion.
+ *
+ * Like the process handler, the {@link io.vertx.ext.shell.command.Command#completionHandler(io.vertx.core.Handler) completion
+ * handler} is non blocking because the implementation may use Vert.x services, e.g the file system.
+ *
+ * The {@link io.vertx.ext.shell.cli.Completion#lineTokens()} returns a list of {@link io.vertx.ext.shell.cli.CliToken tokens}
+ * from the beginning of the line to the cursor position. The list can be empty if the cursor when the cursor is at the
+ * beginning of the line.
+ *
+ * The {@link io.vertx.ext.shell.cli.Completion#rawLine()} returns the current completed from the beginning
+ * of the line to the cursor position, in raw format, i.e without any char escape performed.
+ *
+ * Completion ends with a call to {@link io.vertx.ext.shell.cli.Completion#complete(java.util.List)}.
+ *
  */
 @GenModule(name = "vertx-shell")
 @Document(fileName = "index.adoc")

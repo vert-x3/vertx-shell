@@ -8,6 +8,7 @@ import io.vertx.ext.shell.Session;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -30,7 +31,10 @@ public interface Completion {
 
   Session session();
 
-  String line();
+  /**
+   * @return the current line being completed in raw format, i.e without any char escape performed
+   */
+  String rawLine();
 
   List<CliToken> lineTokens();
 
