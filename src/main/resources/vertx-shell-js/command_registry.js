@@ -19,6 +19,7 @@ var utils = require('vertx-js/util/utils');
 var CommandRegistration = require('vertx-shell-js/command_registration');
 var Command = require('vertx-shell-js/command');
 var Completion = require('vertx-shell-js/completion');
+var Vertx = require('vertx-js/vertx');
 var CliToken = require('vertx-shell-js/cli_token');
 var Process = require('vertx-shell-js/process');
 

@@ -17,6 +17,7 @@
 package io.vertx.groovy.ext.shell.getopt;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.command.Command
 import io.vertx.core.Handler
 /**
@@ -24,15 +25,15 @@ import io.vertx.core.Handler
 */
 @CompileStatic
 public class GetOptCommand {
-  final def io.vertx.ext.shell.getopt.GetOptCommand delegate;
-  public GetOptCommand(io.vertx.ext.shell.getopt.GetOptCommand delegate) {
-    this.delegate = delegate;
+  private final def io.vertx.ext.shell.getopt.GetOptCommand delegate;
+  public GetOptCommand(Object delegate) {
+    this.delegate = (io.vertx.ext.shell.getopt.GetOptCommand) delegate;
   }
   public Object getDelegate() {
     return delegate;
   }
   public static GetOptCommand create(String name) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.getopt.GetOptCommand.create(name), io.vertx.ext.shell.getopt.GetOptCommand.class, io.vertx.groovy.ext.shell.getopt.GetOptCommand.class);
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.getopt.GetOptCommand.create(name), io.vertx.groovy.ext.shell.getopt.GetOptCommand.class);
     return ret;
   }
   public void processHandler(Handler<GetOptCommandProcess> handler) {
@@ -47,11 +48,11 @@ public class GetOptCommand {
     return this;
   }
   public Option getOption(String name) {
-    def ret= InternalHelper.safeCreate(this.delegate.getOption(name), io.vertx.ext.shell.getopt.Option.class, io.vertx.groovy.ext.shell.getopt.Option.class);
+    def ret= InternalHelper.safeCreate(this.delegate.getOption(name), io.vertx.groovy.ext.shell.getopt.Option.class);
     return ret;
   }
   public Command build() {
-    def ret= InternalHelper.safeCreate(this.delegate.build(), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
+    def ret= InternalHelper.safeCreate(this.delegate.build(), io.vertx.groovy.ext.shell.command.Command.class);
     return ret;
   }
 }

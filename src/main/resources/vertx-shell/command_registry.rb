@@ -1,6 +1,7 @@
 require 'vertx-shell/command_registration'
 require 'vertx-shell/command'
 require 'vertx-shell/completion'
+require 'vertx/vertx'
 require 'vertx-shell/cli_token'
 require 'vertx-shell/process'
 require 'vertx/util/utils.rb'

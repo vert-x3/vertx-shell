@@ -17,20 +17,21 @@
 package io.vertx.groovy.ext.shell.getopt;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import io.vertx.core.json.JsonObject
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
 public class Option {
-  final def io.vertx.ext.shell.getopt.Option delegate;
-  public Option(io.vertx.ext.shell.getopt.Option delegate) {
-    this.delegate = delegate;
+  private final def io.vertx.ext.shell.getopt.Option delegate;
+  public Option(Object delegate) {
+    this.delegate = (io.vertx.ext.shell.getopt.Option) delegate;
   }
   public Object getDelegate() {
     return delegate;
   }
   public static Option create(String name, int arity) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.getopt.Option.create(name, arity), io.vertx.ext.shell.getopt.Option.class, io.vertx.groovy.ext.shell.getopt.Option.class);
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.getopt.Option.create(name, arity), io.vertx.groovy.ext.shell.getopt.Option.class);
     return ret;
   }
   public String name() {

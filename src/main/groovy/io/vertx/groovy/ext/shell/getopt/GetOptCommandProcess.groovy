@@ -17,6 +17,7 @@
 package io.vertx.groovy.ext.shell.getopt;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import io.vertx.core.json.JsonObject
 import java.util.List
 import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.command.CommandProcess
@@ -25,10 +26,10 @@ import io.vertx.groovy.ext.shell.command.CommandProcess
 */
 @CompileStatic
 public class GetOptCommandProcess extends CommandProcess {
-  final def io.vertx.ext.shell.getopt.GetOptCommandProcess delegate;
-  public GetOptCommandProcess(io.vertx.ext.shell.getopt.GetOptCommandProcess delegate) {
-    super(delegate);
-    this.delegate = delegate;
+  private final def io.vertx.ext.shell.getopt.GetOptCommandProcess delegate;
+  public GetOptCommandProcess(Object delegate) {
+    super((io.vertx.ext.shell.getopt.GetOptCommandProcess) delegate);
+    this.delegate = (io.vertx.ext.shell.getopt.GetOptCommandProcess) delegate;
   }
   public Object getDelegate() {
     return delegate;
@@ -42,15 +43,15 @@ public class GetOptCommandProcess extends CommandProcess {
     return ret;
   }
   public GetOptCommandProcess setStdin(Handler<String> stdin) {
-    this.delegate.setStdin(stdin);
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).setStdin(stdin);
     return this;
   }
   public GetOptCommandProcess eventHandler(String event, Handler<Void> handler) {
-    this.delegate.eventHandler(event, handler);
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).eventHandler(event, handler);
     return this;
   }
   public GetOptCommandProcess write(String text) {
-    this.delegate.write(text);
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.getopt.GetOptCommandProcess) this.delegate).write(text);
     return this;
   }
 }

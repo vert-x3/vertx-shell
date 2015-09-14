@@ -201,9 +201,9 @@
  * Completion ends with a call to {@link io.vertx.ext.shell.cli.Completion#complete(java.util.List)}.
  *
  */
-@GenModule(name = "vertx-shell")
+@ModuleGen(name = "vertx-shell", groupPackage = "io.vertx")
 @Document(fileName = "index.adoc")
 package io.vertx.ext.shell;
 
-import io.vertx.codegen.annotations.GenModule;
+import io.vertx.codegen.annotations.ModuleGen;
 import io.vertx.docgen.Document;

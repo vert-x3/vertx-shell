@@ -1,4 +1,5 @@
 require 'vertx-shell/session'
+require 'vertx/vertx'
 require 'vertx-shell/cli_token'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.cli.Completion

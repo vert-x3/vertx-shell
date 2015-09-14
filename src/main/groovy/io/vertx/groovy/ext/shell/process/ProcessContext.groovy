@@ -17,6 +17,7 @@
 package io.vertx.groovy.ext.shell.process;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.Session
 import io.vertx.groovy.ext.shell.io.Tty
 /**
@@ -24,9 +25,9 @@ import io.vertx.groovy.ext.shell.io.Tty
 */
 @CompileStatic
 public class ProcessContext {
-  final def io.vertx.ext.shell.process.ProcessContext delegate;
-  public ProcessContext(io.vertx.ext.shell.process.ProcessContext delegate) {
-    this.delegate = delegate;
+  private final def io.vertx.ext.shell.process.ProcessContext delegate;
+  public ProcessContext(Object delegate) {
+    this.delegate = (io.vertx.ext.shell.process.ProcessContext) delegate;
   }
   public Object getDelegate() {
     return delegate;
@@ -36,7 +37,7 @@ public class ProcessContext {
    * @return 
    */
   public Tty tty() {
-    def ret= InternalHelper.safeCreate(this.delegate.tty(), io.vertx.ext.shell.io.Tty.class, io.vertx.groovy.ext.shell.io.Tty.class);
+    def ret= InternalHelper.safeCreate(this.delegate.tty(), io.vertx.groovy.ext.shell.io.Tty.class);
     return ret;
   }
   /**
@@ -44,7 +45,7 @@ public class ProcessContext {
    * @return 
    */
   public Session session() {
-    def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.ext.shell.Session.class, io.vertx.groovy.ext.shell.Session.class);
+    def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.groovy.ext.shell.Session.class);
     return ret;
   }
   /**

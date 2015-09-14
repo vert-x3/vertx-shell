@@ -17,6 +17,7 @@
 package io.vertx.groovy.ext.shell.command;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.cli.Completion
 import io.vertx.core.Handler
 /**
@@ -24,9 +25,9 @@ import io.vertx.core.Handler
 */
 @CompileStatic
 public class Command {
-  final def io.vertx.ext.shell.command.Command delegate;
-  public Command(io.vertx.ext.shell.command.Command delegate) {
-    this.delegate = delegate;
+  private final def io.vertx.ext.shell.command.Command delegate;
+  public Command(Object delegate) {
+    this.delegate = (io.vertx.ext.shell.command.Command) delegate;
   }
   public Object getDelegate() {
     return delegate;
@@ -37,7 +38,7 @@ public class Command {
    * @return the command object
    */
   public static Command command(String name) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.Command.command(name), io.vertx.ext.shell.command.Command.class, io.vertx.groovy.ext.shell.command.Command.class);
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.Command.command(name), io.vertx.groovy.ext.shell.command.Command.class);
     return ret;
   }
   public String name() {

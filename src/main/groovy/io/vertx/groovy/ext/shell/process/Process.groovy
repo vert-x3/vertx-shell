@@ -17,14 +17,15 @@
 package io.vertx.groovy.ext.shell.process;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import io.vertx.core.json.JsonObject
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
 public class Process {
-  final def io.vertx.ext.shell.process.Process delegate;
-  public Process(io.vertx.ext.shell.process.Process delegate) {
-    this.delegate = delegate;
+  private final def io.vertx.ext.shell.process.Process delegate;
+  public Process(Object delegate) {
+    this.delegate = (io.vertx.ext.shell.process.Process) delegate;
   }
   public Object getDelegate() {
     return delegate;

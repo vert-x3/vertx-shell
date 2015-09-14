@@ -17,14 +17,15 @@
 package io.vertx.groovy.ext.shell;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import io.vertx.core.json.JsonObject
 /**
  * A shell session.
 */
 @CompileStatic
 public class Session {
-  final def io.vertx.ext.shell.Session delegate;
-  public Session(io.vertx.ext.shell.Session delegate) {
-    this.delegate = delegate;
+  private final def io.vertx.ext.shell.Session delegate;
+  public Session(Object delegate) {
+    this.delegate = (io.vertx.ext.shell.Session) delegate;
   }
   public Object getDelegate() {
     return delegate;

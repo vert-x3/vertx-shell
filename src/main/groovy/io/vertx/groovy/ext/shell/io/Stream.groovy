@@ -17,15 +17,16 @@
 package io.vertx.groovy.ext.shell.io;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import io.vertx.core.json.JsonObject
 import io.vertx.core.Handler
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
 public class Stream implements Handler<String> {
-  final def io.vertx.ext.shell.io.Stream delegate;
-  public Stream(io.vertx.ext.shell.io.Stream delegate) {
-    this.delegate = delegate;
+  private final def io.vertx.ext.shell.io.Stream delegate;
+  public Stream(Object delegate) {
+    this.delegate = (io.vertx.ext.shell.io.Stream) delegate;
   }
   public Object getDelegate() {
     return delegate;

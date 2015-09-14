@@ -17,6 +17,7 @@
 /** @module vertx-shell-js/completion */
 var utils = require('vertx-js/util/utils');
 var Session = require('vertx-shell-js/session');
+var Vertx = require('vertx-js/vertx');
 var CliToken = require('vertx-shell-js/cli_token');
 
 var io = Packages.io;

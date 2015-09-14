@@ -9,4 +9,10 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|===
+
+|[[config]]`config`
+|`Json object`
+|-
+|[[type]]`type`
+|`Enum`
+|-|===

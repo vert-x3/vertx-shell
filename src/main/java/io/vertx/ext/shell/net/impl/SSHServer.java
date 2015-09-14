@@ -9,6 +9,9 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.impl.VertxInternal;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.net.JksOptions;
+import io.vertx.core.net.KeyCertOptions;
+import io.vertx.core.net.PfxOptions;
 import io.vertx.core.net.impl.KeyStoreHelper;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.User;
@@ -19,8 +22,6 @@ import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.apache.sshd.server.SshServer;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -76,15 +77,16 @@ public class SSHServer {
     vertx.executeBlocking(fut -> {
 
       try {
-        KeyStoreHelper keyStoreHelper = KeyStoreHelper.create((VertxInternal) vertx, options.getKeyCertOptions());
+        KeyCertOptions ksOptions = options.getKeyCertOptions();
+        KeyStoreHelper ksHelper = KeyStoreHelper.create((VertxInternal) vertx, ksOptions);
+        KeyStore ks = ksHelper.loadStore((VertxInternal) vertx);
 
-        // Make this possible in KeyStoreHelper
-        Field passwordField = KeyStoreHelper.class.getDeclaredField("password");
-        passwordField.setAccessible(true);
-        String password = (String) passwordField.get(keyStoreHelper);
-        Method loadStore = KeyStoreHelper.class.getDeclaredMethod("loadStore", VertxInternal.class, String.class);
-        loadStore.setAccessible(true);
-        KeyStore ks = (KeyStore) loadStore.invoke(keyStoreHelper, vertx, password);
+        String password = "";
+        if (ksOptions instanceof JksOptions) {
+          password = ((JksOptions) ksOptions).getPassword();
+        } else if (ksOptions instanceof PfxOptions) {
+          password = ((PfxOptions) ksOptions).getPassword();
+        }
 
         List<KeyPair> keyPairs = new ArrayList<>();
         for (Enumeration<String> it = ks.aliases(); it.hasMoreElements(); ) {

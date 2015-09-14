@@ -17,15 +17,16 @@
 package io.vertx.groovy.ext.shell.io;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import io.vertx.core.json.JsonObject
 import io.vertx.core.Handler
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
 public class Tty {
-  final def io.vertx.ext.shell.io.Tty delegate;
-  public Tty(io.vertx.ext.shell.io.Tty delegate) {
-    this.delegate = delegate;
+  private final def io.vertx.ext.shell.io.Tty delegate;
+  public Tty(Object delegate) {
+    this.delegate = (io.vertx.ext.shell.io.Tty) delegate;
   }
   public Object getDelegate() {
     return delegate;
@@ -51,7 +52,7 @@ public class Tty {
     return this;
   }
   public Stream stdout() {
-    def ret= InternalHelper.safeCreate(this.delegate.stdout(), io.vertx.ext.shell.io.Stream.class, io.vertx.groovy.ext.shell.io.Stream.class);
+    def ret= InternalHelper.safeCreate(this.delegate.stdout(), io.vertx.groovy.ext.shell.io.Stream.class);
     return ret;
   }
   public Tty eventHandler(String event, Handler<Void> handler) {

@@ -10,69 +10,72 @@
 |===
 ^|Name | Type ^| Description
 
-|[[sendBufferSize]]`sendBufferSize`
-|`Number`
+|[[acceptBacklog]]`acceptBacklog`
+|`Number (int)`
+|-
+|[[clientAuthRequired]]`clientAuthRequired`
+|`Boolean`
+|-
+|[[crlPaths]]`crlPaths`
+|`Array of String`
+|-
+|[[crlValues]]`crlValues`
+|`Array of Buffer`
+|-
+|[[enabledCipherSuites]]`enabledCipherSuites`
+|`Array of String`
+|-
+|[[host]]`host`
+|`String`
+|-
+|[[idleTimeout]]`idleTimeout`
+|`Number (int)`
+|-
+|[[keyStoreOptions]]`keyStoreOptions`
+|`link:JksOptions.html[JksOptions]`
+|-
+|[[pemKeyCertOptions]]`pemKeyCertOptions`
+|`link:PemKeyCertOptions.html[PemKeyCertOptions]`
+|-
+|[[pemTrustOptions]]`pemTrustOptions`
+|`link:PemTrustOptions.html[PemTrustOptions]`
+|-
+|[[pfxKeyCertOptions]]`pfxKeyCertOptions`
+|`link:PfxOptions.html[PfxOptions]`
+|-
+|[[pfxTrustOptions]]`pfxTrustOptions`
+|`link:PfxOptions.html[PfxOptions]`
+|-
+|[[port]]`port`
+|`Number (int)`
 |-
 |[[receiveBufferSize]]`receiveBufferSize`
-|`Number`
+|`Number (int)`
 |-
 |[[reuseAddress]]`reuseAddress`
 |`Boolean`
 |-
-|[[trafficClass]]`trafficClass`
-|`Number`
+|[[sendBufferSize]]`sendBufferSize`
+|`Number (int)`
 |-
-|[[tcpNoDelay]]`tcpNoDelay`
+|[[soLinger]]`soLinger`
+|`Number (int)`
+|-
+|[[ssl]]`ssl`
 |`Boolean`
 |-
 |[[tcpKeepAlive]]`tcpKeepAlive`
 |`Boolean`
 |-
-|[[soLinger]]`soLinger`
-|`Number`
-|-
-|[[usePooledBuffers]]`usePooledBuffers`
+|[[tcpNoDelay]]`tcpNoDelay`
 |`Boolean`
 |-
-|[[idleTimeout]]`idleTimeout`
-|`Number`
-|-
-|[[ssl]]`ssl`
-|`Boolean`
-|-
-|[[keyStoreOptions]]`keyStoreOptions`
-|`link:JksOptions.html[JksOptions]`
-|-
-|[[pfxKeyCertOptions]]`pfxKeyCertOptions`
-|`link:PfxOptions.html[PfxOptions]`
-|-
-|[[pemKeyCertOptions]]`pemKeyCertOptions`
-|`link:PemKeyCertOptions.html[PemKeyCertOptions]`
+|[[trafficClass]]`trafficClass`
+|`Number (int)`
 |-
 |[[trustStoreOptions]]`trustStoreOptions`
 |`link:JksOptions.html[JksOptions]`
 |-
-|[[pfxTrustOptions]]`pfxTrustOptions`
-|`link:PfxOptions.html[PfxOptions]`
-|-
-|[[pemTrustOptions]]`pemTrustOptions`
-|`link:PemTrustOptions.html[PemTrustOptions]`
-|-
-|[[enabledCipherSuites]]`enabledCipherSuites`
-|`Array of String`
-|-
-|[[crlPaths]]`crlPaths`
-|`Array of String`
-|-
-|[[acceptBacklog]]`acceptBacklog`
-|`Number`
-|-
-|[[host]]`host`
-|`String`
-|-
-|[[port]]`port`
-|`Number`
-|-
-|[[clientAuthRequired]]`clientAuthRequired`
+|[[usePooledBuffers]]`usePooledBuffers`
 |`Boolean`
 |-|===

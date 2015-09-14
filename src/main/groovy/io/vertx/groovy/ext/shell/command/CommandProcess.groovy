@@ -17,6 +17,7 @@
 package io.vertx.groovy.ext.shell.command;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import io.vertx.core.json.JsonObject
 import java.util.List
 import io.vertx.groovy.ext.shell.Session
 import io.vertx.groovy.ext.shell.io.Tty
@@ -28,10 +29,10 @@ import io.vertx.core.Handler
 */
 @CompileStatic
 public class CommandProcess extends Tty {
-  final def io.vertx.ext.shell.command.CommandProcess delegate;
-  public CommandProcess(io.vertx.ext.shell.command.CommandProcess delegate) {
-    super(delegate);
-    this.delegate = delegate;
+  private final def io.vertx.ext.shell.command.CommandProcess delegate;
+  public CommandProcess(Object delegate) {
+    super((io.vertx.ext.shell.command.CommandProcess) delegate);
+    this.delegate = (io.vertx.ext.shell.command.CommandProcess) delegate;
   }
   public Object getDelegate() {
     return delegate;
@@ -41,7 +42,7 @@ public class CommandProcess extends Tty {
    * @return 
    */
   public Vertx vertx() {
-    def ret= InternalHelper.safeCreate(this.delegate.vertx(), io.vertx.core.Vertx.class, io.vertx.groovy.core.Vertx.class);
+    def ret= InternalHelper.safeCreate(this.delegate.vertx(), io.vertx.groovy.core.Vertx.class);
     return ret;
   }
   /**
@@ -65,15 +66,15 @@ public class CommandProcess extends Tty {
    * @return 
    */
   public Session session() {
-    def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.ext.shell.Session.class, io.vertx.groovy.ext.shell.Session.class);
+    def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.groovy.ext.shell.Session.class);
     return ret;
   }
   public CommandProcess setStdin(Handler<String> stdin) {
-    this.delegate.setStdin(stdin);
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).setStdin(stdin);
     return this;
   }
   public CommandProcess eventHandler(String event, Handler<Void> handler) {
-    this.delegate.eventHandler(event, handler);
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).eventHandler(event, handler);
     return this;
   }
   public CommandProcess write(String text) {

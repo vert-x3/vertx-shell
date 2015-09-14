@@ -17,6 +17,7 @@
 package io.vertx.groovy.ext.shell.registry;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import io.vertx.core.json.JsonObject
 import java.util.List
 import io.vertx.groovy.ext.shell.command.Command
 import io.vertx.groovy.ext.shell.cli.Completion
@@ -30,15 +31,15 @@ import io.vertx.groovy.ext.shell.process.Process
 */
 @CompileStatic
 public class CommandRegistry {
-  final def io.vertx.ext.shell.registry.CommandRegistry delegate;
-  public CommandRegistry(io.vertx.ext.shell.registry.CommandRegistry delegate) {
-    this.delegate = delegate;
+  private final def io.vertx.ext.shell.registry.CommandRegistry delegate;
+  public CommandRegistry(Object delegate) {
+    this.delegate = (io.vertx.ext.shell.registry.CommandRegistry) delegate;
   }
   public Object getDelegate() {
     return delegate;
   }
   public static CommandRegistry get(Vertx vertx) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.registry.CommandRegistry.get((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.ext.shell.registry.CommandRegistry.class, io.vertx.groovy.ext.shell.registry.CommandRegistry.class);
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.registry.CommandRegistry.get((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.registry.CommandRegistry.class);
     return ret;
   }
   /**

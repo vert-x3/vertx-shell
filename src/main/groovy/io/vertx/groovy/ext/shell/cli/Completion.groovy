@@ -17,6 +17,7 @@
 package io.vertx.groovy.ext.shell.cli;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import io.vertx.core.json.JsonObject
 import java.util.List
 import io.vertx.groovy.ext.shell.Session
 import io.vertx.groovy.core.Vertx
@@ -25,9 +26,9 @@ import io.vertx.groovy.core.Vertx
 */
 @CompileStatic
 public class Completion {
-  final def io.vertx.ext.shell.cli.Completion delegate;
-  public Completion(io.vertx.ext.shell.cli.Completion delegate) {
-    this.delegate = delegate;
+  private final def io.vertx.ext.shell.cli.Completion delegate;
+  public Completion(Object delegate) {
+    this.delegate = (io.vertx.ext.shell.cli.Completion) delegate;
   }
   public Object getDelegate() {
     return delegate;
@@ -37,11 +38,11 @@ public class Completion {
    * @return 
    */
   public Vertx vertx() {
-    def ret= InternalHelper.safeCreate(this.delegate.vertx(), io.vertx.core.Vertx.class, io.vertx.groovy.core.Vertx.class);
+    def ret= InternalHelper.safeCreate(this.delegate.vertx(), io.vertx.groovy.core.Vertx.class);
     return ret;
   }
   public Session session() {
-    def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.ext.shell.Session.class, io.vertx.groovy.ext.shell.Session.class);
+    def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.groovy.ext.shell.Session.class);
     return ret;
   }
   /**

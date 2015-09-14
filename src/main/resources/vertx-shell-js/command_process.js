@@ -18,6 +18,7 @@
 var utils = require('vertx-js/util/utils');
 var Session = require('vertx-shell-js/session');
 var Tty = require('vertx-shell-js/tty');
+var Vertx = require('vertx-js/vertx');
 var CliToken = require('vertx-shell-js/cli_token');
 
 var io = Packages.io;

@@ -32,7 +32,7 @@
   <name>Vert.x Unit</name>
 
   <properties>
-    <stack.version>3.0.0</stack.version>
+    <stack.version>3.1.0-SNAPSHOT</stack.version>
   </properties>
 
   <dependencyManagement>
@@ -55,13 +55,11 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-auth-shiro</artifactId>
-      <version>3.0.0</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-auth-common</artifactId>
-      <version>3.0.0</version>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
