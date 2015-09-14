@@ -61,6 +61,7 @@
       <groupId>io.vertx</groupId>
       <artifactId>vertx-auth-common</artifactId>
     </dependency>
+<!--
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-lang-groovy</artifactId>
@@ -76,7 +77,6 @@
       <artifactId>vertx-lang-ruby</artifactId>
       <optional>true</optional>
     </dependency>
-<!--
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-rx-java</artifactId>

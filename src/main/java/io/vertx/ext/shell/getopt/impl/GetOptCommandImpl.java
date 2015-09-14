@@ -2,6 +2,7 @@ package io.vertx.ext.shell.getopt.impl;
 
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.cli.CommandLine;
 import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.cli.CliToken;
@@ -77,6 +78,11 @@ public class GetOptCommandImpl implements GetOptCommand {
           @Override
           public List<String> getOption(String name) {
             return req.getOptions().get(name);
+          }
+
+          @Override
+          public CommandLine commandLine() {
+            return a.commandLine();
           }
 
           @Override

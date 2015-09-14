@@ -3,6 +3,8 @@ package io.vertx.ext.shell.registry.impl;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.cli.CLIException;
+import io.vertx.core.cli.CommandLine;
 import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.io.Stream;
@@ -58,11 +60,30 @@ public class CommandRegistrationImpl implements CommandRegistration {
     return new Process() {
       public void execute(ProcessContext context) {
 
+        CommandLine cl;
+        if (command.getCLI() != null) {
+          try {
+            cl = command.getCLI().parse(args.stream().filter(CliToken::isText).map(CliToken::value).collect(Collectors.toList()));
+          } catch (CLIException e) {
+            context.tty().stdout().handle(e.getMessage());
+            context.tty().stdout().handle("\n");
+            context.end(0);
+            return;
+          }
+        } else {
+          cl = null;
+        }
+
         CommandProcess process = new CommandProcess() {
 
           @Override
           public Vertx vertx() {
             return vertx;
+          }
+
+          @Override
+          public CommandLine commandLine() {
+            return cl;
           }
 
           @Override
@@ -99,15 +120,18 @@ public class CommandRegistrationImpl implements CommandRegistration {
             }
             return this;
           }
+
           @Override
           public Stream stdout() {
             return context.tty().stdout();
           }
+
           @Override
           public CommandProcess write(String text) {
             context.tty().stdout().handle(text);
             return this;
           }
+
           @Override
           public CommandProcess eventHandler(String event, Handler<Void> handler) {
             if (handler != null) {

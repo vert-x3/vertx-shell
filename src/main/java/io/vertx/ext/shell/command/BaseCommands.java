@@ -2,6 +2,8 @@ package io.vertx.ext.shell.command;
 
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Vertx;
+import io.vertx.core.cli.Argument;
+import io.vertx.core.cli.CLI;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.http.impl.HttpServerImpl;
 import io.vertx.core.impl.Deployment;
@@ -11,8 +13,6 @@ import io.vertx.core.net.impl.ServerID;
 import io.vertx.core.shareddata.LocalMap;
 import io.vertx.core.shareddata.SharedData;
 import io.vertx.core.spi.VerticleFactory;
-import io.vertx.ext.shell.getopt.GetOptCommand;
-import io.vertx.ext.shell.getopt.GetOptCommandProcess;
 import io.vertx.ext.shell.impl.vertx.FsHelper;
 import io.vertx.ext.shell.registry.CommandRegistration;
 import io.vertx.ext.shell.registry.CommandRegistry;
@@ -277,12 +277,12 @@ public interface BaseCommands {
   static Command sleep() {
     class SleepImpl {
 
-      void run(GetOptCommandProcess process) {
-        if (process.arguments().isEmpty()) {
+      void run(CommandProcess process) {
+        if (process.commandLine().getArgumentValue(0) == null) {
           process.write("usage: sleep seconds\n");
           process.end();
         } else {
-          String arg = process.arguments().get(0);
+          String arg = process.commandLine().getArgumentValue(0);
           int seconds = -1;
           try {
             seconds = Integer.parseInt(arg);
@@ -292,7 +292,7 @@ public interface BaseCommands {
         }
       }
 
-      void scheduleSleep(GetOptCommandProcess process, long millis) {
+      void scheduleSleep(CommandProcess process, long millis) {
         Vertx vertx = process.vertx();
         if (millis > 0) {
           System.out.println("Scheduling timer " + millis);
@@ -323,9 +323,11 @@ public interface BaseCommands {
     }
 
     SleepImpl sleep = new SleepImpl();
-    GetOptCommand sleepCmd = GetOptCommand.create("sleep");
+    Command sleepCmd = Command.command("sleep", CLI.create("sleep").
+        addArgument(new Argument().setArgName("seconds")
+        ));
     sleepCmd.processHandler(sleep::run);
-    return sleepCmd.build();
+    return sleepCmd;
   }
 
   static Command echo() {
