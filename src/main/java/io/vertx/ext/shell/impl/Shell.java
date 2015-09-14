@@ -287,9 +287,13 @@ public class Shell {
 
         @Override
         public void complete(List<String> candidates) {
-          completion.suggest(candidates.stream().
-              map(Helper::toCodePoints).
-              collect(Collectors.toList()));
+          if (candidates.size() > 0) {
+            completion.suggest(candidates.stream().
+                map(Helper::toCodePoints).
+                collect(Collectors.toList()));
+          } else {
+            completion.end();
+          }
         }
 
         @Override

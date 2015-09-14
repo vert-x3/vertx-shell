@@ -6,6 +6,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.BaseCommands;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.MetricsCommands;
 import io.vertx.ext.shell.impl.ShellServiceImpl;
 import io.vertx.ext.shell.registry.CommandRegistry;
 
@@ -40,6 +41,10 @@ public interface ShellService {
     registry.registerCommand(Command.command("jobs").processHandler(process -> {}));
     registry.registerCommand(Command.command("fg").processHandler(process -> {}));
     registry.registerCommand(Command.command("bg").processHandler(process -> {}));
+
+    //
+    registry.registerCommand(MetricsCommands.ls());
+    registry.registerCommand(MetricsCommands.info());
 
     //
     return new ShellServiceImpl(vertx, options, registry);
