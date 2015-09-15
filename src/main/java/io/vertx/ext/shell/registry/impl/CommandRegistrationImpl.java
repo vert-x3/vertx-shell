@@ -3,8 +3,11 @@ package io.vertx.ext.shell.registry.impl;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.cli.Argument;
 import io.vertx.core.cli.CLIException;
 import io.vertx.core.cli.CommandLine;
+import io.vertx.core.cli.Option;
+import io.vertx.core.cli.impl.DefaultCommandLine;
 import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.io.Stream;
@@ -16,7 +19,9 @@ import io.vertx.ext.shell.process.Process;
 import io.vertx.ext.shell.process.ProcessContext;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -61,12 +66,27 @@ public class CommandRegistrationImpl implements CommandRegistration {
       public void execute(ProcessContext context) {
 
         CommandLine cl;
+        final List<String> args2 = args.stream().filter(CliToken::isText).map(CliToken::value).collect(Collectors.toList());
         if (command.getCLI() != null) {
+
+          // Build to skip validation problems
+          Optional<Option> helpOpt = command.getCLI().getOptions().stream().filter(o -> o.getArgName().equals("help")).findFirst();
+          if (helpOpt.isPresent()) {
+            if (command.getCLI().parse(args2, false).isSeenInCommandLine(helpOpt.get())) {
+              StringBuilder usage = new StringBuilder();
+              command.getCLI().usage(usage);
+              usage.append('\n');
+              context.tty().stdout().handle(usage.toString());
+              context.end(0);
+              return;
+            }
+          }
+
+          //
           try {
-            cl = command.getCLI().parse(args.stream().filter(CliToken::isText).map(CliToken::value).collect(Collectors.toList()));
+            cl = command.getCLI().parse(args2);
           } catch (CLIException e) {
-            context.tty().stdout().handle(e.getMessage());
-            context.tty().stdout().handle("\n");
+            context.tty().stdout().handle(e.getMessage() + "\n");
             context.end(0);
             return;
           }
@@ -93,7 +113,7 @@ public class CommandRegistrationImpl implements CommandRegistration {
 
           @Override
           public List<String> args() {
-            return args.stream().filter(CliToken::isText).map(CliToken::value).collect(Collectors.toList());
+            return args2;
           }
 
           @Override

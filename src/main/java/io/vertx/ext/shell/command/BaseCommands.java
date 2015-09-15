@@ -4,6 +4,7 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Vertx;
 import io.vertx.core.cli.Argument;
 import io.vertx.core.cli.CLI;
+import io.vertx.core.cli.Option;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.http.impl.HttpServerImpl;
 import io.vertx.core.impl.Deployment;
@@ -324,8 +325,8 @@ public interface BaseCommands {
 
     SleepImpl sleep = new SleepImpl();
     Command sleepCmd = Command.command("sleep", CLI.create("sleep").
-        addArgument(new Argument().setArgName("seconds")
-        ));
+        addArgument(new Argument().setArgName("seconds")).
+        addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help")));
     sleepCmd.processHandler(sleep::run);
     return sleepCmd;
   }
