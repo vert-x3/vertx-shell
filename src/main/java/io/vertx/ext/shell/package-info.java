@@ -78,7 +78,6 @@
  *
  * The {@link io.vertx.ext.shell.command.CommandProcess} object can be used for interacting with the shell.
  *
- *
  * === Command arguments
  *
  * The {@link io.vertx.ext.shell.command.CommandProcess#args()} returns the command arguments:
@@ -86,6 +85,26 @@
  * [source,$lang]
  * ----
  * {@link examples.Examples#commandArgs}
+ * ----
+ *
+ * Besides it is also possible to create commands using {@link io.vertx.core.cli.CLI Vert.x CLI}: it makes easier to
+ * write command line argument parsing:
+ *
+ * - _option_ and _argument_ parsing
+ * - argument _validation_
+ * - generation of the command _usage_
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#cliCommand()}
+ * ----
+ *
+ * When an option named _help_ is added to the CLI object, the shell will take care of generating the command usage
+ * when the option is activated:
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#cliCommandWithHelp()}
  * ----
  *
  * === Terminal size

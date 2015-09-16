@@ -110,7 +110,6 @@ registry. Keep this in mind if you maintain state in a command.
 
 The `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html[CommandProcess]` object can be used for interacting with the shell.
 
-
 === Command arguments
 
 The `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html#args--[args]` returns the command arguments:
@@ -125,6 +124,45 @@ command.processHandler(process -> {
   }
 
   process.end();
+});
+----
+
+Besides it is also possible to create commands using `link:../../apidocs/io/vertx/core/cli/CLI.html[Vert.x CLI]`: it makes easier to
+write command line argument parsing:
+
+- _option_ and _argument_ parsing
+- argument _validation_
+- generation of the command _usage_
+
+[source,java]
+----
+CLI cli = CLI.create("my-command").
+    addArgument(new Argument().setArgName("my-arg")).
+    addOption(new Option().setShortName("m").setLongName("my-option"));
+Command command = Command.command(cli);
+command.processHandler(process -> {
+
+  CommandLine commandLine = process.commandLine();
+
+  String argValue = commandLine.getArgumentValue(0);
+  String optValue = commandLine.getOptionValue("my-option");
+  process.write("The argument is " + argValue + " and the option is " + optValue);
+
+  process.end();
+});
+----
+
+When an option named _help_ is added to the CLI object, the shell will take care of generating the command usage
+when the option is activated:
+
+[source,java]
+----
+CLI cli = CLI.create("my-command").
+    addArgument(new Argument().setArgName("my-arg")).
+    addOption(new Option().setArgName("help").setShortName("h").setLongName("help"));
+Command command = Command.command(cli);
+command.processHandler(process -> {
+  // ...
 });
 ----
 

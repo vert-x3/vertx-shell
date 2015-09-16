@@ -1,6 +1,10 @@
 package examples;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.cli.Argument;
+import io.vertx.core.cli.CLI;
+import io.vertx.core.cli.CommandLine;
+import io.vertx.core.cli.Option;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
@@ -62,6 +66,33 @@ public class Examples {
     // Register the command
     CommandRegistry registry = CommandRegistry.get(vertx);
     registry.registerCommand(command);
+  }
+
+  public void cliCommand() {
+    CLI cli = CLI.create("my-command").
+        addArgument(new Argument().setArgName("my-arg")).
+        addOption(new Option().setShortName("m").setLongName("my-option"));
+    Command command = Command.command(cli);
+    command.processHandler(process -> {
+
+      CommandLine commandLine = process.commandLine();
+
+      String argValue = commandLine.getArgumentValue(0);
+      String optValue = commandLine.getOptionValue("my-option");
+      process.write("The argument is " + argValue + " and the option is " + optValue);
+
+      process.end();
+    });
+  }
+
+  public void cliCommandWithHelp() {
+    CLI cli = CLI.create("my-command").
+        addArgument(new Argument().setArgName("my-arg")).
+        addOption(new Option().setArgName("help").setShortName("h").setLongName("help"));
+    Command command = Command.command(cli);
+    command.processHandler(process -> {
+      // ...
+    });
   }
 
   public void commandArgs(Command command) {
