@@ -26,11 +26,10 @@ public interface Command {
   /**
    * Create a new commmand.
    *
-   * @param name the command name
    * @return the command object
    */
-  static Command command(String name, CLI cli) {
-    return new CommandImpl(name, cli);
+  static Command command(CLI cli) {
+    return new CommandImpl(cli.getName(), cli);
   }
 
   String name();

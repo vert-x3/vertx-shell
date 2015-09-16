@@ -324,7 +324,7 @@ public interface BaseCommands {
     }
 
     SleepImpl sleep = new SleepImpl();
-    Command sleepCmd = Command.command("sleep", CLI.create("sleep").
+    Command sleepCmd = Command.command(CLI.create("sleep").
         addArgument(new Argument().setArgName("seconds")).
         addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help")));
     sleepCmd.processHandler(sleep::run);
