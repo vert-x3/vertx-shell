@@ -16,7 +16,7 @@ public interface MetricsCommands {
     Command cmd = Command.command("metrics-ls");
     cmd.processHandler(process -> {
       MetricsService metrics = MetricsService.create(process.vertx());
-      metrics.getMetricsNames().forEach(name -> {
+      metrics.metricsNames().forEach(name -> {
         process.write(name + "\n");
       });
       process.end();
@@ -25,7 +25,7 @@ public interface MetricsCommands {
   }
 
   static Command info() {
-    Command cmd = Command.command("metrics-info", CLI.create("metrics-info").addArgument(new Argument().setArgName("name")));
+    Command cmd = Command.command(CLI.create("metrics-info").addArgument(new Argument().setArgName("name")));
     cmd.processHandler(process -> {
       String name = process.args().get(0);
       MetricsService metrics = MetricsService.create(process.vertx());
