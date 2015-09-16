@@ -3,6 +3,7 @@ package io.vertx.ext.shell.getopt;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.command.CommandProcess;
+import io.vertx.ext.shell.io.Stream;
 
 import java.util.List;
 
@@ -15,6 +16,9 @@ public interface GetOptCommandProcess extends CommandProcess {
   List<String> arguments();
 
   List<String> getOption(String name);
+
+  @Override
+  GetOptCommandProcess setStdin(Stream stdin);
 
   @Override
   GetOptCommandProcess setStdin(Handler<String> stdin);

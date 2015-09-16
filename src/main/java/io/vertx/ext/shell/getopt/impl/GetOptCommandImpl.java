@@ -107,6 +107,12 @@ public class GetOptCommandImpl implements GetOptCommand {
           }
 
           @Override
+          public GetOptCommandProcess setStdin(Stream stdin) {
+            a.setStdin(stdin);
+            return this;
+          }
+
+          @Override
           public GetOptCommandProcess eventHandler(String event, Handler<Void> handler) {
             a.eventHandler(event, handler);
             return this;

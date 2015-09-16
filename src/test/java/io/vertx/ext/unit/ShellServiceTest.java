@@ -4,6 +4,7 @@ import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.Test;
@@ -76,7 +77,7 @@ public class ShellServiceTest {
     CommandRegistry manager = CommandRegistry.get(vertx);
     Command cmd = Command.command("foo");
     cmd.processHandler(process -> {
-      process.stdout().handle("bye_world");
+      process.stdout().write("bye_world");
       process.end(0);
     });
     manager.registerCommand(cmd, context.asyncAssertSuccess(v -> {
@@ -84,7 +85,7 @@ public class ShellServiceTest {
         Async async = context.async();
         LinkedList<String> out = new LinkedList<>();
         TestProcessContext ctx = new TestProcessContext();
-        ctx.setStdout(out::add);
+        ctx.setStdout(Stream.ofString(out::add));
         ctx.endHandler(code -> {
           context.assertEquals(0, code);
           context.assertEquals(Arrays.asList("bye_world"), out);
@@ -132,12 +133,12 @@ public class ShellServiceTest {
             } catch (InterruptedException e) {
               testContext.fail(e);
             }
-            ctx.setStdout(text -> {
+            ctx.setStdout(Stream.ofObject(text -> {
               testContext.assertTrue(shellCtx == Vertx.currentContext());
               testContext.assertEquals("pong", text);
               testContext.assertTrue(ctx.sendEvent("SIGTERM"));
               testContext.assertFalse(ctx.sendEvent("WHATEVER"));
-            });
+            }));
             ctx.stdin.handle("ping");
           }));
         });
@@ -186,7 +187,7 @@ public class ShellServiceTest {
         context.assertEquals(15, process.height());
         process.end(0);
       });
-      process.stdout().handle("ping");
+      process.stdout().write("ping");
     });
     manager.registerCommand(cmd, context.asyncAssertSuccess(v -> {
       manager.createProcess("foo", context.asyncAssertSuccess(job -> {
@@ -196,9 +197,9 @@ public class ShellServiceTest {
           async.complete();
         });
         ctx.setWindowSize(20, 10);
-        ctx.setStdout(text -> {
+        ctx.setStdout(Stream.ofObject(text -> {
           ctx.setWindowSize(25, 15);
-        });
+        }));
         job.execute(ctx);
       }));
     }));

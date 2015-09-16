@@ -26,7 +26,7 @@ public class Main {
     echoKeyboardCmd.processHandler(process -> {
       Stream stdout = process.stdout();
       process.setStdin(line -> {
-        stdout.handle("-> " + line + "\n");
+        stdout.write("-> " + line + "\n");
       });
       process.eventHandler("SIGINT", v -> process.end());
     });

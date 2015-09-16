@@ -64,12 +64,17 @@ class TestProcessContext implements ProcessContext, Tty {
   }
 
   @Override
+  public Tty setStdin(Stream stdin) {
+    return setStdin((Handler<String>)stdin::write);
+  }
+
+  @Override
   public Stream stdout() {
     return stdout;
   }
 
   public TestProcessContext setStdout(Stream stream) {
-    stdout = context != null ? txt -> context.runOnContext(v -> stream.handle(txt) ) : stream;
+    stdout = context != null ? Stream.ofObject(txt -> context.runOnContext(v -> stream.write(txt))) : stream;
     return this;
   }
 

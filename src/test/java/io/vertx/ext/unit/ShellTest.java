@@ -186,7 +186,7 @@ public class ShellTest {
         context.assertNotNull(process.stdout());
         context.assertEquals(job, shell.foregroundJob());
         conn.out.setLength(0);
-        process.stdout().handle("resumed");
+        process.stdout().write("resumed");
         latch3.countDown();
       });
       process.setStdin(txt -> {
@@ -233,7 +233,7 @@ public class ShellTest {
         } catch (InterruptedException e) {
           context.fail(e);
         }
-        process.stdout().handle("resumed");
+        process.stdout().write("resumed");
       });
       process.setStdin(txt -> {
         context.assertEquals(0L, latch3.getCount());

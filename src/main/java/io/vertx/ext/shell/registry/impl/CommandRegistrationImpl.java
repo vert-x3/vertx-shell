@@ -3,11 +3,9 @@ package io.vertx.ext.shell.registry.impl;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.core.cli.Argument;
 import io.vertx.core.cli.CLIException;
 import io.vertx.core.cli.CommandLine;
 import io.vertx.core.cli.Option;
-import io.vertx.core.cli.impl.DefaultCommandLine;
 import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.io.Stream;
@@ -19,7 +17,6 @@ import io.vertx.ext.shell.process.Process;
 import io.vertx.ext.shell.process.ProcessContext;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -76,7 +73,7 @@ public class CommandRegistrationImpl implements CommandRegistration {
               StringBuilder usage = new StringBuilder();
               command.getCLI().usage(usage);
               usage.append('\n');
-              context.tty().stdout().handle(usage.toString());
+              context.tty().stdout().write(usage.toString());
               context.end(0);
               return;
             }
@@ -86,7 +83,7 @@ public class CommandRegistrationImpl implements CommandRegistration {
           try {
             cl = command.getCLI().parse(args2);
           } catch (CLIException e) {
-            context.tty().stdout().handle(e.getMessage() + "\n");
+            context.tty().stdout().write(e.getMessage() + "\n");
             context.end(0);
             return;
           }
@@ -132,13 +129,20 @@ public class CommandRegistrationImpl implements CommandRegistration {
           }
 
           @Override
-          public CommandProcess setStdin(Handler<String> stdin) {
+          public CommandProcess setStdin(Stream stdin) {
+            Stream s;
             if (stdin != null) {
-              context.tty().setStdin(event -> CommandRegistrationImpl.this.context.runOnContext(v -> stdin.handle(event)));
+              s = Stream.ofObject(data -> CommandRegistrationImpl.this.context.runOnContext(v -> stdin.write(data)));
             } else {
-              context.tty().setStdin(null);
+              s = null;
             }
+            context.tty().setStdin(s);
             return this;
+          }
+
+          @Override
+          public CommandProcess setStdin(Handler<String> stdin) {
+            return setStdin(Stream.ofString(stdin));
           }
 
           @Override
@@ -148,7 +152,7 @@ public class CommandRegistrationImpl implements CommandRegistration {
 
           @Override
           public CommandProcess write(String text) {
-            context.tty().stdout().handle(text);
+            context.tty().stdout().write(text);
             return this;
           }
 

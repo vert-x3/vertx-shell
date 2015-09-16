@@ -82,15 +82,12 @@ public class Job {
         return this;
       }
       @Override
+      public Tty setStdin(Stream stdin) {
+        return setStdin((Handler<String>) stdin::write);
+      }
+      @Override
       public Stream stdout() {
-        Stream stdout = Job.this.stdout;
-        if (stdout != null) {
-          Stream tmp = stdout;
-          stdout = txt -> {
-            tmp.handle(txt);
-          };
-        }
-        return stdout;
+        return Job.this.stdout;
       }
       @Override
       public Tty eventHandler(String event, Handler<Void> handler) {

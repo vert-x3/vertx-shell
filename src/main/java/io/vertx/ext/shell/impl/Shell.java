@@ -8,11 +8,11 @@ import io.termd.core.util.Vector;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.cli.Completion;
+import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.cli.CliToken;
 
 import java.io.InputStream;
-import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -218,7 +218,7 @@ public class Shell {
               foregroundJob = job;
               echo(Helper.toCodePoints(job.line + "\n"));
               if (job.status == JobStatus.STOPPED) {
-                job.stdout = conn::write; // We set stdout whether or not it's background (maybe do something different)
+                job.stdout = Stream.ofString(conn::write); // We set stdout whether or not it's background (maybe do something different)
                 job.status = JobStatus.RUNNING;
                 job.sendEvent("SIGCONT");
               } else {
@@ -233,7 +233,7 @@ public class Shell {
               conn.write("no such job\n");
             } else {
               if (job.status == JobStatus.STOPPED) {
-                job.stdout = conn::write; // We set stdout whether or not it's background (maybe do something different)
+                job.stdout = Stream.ofString(conn::write); // We set stdout whether or not it's background (maybe do something different)
                 job.status = JobStatus.RUNNING;
                 job.sendEvent("SIGCONT");
                 echo(Helper.toCodePoints(job.statusLine() + "\n"));
@@ -252,7 +252,7 @@ public class Shell {
           int id = jobs.isEmpty() ? 1 : jobs.lastKey() + 1;
           Job job = new Job(id, this, ar.result(), line);
           foregroundJob = job;
-          job.stdout = conn::write;
+          job.stdout = Stream.ofString(conn::write);
           jobs.put(id, job);
           job.run();
         } else {

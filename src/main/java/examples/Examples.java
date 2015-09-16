@@ -100,7 +100,7 @@ public class Examples {
 
   public void writeStdout(Command command) {
     command.processHandler(process -> {
-      process.stdout().handle("Hello World");
+      process.stdout().write("Hello World");
       process.end();
     });
   }

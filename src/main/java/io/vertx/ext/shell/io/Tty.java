@@ -21,6 +21,9 @@ public interface Tty {
   int height();
 
   @Fluent
+  Tty setStdin(Stream stdin);
+
+  @Fluent
   Tty setStdin(Handler<String> stdin);
 
   Stream stdout();
