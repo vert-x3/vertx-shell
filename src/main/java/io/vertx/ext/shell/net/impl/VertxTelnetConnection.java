@@ -1,4 +1,4 @@
-package io.vertx.ext.shell.net.impl.telnet;
+package io.vertx.ext.shell.net.impl;
 
 import io.termd.core.telnet.TelnetConnection;
 import io.termd.core.telnet.TelnetHandler;

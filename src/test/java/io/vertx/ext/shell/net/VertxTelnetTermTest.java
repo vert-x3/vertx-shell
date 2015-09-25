@@ -6,7 +6,7 @@ import io.termd.core.telnet.TestBase;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Vertx;
 import io.vertx.core.net.NetServer;
-import io.vertx.ext.shell.net.impl.telnet.TelnetSocketHandler;
+import io.vertx.ext.shell.net.impl.TelnetSocketHandler;
 
 import java.io.Closeable;
 import java.util.concurrent.ArrayBlockingQueue;

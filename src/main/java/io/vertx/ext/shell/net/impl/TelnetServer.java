@@ -7,7 +7,6 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.net.NetServer;
-import io.vertx.ext.shell.net.impl.telnet.TelnetSocketHandler;
 import io.vertx.ext.shell.net.TelnetOptions;
 
 import java.util.function.Consumer;
