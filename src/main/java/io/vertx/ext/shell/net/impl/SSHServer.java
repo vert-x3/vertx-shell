@@ -1,12 +1,14 @@
 package io.vertx.ext.shell.net.impl;
 
 import io.termd.core.ssh.SshTtyConnection;
+import io.termd.core.ssh.netty.NettyIoServiceFactoryFactory;
 import io.termd.core.tty.TtyConnection;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.impl.ContextInternal;
 import io.vertx.core.impl.VertxInternal;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
@@ -48,8 +50,9 @@ public class SSHServer {
   private final Vertx vertx;
   private final SSHOptions options;
   private Consumer<TtyConnection> handler;
-  private SshServer sshd;
+  private SshServer nativeServer;
   private final AtomicInteger status = new AtomicInteger(STATUS_STOPPED);
+  private ContextInternal listenContext;
 
   public SSHServer(Vertx vertx, SSHOptions options) {
     this.vertx = vertx;
@@ -69,11 +72,19 @@ public class SSHServer {
     return this;
   }
 
+  /**
+   * @return the underlying native server
+   */
+  public SshServer getNativeServer() {
+    return nativeServer;
+  }
+
   public void listen(Handler<AsyncResult<Void>> listenHandler) {
     if (!status.compareAndSet(STATUS_STOPPED, STATUS_STARTING)) {
       listenHandler.handle(Future.failedFuture("Invalid state:" + status.get()));
       return;
     }
+    listenContext = (ContextInternal) vertx.getOrCreateContext();
     vertx.executeBlocking(fut -> {
 
       try {
@@ -105,11 +116,12 @@ public class SSHServer {
           }
         };
 
-        sshd = SshServer.setUpDefaultServer();
-        sshd.setShellFactory(() -> new SshTtyConnection(handler));
-        sshd.setHost(options.getHost());
-        sshd.setPort(options.getPort());
-        sshd.setKeyPairProvider(provider);
+        nativeServer = SshServer.setUpDefaultServer();
+        nativeServer.setShellFactory(() -> new SshTtyConnection(handler));
+        nativeServer.setHost(options.getHost());
+        nativeServer.setPort(options.getPort());
+        nativeServer.setKeyPairProvider(provider);
+        nativeServer.setIoServiceFactoryFactory(new NettyIoServiceFactoryFactory(listenContext.nettyEventLoop(), new VertxIoHandlerBridge(listenContext)));
 
         //
         AuthProvider authProvider;
@@ -125,7 +137,7 @@ public class SSHServer {
         }
 
         Context context = vertx.getOrCreateContext();
-        sshd.setPasswordAuthenticator((username, userpass, session) -> {
+        nativeServer.setPasswordAuthenticator((username, userpass, session) -> {
           CountDownLatch latch = new CountDownLatch(1);
           AtomicReference<AsyncResult<User>> ref = new AtomicReference<>();
           // That's not a Vert.x thread here
@@ -150,7 +162,7 @@ public class SSHServer {
         });
 
         //
-        sshd.start();
+        nativeServer.start();
         status.set(STATUS_STARTED);
         fut.complete(null);
       } catch (Exception e) {
@@ -167,8 +179,8 @@ public class SSHServer {
     }
     vertx.executeBlocking(fut-> {
       try {
-        SshServer server = sshd;
-        sshd = null;
+        SshServer server = this.nativeServer;
+        this.nativeServer = null;
         server.close();
         closeHandler.handle(Future.succeededFuture());
       } catch (Exception t) {
