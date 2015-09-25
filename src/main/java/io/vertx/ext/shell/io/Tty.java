@@ -11,12 +11,12 @@ import io.vertx.core.Handler;
 public interface Tty {
 
   /**
-   * @return the current width, the number of rows
+   * @return the current width, i.e the number of rows or {@literal -1} if unknown
    */
   int width();
 
   /**
-   * @return the current height, the number of columns
+   * @return the current height, i.e the number of columns or {@literal -1} if unknown
    */
   int height();
 
