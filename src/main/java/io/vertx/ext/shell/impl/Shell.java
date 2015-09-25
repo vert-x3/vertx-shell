@@ -32,7 +32,6 @@ public class Shell {
   private final TtyConnection conn;
   final Readline readline;
   final CommandRegistry mgr;
-  Vector size;
   Job foregroundJob; // The currently running job
   final SortedMap<Integer, Job> jobs = new TreeMap<>();
   String welcome;
@@ -58,6 +57,10 @@ public class Shell {
     this.welcome = welcome;
   }
 
+  public Vector size() {
+    return conn.size();
+  }
+
   public void init() {
     for (io.termd.core.readline.Function function : Helper.loadServices(Thread.currentThread().getContextClassLoader(), io.termd.core.readline.Function.class)) {
       readline.addFunction(function);
@@ -77,7 +80,6 @@ public class Shell {
       }
     });
     conn.setSizeHandler(resize -> {
-      size = resize;
       Job job = foregroundJob;
       if (job != null) {
         job.sendEvent("SIGWINCH");

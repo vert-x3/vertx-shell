@@ -67,11 +67,11 @@ public class Job {
     Tty tty = new Tty() {
       @Override
       public int width() {
-        return shell.size != null ? shell.size.x() : -1;
+        return shell.size() != null ? shell.size().x() : -1;
       }
       @Override
       public int height() {
-        return shell.size != null ? shell.size.y() : -1;
+        return shell.size() != null ? shell.size().y() : -1;
       }
       @Override
       public Tty setStdin(Handler<String> stdin) {
