@@ -1,13 +1,13 @@
 package io.vertx.ext.shell.net.impl;
 
 import io.termd.core.telnet.TelnetTtyConnection;
-import io.termd.core.telnet.vertx.TelnetSocketHandler;
 import io.termd.core.tty.TtyConnection;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.net.NetServer;
+import io.vertx.ext.shell.net.impl.telnet.TelnetSocketHandler;
 import io.vertx.ext.shell.net.TelnetOptions;
 
 import java.util.function.Consumer;
