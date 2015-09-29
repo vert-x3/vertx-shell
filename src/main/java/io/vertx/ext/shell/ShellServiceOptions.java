@@ -5,13 +5,39 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.shell.net.SSHOptions;
 import io.vertx.ext.shell.net.TelnetOptions;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @DataObject
 public class ShellServiceOptions {
 
-  public static final String DEFAULT_WELCOME_MESSAGE = "Welcome to Vert.x Shell\n\n";
+  public static final String DEFAULT_WELCOME_MESSAGE;
+
+  static {
+    String welcome = "Welcome to Vert.x Shell";
+    InputStream in = ShellServiceOptions.class.getResourceAsStream("vertx-banner.txt");
+    if (in != null) {
+      ByteArrayOutputStream tmp = new ByteArrayOutputStream();
+      byte[] buf = new byte[256];
+      try {
+        while (true) {
+          int len = in.read(buf);
+          if (len == -1) {
+            break;
+          }
+          tmp.write(buf, 0, len);
+        }
+        welcome = tmp.toString();
+      } catch (Exception ignore) {
+        // Could not load
+      }
+    }
+    DEFAULT_WELCOME_MESSAGE = welcome + "\n\n";
+  }
 
   private String welcomeMessage;
   private TelnetOptions telnet;

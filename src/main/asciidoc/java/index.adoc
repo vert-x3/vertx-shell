@@ -9,7 +9,7 @@ Vert.x Shell can be extended with custom commands in any language supported by V
 
 == Using Vert.x Shell
 
-Vert.x Shell provides an
+todo.
 
 == Shell Service
 
