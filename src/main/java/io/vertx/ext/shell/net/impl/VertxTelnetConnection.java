@@ -6,6 +6,8 @@ import io.vertx.core.Context;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetSocket;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
@@ -22,8 +24,14 @@ public class VertxTelnetConnection extends TelnetConnection {
   }
 
   @Override
-  public void schedule(final Runnable task) {
+  protected void execute(Runnable task) {
     context.runOnContext(event -> task.run());
+  }
+
+  @Override
+  protected void schedule(Runnable task, long delay, TimeUnit unit) {
+    long millis = unit.toMillis(delay);
+    context.owner().setTimer(millis, event -> task.run());
   }
 
   // Not properly synchronized, but ok for now

@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.Before;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
@@ -50,10 +51,16 @@ public class VertxSshTtyTest extends SshTtyTestBase {
     assertEquals(context, Vertx.currentContext());
     return new SshTtyConnection(onConnect) {
       @Override
-      public void schedule(Runnable task) {
+      public void execute(Runnable task) {
         Session session = this.session.getSession();
         NettyIoSession ioSession = (NettyIoSession) session.getIoSession();
-        ioSession.schedule(task);
+        ioSession.execute(task);
+      }
+      @Override
+      public void schedule(Runnable task, long delay, TimeUnit unit) {
+        Session session = this.session.getSession();
+        NettyIoSession ioSession = (NettyIoSession) session.getIoSession();
+        ioSession.schedule(task, delay, unit);
       }
     };
   }

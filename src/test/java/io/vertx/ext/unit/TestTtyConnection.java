@@ -5,6 +5,7 @@ import io.termd.core.tty.TtyEvent;
 import io.termd.core.util.Helper;
 import io.termd.core.util.Vector;
 
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -20,6 +21,11 @@ public class TestTtyConnection implements TtyConnection {
   private Consumer<Void> closeHandler;
   public final StringBuilder out = new StringBuilder();
   boolean closed;
+
+  @Override
+  public String term() {
+    return "xterm";
+  }
 
   @Override
   public Vector size() {
@@ -95,11 +101,16 @@ public class TestTtyConnection implements TtyConnection {
   private boolean reading = false;
 
   @Override
-  public void schedule(Runnable task) {
+  public void execute(Runnable task) {
     if (reading) {
       throw new AssertionError();
     }
     task.run();
+  }
+
+  @Override
+  public void schedule(Runnable task, long delay, TimeUnit unit) {
+    throw new UnsupportedOperationException();
   }
 
   public void sendEvent(TtyEvent event) {
