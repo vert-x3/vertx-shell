@@ -1,10 +1,9 @@
-package io.vertx.ext.unit;
+package io.vertx.ext.shell.command.base;
 
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.command.BaseCommands;
-import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.impl.vertx.FsHelper;
+import io.vertx.ext.shell.command.base.FsHelper;
 import io.vertx.ext.shell.registry.CommandRegistry;
+import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.After;
 import org.junit.Before;
@@ -14,7 +13,6 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;

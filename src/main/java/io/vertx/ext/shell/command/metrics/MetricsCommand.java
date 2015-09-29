@@ -1,16 +1,17 @@
-package io.vertx.ext.shell.command;
+package io.vertx.ext.shell.command.metrics;
 
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.cli.Argument;
 import io.vertx.core.cli.CLI;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.dropwizard.MetricsService;
+import io.vertx.ext.shell.command.Command;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
-public interface MetricsCommands {
+public interface MetricsCommand {
 
   static Command ls() {
     Command cmd = Command.command("metrics-ls");

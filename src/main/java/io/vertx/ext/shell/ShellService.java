@@ -4,9 +4,14 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.command.BaseCommands;
+import io.vertx.ext.shell.command.base.ShellCommands;
 import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.command.MetricsCommands;
+import io.vertx.ext.shell.command.metrics.MetricsCommand;
+import io.vertx.ext.shell.command.base.BusCommand;
+import io.vertx.ext.shell.command.base.FileSystemCommand;
+import io.vertx.ext.shell.command.base.LocalMapCommand;
+import io.vertx.ext.shell.command.base.ServerCommand;
+import io.vertx.ext.shell.command.base.VerticleCommand;
 import io.vertx.ext.shell.impl.ShellServiceImpl;
 import io.vertx.ext.shell.registry.CommandRegistry;
 
@@ -18,22 +23,22 @@ public interface ShellService {
 
   static ShellService create(Vertx vertx, ShellServiceOptions options) {
     CommandRegistry registry = CommandRegistry.get(vertx);
-    registry.registerCommand(BaseCommands.echo());
-    registry.registerCommand(BaseCommands.fs_cd());
-    registry.registerCommand(BaseCommands.fs_pwd());
-    registry.registerCommand(BaseCommands.fs_ls());
-    registry.registerCommand(BaseCommands.sleep());
-    registry.registerCommand(BaseCommands.help());
-    registry.registerCommand(BaseCommands.server_ls());
-    registry.registerCommand(BaseCommands.local_map_get());
-    registry.registerCommand(BaseCommands.local_map_put());
-    registry.registerCommand(BaseCommands.local_map_rm());
-    registry.registerCommand(BaseCommands.bus_send());
-    registry.registerCommand(BaseCommands.bus_tail());
-    registry.registerCommand(BaseCommands.verticle_ls());
-    registry.registerCommand(BaseCommands.verticle_deploy());
-    registry.registerCommand(BaseCommands.verticle_undeploy());
-    registry.registerCommand(BaseCommands.verticle_factories());
+    registry.registerCommand(ShellCommands.echo());
+    registry.registerCommand(FileSystemCommand.cd());
+    registry.registerCommand(FileSystemCommand.pwd());
+    registry.registerCommand(FileSystemCommand.ls());
+    registry.registerCommand(ShellCommands.sleep());
+    registry.registerCommand(ShellCommands.help());
+    registry.registerCommand(ServerCommand.ls());
+    registry.registerCommand(LocalMapCommand.get());
+    registry.registerCommand(LocalMapCommand.put());
+    registry.registerCommand(LocalMapCommand.rm());
+    registry.registerCommand(BusCommand.send());
+    registry.registerCommand(BusCommand.tail());
+    registry.registerCommand(VerticleCommand.ls());
+    registry.registerCommand(VerticleCommand.deploy());
+    registry.registerCommand(VerticleCommand.undeploy());
+    registry.registerCommand(VerticleCommand.factories());
 
     // Register builtin commands so they are listed in help
     registry.registerCommand(Command.command("exit").processHandler(process -> {}));
@@ -43,8 +48,8 @@ public interface ShellService {
     registry.registerCommand(Command.command("bg").processHandler(process -> {}));
 
     //
-    registry.registerCommand(MetricsCommands.ls());
-    registry.registerCommand(MetricsCommands.info());
+    registry.registerCommand(MetricsCommand.ls());
+    registry.registerCommand(MetricsCommand.info());
 
     //
     return new ShellServiceImpl(vertx, options, registry);

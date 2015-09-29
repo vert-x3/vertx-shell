@@ -1,4 +1,4 @@
-package io.vertx.ext.shell.impl.vertx;
+package io.vertx.ext.shell.command.base;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -20,19 +20,19 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class FsHelper {
+class FsHelper {
 
   private final Path root;
 
-  public FsHelper() {
+  FsHelper() {
     root = new File(System.getProperty("vertx.cwd", ".")).getAbsoluteFile().toPath().normalize();
   }
 
-  public String getRootPath() {
+  String getRootPath() {
     return root.toString();
   }
 
-  public void cd(FileSystem fs, String currentPath, String pathArg, Handler<AsyncResult<String>> pathHandler) {
+  void cd(FileSystem fs, String currentPath, String pathArg, Handler<AsyncResult<String>> pathHandler) {
     Path base = currentPath != null ? new File(currentPath).toPath() : root;
     String path = base.resolve(pathArg).toAbsolutePath().normalize().toString();
     fs.props(path, ar -> {
@@ -44,7 +44,7 @@ public class FsHelper {
     });
   }
 
-  public void ls(Vertx vertx, String currentPath, String pathArg, Handler<AsyncResult<Map<String, FileProps>>> filesHandler) {
+  void ls(Vertx vertx, String currentPath, String pathArg, Handler<AsyncResult<Map<String, FileProps>>> filesHandler) {
     Path base = currentPath != null ? new File(currentPath).toPath() : root;
     String path = base.resolve(pathArg).toAbsolutePath().normalize().toString();
     vertx.executeBlocking(fut -> {
@@ -61,7 +61,7 @@ public class FsHelper {
     }, filesHandler);
   }
 
-  public Handler<Completion> completionHandler() {
+  Handler<Completion> completionHandler() {
     return completion -> {
       String last;
       int s = completion.lineTokens().size();
@@ -92,7 +92,7 @@ public class FsHelper {
     };
   }
 
-  public void complete(Vertx vertx, String currentPath, String _prefix, Handler<AsyncResult<Map<String, Boolean>>> handler) {
+  void complete(Vertx vertx, String currentPath, String _prefix, Handler<AsyncResult<Map<String, Boolean>>> handler) {
     vertx.executeBlocking(fut -> {
 
       FileSystem fs = vertx.fileSystem();
