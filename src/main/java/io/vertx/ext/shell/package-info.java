@@ -6,7 +6,7 @@
  *
  * Vert.x Shell provides a variety of commands for interacting live with Vert.x services.
  *
- * Vert.x Shell can be extended with custom commands in the language of your choice.
+ * Vert.x Shell can be extended with custom commands in any language supported by Vert.x
  *
  * == Using Vert.x Shell
  *
