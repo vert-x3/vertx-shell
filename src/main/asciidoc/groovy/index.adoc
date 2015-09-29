@@ -1,0 +1,346 @@
+= Vert.x Shell
+
+Vert.x Shell is a command line interface for the Vert.x runtime available from regular
+terminals using different protocols.
+
+Vert.x Shell provides a variety of commands for interacting live with Vert.x services.
+
+Vert.x Shell can be extended with custom commands in any language supported by Vert.x
+
+== Using Vert.x Shell
+
+todo.
+
+== Shell Service
+
+The `link:groovydoc/io/vertx/groovy/ext/shell/ShellService.html[ShellService]` takes care of starting an instance of Vert.x Shell. It can be started
+programmatically or as a service from the command line.
+
+Starting a shell service available via SSH:
+
+[source,groovy]
+----
+Code not translatable
+----
+
+The server key configuration reuses the key store configuration scheme provided by _Vert.x Core_.
+
+User authenticates via login/password (no key authentication for now) and is based on _Vert.x Auth_ component supporting:
+
+- Shiro Authentication : _properties_ configuration or _ldap_ configuration
+- JDBC Authentication : todo
+- Mongo Authentication : todo
+
+Starting a shell service available via Telnet:
+
+[source,groovy]
+----
+import io.vertx.groovy.ext.shell.ShellService
+def service = ShellService.create(vertx, [
+  telnet:[
+    host:"localhost",
+    port:4000
+  ]
+])
+service.start()
+
+----
+
+The `link:../dataobjects.html#TelnetOptions[TelnetOptions]` extends the Vert.x Core `NetServerOptions` as the Telnet server
+implementation is based on a `NetServer`.
+
+CAUTION: Telnet does not provide any authentication nor encryption at all.
+
+Or via the service facility:
+
+[source]
+----
+> vertx run maven:io.vertx:vertx-shell:3.0.0-SNAPSHOT
+----
+
+== Base commands
+
+To find out the available commands you can use the _help_ builtin command.
+
+todo.
+
+== Extending Vert.x Shell
+
+Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
+
+A command is created by the `link:groovydoc/io/vertx/groovy/ext/shell/command/Command.html#command(java.lang.String)[Command.command]` method: the command process handler is called
+by the shell when the command is executed, this handler can be set with the `link:groovydoc/io/vertx/groovy/ext/shell/command/Command.html#processHandler(io.vertx.core.Handler)[processHandler]`
+method:
+
+[source,groovy]
+----
+import io.vertx.groovy.ext.shell.command.Command
+import io.vertx.groovy.ext.shell.registry.CommandRegistry
+
+def command = Command.command("my-command")
+command.processHandler({ process ->
+
+  // Write a message to the console
+  process.write("Hello World")
+
+  // End the process
+  process.end()
+})
+
+// Register the command
+def registry = CommandRegistry.get(vertx)
+registry.registerCommand(command)
+
+----
+
+After a command is created, it needs to be registed to a `link:groovydoc/io/vertx/groovy/ext/shell/registry/CommandRegistry.html[CommandRegistry]`. The
+command registry holds all the commands for a Vert.x instance.
+
+NOTE: Command callbacks are invoked in the `io.vertx.core.Context` when the command is registered in the
+registry. Keep this in mind if you maintain state in a command.
+
+The `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html[CommandProcess]` object can be used for interacting with the shell.
+
+=== Command arguments
+
+The `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#args()[args]` returns the command arguments:
+
+[source,groovy]
+----
+command.processHandler({ process ->
+
+  process.args().each { arg ->
+    // Print each argument on the console
+    process.write("Argument ${arg}")
+  }
+
+  process.end()
+})
+
+----
+
+Besides it is also possible to create commands using `link:../../vertx-core/groovy/groovydoc/io/vertx/groovy/core/cli/CLI.html[Vert.x CLI]`: it makes easier to
+write command line argument parsing:
+
+- _option_ and _argument_ parsing
+- argument _validation_
+- generation of the command _usage_
+
+[source,groovy]
+----
+import io.vertx.groovy.core.cli.CLI
+import io.vertx.groovy.ext.shell.command.Command
+def cli = CLI.create("my-command").addArgument([
+  argName:"my-arg"
+]).addOption([
+  shortName:"m",
+  longName:"my-option"
+])
+def command = Command.command(cli)
+command.processHandler({ process ->
+
+  def commandLine = process.commandLine()
+
+  def argValue = commandLine.getArgumentValue(0)
+  def optValue = commandLine.getOptionValue("my-option")
+  process.write("The argument is ${argValue} and the option is ${optValue}")
+
+  process.end()
+})
+
+----
+
+When an option named _help_ is added to the CLI object, the shell will take care of generating the command usage
+when the option is activated:
+
+[source,groovy]
+----
+import io.vertx.groovy.core.cli.CLI
+import io.vertx.groovy.ext.shell.command.Command
+def cli = CLI.create("my-command").addArgument([
+  argName:"my-arg"
+]).addOption([
+  argName:"help",
+  shortName:"h",
+  longName:"help"
+])
+def command = Command.command(cli)
+command.processHandler({ process ->
+  // ...
+})
+
+----
+
+=== Terminal size
+
+The current terminal size can be obtained using `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#width()[width]` and
+`link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#height()[height]`.
+
+[source,groovy]
+----
+command.processHandler({ process ->
+  process.write("Current terminal size: (${process.width()}, ${process.height()})").end()
+})
+
+----
+
+=== Shell session
+
+The shell is a connected service that naturally maintains a session with the client, this session can be
+used in commands to scope data. A command can get the session with `link:groovydoc/io/vertx/groovy/ext/shell/process/ProcessContext.html#session()[session]`:
+
+[source,groovy]
+----
+command.processHandler({ process ->
+
+  def session = process.session()
+
+  if (session.get("my_key") == null) {
+    session.put("my key", "my value")
+  }
+
+  process.end()
+})
+
+----
+
+=== Process I/O
+
+A command can set a `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#setStdin(io.vertx.core.Handler)[setStdin]` handler
+to be notified when the shell receives data, e.g the user uses his keyboard:
+
+[source,groovy]
+----
+command.processHandler({ process ->
+  process.setStdin({ data ->
+    println("Received ${data}")
+  })
+})
+
+----
+
+A command can use the `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#stdout()[stdout]` to write to the standard output.
+
+[source,groovy]
+----
+command.processHandler({ process ->
+  process.stdout().write("Hello World")
+  process.end()
+})
+
+----
+
+Or it can use the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#write(java.lang.String)[write]` method:
+
+[source,groovy]
+----
+command.processHandler({ process ->
+  process.write("Hello World")
+  process.end()
+})
+
+----
+
+=== Process termination
+
+Calling `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#end()[end]` ends the current process. It can be called directly
+in the invocation of the command handler or any time later:
+
+[source,groovy]
+----
+command.processHandler({ process ->
+  def vertx = process.vertx()
+
+  // Set a timer
+  vertx.setTimer(1000, { id ->
+
+    // End the command when the timer is fired
+    process.end()
+  })
+})
+
+----
+
+=== Process events
+
+A command can subscribe to a few process events, named after the posix signals.
+
+==== `SIGINT` event
+
+The `SIGINT` event is fired when the process is interrupted, this event is fired when the user press
+_Ctrl+C_ during the execution of a command. This handler can be used for interrupting commands _blocking_ the CLI and
+gracefully ending the command process:
+
+[source,groovy]
+----
+command.processHandler({ process ->
+  def vertx = process.vertx()
+
+  // Every second print a message on the console
+  def periodicId = vertx.setPeriodic(1000, { id ->
+    process.write("tick\n")
+  })
+
+  // When user press Ctrl+C: cancel the timer and end the process
+  process.eventHandler("SIGINT", { event ->
+    vertx.cancelTimer(periodicId)
+    process.end()
+  })
+})
+
+----
+
+When no `SIGINT` handler is registered, pressing _Ctrl+C_ will have no effect on the current process and the event
+will be delayed and will likely be handled by the shell, like printing a new line on the console.
+
+==== `SIGTSTP`/`SIGCONT` events
+
+The `SIGSTP` event is fired when the process is running and the user press _Ctrl+Z_: the command
+is _suspended_:
+
+- the command can receive the `SIGSTP` event when it has registered an handler for this event
+- the command will not receive anymore data from the standard input
+- the shell prompt the user for input
+
+The `SIGCONT` event is fired when the process is resumed, usually when the user types _fg_:
+
+- the command can receive the `SIGCONT` event when it has registered an handler for this event
+- the command will receive anymore data from the standard input when it has registered an stdin handler
+
+[source,groovy]
+----
+command.processHandler({ process ->
+
+  // Command is suspended
+  process.eventHandler("SIGTSTP", { event ->
+    println("Suspended")
+  })
+
+  // Command is resumed
+  process.eventHandler("SIGCONT", { event ->
+    println("Resumed")
+  })
+})
+
+----
+
+==== `SIGWINCH` event
+
+The `SIGWINCH` event is fired when the size of the terminal changes, the new terminal size can be obtained
+with `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#width()[width]` and `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#height()[height]`.
+
+=== Command completion
+
+A command can provide a completion handler when the want to provide contextual command line interface completion.
+
+Like the process handler, the `link:groovydoc/io/vertx/groovy/ext/shell/command/Command.html#completionHandler(io.vertx.core.Handler)[completion
+handler]` is non blocking because the implementation may use Vert.x services, e.g the file system.
+
+The `link:groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#lineTokens()[lineTokens]` returns a list of `link:groovydoc/io/vertx/groovy/ext/shell/cli/CliToken.html[tokens]`
+from the beginning of the line to the cursor position. The list can be empty if the cursor when the cursor is at the
+beginning of the line.
+
+The `link:groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#rawLine()[rawLine]` returns the current completed from the beginning
+of the line to the cursor position, in raw format, i.e without any char escape performed.
+
+Completion ends with a call to `link:groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#complete(java.util.List)[complete]`.
