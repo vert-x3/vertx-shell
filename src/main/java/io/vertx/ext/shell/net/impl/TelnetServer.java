@@ -40,7 +40,7 @@ public class TelnetServer {
   public void listen(Handler<AsyncResult<Void>> listenHandler) {
     if (server == null) {
       server = vertx.createNetServer(options);
-      server.connectHandler(new TelnetSocketHandler(vertx, () -> new TelnetTtyConnection(handler)));
+      server.connectHandler(new TelnetSocketHandler(vertx, () -> new TelnetTtyConnection(true, true, handler)));
       server.listen(ar -> {
         if (ar.succeeded()) {
           listenHandler.handle(Future.succeededFuture());
