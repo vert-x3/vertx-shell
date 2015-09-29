@@ -1,6 +1,6 @@
 # Vertx shell
 
-Status : work in progress
+Status : preview for 3.1
 
 # Test drive with maven project
 
@@ -13,7 +13,6 @@ in another shell:
 or
 
 > ssh -p 4000 whatever@localhost
-
 
 # Test drive with Vert.x 3.0
 
@@ -30,21 +29,20 @@ or
 
 ## Features
 
-- commands
+- base commands for Vert.x and Metrics
+- extensible
 - completion
 - basic job control
 
-## Todo
+## Roadmap
 
 - make builtin shell commands completable
 - fg/bg with id : fg 3, bg 4
 - stream redirection : echo abc >toto.txt
 - pipe command : a | b
-- man / help generation ?
 - process management
 - REPL ?
 - more OOTB commands
-- doc, examples
 - stream more than just text : any T should be streamable (in particular json)
 - advanced option configuration (beyond host/port)
 - web connector
