@@ -33,14 +33,13 @@ public interface ShellCommands {
             seconds = Integer.parseInt(arg);
           } catch (NumberFormatException ignore) {
           }
-          scheduleSleep(process, seconds * 1000);
+          scheduleSleep(process, seconds * 1000L);
         }
       }
 
       void scheduleSleep(CommandProcess process, long millis) {
         Vertx vertx = process.vertx();
         if (millis > 0) {
-          System.out.println("Scheduling timer " + millis);
           long now = System.currentTimeMillis();
           AtomicLong remaining = new AtomicLong(-1);
           long id = process.vertx().setTimer(millis, v -> {
@@ -48,14 +47,12 @@ public interface ShellCommands {
           });
           process.eventHandler(EventType.SIGINT, v -> {
             if (vertx.cancelTimer(id)) {
-              System.out.println("Cancelling timer");
               process.end();
             }
           });
           process.eventHandler(EventType.SIGTSTP, v -> {
             if (vertx.cancelTimer(id)) {
               remaining.set(millis - (System.currentTimeMillis() - now));
-              System.out.println("Suspending timer " + remaining.get());
             }
           });
           process.eventHandler(EventType.SIGCONT, v -> {
