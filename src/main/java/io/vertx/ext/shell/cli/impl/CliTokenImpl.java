@@ -44,8 +44,15 @@ public class CliTokenImpl implements CliToken {
   }
 
   @Override
+  public int hashCode() {
+    return value.hashCode();
+  }
+
+  @Override
   public boolean equals(Object obj) {
-    if (obj instanceof CliTokenImpl) {
+    if (obj == this) {
+      return true;
+    } else if (obj instanceof CliTokenImpl) {
       CliTokenImpl that = (CliTokenImpl) obj;
       return text == that.text && value.equals(that.value);
     }
@@ -56,8 +63,6 @@ public class CliTokenImpl implements CliToken {
   public String toString() {
     return "CliToken[text=" + text + ",value=" + value + "]";
   }
-
-
 
   public static List<CliToken> tokenize(String s) {
 
