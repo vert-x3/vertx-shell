@@ -14,7 +14,9 @@ import io.vertx.ext.shell.command.Command;
 public interface MetricsCommand {
 
   static Command ls() {
-    Command cmd = Command.command("metrics-ls");
+    Command cmd = Command.command(CLI.
+        create("metrics-ls").
+        setDescription("List the known metrics for the current Vert.x instance"));
     cmd.processHandler(process -> {
       MetricsService metrics = MetricsService.create(process.vertx());
       metrics.metricsNames().forEach(name -> {
@@ -26,7 +28,10 @@ public interface MetricsCommand {
   }
 
   static Command info() {
-    Command cmd = Command.command(CLI.create("metrics-info").addArgument(new Argument().setArgName("name")));
+    Command cmd = Command.command(CLI.
+        create("metrics-info").
+        setDescription("Show metrics info for the current Vert.x instance in Json format").
+        addArgument(new Argument().setArgName("name")));
     cmd.processHandler(process -> {
       String name = process.args().get(0);
       MetricsService metrics = MetricsService.create(process.vertx());

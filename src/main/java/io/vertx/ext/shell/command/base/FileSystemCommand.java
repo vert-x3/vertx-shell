@@ -20,23 +20,28 @@ import java.util.stream.Stream;
 public interface FileSystemCommand {
 
   static Command cd() {
-    Command cmd = Command.command("cd");
+    Command cmd = Command.command(CLI.
+            create("cd").
+            setSummary("Change the current working dir").
+            addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help")).
+            addArgument(new Argument().setArgName("dir").setRequired(false).setDefaultValue("the new working dir"))
+    );
     cmd.completionHandler(new FsHelper().completionHandler());
     cmd.processHandler(process -> {
       if (process.args().size() > 0) {
-        String pathArg = process.args().get(0);
-        String path = process.session().get("path");
-        new FsHelper().cd(process.vertx().fileSystem(), path, pathArg, ar -> {
+        String dirArg = process.commandLine().getArgumentValue("dir");
+        String cwd = process.session().get("cwd");
+        new FsHelper().cd(process.vertx().fileSystem(), cwd, dirArg, ar -> {
           if (ar.succeeded()) {
-            process.session().put("path", ar.result());
+            process.session().put("cwd", ar.result());
             process.end();
           } else {
-            process.write(ar.result() + ": No such file or directory");
+            process.write("cd: No such file or directory\n");
             process.end();
           }
         });
       } else {
-        process.session().put("path", "/");
+        process.session().remove("cwd");
         process.end();
       }
     });
@@ -44,20 +49,24 @@ public interface FileSystemCommand {
   }
 
   static Command pwd() {
-    Command cmd = Command.command("pwd");
+    Command cmd = Command.command(CLI.
+            create("pwd").
+            setSummary("Print the current working dir").
+            addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help"))
+    );
     cmd.processHandler(process -> {
-      String path = process.session().get("path");
-      if (path == null) {
-        path = new FsHelper().getRootPath();
+      String cwd = process.session().get("cwd");
+      if (cwd == null) {
+        cwd = new FsHelper().rootDir();
       }
-      process.write(path).write("\n").end();
+      process.write(cwd).write("\n").end();
     });
     return cmd;
   }
 
   static Command ls() {
     Option ELL = new Option().setArgName("ell").setFlag(true).setShortName("l").setDescription("List in long format");
-    Argument FILE = new Argument().setArgName("dir").setRequired(false).setDescription("The dir to list");
+    Argument FILE = new Argument().setArgName("file").setRequired(false).setDescription("The file to list");
     Option HELP = new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help").setDescription("This help");
     Option ALL = new Option().setArgName("all").setFlag(true).setShortName("a").setDescription("Include files that begins with .");
     Command cmd = Command.command(CLI.create("ls").
@@ -68,9 +77,9 @@ public interface FileSystemCommand {
         setDescription("List directory content"));
     cmd.completionHandler(new FsHelper().completionHandler());
     cmd.processHandler(process -> {
-      String fileArg = process.commandLine().getArgumentValue(0);
+      String fileArg = process.commandLine().getArgumentValue("file");
       new FsHelper().ls(process.vertx(),
-          process.session().get("path"),
+          process.session().get("cwd"),
           fileArg != null ? fileArg : ".",
           ar -> {
             if (ar.succeeded()) {

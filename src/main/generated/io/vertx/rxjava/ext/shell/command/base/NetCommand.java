@@ -16,21 +16,23 @@
 
 package io.vertx.rxjava.ext.shell.command.base;
 
-import io.vertx.ext.shell.command.base.NetCommand;
+import java.util.Map;
+import io.vertx.lang.rxjava.InternalHelper;
+import rx.Observable;
 import io.vertx.rxjava.ext.shell.command.Command;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  *
  * <p/>
- * NOTE: This class has been automatically generated from the {@link NetCommand original} non RX-ified interface using Vert.x codegen.
+ * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.command.base.NetCommand original} non RX-ified interface using Vert.x codegen.
  */
 
-public class ServerCommand {
+public class NetCommand {
 
-  final NetCommand delegate;
+  final io.vertx.ext.shell.command.base.NetCommand delegate;
 
-  public ServerCommand(NetCommand delegate) {
+  public NetCommand(io.vertx.ext.shell.command.base.NetCommand delegate) {
     this.delegate = delegate;
   }
 
@@ -39,12 +41,12 @@ public class ServerCommand {
   }
 
   public static Command ls() { 
-    Command ret= Command.newInstance(NetCommand.ls());
+    Command ret= Command.newInstance(io.vertx.ext.shell.command.base.NetCommand.ls());
     return ret;
   }
 
 
-  public static ServerCommand newInstance(NetCommand arg) {
-    return arg != null ? new ServerCommand(arg) : null;
+  public static NetCommand newInstance(io.vertx.ext.shell.command.base.NetCommand arg) {
+    return arg != null ? new NetCommand(arg) : null;
   }
 }

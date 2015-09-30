@@ -14,37 +14,25 @@
  * under the License.
  */
 
-package io.vertx.rxjava.ext.shell.command.base;
-
-import io.vertx.ext.shell.command.base.NetCommand;
-import io.vertx.rxjava.ext.shell.command.Command;
-
+package io.vertx.groovy.ext.shell.command.base;
+import groovy.transform.CompileStatic
+import io.vertx.lang.groovy.InternalHelper
+import io.vertx.core.json.JsonObject
+import io.vertx.groovy.ext.shell.command.Command
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
- *
- * <p/>
- * NOTE: This class has been automatically generated from the {@link NetCommand original} non RX-ified interface using Vert.x codegen.
- */
-
-public class ServerCommand {
-
-  final NetCommand delegate;
-
-  public ServerCommand(NetCommand delegate) {
-    this.delegate = delegate;
+*/
+@CompileStatic
+public class NetCommand {
+  private final def io.vertx.ext.shell.command.base.NetCommand delegate;
+  public NetCommand(Object delegate) {
+    this.delegate = (io.vertx.ext.shell.command.base.NetCommand) delegate;
   }
-
   public Object getDelegate() {
     return delegate;
   }
-
-  public static Command ls() { 
-    Command ret= Command.newInstance(NetCommand.ls());
+  public static Command ls() {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.base.NetCommand.ls(), io.vertx.groovy.ext.shell.command.Command.class);
     return ret;
-  }
-
-
-  public static ServerCommand newInstance(NetCommand arg) {
-    return arg != null ? new ServerCommand(arg) : null;
   }
 }

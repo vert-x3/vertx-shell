@@ -1,6 +1,9 @@
 package io.vertx.ext.shell.command.base;
 
 import io.vertx.codegen.annotations.VertxGen;
+import io.vertx.core.cli.Argument;
+import io.vertx.core.cli.CLI;
+import io.vertx.core.cli.Option;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.io.EventType;
@@ -14,37 +17,38 @@ import java.util.List;
 public interface BusCommand {
 
   static Command send() {
-    Command cmd = Command.command("bus-send");
+    Command cmd = Command.command(CLI.
+            create("bus-send").
+            setSummary("Send a message to the event bus").
+            addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help")).
+            addArgument(new Argument().setArgName("address").setIndex(0).setDefaultValue("the bus address destination")).
+            addArgument(new Argument().setArgName("message").setIndex(1).setDefaultValue("the message"))
+    );
     cmd.processHandler(process -> {
-      List<String> args = process.args();
-      if (args.size() < 2) {
-        process.write("usage: bus-send address message\n");
-      } else {
-        String address = args.get(0);
-        String msg = args.get(1);
-        process.vertx().eventBus().send(address, msg);
-      }
+      String address = process.commandLine().getArgumentValue("address");
+      String msg = process.commandLine().getArgumentValue("message");
+      process.vertx().eventBus().send(address, msg);
       process.end();
     });
     return cmd;
   }
 
   static Command tail() {
-    Command cmd = Command.command("bus-tail");
+    Command cmd = Command.command(CLI.
+            create("bus-tail").
+            setSummary("Subscribe to an event bus address and logs received messages on the console").
+            addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help")).
+            addArgument(new Argument().setArgName("address").setDefaultValue("the bus address to listen to"))
+    );
     cmd.processHandler(process -> {
-      List<String> args = process.args();
-      if (args.size() < 1) {
-        process.write("usage: bus-tail address\n").end();
-      } else {
-        String address = args.get(0);
-        MessageConsumer<Object> consumer = process.vertx().eventBus().consumer(address, msg -> {
-          process.write("" + msg.body() + "\n");
-        });
-        process.eventHandler(EventType.SIGINT, done -> {
-          consumer.unregister();
-          process.end();
-        });
-      }
+      String address = process.commandLine().getArgumentValue("address");
+      MessageConsumer<Object> consumer = process.vertx().eventBus().consumer(address, msg -> {
+        process.write("" + msg.body() + "\n");
+      });
+      process.eventHandler(EventType.SIGINT, done -> {
+        consumer.unregister();
+        process.end();
+      });
     });
     return cmd;
   }

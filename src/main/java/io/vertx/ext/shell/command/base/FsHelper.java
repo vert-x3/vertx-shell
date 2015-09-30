@@ -13,27 +13,25 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 class FsHelper {
 
-  private final Path root;
+  private final Path rootDir;
 
   FsHelper() {
-    root = new File(System.getProperty("vertx.cwd", ".")).getAbsoluteFile().toPath().normalize();
+    rootDir = new File(System.getProperty("vertx.cwd", ".")).getAbsoluteFile().toPath().normalize();
   }
 
-  String getRootPath() {
-    return root.toString();
+  String rootDir() {
+    return rootDir.toString();
   }
 
   void cd(FileSystem fs, String currentPath, String pathArg, Handler<AsyncResult<String>> pathHandler) {
-    Path base = currentPath != null ? new File(currentPath).toPath() : root;
+    Path base = currentPath != null ? new File(currentPath).toPath() : rootDir;
     String path = base.resolve(pathArg).toAbsolutePath().normalize().toString();
     fs.props(path, ar -> {
       if (ar.succeeded() && ar.result().isDirectory()) {
@@ -44,8 +42,8 @@ class FsHelper {
     });
   }
 
-  void ls(Vertx vertx, String currentPath, String pathArg, Handler<AsyncResult<Map<String, FileProps>>> filesHandler) {
-    Path base = currentPath != null ? new File(currentPath).toPath() : root;
+  void ls(Vertx vertx, String currentFile, String pathArg, Handler<AsyncResult<Map<String, FileProps>>> filesHandler) {
+    Path base = currentFile != null ? new File(currentFile).toPath() : rootDir;
     String path = base.resolve(pathArg).toAbsolutePath().normalize().toString();
     vertx.executeBlocking(fut -> {
       FileSystem fs = vertx.fileSystem();
@@ -96,7 +94,7 @@ class FsHelper {
     vertx.executeBlocking(fut -> {
 
       FileSystem fs = vertx.fileSystem();
-      Path base = (currentPath != null ? new File(currentPath).toPath() : root);
+      Path base = (currentPath != null ? new File(currentPath).toPath() : rootDir);
 
       int index = _prefix.lastIndexOf('/');
       String prefix;

@@ -1,6 +1,9 @@
 package io.vertx.ext.shell.command.base;
 
 import io.vertx.codegen.annotations.VertxGen;
+import io.vertx.core.cli.Argument;
+import io.vertx.core.cli.CLI;
+import io.vertx.core.cli.Option;
 import io.vertx.core.impl.Deployment;
 import io.vertx.core.impl.VertxInternal;
 import io.vertx.core.spi.VerticleFactory;
@@ -16,7 +19,11 @@ import java.io.StringWriter;
 public interface VerticleCommand {
 
   static Command ls() {
-    Command cmd = Command.command("verticle-ls");
+    Command cmd = Command.command(CLI.
+            create("verticle-ls").
+            setSummary("List all verticles").
+            addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help"))
+    );
     cmd.processHandler(process -> {
       VertxInternal vertx = (VertxInternal) process.vertx();
       for (String id : vertx.deploymentIDs()) {
@@ -31,13 +38,14 @@ public interface VerticleCommand {
   }
 
   static Command deploy() {
-    Command cmd = Command.command("verticle-deploy");
+    Command cmd = Command.command(CLI.
+            create("verticle-deploy").
+            setSummary("Deploy a verticle").
+            addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help")).
+            addArgument(new Argument().setArgName("name").setDescription("the verticle name"))
+    );
     cmd.processHandler(process -> {
-      if (process.args().isEmpty()) {
-        process.write("no verticle name specified\n").end();
-        return;
-      }
-      String name = process.args().get(0);
+      String name = process.commandLine().getArgumentValue("name");
       process.vertx().deployVerticle(name, ar -> {
         if (ar.succeeded()) {
           process.write("Deployed " + ar.result() + "\n").end();
@@ -54,13 +62,14 @@ public interface VerticleCommand {
   }
 
   static Command undeploy() {
-    Command cmd = Command.command("verticle-undeploy");
+    Command cmd = Command.command(CLI.
+            create("verticle-undeploy").
+            setSummary("Undeploy a verticle").
+            addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help")).
+            addArgument(new Argument().setArgName("id").setDescription("the verticle id"))
+    );
     cmd.processHandler(process -> {
-      if (process.args().isEmpty()) {
-        process.write("no deployment ID specified\n").end();
-        return;
-      }
-      String id = process.args().get(0);
+      String id = process.commandLine().getArgumentValue("id");
       process.vertx().undeploy(id, ar -> {
         if (ar.succeeded()) {
           process.write("Undeployed " + id + "\n").end();
@@ -77,7 +86,11 @@ public interface VerticleCommand {
   }
 
   static Command factories() {
-    Command cmd = Command.command("verticle-factories");
+    Command cmd = Command.command(CLI.
+            create("verticle-factories").
+            setSummary("List all verticle factories").
+            addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help"))
+    );
     cmd.processHandler(process -> {
       VertxInternal vertx = (VertxInternal) process.vertx();
       for (VerticleFactory factory : vertx.verticleFactories()) {

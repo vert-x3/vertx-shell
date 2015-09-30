@@ -10,7 +10,7 @@ import io.vertx.ext.shell.command.metrics.MetricsCommand;
 import io.vertx.ext.shell.command.base.BusCommand;
 import io.vertx.ext.shell.command.base.FileSystemCommand;
 import io.vertx.ext.shell.command.base.LocalMapCommand;
-import io.vertx.ext.shell.command.base.ServerCommand;
+import io.vertx.ext.shell.command.base.NetCommand;
 import io.vertx.ext.shell.command.base.VerticleCommand;
 import io.vertx.ext.shell.impl.ShellServiceImpl;
 import io.vertx.ext.shell.registry.CommandRegistry;
@@ -34,7 +34,7 @@ public interface ShellService {
     registry.registerCommand(FileSystemCommand.ls());
     registry.registerCommand(ShellCommands.sleep());
     registry.registerCommand(ShellCommands.help());
-    registry.registerCommand(ServerCommand.ls());
+    registry.registerCommand(NetCommand.ls());
     registry.registerCommand(LocalMapCommand.get());
     registry.registerCommand(LocalMapCommand.put());
     registry.registerCommand(LocalMapCommand.rm());

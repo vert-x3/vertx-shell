@@ -16,23 +16,23 @@
 
 package io.vertx.groovy.ext.shell.command.base;
 import groovy.transform.CompileStatic
+import io.vertx.ext.shell.command.base.NetCommand
 import io.vertx.lang.groovy.InternalHelper
-import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.command.Command
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
 public class ServerCommand {
-  private final def io.vertx.ext.shell.command.base.ServerCommand delegate;
+  private final def NetCommand delegate;
   public ServerCommand(Object delegate) {
-    this.delegate = (io.vertx.ext.shell.command.base.ServerCommand) delegate;
+    this.delegate = (NetCommand) delegate;
   }
   public Object getDelegate() {
     return delegate;
   }
   public static Command ls() {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.base.ServerCommand.ls(), io.vertx.groovy.ext.shell.command.Command.class);
+    def ret= InternalHelper.safeCreate(NetCommand.ls(), io.vertx.groovy.ext.shell.command.Command.class);
     return ret;
   }
 }
