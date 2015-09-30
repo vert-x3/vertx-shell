@@ -9,6 +9,7 @@ import io.vertx.core.file.FileSystem;
 import io.vertx.ext.shell.cli.Completion;
 
 import java.io.File;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +38,7 @@ class FsHelper {
       if (ar.succeeded() && ar.result().isDirectory()) {
         pathHandler.handle(Future.succeededFuture(path));
       } else {
-        pathHandler.handle(Future.failedFuture(path + ": No such file or directory"));
+        pathHandler.handle(Future.failedFuture(new NoSuchFileException(path)));
       }
     });
   }

@@ -123,6 +123,8 @@ public interface FileSystemCommand {
               } else {
                 process.write("ls:" + ar.cause().getMessage() + "\n");
               }
+            } else {
+              process.write("ls: " + ar.cause().getMessage() + "\n");
             }
             process.end();
           });
