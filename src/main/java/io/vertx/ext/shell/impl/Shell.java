@@ -145,13 +145,11 @@ public class Shell {
   }
 
   void checkPending() {
-    if (foregroundJob != null && foregroundJob.stdin != null) {
-      if (readline.hasEvent()) {
-        foregroundJob.stdin.handle(Helper.fromCodePoints(readline.nextEvent().buffer().array()));
-        vertx.runOnContext(v -> {
-          checkPending();
-        });
-      }
+    if (foregroundJob != null && foregroundJob.stdin != null && readline.hasEvent()) {
+      foregroundJob.stdin.handle(Helper.fromCodePoints(readline.nextEvent().buffer().array()));
+      vertx.runOnContext(v -> {
+        checkPending();
+      });
     }
   }
 
@@ -206,9 +204,9 @@ public class Shell {
         switch (name) {
           case "exit":
           case "logout":
-            // Should clean stuff before!!!
+            // Todo: clean stuff before (like unterminated jobs, etc...)
             conn.close();
-            break;
+            return;
           case "jobs":
             jobs(readline);
             return;

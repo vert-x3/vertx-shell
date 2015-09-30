@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  */
 public class CommandRegistryImpl implements CommandRegistry {
 
-  private static ConcurrentHashMap<Vertx, CommandRegistryImpl> managers = new ConcurrentHashMap<>();
+  private static Map<Vertx, CommandRegistryImpl> managers = new ConcurrentHashMap<>();
 
   public static CommandRegistry get(Vertx vertx) {
     CommandRegistryImpl mgr = managers.computeIfAbsent(vertx, CommandRegistryImpl::new);

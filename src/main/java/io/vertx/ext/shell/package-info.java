@@ -46,9 +46,9 @@
  *
  * Or via the service facility:
  *
- * [source]
+ * [source,subs="+attributes"]
  * ----
- * > vertx run maven:io.vertx:vertx-shell:3.0.0-SNAPSHOT
+ * > vertx run maven:{maven-groupId}:{maven-artifactId}:{maven-version}
  * ----
  *
  * == Base commands
@@ -205,7 +205,7 @@
  *
  * === Command completion
  *
- * A command can provide a completion handler when the want to provide contextual command line interface completion.
+ * A command can provide a completion handler when it wants to provide contextual command line interface completion.
  *
  * Like the process handler, the {@link io.vertx.ext.shell.command.Command#completionHandler(io.vertx.core.Handler) completion
  * handler} is non blocking because the implementation may use Vert.x services, e.g the file system.

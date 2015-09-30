@@ -57,6 +57,7 @@ public class VertxTelnetConnection extends TelnetConnection {
 
   @Override
   public void close() {
+    // Check there is no
     socket.close();
   }
 }
