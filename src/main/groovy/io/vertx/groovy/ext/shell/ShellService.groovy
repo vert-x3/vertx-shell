@@ -20,10 +20,12 @@ import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.shell.ShellServiceOptions
 import io.vertx.groovy.core.Vertx
+import io.vertx.groovy.ext.shell.registry.CommandRegistry
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * The shell service, provides a remotely accessible shell available via Telnet or SSH according to the
+ * <a href="../../../../../../../cheatsheet/ShellServiceOptions.html">ShellServiceOptions</a> configuration.
 */
 @CompileStatic
 public class ShellService {
@@ -38,13 +40,38 @@ public class ShellService {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx)vertx.getDelegate(), options != null ? new io.vertx.ext.shell.ShellServiceOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.ShellService.class);
     return ret;
   }
+  /**
+   * @return the command registry for this service
+   * @return 
+   */
+  public CommandRegistry getCommandRegistry() {
+    def ret= InternalHelper.safeCreate(this.delegate.getCommandRegistry(), io.vertx.groovy.ext.shell.registry.CommandRegistry.class);
+    return ret;
+  }
+  /**
+   * Start the shell service, this is an asynchronous start.
+   */
   public void start() {
     this.delegate.start();
   }
+  /**
+   * Start the shell service, this is an asynchronous start.
+   * @param startHandler handler for getting notified when service is started
+   */
   public void start(Handler<AsyncResult<Void>> startHandler) {
     this.delegate.start(startHandler);
   }
-  public void close(Handler<AsyncResult<Void>> closeHandler) {
-    this.delegate.close(closeHandler);
+  /**
+   * Stop the shell service, this is an asynchronous stop.
+   */
+  public void stop() {
+    this.delegate.stop();
+  }
+  /**
+   * Stop the shell service, this is an asynchronous start.
+   * @param stopHandler handler for getting notified when service is stopped
+   */
+  public void stop(Handler<AsyncResult<Void>> stopHandler) {
+    this.delegate.stop(stopHandler);
   }
 }

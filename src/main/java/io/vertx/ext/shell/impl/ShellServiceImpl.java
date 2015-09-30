@@ -34,6 +34,11 @@ public class ShellServiceImpl implements ShellService {
   }
 
   @Override
+  public CommandRegistry getCommandRegistry() {
+    return registry;
+  }
+
+  @Override
   public void start(Handler<AsyncResult<Void>> startHandler) {
 
     Consumer<TtyConnection> shellBoostrap = conn -> {
@@ -77,22 +82,22 @@ public class ShellServiceImpl implements ShellService {
   }
 
   @Override
-  public void close(Handler<AsyncResult<Void>> closeHandler) {
+  public void stop(Handler<AsyncResult<Void>> stopHandler) {
     AtomicInteger count = new AtomicInteger();
     count.addAndGet(telnet != null ? 1 : 0);
     count.addAndGet(ssh != null ? 1 : 0);
     if (count.get() == 0) {
-      closeHandler.handle(Future.succeededFuture());
+      stopHandler.handle(Future.succeededFuture());
       return;
     }
     Handler<AsyncResult<Void>> listenHandler = ar -> {
       if (ar.succeeded()) {
         if (count.decrementAndGet() == 0) {
-          closeHandler.handle(Future.succeededFuture());
+          stopHandler.handle(Future.succeededFuture());
         }
       } else {
         count.set(0);
-        closeHandler.handle(Future.failedFuture(ar.cause()));
+        stopHandler.handle(Future.failedFuture(ar.cause()));
       }
     };
     if (telnet != null) {

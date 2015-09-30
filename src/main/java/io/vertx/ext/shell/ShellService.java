@@ -16,6 +16,9 @@ import io.vertx.ext.shell.impl.ShellServiceImpl;
 import io.vertx.ext.shell.registry.CommandRegistry;
 
 /**
+ * The shell service, provides a remotely accessible shell available via Telnet or SSH according to the
+ * {@link io.vertx.ext.shell.ShellServiceOptions} configuration.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
@@ -23,6 +26,8 @@ public interface ShellService {
 
   static ShellService create(Vertx vertx, ShellServiceOptions options) {
     CommandRegistry registry = CommandRegistry.get(vertx);
+
+    // Base commands
     registry.registerCommand(ShellCommands.echo());
     registry.registerCommand(FileSystemCommand.cd());
     registry.registerCommand(FileSystemCommand.pwd());
@@ -40,27 +45,54 @@ public interface ShellService {
     registry.registerCommand(VerticleCommand.undeploy());
     registry.registerCommand(VerticleCommand.factories());
 
+    // Metrics commands
+    registry.registerCommand(MetricsCommand.ls());
+    registry.registerCommand(MetricsCommand.info());
+
     // Register builtin commands so they are listed in help
     registry.registerCommand(Command.command("exit").processHandler(process -> {}));
     registry.registerCommand(Command.command("logout").processHandler(process -> {}));
     registry.registerCommand(Command.command("jobs").processHandler(process -> {}));
-    registry.registerCommand(Command.command("fg").processHandler(process -> {}));
-    registry.registerCommand(Command.command("bg").processHandler(process -> {}));
+    registry.registerCommand(Command.command("fg").processHandler(process -> {
+    }));
+    registry.registerCommand(Command.command("bg").processHandler(process -> {
+    }));
 
-    //
-    registry.registerCommand(MetricsCommand.ls());
-    registry.registerCommand(MetricsCommand.info());
-
-    //
     return new ShellServiceImpl(vertx, options, registry);
   }
 
+  /**
+   * @return the command registry for this service
+   */
+  CommandRegistry getCommandRegistry();
+
+  /**
+   * Start the shell service, this is an asynchronous start.
+   */
   default void start() {
     start(ar -> {});
   }
 
+  /**
+   * Start the shell service, this is an asynchronous start.
+   *
+   * @param startHandler handler for getting notified when service is started
+   */
   void start(Handler<AsyncResult<Void>> startHandler);
 
-  void close(Handler<AsyncResult<Void>> closeHandler);
+  /**
+   * Stop the shell service, this is an asynchronous stop.
+   */
+  default void stop() {
+    stop(ar -> {
+    });
+  }
+
+  /**
+   * Stop the shell service, this is an asynchronous start.
+   *
+   * @param stopHandler handler for getting notified when service is stopped
+   */
+  void stop(Handler<AsyncResult<Void>> stopHandler);
 
 }

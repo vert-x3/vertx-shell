@@ -21,11 +21,13 @@ import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.ext.shell.ShellServiceOptions;
 import io.vertx.rxjava.core.Vertx;
+import io.vertx.rxjava.ext.shell.registry.CommandRegistry;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * The shell service, provides a remotely accessible shell available via Telnet or SSH according to the
+ * {@link io.vertx.ext.shell.ShellServiceOptions} configuration.
  *
  * <p/>
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.ShellService original} non RX-ified interface using Vert.x codegen.
@@ -48,28 +50,63 @@ public class ShellService {
     return ret;
   }
 
+  /**
+   * @return the command registry for this service
+   * @return 
+   */
+  public CommandRegistry getCommandRegistry() { 
+    CommandRegistry ret= CommandRegistry.newInstance(this.delegate.getCommandRegistry());
+    return ret;
+  }
+
+  /**
+   * Start the shell service, this is an asynchronous start.
+   */
   public void start() { 
     this.delegate.start();
   }
 
+  /**
+   * Start the shell service, this is an asynchronous start.
+   * @param startHandler handler for getting notified when service is started
+   */
   public void start(Handler<AsyncResult<Void>> startHandler) { 
     this.delegate.start(startHandler);
   }
 
+  /**
+   * Start the shell service, this is an asynchronous start.
+   * @return 
+   */
   public Observable<Void> startObservable() { 
     io.vertx.rx.java.ObservableFuture<Void> startHandler = io.vertx.rx.java.RxHelper.observableFuture();
     start(startHandler.toHandler());
     return startHandler;
   }
 
-  public void close(Handler<AsyncResult<Void>> closeHandler) { 
-    this.delegate.close(closeHandler);
+  /**
+   * Stop the shell service, this is an asynchronous stop.
+   */
+  public void stop() { 
+    this.delegate.stop();
   }
 
-  public Observable<Void> closeObservable() { 
-    io.vertx.rx.java.ObservableFuture<Void> closeHandler = io.vertx.rx.java.RxHelper.observableFuture();
-    close(closeHandler.toHandler());
-    return closeHandler;
+  /**
+   * Stop the shell service, this is an asynchronous start.
+   * @param stopHandler handler for getting notified when service is stopped
+   */
+  public void stop(Handler<AsyncResult<Void>> stopHandler) { 
+    this.delegate.stop(stopHandler);
+  }
+
+  /**
+   * Stop the shell service, this is an asynchronous start.
+   * @return 
+   */
+  public Observable<Void> stopObservable() { 
+    io.vertx.rx.java.ObservableFuture<Void> stopHandler = io.vertx.rx.java.RxHelper.observableFuture();
+    stop(stopHandler.toHandler());
+    return stopHandler;
   }
 
 

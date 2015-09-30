@@ -1,8 +1,10 @@
 require 'vertx/vertx'
+require 'vertx-shell/command_registry'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.ShellService
 module VertxShell
-  #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+  #  The shell service, provides a remotely accessible shell available via Telnet or SSH according to the
+  #  {Hash} configuration.
   class ShellService
     # @private
     # @param j_del [::VertxShell::ShellService] the java delegate
@@ -23,7 +25,16 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling create(vertx,options)"
     end
-    # @yield 
+    #  @return the command registry for this service
+    # @return [::VertxShell::CommandRegistry]
+    def get_command_registry
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:getCommandRegistry, []).call(),::VertxShell::CommandRegistry)
+      end
+      raise ArgumentError, "Invalid arguments when calling get_command_registry()"
+    end
+    #  Start the shell service, this is an asynchronous start.
+    # @yield handler for getting notified when service is started
     # @return [void]
     def start
       if !block_given?
@@ -33,13 +44,16 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling start()"
     end
-    # @yield 
+    #  Stop the shell service, this is an asynchronous start.
+    # @yield handler for getting notified when service is stopped
     # @return [void]
-    def close
-      if block_given?
-        return @j_del.java_method(:close, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |ar| yield(ar.failed ? ar.cause : nil) }))
+    def stop
+      if !block_given?
+        return @j_del.java_method(:stop, []).call()
+      elsif block_given?
+        return @j_del.java_method(:stop, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |ar| yield(ar.failed ? ar.cause : nil) }))
       end
-      raise ArgumentError, "Invalid arguments when calling close()"
+      raise ArgumentError, "Invalid arguments when calling stop()"
     end
   end
 end

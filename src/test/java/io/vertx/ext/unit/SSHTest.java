@@ -41,7 +41,7 @@ public class SSHTest {
   @After
   public void after(TestContext context) {
     if (service != null) {
-      service.close(context.asyncAssertSuccess());
+      service.stop(context.asyncAssertSuccess());
     }
     vertx.close(context.asyncAssertSuccess());
   }
