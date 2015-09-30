@@ -6,6 +6,8 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.dropwizard.DropwizardMetricsOptions;
+import io.vertx.ext.shell.ShellService;
+import io.vertx.ext.shell.ShellServiceOptions;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.io.Stream;
@@ -14,6 +16,8 @@ import io.vertx.ext.shell.net.TelnetOptions;
 import io.vertx.ext.shell.registry.CommandRegistry;
 
 /**
+ * A simple class for testing from command line directly.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 public class Main {

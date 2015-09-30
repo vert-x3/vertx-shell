@@ -208,6 +208,7 @@
           <version>1.3.2</version>
           <configuration>
             <mainClass>io.vertx.ext.shell.Main</mainClass>
+            <classpathScope>test</classpathScope>
           </configuration>
         </plugin>
       </plugins>
