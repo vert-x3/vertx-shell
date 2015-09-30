@@ -26,7 +26,7 @@ public class CommandImpl implements Command {
     return name;
   }
 
-  public CLI getCLI() {
+  public CLI cli() {
     return cli;
   }
 

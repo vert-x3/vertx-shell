@@ -65,14 +65,14 @@ public class CommandRegistrationImpl implements CommandRegistration {
 
         CommandLine cl;
         final List<String> args2 = args.stream().filter(CliToken::isText).map(CliToken::value).collect(Collectors.toList());
-        if (command.getCLI() != null) {
+        if (command.cli() != null) {
 
           // Build to skip validation problems
-          Optional<Option> helpOpt = command.getCLI().getOptions().stream().filter(o -> o.getArgName().equals("help")).findFirst();
+          Optional<Option> helpOpt = command.cli().getOptions().stream().filter(o -> o.getArgName().equals("help")).findFirst();
           if (helpOpt.isPresent()) {
-            if (command.getCLI().parse(args2, false).isSeenInCommandLine(helpOpt.get())) {
+            if (command.cli().parse(args2, false).isSeenInCommandLine(helpOpt.get())) {
               StringBuilder usage = new StringBuilder();
-              command.getCLI().usage(usage);
+              command.cli().usage(usage);
               usage.append('\n');
               context.tty().stdout().write(usage.toString());
               context.end(0);
@@ -82,7 +82,7 @@ public class CommandRegistrationImpl implements CommandRegistration {
 
           //
           try {
-            cl = command.getCLI().parse(args2);
+            cl = command.cli().parse(args2);
           } catch (CLIException e) {
             context.tty().stdout().write(e.getMessage() + "\n");
             context.end(0);
