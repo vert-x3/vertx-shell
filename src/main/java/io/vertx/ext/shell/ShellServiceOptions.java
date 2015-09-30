@@ -6,7 +6,6 @@ import io.vertx.ext.shell.net.SSHOptions;
 import io.vertx.ext.shell.net.TelnetOptions;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -19,11 +18,11 @@ public class ShellServiceOptions {
 
   static {
     String welcome = "Welcome to Vert.x Shell";
-    InputStream in = ShellServiceOptions.class.getResourceAsStream("vertx-banner.txt");
-    if (in != null) {
-      ByteArrayOutputStream tmp = new ByteArrayOutputStream();
-      byte[] buf = new byte[256];
-      try {
+    InputStream resource = ShellServiceOptions.class.getResourceAsStream("vertx-banner.txt");
+    if (resource != null) {
+      try(InputStream in = resource) {
+        ByteArrayOutputStream tmp = new ByteArrayOutputStream();
+        byte[] buf = new byte[256];
         while (true) {
           int len = in.read(buf);
           if (len == -1) {
