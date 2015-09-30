@@ -4,7 +4,7 @@
 == ShiroAuthOptions
 
 ++++
- @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ Shiro auth configuration options, see Vert.x Auth Shiro component and/or Apache Shiro project.
 ++++
 '''
 
@@ -12,15 +12,21 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[config]]`config`|`Json object`|-
-|[[type]]`type`|`link:enums.html#ShiroAuthRealmType[ShiroAuthRealmType]`|-
+|[[config]]`config`|`Json object`|
++++
+Set the Shiro auth config.
++++
+|[[type]]`type`|`link:enums.html#ShiroAuthRealmType[ShiroAuthRealmType]`|
++++
+Set the Shiro auth options type.
++++
 |===
 
 [[AuthOptions]]
 == AuthOptions
 
 ++++
- @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ A common base object for authentication options.
 ++++
 '''
 
@@ -34,7 +40,8 @@
 == ShellServiceOptions
 
 ++++
- @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ The configurations options for the shell service, the shell connectors can be configured
+ with link and link.
 ++++
 '''
 
@@ -42,16 +49,25 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[ssh]]`ssh`|`link:dataobjects.html#SSHOptions[SSHOptions]`|-
-|[[telnet]]`telnet`|`link:dataobjects.html#TelnetOptions[TelnetOptions]`|-
-|[[welcomeMessage]]`welcomeMessage`|`String`|-
+|[[sshOptions]]`sshOptions`|`link:dataobjects.html#SSHOptions[SSHOptions]`|
++++
+Set the SSH options, if the option is null, SSH will not be started.
++++
+|[[telnetOptions]]`telnetOptions`|`link:dataobjects.html#TelnetOptions[TelnetOptions]`|
++++
+Set the Telnet options, if the option is null, Telnet will not be started.
++++
+|[[welcomeMessage]]`welcomeMessage`|`String`|
++++
+Set the shell welcome message, i.e the message displayed in the user console when he connects to the shell.
++++
 |===
 
 [[SSHOptions]]
 == SSHOptions
 
 ++++
- @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ The SSH shell configuration options.
 ++++
 '''
 
@@ -59,7 +75,10 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[host]]`host`|`String`|-
+|[[host]]`host`|`String`|
++++
+Set the host
++++
 |[[keyStoreOptions]]`keyStoreOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|
 +++
 Set the key/cert options in jks format, aka Java keystore.
@@ -72,15 +91,21 @@ Set the key/cert store options in pem format.
 +++
 Set the key/cert options in pfx format.
 +++
-|[[port]]`port`|`Number (int)`|-
-|[[shiroAuthOptions]]`shiroAuthOptions`|`link:dataobjects.html#ShiroAuthOptions[ShiroAuthOptions]`|-
+|[[port]]`port`|`Number (int)`|
++++
+Set the port
++++
+|[[shiroAuthOptions]]`shiroAuthOptions`|`link:dataobjects.html#ShiroAuthOptions[ShiroAuthOptions]`|
++++
+Set the auth options as a Shiro auth.
++++
 |===
 
 [[TelnetOptions]]
 == TelnetOptions
 
 ++++
- @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ Telnet options configuration, extends link.
 ++++
 '''
 

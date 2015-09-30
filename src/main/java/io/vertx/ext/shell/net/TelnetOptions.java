@@ -10,9 +10,11 @@ import io.vertx.core.net.PemTrustOptions;
 import io.vertx.core.net.PfxOptions;
 
 /**
+ * Telnet options configuration, extends {@link io.vertx.core.net.NetServerOptions}.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@DataObject
+@DataObject()
 public class TelnetOptions extends NetServerOptions {
 
   public TelnetOptions() {

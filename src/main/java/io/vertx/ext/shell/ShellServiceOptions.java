@@ -9,9 +9,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 /**
+ * The configurations options for the shell service, the shell connectors can be configured
+ * with {@link io.vertx.ext.shell.net.TelnetOptions} and {@link io.vertx.ext.shell.net.SSHOptions}.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@DataObject
+@DataObject(generateConverter = true)
 public class ShellServiceOptions {
 
   public static final String DEFAULT_WELCOME_MESSAGE;
@@ -39,48 +42,74 @@ public class ShellServiceOptions {
   }
 
   private String welcomeMessage;
-  private TelnetOptions telnet;
-  private SSHOptions ssh;
+  private TelnetOptions telnetOptions;
+  private SSHOptions sshOptions;
 
   public ShellServiceOptions() {
     welcomeMessage = DEFAULT_WELCOME_MESSAGE;
   }
 
   public ShellServiceOptions(ShellServiceOptions that) {
-    this.telnet = that.telnet != null ? new TelnetOptions(that.telnet) : null;
+    this.telnetOptions = that.telnetOptions != null ? new TelnetOptions(that.telnetOptions) : null;
     this.welcomeMessage = that.welcomeMessage;
   }
 
   public ShellServiceOptions(JsonObject json) {
-    welcomeMessage = json.getString("welcomeMessage", DEFAULT_WELCOME_MESSAGE);
-    telnet = json.getJsonObject("telnet") != null ? new TelnetOptions(json.getJsonObject("telnet")) : null;
-    ssh = json.getJsonObject("ssh") != null ? new SSHOptions(json.getJsonObject("ssh")) : null;
+    this();
+    ShellServiceOptionsConverter.fromJson(json, this);
   }
 
+  /**
+   * @return the shell welcome message
+   */
   public String getWelcomeMessage() {
     return welcomeMessage;
   }
 
+  /**
+   * Set the shell welcome message, i.e the message displayed in the user console when he connects to the shell.
+   *
+   * @param welcomeMessage the welcome message
+   * @return a reference to this, so the API can be used fluently
+   */
   public ShellServiceOptions setWelcomeMessage(String welcomeMessage) {
     this.welcomeMessage = welcomeMessage;
     return this;
   }
 
-  public TelnetOptions getTelnet() {
-    return telnet;
+  /**
+   * @return the Telnet options
+   */
+  public TelnetOptions getTelnetOptions() {
+    return telnetOptions;
   }
 
-  public ShellServiceOptions setTelnet(TelnetOptions telnet) {
-    this.telnet = telnet;
+  /**
+   * Set the Telnet options, if the option is null, Telnet will not be started.
+   *
+   * @param telnetOptions the ssh options
+   * @return a reference to this, so the API can be used fluently
+   */
+  public ShellServiceOptions setTelnetOptions(TelnetOptions telnetOptions) {
+    this.telnetOptions = telnetOptions;
     return this;
   }
 
+  /**
+   * @return the SSH options
+   */
   public SSHOptions getSSH() {
-    return ssh;
+    return sshOptions;
   }
 
-  public ShellServiceOptions setSSH(SSHOptions ssh) {
-    this.ssh = ssh;
+  /**
+   * Set the SSH options, if the option is null, SSH will not be started.
+   *
+   * @param sshOptions the ssh options
+   * @return a reference to this, so the API can be used fluently
+   */
+  public ShellServiceOptions setSSHOptions(SSHOptions sshOptions) {
+    this.sshOptions = sshOptions;
     return this;
   }
 }

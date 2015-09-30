@@ -37,7 +37,7 @@ Starting a shell service available via Telnet:
 ----
 import io.vertx.groovy.ext.shell.ShellService
 def service = ShellService.create(vertx, [
-  telnet:[
+  telnetOptions:[
     host:"localhost",
     port:4000
   ]

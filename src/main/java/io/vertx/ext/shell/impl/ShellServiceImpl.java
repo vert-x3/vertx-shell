@@ -50,7 +50,7 @@ public class ShellServiceImpl implements ShellService {
       shell.init();
     };
 
-    TelnetOptions telnetOptions = options.getTelnet();
+    TelnetOptions telnetOptions = options.getTelnetOptions();
     SSHOptions sshOptions = options.getSSH();
     AtomicInteger count = new AtomicInteger();
     count.addAndGet(telnetOptions != null ? 1 : 0);

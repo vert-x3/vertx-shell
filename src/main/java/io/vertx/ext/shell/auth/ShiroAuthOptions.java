@@ -5,9 +5,11 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 
 /**
+ * Shiro auth configuration options, see Vert.x Auth Shiro component and/or Apache Shiro project.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@DataObject()
+@DataObject(generateConverter = true)
 public class ShiroAuthOptions extends AuthOptions {
 
   private ShiroAuthRealmType type;
@@ -22,23 +24,40 @@ public class ShiroAuthOptions extends AuthOptions {
   }
 
   public ShiroAuthOptions(JsonObject json) {
-    type = json.getString("type") != null ? ShiroAuthRealmType.valueOf(json.getString("type")) : null;
-    config = json.getJsonObject("config") != null ? json.getJsonObject("config").copy() : null;
+    ShiroAuthOptionsConverter.fromJson(json, this);
   }
 
+  /**
+   * @return the Shiro realm type
+   */
   public ShiroAuthRealmType getType() {
     return type;
   }
 
+  /**
+   * Set the Shiro auth options type.
+   *
+   * @param type the type
+   * @return a reference to this, so the API can be used fluently
+   */
   public ShiroAuthOptions setType(ShiroAuthRealmType type) {
     this.type = type;
     return this;
   }
 
+  /**
+   * @return the Shiro auth config
+   */
   public JsonObject getConfig() {
     return config;
   }
 
+  /**
+   * Set the Shiro auth config.
+   *
+   * @param config the config
+   * @return a reference to this, so the API can be used fluently
+   */
   public ShiroAuthOptions setConfig(JsonObject config) {
     this.config = config;
     return this;

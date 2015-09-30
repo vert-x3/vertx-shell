@@ -24,7 +24,7 @@ public class Examples {
 
   public void runTelnetService(Vertx vertx) throws Exception {
     ShellService service = ShellService.create(vertx,
-        new ShellServiceOptions().setTelnet(
+        new ShellServiceOptions().setTelnetOptions(
             new TelnetOptions().
                 setHost("localhost").
                 setPort(4000)
@@ -35,7 +35,7 @@ public class Examples {
 
   public void runSSHService(Vertx vertx) throws Exception {
     ShellService service = ShellService.create(vertx,
-        new ShellServiceOptions().setSSH(
+        new ShellServiceOptions().setSSHOptions(
             new SSHOptions().
                 setHost("localhost").
                 setPort(5000).

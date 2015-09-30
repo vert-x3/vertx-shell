@@ -37,7 +37,7 @@ Starting a shell service available via Telnet:
 ----
 var ShellService = require("vertx-shell-js/shell_service");
 var service = ShellService.create(vertx, {
-  "telnet" : {
+  "telnetOptions" : {
     "host" : "localhost",
     "port" : 4000
   }

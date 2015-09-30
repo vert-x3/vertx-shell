@@ -21,7 +21,7 @@ Starting a shell service available via SSH:
 [source,java]
 ----
 ShellService service = ShellService.create(vertx,
-    new ShellServiceOptions().setSSH(
+    new ShellServiceOptions().setSSHOptions(
         new SSHOptions().
             setHost("localhost").
             setPort(5000).
@@ -50,7 +50,7 @@ Starting a shell service available via Telnet:
 [source,java]
 ----
 ShellService service = ShellService.create(vertx,
-    new ShellServiceOptions().setTelnet(
+    new ShellServiceOptions().setTelnetOptions(
         new TelnetOptions().
             setHost("localhost").
             setPort(4000)

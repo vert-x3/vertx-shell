@@ -6,8 +6,6 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.dropwizard.DropwizardMetricsOptions;
-import io.vertx.ext.shell.ShellService;
-import io.vertx.ext.shell.ShellServiceOptions;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.io.Stream;
@@ -65,8 +63,8 @@ public class Main {
                 setConfig(new JsonObject().put("properties_path", "file:src/test/resources/test-auth.properties"))
     );
     ShellService service = ShellService.create(vertx, new ShellServiceOptions().
-        setTelnet(new TelnetOptions().setPort(5000)).
-        setSSH(options));
+        setTelnetOptions(new TelnetOptions().setPort(5000)).
+        setSSHOptions(options));
     service.start();
 
   }

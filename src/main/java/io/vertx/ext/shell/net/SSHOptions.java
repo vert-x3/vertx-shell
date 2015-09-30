@@ -10,9 +10,11 @@ import io.vertx.ext.shell.auth.AuthOptions;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
 
 /**
+ * The SSH shell configuration options.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@DataObject
+@DataObject(generateConverter = true)
 public class SSHOptions {
 
   private static final String DEFAULT_HOST = "localhost";
@@ -36,24 +38,39 @@ public class SSHOptions {
   }
 
   public SSHOptions(JsonObject json) {
-    this.host = json.getString("host", DEFAULT_HOST);
-    this.port = json.getInteger("port", DEFAULT_PORT);
-    this.authOptions = json.getJsonObject("shiroAuthOptions") != null ? new ShiroAuthOptions(json.getJsonObject("shiroAuthOptions")) : null;
+    this();
+    SSHOptionsConverter.fromJson(json, this);
   }
 
+  /**
+   * @return the host
+   */
   public String getHost() {
     return host;
   }
 
+  /**
+   * Set the host
+   * @param host the host
+   * @return a reference to this, so the API can be used fluently
+   */
   public SSHOptions setHost(String host) {
     this.host = host;
     return this;
   }
 
+  /**
+   * @return the port
+   */
   public int getPort() {
     return port;
   }
 
+  /**
+   * Set the port
+   * @param port the port
+   * @return a reference to this, so the API can be used fluently
+   */
   public SSHOptions setPort(int port) {
     this.port = port;
     return this;
@@ -96,12 +113,21 @@ public class SSHOptions {
     return this;
   }
 
+  /**
+   * @return the auth options
+   */
   public AuthOptions getAuthOptions() {
     return authOptions;
   }
 
-  public SSHOptions setShiroAuthOptions(ShiroAuthOptions authOptions) {
-    this.authOptions = authOptions;
+  /**
+   * Set the auth options as a Shiro auth.
+   *
+   * @param shiroAuthOptions the Shiro auth options
+   * @return a reference to this, so the API can be used fluently
+   */
+  public SSHOptions setShiroAuthOptions(ShiroAuthOptions shiroAuthOptions) {
+    this.authOptions = shiroAuthOptions;
     return this;
   }
 }

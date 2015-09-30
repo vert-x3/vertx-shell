@@ -4,6 +4,8 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 
 /**
+ * A common base object for authentication options.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @DataObject

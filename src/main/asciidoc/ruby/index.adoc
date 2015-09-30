@@ -37,7 +37,7 @@ Starting a shell service available via Telnet:
 ----
 require 'vertx-shell/shell_service'
 service = VertxShell::ShellService.create(vertx, {
-  'telnet' => {
+  'telnetOptions' => {
     'host' => "localhost",
     'port' => 4000
   }

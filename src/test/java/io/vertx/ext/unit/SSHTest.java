@@ -54,7 +54,7 @@ public class SSHTest {
 
     service = ShellService.create(vertx, new ShellServiceOptions().
         setWelcomeMessage("").
-        setSSH(new SSHOptions().setPort(5000).setHost("localhost").setKeyStoreOptions(
+        setSSHOptions(new SSHOptions().setPort(5000).setHost("localhost").setKeyStoreOptions(
             new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
             setShiroAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
                 new JsonObject().put("properties_path", "classpath:test-auth.properties")))));
