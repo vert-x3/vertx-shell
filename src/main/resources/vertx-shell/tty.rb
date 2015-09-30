@@ -2,7 +2,7 @@ require 'vertx-shell/stream'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.io.Tty
 module VertxShell
-  #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+  #  Provide interactions with the Shell TTY.
   class Tty
     # @private
     # @param j_del [::VertxShell::Tty] the java delegate
@@ -30,7 +30,8 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling height()"
     end
-    # @yield 
+    #  Set an handler the standard input to read the data in String format.
+    # @yield the standard input
     # @return [self]
     def set_stdin(stdin=nil)
       if stdin.class.method_defined?(:j_del) && !block_given?
@@ -42,6 +43,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling set_stdin(stdin)"
     end
+    #  @return the standard output for emitting data
     # @return [::VertxShell::Stream]
     def stdout
       if !block_given?
@@ -49,15 +51,16 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling stdout()"
     end
-    # @param [String] event 
+    #  Set an event handler to be notified by Shell events.
+    # @param [:SIGTSTP,:EOF,:SIGINT,:SIGWINCH,:SIGCONT] eventType the event type
     # @yield 
     # @return [self]
-    def event_handler(event=nil)
-      if event.class == String && block_given?
-        @j_del.java_method(:eventHandler, [Java::java.lang.String.java_class,Java::IoVertxCore::Handler.java_class]).call(event,Proc.new { yield })
+    def event_handler(eventType=nil)
+      if eventType.class == Symbol && block_given?
+        @j_del.java_method(:eventHandler, [Java::IoVertxExtShellIo::EventType.java_class,Java::IoVertxCore::Handler.java_class]).call(Java::IoVertxExtShellIo::EventType.valueOf(eventType),Proc.new { yield })
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling event_handler(event)"
+      raise ArgumentError, "Invalid arguments when calling event_handler(eventType)"
     end
   end
 end

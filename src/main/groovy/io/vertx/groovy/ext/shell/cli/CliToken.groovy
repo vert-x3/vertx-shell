@@ -20,7 +20,7 @@ import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import java.util.List
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * A parsed token in the command line interface.
 */
 @CompileStatic
 public class CliToken {
@@ -31,30 +31,61 @@ public class CliToken {
   public Object getDelegate() {
     return delegate;
   }
-  public static CliToken createText(String s) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.cli.CliToken.createText(s), io.vertx.groovy.ext.shell.cli.CliToken.class);
+  /**
+   * Create a text token.
+   * @param text the text
+   * @return the token
+   */
+  public static CliToken createText(String text) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.cli.CliToken.createText(text), io.vertx.groovy.ext.shell.cli.CliToken.class);
     return ret;
   }
-  public static CliToken createBlank(String s) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.cli.CliToken.createBlank(s), io.vertx.groovy.ext.shell.cli.CliToken.class);
+  /**
+   * Create a new blank token.
+   * @param blank the blank value
+   * @return the token
+   */
+  public static CliToken createBlank(String blank) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.cli.CliToken.createBlank(blank), io.vertx.groovy.ext.shell.cli.CliToken.class);
     return ret;
   }
-  public String raw() {
-    def ret = this.delegate.raw();
-    return ret;
-  }
+  /**
+   * @return the token value
+   * @return 
+   */
   public String value() {
     def ret = this.delegate.value();
     return ret;
   }
+  /**
+   * @return the raw token value, that may contain unescaped chars, for instance 
+   * @return 
+   */
+  public String raw() {
+    def ret = this.delegate.raw();
+    return ret;
+  }
+  /**
+   * @return true when it's a text token
+   * @return 
+   */
   public boolean isText() {
     def ret = this.delegate.isText();
     return ret;
   }
+  /**
+   * @return true when it's a blank token
+   * @return 
+   */
   public boolean isBlank() {
     def ret = this.delegate.isBlank();
     return ret;
   }
+  /**
+   * Tokenize the string argument and return a list of tokens.
+   * @param s the tokenized string
+   * @return the tokens
+   */
   public static List<CliToken> tokenize(String s) {
     def ret = io.vertx.ext.shell.cli.CliToken.tokenize(s)?.collect({underpants -> new io.vertx.groovy.ext.shell.cli.CliToken(underpants)});
       return ret;

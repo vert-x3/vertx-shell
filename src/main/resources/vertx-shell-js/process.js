@@ -23,6 +23,7 @@ var JsonObject = io.vertx.core.json.JsonObject;
 var JProcess = io.vertx.ext.shell.process.Process;
 
 /**
+ A process managed by the shell.
 
  @class
 */
@@ -32,9 +33,10 @@ var Process = function(j_val) {
   var that = this;
 
   /**
+   Execute the process in the given context.
 
    @public
-   @param context {ProcessContext} 
+   @param context {ProcessContext} the context 
    */
   this.execute = function(context) {
     var __args = arguments;

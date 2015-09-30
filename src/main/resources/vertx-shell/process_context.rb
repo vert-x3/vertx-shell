@@ -3,7 +3,7 @@ require 'vertx-shell/tty'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.process.ProcessContext
 module VertxShell
-  #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+  #  Allow a process to interact with its context during execution.
   class ProcessContext
     # @private
     # @param j_del [::VertxShell::ProcessContext] the java delegate

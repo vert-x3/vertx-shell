@@ -7,6 +7,7 @@ import io.vertx.core.cli.CLI;
 import io.vertx.core.cli.Option;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandProcess;
+import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.registry.CommandRegistration;
 import io.vertx.ext.shell.registry.CommandRegistry;
 
@@ -45,19 +46,19 @@ public interface ShellCommands {
           long id = process.vertx().setTimer(millis, v -> {
             process.end();
           });
-          process.eventHandler("SIGINT", v -> {
+          process.eventHandler(EventType.SIGINT, v -> {
             if (vertx.cancelTimer(id)) {
               System.out.println("Cancelling timer");
               process.end();
             }
           });
-          process.eventHandler("SIGTSTP", v -> {
+          process.eventHandler(EventType.SIGTSTP, v -> {
             if (vertx.cancelTimer(id)) {
               remaining.set(millis - (System.currentTimeMillis() - now));
               System.out.println("Suspending timer " + remaining.get());
             }
           });
-          process.eventHandler("SIGCONT", v -> {
+          process.eventHandler(EventType.SIGCONT, v -> {
             scheduleSleep(process, remaining.get());
           });
         } else {

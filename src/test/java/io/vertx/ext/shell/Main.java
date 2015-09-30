@@ -8,6 +8,7 @@ import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.dropwizard.DropwizardMetricsOptions;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.net.SSHOptions;
 import io.vertx.ext.shell.net.TelnetOptions;
@@ -33,17 +34,17 @@ public class Main {
       process.setStdin(line -> {
         stdout.write("-> " + line + "\n");
       });
-      process.eventHandler("SIGINT", v -> process.end());
+      process.eventHandler(EventType.SIGINT, v -> process.end());
     });
     mgr.registerCommand(echoKeyboardCmd);
 
     Command windowCmd = Command.command("window");
     windowCmd.processHandler(process -> {
       process.write("[" + process.width() + "," + process.height() + "]\n");
-      process.eventHandler("SIGWINCH", v -> {
+      process.eventHandler(EventType.SIGWINCH, v -> {
         process.write("[" + process.width() + "," + process.height() + "]\n");
       });
-      process.eventHandler("SIGINT", v -> {
+      process.eventHandler(EventType.SIGINT, v -> {
         process.end();
       });
     });

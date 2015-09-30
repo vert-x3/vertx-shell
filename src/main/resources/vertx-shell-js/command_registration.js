@@ -35,6 +35,7 @@ var CommandRegistration = function(j_val) {
   var that = this;
 
   /**
+   @return the registered command.
 
    @public
 
@@ -48,9 +49,10 @@ var CommandRegistration = function(j_val) {
   };
 
   /**
+   Complete the command for the given completion.
 
    @public
-   @param completion {Completion} 
+   @param completion {Completion} the completion 
    */
   this.complete = function(completion) {
     var __args = arguments;
@@ -60,10 +62,11 @@ var CommandRegistration = function(j_val) {
   };
 
   /**
+   Create a new process with the passed arguments.
 
    @public
-   @param args {Array.<CliToken>} 
-   @return {Process}
+   @param args {Array.<CliToken>} the process arguments 
+   @return {Process} the process
    */
   this.createProcess = function(args) {
     var __args = arguments;

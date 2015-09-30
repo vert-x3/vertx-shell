@@ -27,7 +27,7 @@ import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.cli.CliToken
 import io.vertx.groovy.ext.shell.process.Process
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * A registry that contains the commands known by a shell.
 */
 @CompileStatic
 public class CommandRegistry {
@@ -38,6 +38,11 @@ public class CommandRegistry {
   public Object getDelegate() {
     return delegate;
   }
+  /**
+   * Get the registry for the Vert.x instance
+   * @param vertx the vertx instance
+   * @return the registry
+   */
   public static CommandRegistry get(Vertx vertx) {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.registry.CommandRegistry.get((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.registry.CommandRegistry.class);
     return ret;
@@ -50,8 +55,13 @@ public class CommandRegistry {
     def ret = this.delegate.registrations()?.collect({underpants -> new io.vertx.groovy.ext.shell.registry.CommandRegistration(underpants)});
       return ret;
   }
-  public void createProcess(String s, Handler<AsyncResult<Process>> handler) {
-    this.delegate.createProcess(s, new Handler<AsyncResult<io.vertx.ext.shell.process.Process>>() {
+  /**
+   * Parses a command line and try to create a process.
+   * @param line the command line to parse
+   * @param handler the handler to be notified about process creation
+   */
+  public void createProcess(String line, Handler<AsyncResult<Process>> handler) {
+    this.delegate.createProcess(line, new Handler<AsyncResult<io.vertx.ext.shell.process.Process>>() {
       public void handle(AsyncResult<io.vertx.ext.shell.process.Process> event) {
         AsyncResult<Process> f
         if (event.succeeded()) {
@@ -63,6 +73,11 @@ public class CommandRegistry {
       }
     });
   }
+  /**
+   * Try to create a process from the command line tokens.
+   * @param line the command line tokens
+   * @param handler the handler to be notified about process creation
+   */
   public void createProcess(List<CliToken> line, Handler<AsyncResult<Process>> handler) {
     this.delegate.createProcess((List<io.vertx.ext.shell.cli.CliToken>)(line.collect({underpants -> underpants.getDelegate()})), new Handler<AsyncResult<io.vertx.ext.shell.process.Process>>() {
       public void handle(AsyncResult<io.vertx.ext.shell.process.Process> event) {
@@ -76,9 +91,17 @@ public class CommandRegistry {
       }
     });
   }
+  /**
+   * Perform completion, the completion argument will be notified of the completion progress.
+   * @param completion the completion object
+   */
   public void complete(Completion completion) {
     this.delegate.complete((io.vertx.ext.shell.cli.Completion)completion.getDelegate());
   }
+  /**
+   * Register a command
+   * @param command the command to register
+   */
   public void registerCommand(Command command) {
     this.delegate.registerCommand((io.vertx.ext.shell.command.Command)command.getDelegate());
   }
@@ -95,12 +118,19 @@ public class CommandRegistry {
       }
     });
   }
+  /**
+   * Unregister a command.
+   * @param commandName the command name
+   */
   public void unregisterCommand(String commandName) {
     this.delegate.unregisterCommand(commandName);
   }
   public void unregisterCommand(String commandName, Handler<AsyncResult<Void>> doneHandler) {
     this.delegate.unregisterCommand(commandName, doneHandler);
   }
+  /**
+   * Release the registry.
+   */
   public void release() {
     this.delegate.release();
   }

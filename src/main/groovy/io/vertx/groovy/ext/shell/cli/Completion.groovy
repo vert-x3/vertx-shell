@@ -22,7 +22,7 @@ import java.util.List
 import io.vertx.groovy.ext.shell.Session
 import io.vertx.groovy.core.Vertx
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * The completion object
 */
 @CompileStatic
 public class Completion {
@@ -41,6 +41,10 @@ public class Completion {
     def ret= InternalHelper.safeCreate(this.delegate.vertx(), io.vertx.groovy.core.Vertx.class);
     return ret;
   }
+  /**
+   * @return the shell current session, useful for accessing data like the current path for file completion, etc...
+   * @return 
+   */
   public Session session() {
     def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.groovy.ext.shell.Session.class);
     return ret;
@@ -53,13 +57,26 @@ public class Completion {
     def ret = this.delegate.rawLine();
     return ret;
   }
+  /**
+   * @return the current line being completed as preparsed tokens
+   * @return 
+   */
   public List<CliToken> lineTokens() {
     def ret = this.delegate.lineTokens()?.collect({underpants -> new io.vertx.groovy.ext.shell.cli.CliToken(underpants)});
       return ret;
   }
+  /**
+   * End the completion with a list of candidates, these candidates will be displayed by the shell on the console.
+   * @param candidates the candidates
+   */
   public void complete(List<String> candidates) {
     this.delegate.complete(candidates);
   }
+  /**
+   * End the completion with a value that will be inserted to complete the line.
+   * @param value the value to complete with
+   * @param terminal true if the value is terminal, i.e can be further completed
+   */
   public void complete(String value, boolean terminal) {
     this.delegate.complete(value, terminal);
   }

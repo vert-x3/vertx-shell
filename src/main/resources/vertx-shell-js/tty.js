@@ -23,6 +23,7 @@ var JsonObject = io.vertx.core.json.JsonObject;
 var JTty = io.vertx.ext.shell.io.Tty;
 
 /**
+ Provide interactions with the Shell TTY.
 
  @class
 */
@@ -60,10 +61,11 @@ var Tty = function(j_val) {
   };
 
   /**
+   Set an handler the standard input to read the data in String format.
 
    @public
-   @param stdin {function} 
-   @return {Tty}
+   @param stdin {function} the standard input 
+   @return {Tty} this object
    */
   this.setStdin = function() {
     var __args = arguments;
@@ -79,6 +81,7 @@ var Tty = function(j_val) {
   };
 
   /**
+   @return the standard output for emitting data
 
    @public
 
@@ -92,16 +95,17 @@ var Tty = function(j_val) {
   };
 
   /**
+   Set an event handler to be notified by Shell events.
 
    @public
-   @param event {string} 
+   @param eventType {Object} the event type 
    @param handler {function} 
-   @return {Tty}
+   @return {Tty} 
    */
-  this.eventHandler = function(event, handler) {
+  this.eventHandler = function(eventType, handler) {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_tty["eventHandler(java.lang.String,io.vertx.core.Handler)"](event, handler);
+      j_tty["eventHandler(io.vertx.ext.shell.io.EventType,io.vertx.core.Handler)"](io.vertx.ext.shell.io.EventType.valueOf(__args[0]), handler);
       return that;
     } else utils.invalidArgs();
   };

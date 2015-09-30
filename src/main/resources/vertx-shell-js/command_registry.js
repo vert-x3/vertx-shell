@@ -28,6 +28,7 @@ var JsonObject = io.vertx.core.json.JsonObject;
 var JCommandRegistry = io.vertx.ext.shell.registry.CommandRegistry;
 
 /**
+ A registry that contains the commands known by a shell.
 
  @class
 */
@@ -51,10 +52,11 @@ var CommandRegistry = function(j_val) {
   };
 
   /**
+   Try to create a process from the command line tokens.
 
    @public
-   @param line {Array.<CliToken>} 
-   @param handler {function} 
+   @param line {Array.<CliToken>} the command line tokens 
+   @param handler {function} the handler to be notified about process creation 
    */
   this.createProcess = function() {
     var __args = arguments;
@@ -78,9 +80,10 @@ var CommandRegistry = function(j_val) {
   };
 
   /**
+   Perform completion, the completion argument will be notified of the completion progress.
 
    @public
-   @param completion {Completion} 
+   @param completion {Completion} the completion object 
    */
   this.complete = function(completion) {
     var __args = arguments;
@@ -132,6 +135,7 @@ var CommandRegistry = function(j_val) {
   };
 
   /**
+   Release the registry.
 
    @public
 
@@ -150,10 +154,11 @@ var CommandRegistry = function(j_val) {
 };
 
 /**
+ Get the registry for the Vert.x instance
 
  @memberof module:vertx-shell-js/command_registry
- @param vertx {Vertx} 
- @return {CommandRegistry}
+ @param vertx {Vertx} the vertx instance 
+ @return {CommandRegistry} the registry
  */
 CommandRegistry.get = function(vertx) {
   var __args = arguments;

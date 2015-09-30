@@ -24,7 +24,7 @@ import io.vertx.groovy.ext.shell.cli.Completion
 import io.vertx.groovy.ext.shell.cli.CliToken
 import io.vertx.groovy.ext.shell.process.Process
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * A registration of a command in the {@link io.vertx.groovy.ext.shell.registry.CommandRegistry}
 */
 @CompileStatic
 public class CommandRegistration {
@@ -35,13 +35,26 @@ public class CommandRegistration {
   public Object getDelegate() {
     return delegate;
   }
+  /**
+   * @return the registered command.
+   * @return 
+   */
   public Command command() {
     def ret= InternalHelper.safeCreate(this.delegate.command(), io.vertx.groovy.ext.shell.command.Command.class);
     return ret;
   }
+  /**
+   * Complete the command for the given completion.
+   * @param completion the completion
+   */
   public void complete(Completion completion) {
     this.delegate.complete((io.vertx.ext.shell.cli.Completion)completion.getDelegate());
   }
+  /**
+   * Create a new process with the passed arguments.
+   * @param args the process arguments
+   * @return the process
+   */
   public Process createProcess(List<CliToken> args) {
     def ret= InternalHelper.safeCreate(this.delegate.createProcess((List<io.vertx.ext.shell.cli.CliToken>)(args.collect({underpants -> underpants.getDelegate()}))), io.vertx.groovy.ext.shell.process.Process.class);
     return ret;

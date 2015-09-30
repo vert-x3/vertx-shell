@@ -19,7 +19,7 @@ import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * A process managed by the shell.
 */
 @CompileStatic
 public class Process {
@@ -30,6 +30,10 @@ public class Process {
   public Object getDelegate() {
     return delegate;
   }
+  /**
+   * Execute the process in the given context.
+   * @param context the context
+   */
   public void execute(ProcessContext context) {
     this.delegate.execute((io.vertx.ext.shell.process.ProcessContext)context.getDelegate());
   }

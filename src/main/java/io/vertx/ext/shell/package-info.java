@@ -167,7 +167,7 @@
  *
  * ==== `SIGINT` event
  *
- * The `SIGINT` event is fired when the process is interrupted, this event is fired when the user press
+ * The {@link io.vertx.ext.shell.io.EventType#SIGINT} event is fired when the process is interrupted, this event is fired when the user press
  * _Ctrl+C_ during the execution of a command. This handler can be used for interrupting commands _blocking_ the CLI and
  * gracefully ending the command process:
  *
@@ -181,14 +181,14 @@
  *
  * ==== `SIGTSTP`/`SIGCONT` events
  *
- * The `SIGSTP` event is fired when the process is running and the user press _Ctrl+Z_: the command
+ * The {@link io.vertx.ext.shell.io.EventType#SIGTSTP} event is fired when the process is running and the user press _Ctrl+Z_: the command
  * is _suspended_:
  *
- * - the command can receive the `SIGSTP` event when it has registered an handler for this event
+ * - the command can receive the `SIGTSTP` event when it has registered an handler for this event
  * - the command will not receive anymore data from the standard input
  * - the shell prompt the user for input
  *
- * The `SIGCONT` event is fired when the process is resumed, usually when the user types _fg_:
+ * The {@link io.vertx.ext.shell.io.EventType#SIGCONT} event is fired when the process is resumed, usually when the user types _fg_:
  *
  * - the command can receive the `SIGCONT` event when it has registered an handler for this event
  * - the command will receive anymore data from the standard input when it has registered an stdin handler
@@ -200,7 +200,7 @@
  *
  * ==== `SIGWINCH` event
  *
- * The `SIGWINCH` event is fired when the size of the terminal changes, the new terminal size can be obtained
+ * The {@link io.vertx.ext.shell.io.EventType#SIGWINCH} event is fired when the size of the terminal changes, the new terminal size can be obtained
  * with {@link io.vertx.ext.shell.command.CommandProcess#width()} and {@link io.vertx.ext.shell.command.CommandProcess#height()}.
  *
  * === Command completion

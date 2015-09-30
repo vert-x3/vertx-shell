@@ -7,7 +7,7 @@ require 'vertx-shell/process'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.registry.CommandRegistry
 module VertxShell
-  #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+  #  A registry that contains the commands known by a shell.
   class CommandRegistry
     # @private
     # @param j_del [::VertxShell::CommandRegistry] the java delegate
@@ -19,8 +19,9 @@ module VertxShell
     def j_del
       @j_del
     end
-    # @param [::Vertx::Vertx] vertx 
-    # @return [::VertxShell::CommandRegistry]
+    #  Get the registry for the Vert.x instance
+    # @param [::Vertx::Vertx] vertx the vertx instance
+    # @return [::VertxShell::CommandRegistry] the registry
     def self.get(vertx=nil)
       if vertx.class.method_defined?(:j_del) && !block_given?
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellRegistry::CommandRegistry.java_method(:get, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::CommandRegistry)
@@ -35,12 +36,13 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling registrations()"
     end
-    # @overload createProcess(s,handler)
-    #   @param [String] s 
-    #   @yield 
+    #  Try to create a process from the command line tokens.
     # @overload createProcess(line,handler)
-    #   @param [Array<::VertxShell::CliToken>] line 
-    #   @yield 
+    #   @param [String] line the command line to parse
+    #   @yield the handler to be notified about process creation
+    # @overload createProcess(line,handler)
+    #   @param [Array<::VertxShell::CliToken>] line the command line tokens
+    #   @yield the handler to be notified about process creation
     # @return [void]
     def create_process(param_1=nil)
       if param_1.class == String && block_given?
@@ -50,7 +52,8 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling create_process(param_1)"
     end
-    # @param [::VertxShell::Completion] completion 
+    #  Perform completion, the completion argument will be notified of the completion progress.
+    # @param [::VertxShell::Completion] completion the completion object
     # @return [void]
     def complete(completion=nil)
       if completion.class.method_defined?(:j_del) && !block_given?
@@ -80,6 +83,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling unregister_command(commandName)"
     end
+    #  Release the registry.
     # @return [void]
     def release
       if !block_given?

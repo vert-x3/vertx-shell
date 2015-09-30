@@ -8,6 +8,7 @@ import io.vertx.core.cli.CommandLine;
 import io.vertx.core.cli.Option;
 import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.cli.Completion;
+import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandProcess;
@@ -157,15 +158,15 @@ public class CommandRegistrationImpl implements CommandRegistration {
           }
 
           @Override
-          public CommandProcess eventHandler(String event, Handler<Void> handler) {
+          public CommandProcess eventHandler(EventType eventType, Handler<Void> handler) {
             if (handler != null) {
-              context.tty().eventHandler(event, v -> {
+              context.tty().eventHandler(eventType, v -> {
                 CommandRegistrationImpl.this.context.runOnContext(v2 -> {
                   handler.handle(null);
                 });
               });
             } else {
-              context.tty().eventHandler(event, null);
+              context.tty().eventHandler(eventType, null);
             }
             return this;
           }

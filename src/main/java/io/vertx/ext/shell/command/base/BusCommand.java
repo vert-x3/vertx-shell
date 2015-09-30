@@ -3,6 +3,7 @@ package io.vertx.ext.shell.command.base;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.io.EventType;
 
 import java.util.List;
 
@@ -39,7 +40,7 @@ public interface BusCommand {
         MessageConsumer<Object> consumer = process.vertx().eventBus().consumer(address, msg -> {
           process.write("" + msg.body() + "\n");
         });
-        process.eventHandler("SIGINT", done -> {
+        process.eventHandler(EventType.SIGINT, done -> {
           consumer.unregister();
           process.end();
         });

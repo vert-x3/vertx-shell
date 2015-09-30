@@ -29,7 +29,7 @@ import io.vertx.rxjava.ext.shell.cli.CliToken;
 import io.vertx.rxjava.ext.shell.process.Process;
 
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * A registry that contains the commands known by a shell.
  *
  * <p/>
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.registry.CommandRegistry original} non RX-ified interface using Vert.x codegen.
@@ -47,6 +47,11 @@ public class CommandRegistry {
     return delegate;
   }
 
+  /**
+   * Get the registry for the Vert.x instance
+   * @param vertx the vertx instance
+   * @return the registry
+   */
   public static CommandRegistry get(Vertx vertx) { 
     CommandRegistry ret= CommandRegistry.newInstance(io.vertx.ext.shell.registry.CommandRegistry.get((io.vertx.core.Vertx) vertx.getDelegate()));
     return ret;
@@ -61,8 +66,13 @@ public class CommandRegistry {
     return ret;
   }
 
-  public void createProcess(String s, Handler<AsyncResult<Process>> handler) { 
-    this.delegate.createProcess(s, new Handler<AsyncResult<io.vertx.ext.shell.process.Process>>() {
+  /**
+   * Parses a command line and try to create a process.
+   * @param line the command line to parse
+   * @param handler the handler to be notified about process creation
+   */
+  public void createProcess(String line, Handler<AsyncResult<Process>> handler) { 
+    this.delegate.createProcess(line, new Handler<AsyncResult<io.vertx.ext.shell.process.Process>>() {
       public void handle(AsyncResult<io.vertx.ext.shell.process.Process> event) {
         AsyncResult<Process> f;
         if (event.succeeded()) {
@@ -75,12 +85,22 @@ public class CommandRegistry {
     });
   }
 
-  public Observable<Process> createProcessObservable(String s) { 
+  /**
+   * Parses a command line and try to create a process.
+   * @param line the command line to parse
+   * @return 
+   */
+  public Observable<Process> createProcessObservable(String line) { 
     io.vertx.rx.java.ObservableFuture<Process> handler = io.vertx.rx.java.RxHelper.observableFuture();
-    createProcess(s, handler.toHandler());
+    createProcess(line, handler.toHandler());
     return handler;
   }
 
+  /**
+   * Try to create a process from the command line tokens.
+   * @param line the command line tokens
+   * @param handler the handler to be notified about process creation
+   */
   public void createProcess(List<CliToken> line, Handler<AsyncResult<Process>> handler) { 
     this.delegate.createProcess(line.stream().map(element -> (io.vertx.ext.shell.cli.CliToken)element.getDelegate()).collect(java.util.stream.Collectors.toList()), new Handler<AsyncResult<io.vertx.ext.shell.process.Process>>() {
       public void handle(AsyncResult<io.vertx.ext.shell.process.Process> event) {
@@ -95,16 +115,29 @@ public class CommandRegistry {
     });
   }
 
+  /**
+   * Try to create a process from the command line tokens.
+   * @param line the command line tokens
+   * @return 
+   */
   public Observable<Process> createProcessObservable(List<CliToken> line) { 
     io.vertx.rx.java.ObservableFuture<Process> handler = io.vertx.rx.java.RxHelper.observableFuture();
     createProcess(line, handler.toHandler());
     return handler;
   }
 
+  /**
+   * Perform completion, the completion argument will be notified of the completion progress.
+   * @param completion the completion object
+   */
   public void complete(Completion completion) { 
     this.delegate.complete((io.vertx.ext.shell.cli.Completion) completion.getDelegate());
   }
 
+  /**
+   * Register a command
+   * @param command the command to register
+   */
   public void registerCommand(Command command) { 
     this.delegate.registerCommand((io.vertx.ext.shell.command.Command) command.getDelegate());
   }
@@ -129,6 +162,10 @@ public class CommandRegistry {
     return doneHandler;
   }
 
+  /**
+   * Unregister a command.
+   * @param commandName the command name
+   */
   public void unregisterCommand(String commandName) { 
     this.delegate.unregisterCommand(commandName);
   }
@@ -143,6 +180,9 @@ public class CommandRegistry {
     return doneHandler;
   }
 
+  /**
+   * Release the registry.
+   */
   public void release() { 
     this.delegate.release();
   }

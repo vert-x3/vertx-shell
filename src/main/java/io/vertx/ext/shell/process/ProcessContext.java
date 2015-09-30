@@ -5,6 +5,8 @@ import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.io.Tty;
 
 /**
+ * Allow a process to interact with its context during execution.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen

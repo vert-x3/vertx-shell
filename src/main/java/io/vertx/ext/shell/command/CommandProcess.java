@@ -6,6 +6,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.cli.CommandLine;
 import io.vertx.ext.shell.Session;
+import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.io.Tty;
 import io.vertx.ext.shell.cli.CliToken;
@@ -47,7 +48,7 @@ public interface CommandProcess extends Tty {
   CommandProcess setStdin(Stream stdin);
 
   @Fluent
-  CommandProcess eventHandler(String event, Handler<Void> handler);
+  CommandProcess eventHandler(EventType eventType, Handler<Void> handler);
 
   @Fluent
   CommandProcess write(String text);

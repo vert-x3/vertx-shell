@@ -26,7 +26,7 @@ import io.vertx.rxjava.ext.shell.cli.CliToken;
 import io.vertx.rxjava.ext.shell.process.Process;
 
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * A registration of a command in the {@link io.vertx.rxjava.ext.shell.registry.CommandRegistry}
  *
  * <p/>
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.registry.CommandRegistration original} non RX-ified interface using Vert.x codegen.
@@ -44,15 +44,28 @@ public class CommandRegistration {
     return delegate;
   }
 
+  /**
+   * @return the registered command.
+   * @return 
+   */
   public Command command() { 
     Command ret= Command.newInstance(this.delegate.command());
     return ret;
   }
 
+  /**
+   * Complete the command for the given completion.
+   * @param completion the completion
+   */
   public void complete(Completion completion) { 
     this.delegate.complete((io.vertx.ext.shell.cli.Completion) completion.getDelegate());
   }
 
+  /**
+   * Create a new process with the passed arguments.
+   * @param args the process arguments
+   * @return the process
+   */
   public Process createProcess(List<CliToken> args) { 
     Process ret= Process.newInstance(this.delegate.createProcess(args.stream().map(element -> (io.vertx.ext.shell.cli.CliToken)element.getDelegate()).collect(java.util.stream.Collectors.toList())));
     return ret;

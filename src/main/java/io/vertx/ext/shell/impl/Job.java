@@ -3,6 +3,7 @@ package io.vertx.ext.shell.impl;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.Session;
+import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
 
 import io.vertx.ext.shell.process.*;
@@ -20,7 +21,7 @@ public class Job {
   final Shell shell;
   final io.vertx.ext.shell.process.Process process;
   final String line;
-  final HashMap<String, Handler<Void>> eventHandlers = new HashMap<>();
+  final HashMap<EventType, Handler<Void>> eventHandlers = new HashMap<>();
   volatile JobStatus status;
   volatile long lastStopped; // When the job was last stopped
   volatile Stream stdout;
@@ -33,7 +34,7 @@ public class Job {
     this.line = line;
   }
 
-  boolean sendEvent(String event) {
+  boolean sendEvent(EventType event) {
     Handler<Void> handler = eventHandlers.get(event);
     if (handler != null) {
       handler.handle(null);
@@ -90,11 +91,11 @@ public class Job {
         return Job.this.stdout;
       }
       @Override
-      public Tty eventHandler(String event, Handler<Void> handler) {
+      public Tty eventHandler(EventType eventType, Handler<Void> handler) {
         if (handler != null) {
-          eventHandlers.put(event, handler);
+          eventHandlers.put(eventType, handler);
         } else {
-          eventHandlers.remove(event);
+          eventHandlers.remove(eventType);
         }
         return this;
       }

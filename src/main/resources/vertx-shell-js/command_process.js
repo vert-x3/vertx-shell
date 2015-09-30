@@ -124,14 +124,14 @@ var CommandProcess = function(j_val) {
   /**
 
    @public
-   @param event {string} 
+   @param eventType {Object} 
    @param handler {function} 
    @return {CommandProcess}
    */
-  this.eventHandler = function(event, handler) {
+  this.eventHandler = function(eventType, handler) {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_commandProcess["eventHandler(java.lang.String,io.vertx.core.Handler)"](event, handler);
+      j_commandProcess["eventHandler(io.vertx.ext.shell.io.EventType,io.vertx.core.Handler)"](io.vertx.ext.shell.io.EventType.valueOf(__args[0]), handler);
       return that;
     } else utils.invalidArgs();
   };

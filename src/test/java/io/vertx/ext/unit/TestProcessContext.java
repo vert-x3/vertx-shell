@@ -4,6 +4,7 @@ import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.Session;
+import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.impl.SessionImpl;
 import io.vertx.ext.shell.process.ProcessContext;
@@ -19,7 +20,7 @@ class TestProcessContext implements ProcessContext, Tty {
   final SessionImpl session = new SessionImpl();
   private Handler<Integer> endHandler;
   final Context context = Vertx.currentContext();
-  final HashMap<String, Handler<Void>> eventHandlers = new HashMap<>();
+  final HashMap<EventType, Handler<Void>> eventHandlers = new HashMap<>();
   int width, height;
   Handler<String> stdin;
   private Stream stdout;
@@ -54,7 +55,7 @@ class TestProcessContext implements ProcessContext, Tty {
   public void setWindowSize(int width, int height) {
     this.width = width;
     this.height = height;
-    sendEvent("SIGWINCH");
+    sendEvent(EventType.SIGWINCH);
   }
 
   @Override
@@ -79,11 +80,11 @@ class TestProcessContext implements ProcessContext, Tty {
   }
 
   @Override
-  public TestProcessContext eventHandler(String event, Handler<Void> handler) {
+  public TestProcessContext eventHandler(EventType eventType, Handler<Void> handler) {
     if (handler != null) {
-      eventHandlers.put(event, handler);
+      eventHandlers.put(eventType, handler);
     } else {
-      eventHandlers.remove(event);
+      eventHandlers.remove(eventType);
     }
     return this;
   }
@@ -93,8 +94,8 @@ class TestProcessContext implements ProcessContext, Tty {
     return session;
   }
 
-  public boolean sendEvent(String event) {
-    Handler<Void> handler = eventHandlers.get(event);
+  public boolean sendEvent(EventType eventType) {
+    Handler<Void> handler = eventHandlers.get(eventType);
     if (handler != null) {
       handler.handle(null);
       return true;

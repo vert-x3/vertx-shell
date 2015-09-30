@@ -24,6 +24,7 @@ var JsonObject = io.vertx.core.json.JsonObject;
 var JProcessContext = io.vertx.ext.shell.process.ProcessContext;
 
 /**
+ Allow a process to interact with its context during execution.
 
  @class
 */

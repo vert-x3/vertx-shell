@@ -69,15 +69,15 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling set_stdin(stdin)"
     end
-    # @param [String] event 
+    # @param [:SIGTSTP,:EOF,:SIGINT,:SIGWINCH,:SIGCONT] eventType 
     # @yield 
     # @return [self]
-    def event_handler(event=nil)
-      if event.class == String && block_given?
-        @j_del.java_method(:eventHandler, [Java::java.lang.String.java_class,Java::IoVertxCore::Handler.java_class]).call(event,Proc.new { yield })
+    def event_handler(eventType=nil)
+      if eventType.class == Symbol && block_given?
+        @j_del.java_method(:eventHandler, [Java::IoVertxExtShellIo::EventType.java_class,Java::IoVertxCore::Handler.java_class]).call(Java::IoVertxExtShellIo::EventType.valueOf(eventType),Proc.new { yield })
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling event_handler(event)"
+      raise ArgumentError, "Invalid arguments when calling event_handler(eventType)"
     end
     # @param [String] text 
     # @return [self]

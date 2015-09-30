@@ -4,7 +4,7 @@ require 'vertx-shell/cli_token'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.cli.Completion
 module VertxShell
-  #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+  #  The completion object
   class Completion
     # @private
     # @param j_del [::VertxShell::Completion] the java delegate
@@ -24,6 +24,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling vertx()"
     end
+    #  @return the shell current session, useful for accessing data like the current path for file completion, etc...
     # @return [::VertxShell::Session]
     def session
       if !block_given?
@@ -39,6 +40,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling raw_line()"
     end
+    #  @return the current line being completed as preparsed tokens
     # @return [Array<::VertxShell::CliToken>]
     def line_tokens
       if !block_given?
@@ -46,11 +48,12 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling line_tokens()"
     end
+    #  End the completion with a value that will be inserted to complete the line.
     # @overload complete(candidates)
-    #   @param [Array<String>] candidates 
+    #   @param [Array<String>] candidates the candidates
     # @overload complete(value,terminal)
-    #   @param [String] value 
-    #   @param [true,false] terminal 
+    #   @param [String] value the value to complete with
+    #   @param [true,false] terminal true if the value is terminal, i.e can be further completed
     # @return [void]
     def complete(param_1=nil,param_2=nil)
       if param_1.class == Array && !block_given? && param_2 == nil

@@ -21,7 +21,7 @@ import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * A process managed by the shell.
  *
  * <p/>
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.process.Process original} non RX-ified interface using Vert.x codegen.
@@ -39,6 +39,10 @@ public class Process {
     return delegate;
   }
 
+  /**
+   * Execute the process in the given context.
+   * @param context the context
+   */
   public void execute(ProcessContext context) { 
     this.delegate.execute((io.vertx.ext.shell.process.ProcessContext) context.getDelegate());
   }

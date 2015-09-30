@@ -4,6 +4,7 @@ import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -112,7 +113,7 @@ public class ShellServiceTest {
           testContext.assertEquals("ping", text);
           process.write("pong");
         });
-        process.eventHandler("SIGTERM", event -> {
+        process.eventHandler(EventType.SIGTSTP, event -> {
           testContext.assertTrue(commandCtx == Vertx.currentContext());
           process.end(0);
         });
@@ -136,8 +137,8 @@ public class ShellServiceTest {
             ctx.setStdout(Stream.ofObject(text -> {
               testContext.assertTrue(shellCtx == Vertx.currentContext());
               testContext.assertEquals("pong", text);
-              testContext.assertTrue(ctx.sendEvent("SIGTERM"));
-              testContext.assertFalse(ctx.sendEvent("WHATEVER"));
+              testContext.assertTrue(ctx.sendEvent(EventType.SIGTSTP));
+              testContext.assertFalse(ctx.sendEvent(EventType.EOF));
             }));
             ctx.stdin.handle("ping");
           }));
@@ -152,7 +153,7 @@ public class ShellServiceTest {
     Command cmd = Command.command("foo");
     CountDownLatch latch = new CountDownLatch(1);
     cmd.processHandler(process -> {
-      process.eventHandler("SIGTERM", v -> {
+      process.eventHandler(EventType.SIGTSTP, v -> {
         process.end(0);
       });
       latch.countDown();
@@ -170,7 +171,7 @@ public class ShellServiceTest {
         } catch (InterruptedException e) {
           context.fail(e);
         }
-        ctx.sendEvent("SIGTERM");
+        ctx.sendEvent(EventType.SIGTSTP);
       }));
     }));
   }
@@ -182,7 +183,7 @@ public class ShellServiceTest {
     cmd.processHandler(process -> {
       context.assertEquals(20, process.width());
       context.assertEquals(10, process.height());
-      process.eventHandler("SIGWINCH", v -> {
+      process.eventHandler(EventType.SIGWINCH, v -> {
         context.assertEquals(25, process.width());
         context.assertEquals(15, process.height());
         process.end(0);

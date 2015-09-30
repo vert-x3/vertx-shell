@@ -8,6 +8,7 @@ import io.vertx.core.cli.Option;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
+import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.net.SSHOptions;
 import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.ShellService;
@@ -172,7 +173,7 @@ public class Examples {
       });
 
       // When user press Ctrl+C: cancel the timer and end the process
-      process.eventHandler("SIGINT", event -> {
+      process.eventHandler(EventType.SIGINT, event -> {
         vertx.cancelTimer(periodicId);
         process.end();
       });
@@ -183,12 +184,12 @@ public class Examples {
     command.processHandler(process -> {
 
       // Command is suspended
-      process.eventHandler("SIGTSTP", event -> {
+      process.eventHandler(EventType.SIGTSTP, event -> {
         System.out.println("Suspended");
       });
 
       // Command is resumed
-      process.eventHandler("SIGCONT", event -> {
+      process.eventHandler(EventType.SIGCONT, event -> {
         System.out.println("Resumed");
       });
     });

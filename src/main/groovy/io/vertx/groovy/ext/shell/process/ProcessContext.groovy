@@ -21,7 +21,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.Session
 import io.vertx.groovy.ext.shell.io.Tty
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * Allow a process to interact with its context during execution.
 */
 @CompileStatic
 public class ProcessContext {

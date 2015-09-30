@@ -19,10 +19,11 @@ package io.vertx.rxjava.ext.shell.io;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
+import io.vertx.ext.shell.io.EventType;
 import io.vertx.core.Handler;
 
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * Provide interactions with the Shell TTY.
  *
  * <p/>
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.io.Tty original} non RX-ified interface using Vert.x codegen.
@@ -58,23 +59,43 @@ public class Tty {
     return ret;
   }
 
+  /**
+   * Set a stream on the standard input to read the data.
+   * @param stdin the standard input
+   * @return this object
+   */
   public Tty setStdin(Stream stdin) { 
     this.delegate.setStdin((io.vertx.ext.shell.io.Stream) stdin.getDelegate());
     return this;
   }
 
+  /**
+   * Set an handler the standard input to read the data in String format.
+   * @param stdin the standard input
+   * @return this object
+   */
   public Tty setStdin(Handler<String> stdin) { 
     this.delegate.setStdin(stdin);
     return this;
   }
 
+  /**
+   * @return the standard output for emitting data
+   * @return 
+   */
   public Stream stdout() { 
     Stream ret= Stream.newInstance(this.delegate.stdout());
     return ret;
   }
 
-  public Tty eventHandler(String event, Handler<Void> handler) { 
-    this.delegate.eventHandler(event, handler);
+  /**
+   * Set an event handler to be notified by Shell events.
+   * @param eventType the event type
+   * @param handler 
+   * @return 
+   */
+  public Tty eventHandler(EventType eventType, Handler<Void> handler) { 
+    this.delegate.eventHandler(eventType, handler);
     return this;
   }
 

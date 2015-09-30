@@ -18,9 +18,10 @@ package io.vertx.groovy.ext.shell.io;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
+import io.vertx.ext.shell.io.EventType
 import io.vertx.core.Handler
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * Provide interactions with the Shell TTY.
 */
 @CompileStatic
 public class Tty {
@@ -47,20 +48,40 @@ public class Tty {
     def ret = this.delegate.height();
     return ret;
   }
+  /**
+   * Set a stream on the standard input to read the data.
+   * @param stdin the standard input
+   * @return this object
+   */
   public Tty setStdin(Stream stdin) {
     this.delegate.setStdin((io.vertx.ext.shell.io.Stream)stdin.getDelegate());
     return this;
   }
+  /**
+   * Set an handler the standard input to read the data in String format.
+   * @param stdin the standard input
+   * @return this object
+   */
   public Tty setStdin(Handler<String> stdin) {
     this.delegate.setStdin(stdin);
     return this;
   }
+  /**
+   * @return the standard output for emitting data
+   * @return 
+   */
   public Stream stdout() {
     def ret= InternalHelper.safeCreate(this.delegate.stdout(), io.vertx.groovy.ext.shell.io.Stream.class);
     return ret;
   }
-  public Tty eventHandler(String event, Handler<Void> handler) {
-    this.delegate.eventHandler(event, handler);
+  /**
+   * Set an event handler to be notified by Shell events.
+   * @param eventType the event type
+   * @param handler 
+   * @return 
+   */
+  public Tty eventHandler(EventType eventType, Handler<Void> handler) {
+    this.delegate.eventHandler(eventType, handler);
     return this;
   }
 }

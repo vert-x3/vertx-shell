@@ -2,7 +2,7 @@ require 'vertx-shell/process_context'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.process.Process
 module VertxShell
-  #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+  #  A process managed by the shell.
   class Process
     # @private
     # @param j_del [::VertxShell::Process] the java delegate
@@ -14,7 +14,8 @@ module VertxShell
     def j_del
       @j_del
     end
-    # @param [::VertxShell::ProcessContext] context 
+    #  Execute the process in the given context.
+    # @param [::VertxShell::ProcessContext] context the context
     # @return [void]
     def execute(context=nil)
       if context.class.method_defined?(:j_del) && !block_given?

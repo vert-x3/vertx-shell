@@ -23,7 +23,7 @@ import io.vertx.rxjava.ext.shell.Session;
 import io.vertx.rxjava.ext.shell.io.Tty;
 
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * Allow a process to interact with its context during execution.
  *
  * <p/>
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.process.ProcessContext original} non RX-ified interface using Vert.x codegen.

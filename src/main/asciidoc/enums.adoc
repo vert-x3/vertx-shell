@@ -1,0 +1,36 @@
+= Enums
+
+[[EventType]]
+== EventType
+
+++++
+ An event emitted by a link
+++++
+'''
+
+[cols=">25%,75%"]
+[frame="topbot"]
+|===
+^|Name | Description
+|[[SIGTSTP]]`SIGTSTP`|
++++
+Fired when the process is running and is stopped.
++++
+|[[EOF]]`EOF`|
++++
+Fired when an End Of File is encountered.
++++
+|[[SIGINT]]`SIGINT`|
++++
+Fired when the process is interrupted.
++++
+|[[SIGWINCH]]`SIGWINCH`|
++++
+Fired when the size of the terminal changes.
++++
+|[[SIGCONT]]`SIGCONT`|
++++
+Fired when the process is resumed.
++++
+|===
+

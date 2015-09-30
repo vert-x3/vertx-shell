@@ -8,6 +8,7 @@ import io.termd.core.util.Vector;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.cli.Completion;
+import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.cli.CliToken;
@@ -82,14 +83,14 @@ public class Shell {
     conn.setSizeHandler(resize -> {
       Job job = foregroundJob;
       if (job != null) {
-        job.sendEvent("SIGWINCH");
+        job.sendEvent(EventType.SIGWINCH);
       }
     });
     conn.setEventHandler((event, cp) -> {
       Job job = foregroundJob;
       switch (event) {
         case INTR:
-          if (!job.sendEvent("SIGINT")) {
+          if (!job.sendEvent(EventType.SIGINT)) {
             echo(cp);
             readline.queueEvent(new int[]{cp});
           } else {
@@ -98,7 +99,7 @@ public class Shell {
           break;
         case EOF:
           // Pseudo signal
-          if (!job.sendEvent("EOF")) {
+          if (!job.sendEvent(EventType.EOF)) {
             echo(cp);
             readline.queueEvent(new int[]{cp});
           }
@@ -109,7 +110,7 @@ public class Shell {
           foregroundJob = null;
           job.stdout = null;
           job.status = JobStatus.STOPPED;
-          job.sendEvent("SIGTSTP");
+          job.sendEvent(EventType.SIGTSTP);
           read(readline);
           break;
       }
@@ -222,7 +223,7 @@ public class Shell {
               if (job.status == JobStatus.STOPPED) {
                 job.stdout = Stream.ofString(conn::write); // We set stdout whether or not it's background (maybe do something different)
                 job.status = JobStatus.RUNNING;
-                job.sendEvent("SIGCONT");
+                job.sendEvent(EventType.SIGCONT);
               } else {
                 // BG -> FG : nothing to do for now
               }
@@ -237,7 +238,7 @@ public class Shell {
               if (job.status == JobStatus.STOPPED) {
                 job.stdout = Stream.ofString(conn::write); // We set stdout whether or not it's background (maybe do something different)
                 job.status = JobStatus.RUNNING;
-                job.sendEvent("SIGCONT");
+                job.sendEvent(EventType.SIGCONT);
                 echo(Helper.toCodePoints(job.statusLine() + "\n"));
               } else {
                 conn.write("job " + job.id + " already in background\n");

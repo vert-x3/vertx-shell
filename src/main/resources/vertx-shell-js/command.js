@@ -25,6 +25,7 @@ var JsonObject = io.vertx.core.json.JsonObject;
 var JCommand = io.vertx.ext.shell.command.Command;
 
 /**
+ A shell command.
 
  @class
 */
@@ -34,6 +35,7 @@ var Command = function(j_val) {
   var that = this;
 
   /**
+   @return the command name
 
    @public
 
@@ -47,10 +49,11 @@ var Command = function(j_val) {
   };
 
   /**
+   Set a command process handler on the command, the process handler is called when the command is executed.
 
    @public
-   @param handler {function} 
-   @return {Command}
+   @param handler {function} the process handler 
+   @return {Command} this command object
    */
   this.processHandler = function(handler) {
     var __args = arguments;
@@ -63,10 +66,12 @@ var Command = function(j_val) {
   };
 
   /**
+   Set the command completion handler, the completion handler when the user asks for contextual command line
+   completion, usually hitting the <i>tab</i> key.
 
    @public
-   @param handler {function} 
-   @return {Command}
+   @param handler {function} the completion handler 
+   @return {Command} this command object
    */
   this.completionHandler = function(handler) {
     var __args = arguments;
@@ -85,11 +90,12 @@ var Command = function(j_val) {
 };
 
 /**
- Create a new commmand.
+ Create a new commmand with its {@link CLI} descriptor. This command can then retrieve the parsed
+ {@link CommandProcess#commandLine} when it executes to know get the command arguments and options.
 
  @memberof module:vertx-shell-js/command
- @param cli {CLI} 
- @return {Command} the command object
+ @param cli {CLI} the cli to use 
+ @return {Command} the command
  */
 Command.command = function() {
   var __args = arguments;

@@ -24,6 +24,7 @@ import io.vertx.groovy.ext.shell.Session
 import io.vertx.groovy.ext.shell.io.Stream
 import io.vertx.groovy.ext.shell.io.Tty
 import io.vertx.groovy.core.Vertx
+import io.vertx.ext.shell.io.EventType
 import io.vertx.groovy.ext.shell.cli.CliToken
 import io.vertx.core.Handler
 /**
@@ -83,8 +84,8 @@ public class CommandProcess extends Tty {
     ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).setStdin((io.vertx.ext.shell.io.Stream)stdin.getDelegate());
     return this;
   }
-  public CommandProcess eventHandler(String event, Handler<Void> handler) {
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).eventHandler(event, handler);
+  public CommandProcess eventHandler(EventType eventType, Handler<Void> handler) {
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).eventHandler(eventType, handler);
     return this;
   }
   public CommandProcess write(String text) {

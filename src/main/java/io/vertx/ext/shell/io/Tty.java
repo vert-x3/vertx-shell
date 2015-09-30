@@ -5,6 +5,8 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 
 /**
+ * Provide interactions with the Shell TTY.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
@@ -20,15 +22,37 @@ public interface Tty {
    */
   int height();
 
+  /**
+   * Set a stream on the standard input to read the data.
+   *
+   * @param stdin the standard input
+   * @return this object
+   */
   @Fluent
   Tty setStdin(Stream stdin);
 
+  /**
+   * Set an handler the standard input to read the data in String format.
+   *
+   * @param stdin the standard input
+   * @return this object
+   */
   @Fluent
   Tty setStdin(Handler<String> stdin);
 
+  /**
+   * @return the standard output for emitting data
+   */
   Stream stdout();
 
+  /**
+   * Set an event handler to be notified by Shell events.
+   *
+   * @param eventType the event type
+   * @param handler
+   * @return
+   */
   @Fluent
-  Tty eventHandler(String event, Handler<Void> handler);
+  Tty eventHandler(EventType eventType, Handler<Void> handler);
 
 }

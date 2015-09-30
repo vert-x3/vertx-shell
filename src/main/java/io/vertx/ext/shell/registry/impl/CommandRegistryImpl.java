@@ -94,8 +94,8 @@ public class CommandRegistryImpl implements CommandRegistry {
   }
 
   @Override
-  public void createProcess(String s, Handler<AsyncResult<io.vertx.ext.shell.process.Process>> handler) {
-    createProcess(CliToken.tokenize(s), handler);
+  public void createProcess(String line, Handler<AsyncResult<io.vertx.ext.shell.process.Process>> handler) {
+    createProcess(CliToken.tokenize(line), handler);
   }
 
   @Override

@@ -25,6 +25,7 @@ var JsonObject = io.vertx.core.json.JsonObject;
 var JCompletion = io.vertx.ext.shell.cli.Completion;
 
 /**
+ The completion object
 
  @class
 */
@@ -48,6 +49,7 @@ var Completion = function(j_val) {
   };
 
   /**
+   @return the shell current session, useful for accessing data like the current path for file completion, etc...
 
    @public
 
@@ -75,6 +77,7 @@ var Completion = function(j_val) {
   };
 
   /**
+   @return the current line being completed as preparsed tokens
 
    @public
 
@@ -88,10 +91,11 @@ var Completion = function(j_val) {
   };
 
   /**
+   End the completion with a value that will be inserted to complete the line.
 
    @public
-   @param value {string} 
-   @param terminal {boolean} 
+   @param value {string} the value to complete with 
+   @param terminal {boolean} true if the value is terminal, i.e can be further completed 
    */
   this.complete = function() {
     var __args = arguments;

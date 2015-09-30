@@ -22,6 +22,7 @@ var JsonObject = io.vertx.core.json.JsonObject;
 var JCliToken = io.vertx.ext.shell.cli.CliToken;
 
 /**
+ A parsed token in the command line interface.
 
  @class
 */
@@ -31,19 +32,7 @@ var CliToken = function(j_val) {
   var that = this;
 
   /**
-
-   @public
-
-   @return {string}
-   */
-  this.raw = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      return j_cliToken["raw()"]();
-    } else utils.invalidArgs();
-  };
-
-  /**
+   @return the token value
 
    @public
 
@@ -57,6 +46,21 @@ var CliToken = function(j_val) {
   };
 
   /**
+   @return the raw token value, that may contain unescaped chars, for instance 
+
+   @public
+
+   @return {string}
+   */
+  this.raw = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return j_cliToken["raw()"]();
+    } else utils.invalidArgs();
+  };
+
+  /**
+   @return true when it's a text token
 
    @public
 
@@ -70,6 +74,7 @@ var CliToken = function(j_val) {
   };
 
   /**
+   @return true when it's a blank token
 
    @public
 
@@ -89,36 +94,39 @@ var CliToken = function(j_val) {
 };
 
 /**
+ Create a text token.
 
  @memberof module:vertx-shell-js/cli_token
- @param s {string} 
- @return {CliToken}
+ @param text {string} the text 
+ @return {CliToken} the token
  */
-CliToken.createText = function(s) {
+CliToken.createText = function(text) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnVertxGen(JCliToken["createText(java.lang.String)"](s), CliToken);
+    return utils.convReturnVertxGen(JCliToken["createText(java.lang.String)"](text), CliToken);
   } else utils.invalidArgs();
 };
 
 /**
+ Create a new blank token.
 
  @memberof module:vertx-shell-js/cli_token
- @param s {string} 
- @return {CliToken}
+ @param blank {string} the blank value 
+ @return {CliToken} the token
  */
-CliToken.createBlank = function(s) {
+CliToken.createBlank = function(blank) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnVertxGen(JCliToken["createBlank(java.lang.String)"](s), CliToken);
+    return utils.convReturnVertxGen(JCliToken["createBlank(java.lang.String)"](blank), CliToken);
   } else utils.invalidArgs();
 };
 
 /**
+ Tokenize the string argument and return a list of tokens.
 
  @memberof module:vertx-shell-js/cli_token
- @param s {string} 
- @return {Array.<CliToken>}
+ @param s {string} the tokenized string 
+ @return {Array.<CliToken>} the tokens
  */
 CliToken.tokenize = function(s) {
   var __args = arguments;

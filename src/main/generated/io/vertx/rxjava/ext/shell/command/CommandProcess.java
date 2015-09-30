@@ -25,6 +25,7 @@ import io.vertx.rxjava.ext.shell.Session;
 import io.vertx.rxjava.ext.shell.io.Stream;
 import io.vertx.rxjava.ext.shell.io.Tty;
 import io.vertx.rxjava.core.Vertx;
+import io.vertx.ext.shell.io.EventType;
 import io.vertx.rxjava.ext.shell.cli.CliToken;
 import io.vertx.core.Handler;
 
@@ -99,8 +100,8 @@ public class CommandProcess extends Tty {
     return this;
   }
 
-  public CommandProcess eventHandler(String event, Handler<Void> handler) { 
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) delegate).eventHandler(event, handler);
+  public CommandProcess eventHandler(EventType eventType, Handler<Void> handler) { 
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) delegate).eventHandler(eventType, handler);
     return this;
   }
 

@@ -3,6 +3,7 @@ package io.vertx.ext.unit;
 import io.termd.core.tty.TtyEvent;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.impl.Job;
 import io.vertx.ext.shell.impl.JobStatus;
@@ -110,7 +111,7 @@ public class ShellTest {
     CountDownLatch latch = new CountDownLatch(1);
     manager.registerCommand(Command.command("foo").processHandler(process -> {
       Job job = shell.getJob(1);
-      process.eventHandler("SIGTSTP", v -> {
+      process.eventHandler(EventType.SIGTSTP, v -> {
         context.assertEquals(JobStatus.STOPPED, job.status());
         context.assertNull(shell.foregroundJob());
         async.complete();
@@ -136,7 +137,7 @@ public class ShellTest {
       process.setStdin(line -> {
         context.fail("Should not process line " + line);
       });
-      process.eventHandler("SIGTSTP", v -> {
+      process.eventHandler(EventType.SIGTSTP, v -> {
         context.assertNull(process.stdout());
         latch2.countDown();
       });
@@ -146,7 +147,7 @@ public class ShellTest {
       // Do nothing, this command is used to escape from readline and make
       // sure that the read data is not sent to the stopped command
       latch3.countDown();
-      process.eventHandler("SIGTSTP", v -> {
+      process.eventHandler(EventType.SIGTSTP, v -> {
         process.end(0);
       });
     }));
@@ -175,12 +176,12 @@ public class ShellTest {
     CountDownLatch latch4 = new CountDownLatch(1);
     manager.registerCommand(Command.command("foo").processHandler(process -> {
       Job job = shell.getJob(1);
-      process.eventHandler("SIGTSTP", v -> {
+      process.eventHandler(EventType.SIGTSTP, v -> {
         context.assertEquals(0L, latch1.getCount());
         context.assertNull(process.stdout());
         latch2.countDown();
       });
-      process.eventHandler("SIGCONT", v -> {
+      process.eventHandler(EventType.SIGCONT, v -> {
         context.assertEquals(0L, latch2.getCount());
         context.assertEquals(JobStatus.RUNNING, job.status());
         context.assertNotNull(process.stdout());
@@ -218,12 +219,12 @@ public class ShellTest {
     CountDownLatch latch3 = new CountDownLatch(1);
     manager.registerCommand(Command.command("foo").processHandler(process -> {
       Job job = shell.getJob(1);
-      process.eventHandler("SIGTSTP", v -> {
+      process.eventHandler(EventType.SIGTSTP, v -> {
         context.assertEquals(0L, latch1.getCount());
         context.assertNull(process.stdout());
         latch2.countDown();
       });
-      process.eventHandler("SIGCONT", v -> {
+      process.eventHandler(EventType.SIGCONT, v -> {
         context.assertEquals(0L, latch2.getCount());
         context.assertEquals(JobStatus.RUNNING, job.status());
         context.assertNotNull(process.stdout());
@@ -266,11 +267,11 @@ public class ShellTest {
     CountDownLatch latch3 = new CountDownLatch(1);
     Async async = context.async();
     manager.registerCommand(Command.command("foo").processHandler(process -> {
-      process.eventHandler("SIGTSTP", v -> {
+      process.eventHandler(EventType.SIGTSTP, v -> {
         context.assertEquals(1L, latch2.getCount());
         latch2.countDown();
       });
-      process.eventHandler("SIGCONT", v -> {
+      process.eventHandler(EventType.SIGCONT, v -> {
         context.assertEquals(1L, latch3.getCount());
         latch3.countDown();
       });
