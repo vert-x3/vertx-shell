@@ -10,6 +10,7 @@ import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.VertxException;
 import io.vertx.core.impl.ContextInternal;
 import io.vertx.core.impl.VertxInternal;
 import io.vertx.core.json.JsonObject;
@@ -94,6 +95,9 @@ public class SSHServer {
       try {
         KeyCertOptions ksOptions = options.getKeyCertOptions();
         KeyStoreHelper ksHelper = KeyStoreHelper.create((VertxInternal) vertx, ksOptions);
+        if (ksHelper == null) {
+          throw new VertxException("No key pair store configured");
+        }
         KeyStore ks = ksHelper.loadStore((VertxInternal) vertx);
 
         String kpPassword = "";
@@ -138,21 +142,18 @@ public class SSHServer {
               authOptions.getConfig()
           );
         } else {
-          authProvider = null;
+          throw new VertxException("No authenticator");
         }
 
         Context context = vertx.getOrCreateContext();
         nativeServer.setPasswordAuthenticator((username, userpass, session) -> {
-          if (authProvider != null) {
-            AsyncAuth auth = new AsyncAuth();
-            context.runOnContext(v -> {
-              authProvider.authenticate(new JsonObject().put("username", username).put("password", userpass), ar -> {
-                auth.setAuthed(ar.succeeded());
-              });
+          AsyncAuth auth = new AsyncAuth();
+          context.runOnContext(v -> {
+            authProvider.authenticate(new JsonObject().put("username", username).put("password", userpass), ar -> {
+              auth.setAuthed(ar.succeeded());
             });
-            throw auth;
-          }
-          return false;
+          });
+          throw auth;
         });
 
         //

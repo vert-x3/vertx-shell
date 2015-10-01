@@ -5,7 +5,10 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.VertxException;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
@@ -23,7 +26,10 @@ import static org.junit.Assert.*;
 
 import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -40,14 +46,26 @@ public class SSHTest {
   }
 
   @After
-  public void after(TestContext context) {
+  public void after() throws Exception {
+    CountDownLatch latch = new CountDownLatch(service != null ? 2 : 1);
+    Handler<AsyncResult<Void>> handler = ar -> {
+      latch.countDown();
+    };
     if (service != null) {
-      service.stop(context.asyncAssertSuccess());
+      service.stop(handler);
     }
-    vertx.close(context.asyncAssertSuccess());
+    vertx.close(handler);
+    assertTrue(latch.await(10, TimeUnit.SECONDS));
   }
 
   private void startShell() throws Exception {
+    startShell(new SSHOptions().setPort(5000).setHost("localhost").setKeyStoreOptions(
+        new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
+        setShiroAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
+            new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
+  }
+
+  private void startShell(SSHOptions options) throws ExecutionException, InterruptedException, TimeoutException {
 
     if (service != null) {
       throw new IllegalStateException();
@@ -55,12 +73,8 @@ public class SSHTest {
 
     service = ShellService.create(vertx, new ShellServiceOptions().
         setWelcomeMessage("").
-        setSSHOptions(new SSHOptions().setPort(5000).setHost("localhost").setKeyStoreOptions(
-            new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
-            setShiroAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
-                new JsonObject().put("properties_path", "classpath:test-auth.properties")))));
+        setSSHOptions(options));
 
-    // Remove this when we can use Async.await()
     CompletableFuture<Void> fut = new CompletableFuture<>();
     service.start(ar -> {
       if (ar.succeeded()) {
@@ -69,7 +83,7 @@ public class SSHTest {
         fut.completeExceptionally(ar.cause());
       }
     });
-    fut.get();
+    fut.get(10, TimeUnit.SECONDS);
   }
 
   private Session createSession(String username, String password, boolean interactive) throws Exception {
@@ -107,7 +121,6 @@ public class SSHTest {
 
       @Override
       public void showMessage(String s) {
-
       }
     });
     return session;
@@ -142,6 +155,32 @@ public class SSHTest {
         String msg = e.getMessage();
         assertTrue("Unexpected failure message " + msg, "Auth cancel".equals(msg) || "Auth fail".equals(msg));
       }
+    }
+  }
+
+  @Test
+  public void testNoAuthenticationConfigured() throws Exception {
+    try {
+      startShell(new SSHOptions().setPort(5000).setHost("localhost").setKeyStoreOptions(
+          new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble"))
+      );
+      fail();
+    } catch (ExecutionException e) {
+      assertTrue(e.getCause() instanceof VertxException);
+      assertEquals("No authenticator", e.getCause().getMessage());
+    }
+  }
+
+  @Test
+  public void testNoKeyPairConfigured() throws Exception {
+    try {
+      startShell(new SSHOptions().setPort(5000).setHost("localhost").
+              setShiroAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
+                  new JsonObject().put("properties_path", "classpath:test-auth.properties")))
+      );
+    } catch (ExecutionException e) {
+      assertTrue(e.getCause() instanceof VertxException);
+      assertEquals("No key pair store configured", e.getCause().getMessage());
     }
   }
 }

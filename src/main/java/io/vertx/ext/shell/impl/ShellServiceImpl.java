@@ -66,7 +66,7 @@ public class ShellServiceImpl implements ShellService {
         }
       } else {
         count.set(0);
-        startHandler.handle(Future.failedFuture(ar.cause()));
+        startHandler.handle(ar);
       }
     };
     if (telnetOptions != null) {
