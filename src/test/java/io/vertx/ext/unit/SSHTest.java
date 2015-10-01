@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 
 import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -71,10 +72,12 @@ public class SSHTest {
     fut.get();
   }
 
-  private Session createSession(String username, String password) throws Exception {
+  private Session createSession(String username, String password, boolean interactive) throws Exception {
     JSch jsch= new JSch();
     Session session = jsch.getSession(username, "localhost", 5000);
-    session.setPassword(password);
+    if (!interactive) {
+      session.setPassword(password);
+    }
     session.setUserInfo(new UserInfo() {
       @Override
       public String getPassphrase() {
@@ -83,12 +86,12 @@ public class SSHTest {
 
       @Override
       public String getPassword() {
-        return null;
+        return interactive ? password : null;
       }
 
       @Override
       public boolean promptPassword(String s) {
-        return false;
+        return interactive;
       }
 
       @Override
@@ -113,27 +116,32 @@ public class SSHTest {
   @Test
   public void testAuthenticate() throws Exception {
     startShell();
-    Session session = createSession("paulo", "secret");
-    session.connect();
-    Channel channel = session.openChannel("shell");
-    channel.connect();
-    InputStream in = channel.getInputStream();
-    byte[] out = new byte[2];
-    assertEquals(2, in.read(out));
-    assertEquals("% ", new String(out));
-    channel.disconnect();
-    session.disconnect();
+    for (boolean interactive : new boolean[]{false, true}) {
+      Session session = createSession("paulo", "secret", interactive);
+      session.connect();
+      Channel channel = session.openChannel("shell");
+      channel.connect();
+      InputStream in = channel.getInputStream();
+      byte[] out = new byte[2];
+      assertEquals(2, in.read(out));
+      assertEquals("% ", new String(out));
+      channel.disconnect();
+      session.disconnect();
+    }
   }
 
   @Test
   public void testAuthenticationFail() throws Exception {
     startShell();
-    Session session = createSession("paulo", "secret_");
-    try {
-      session.connect();
-      fail();
-    } catch (JSchException e) {
-      assertEquals("Auth cancel", e.getMessage());
+    for (boolean interactive : new boolean[]{false, true}) {
+      Session session = createSession("paulo", "secret_", interactive);
+      try {
+        session.connect();
+        fail();
+      } catch (JSchException e) {
+        String msg = e.getMessage();
+        assertTrue("Unexpected failure message " + msg, "Auth cancel".equals(msg) || "Auth fail".equals(msg));
+      }
     }
   }
 }

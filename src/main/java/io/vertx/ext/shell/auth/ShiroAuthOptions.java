@@ -12,10 +12,13 @@ import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 @DataObject(generateConverter = true)
 public class ShiroAuthOptions extends AuthOptions {
 
+  public static final ShiroAuthRealmType DEFAULT_TYPE = ShiroAuthRealmType.PROPERTIES;
+
   private ShiroAuthRealmType type;
   private JsonObject config;
 
   public ShiroAuthOptions() {
+    type =DEFAULT_TYPE;
   }
 
   public ShiroAuthOptions(ShiroAuthOptions that) {
@@ -24,6 +27,7 @@ public class ShiroAuthOptions extends AuthOptions {
   }
 
   public ShiroAuthOptions(JsonObject json) {
+    this();
     ShiroAuthOptionsConverter.fromJson(json, this);
   }
 

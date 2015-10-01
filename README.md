@@ -16,14 +16,20 @@ or
 
 # Test drive with Vert.x 3.0
 
-> mvn install
-> vertx run maven:io.vertx:vertx-shell:3.0.0-SNAPSHOT
+> vertx run -conf '{"telnetOptions":{"port":5000}}' maven:io.vertx:vertx-shell:3.1.0-SNAPSHOT
 
 in another shell:
 
 > telnet localhost 5000
 
-or
+> 
+
+or with SSH
+
+
+> keytool -genkey -keyalg RSA -keystore ssh.jks -keysize 2048 -validity 1095 -dname CN=localhost -keypass secret -storepass secret
+> echo user.admin=password > auth.properties
+> vertx run -conf '{"sshOptions":{"port":5000,"keyStoreOptions":{"path":"ssh.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.1.0-SNAPSHOT
 
 > ssh -p 4000 whatever@localhost
 

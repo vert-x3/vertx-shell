@@ -2,12 +2,6 @@
   "main": "io.vertx.ext.shell.ShellVerticle",
   "options": {
     "config": {
-      "telnet": {
-        "port" : 5000
-      },
-      "ssh": {
-        "port" : 4000
-      }
     }
   }
 }

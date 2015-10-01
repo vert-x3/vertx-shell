@@ -1,6 +1,8 @@
 package io.vertx.ext.shell.net.impl;
 
 import io.termd.core.ssh.SshTtyConnection;
+import io.termd.core.ssh.netty.AsyncAuth;
+import io.termd.core.ssh.netty.AsyncUserAuthServiceFactory;
 import io.termd.core.ssh.netty.NettyIoServiceFactoryFactory;
 import io.termd.core.tty.TtyConnection;
 import io.vertx.core.AsyncResult;
@@ -23,6 +25,7 @@ import io.vertx.ext.shell.net.SSHOptions;
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.apache.sshd.server.SshServer;
+import org.apache.sshd.server.session.ServerConnectionServiceFactory;
 
 import java.security.Key;
 import java.security.KeyPair;
@@ -31,6 +34,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -92,17 +96,17 @@ public class SSHServer {
         KeyStoreHelper ksHelper = KeyStoreHelper.create((VertxInternal) vertx, ksOptions);
         KeyStore ks = ksHelper.loadStore((VertxInternal) vertx);
 
-        String password = "";
+        String kpPassword = "";
         if (ksOptions instanceof JksOptions) {
-          password = ((JksOptions) ksOptions).getPassword();
+          kpPassword = ((JksOptions) ksOptions).getPassword();
         } else if (ksOptions instanceof PfxOptions) {
-          password = ((PfxOptions) ksOptions).getPassword();
+          kpPassword = ((PfxOptions) ksOptions).getPassword();
         }
 
         List<KeyPair> keyPairs = new ArrayList<>();
         for (Enumeration<String> it = ks.aliases(); it.hasMoreElements(); ) {
           String alias = it.nextElement();
-          Key key = ks.getKey(alias, password.toCharArray());
+          Key key = ks.getKey(alias, kpPassword.toCharArray());
           if (key instanceof PrivateKey) {
             Certificate cert = ks.getCertificate(alias);
             PublicKey publicKey = cert.getPublicKey();
@@ -122,6 +126,7 @@ public class SSHServer {
         nativeServer.setPort(options.getPort());
         nativeServer.setKeyPairProvider(provider);
         nativeServer.setIoServiceFactoryFactory(new NettyIoServiceFactoryFactory(listenContext.nettyEventLoop(), new VertxIoHandlerBridge(listenContext)));
+        nativeServer.setServiceFactories(Arrays.asList(ServerConnectionServiceFactory.INSTANCE, AsyncUserAuthServiceFactory.INSTANCE));
 
         //
         AuthProvider authProvider;
@@ -138,25 +143,15 @@ public class SSHServer {
 
         Context context = vertx.getOrCreateContext();
         nativeServer.setPasswordAuthenticator((username, userpass, session) -> {
-          CountDownLatch latch = new CountDownLatch(1);
-          AtomicReference<AsyncResult<User>> ref = new AtomicReference<>();
-          // That's not a Vert.x thread here
-          context.runOnContext(v -> {
-            if (authProvider != null) {
+          if (authProvider != null) {
+            AsyncAuth auth = new AsyncAuth();
+            context.runOnContext(v -> {
               authProvider.authenticate(new JsonObject().put("username", username).put("password", userpass), ar -> {
-                ref.set(ar);
-                latch.countDown();
+                System.out.println("Authenticating with " + username + " " + userpass + " " + ar.succeeded());
+                auth.setAuthed(ar.succeeded());
               });
-            }
-          });
-          try {
-            latch.await();
-            AsyncResult<User> ar = ref.get();
-            if (ar.succeeded()) {
-              return true;
-            }
-          } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            });
+            throw auth;
           }
           return false;
         });
