@@ -147,7 +147,6 @@ public class SSHServer {
             AsyncAuth auth = new AsyncAuth();
             context.runOnContext(v -> {
               authProvider.authenticate(new JsonObject().put("username", username).put("password", userpass), ar -> {
-                System.out.println("Authenticating with " + username + " " + userpass + " " + ar.succeeded());
                 auth.setAuthed(ar.succeeded());
               });
             });
