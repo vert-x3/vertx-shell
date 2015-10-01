@@ -59,7 +59,7 @@ public class SSHTest {
   }
 
   private void startShell() throws Exception {
-    startShell(new SSHOptions().setPort(5000).setHost("localhost").setKeyStoreOptions(
+    startShell(new SSHOptions().setPort(5000).setHost("localhost").setKeyPairOptions(
         new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
         setShiroAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
             new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
@@ -161,8 +161,8 @@ public class SSHTest {
   @Test
   public void testNoAuthenticationConfigured() throws Exception {
     try {
-      startShell(new SSHOptions().setPort(5000).setHost("localhost").setKeyStoreOptions(
-          new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble"))
+      startShell(new SSHOptions().setPort(5000).setHost("localhost").setKeyPairOptions(
+              new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble"))
       );
       fail();
     } catch (ExecutionException e) {

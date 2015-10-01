@@ -79,17 +79,17 @@ Set the shell welcome message, i.e the message displayed in the user console whe
 +++
 Set the host
 +++
-|[[keyStoreOptions]]`keyStoreOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|
+|[[keyPairOptions]]`keyPairOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|
 +++
-Set the key/cert options in jks format, aka Java keystore.
+Set the key pair options in jks format, aka Java keystore.
 +++
-|[[pemKeyCertOptions]]`pemKeyCertOptions`|`link:dataobjects.html#PemKeyCertOptions[PemKeyCertOptions]`|
+|[[pemKeyPairOptions]]`pemKeyPairOptions`|`link:dataobjects.html#PemKeyCertOptions[PemKeyCertOptions]`|
 +++
-Set the key/cert store options in pem format.
+Set the key pair store options in pem format.
 +++
-|[[pfxKeyCertOptions]]`pfxKeyCertOptions`|`link:dataobjects.html#PfxOptions[PfxOptions]`|
+|[[pfxKeyPairOptions]]`pfxKeyPairOptions`|`link:dataobjects.html#PfxOptions[PfxOptions]`|
 +++
-Set the key/cert options in pfx format.
+Set the key pair options in pfx format.
 +++
 |[[port]]`port`|`Number (int)`|
 +++

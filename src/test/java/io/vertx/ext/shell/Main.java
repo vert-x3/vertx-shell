@@ -55,7 +55,7 @@ public class Main {
 
     // Expose the shell
     SSHOptions options = new SSHOptions().setPort(5001);
-    options.setKeyStoreOptions(new JksOptions().
+    options.setKeyPairOptions(new JksOptions().
         setPath("src/test/resources/server-keystore.jks").
         setPassword("wibble")).
         setShiroAuthOptions(

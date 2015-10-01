@@ -1,5 +1,6 @@
 package examples;
 
+import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.cli.Argument;
 import io.vertx.core.cli.CLI;
@@ -23,6 +24,34 @@ import io.vertx.ext.shell.registry.CommandRegistry;
  */
 public class Examples {
 
+  public void deployTelnetService(Vertx vertx) throws Exception {
+    vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
+        new DeploymentOptions().setConfig(
+            new JsonObject().put("telnetOptions",
+                new JsonObject().
+                    put("host", "localhost").
+                    put("port", 4000))
+        )
+    );
+  }
+
+  public void deploySSHService(Vertx vertx) throws Exception {
+    vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
+        new DeploymentOptions().setConfig(
+            new JsonObject().put("sshOptions",
+                new JsonObject().
+                    put("host", "localhost").
+                    put("port", 5000).
+                    put("keyPairOptions",
+                        new JsonObject().
+                            put("path", "server-keystore.jks").
+                            put("password", "wibble")).
+                    put("config", new JsonObject().
+                        put("properties_path", "file:/path/to/my/auth.properties")))
+        )
+    );
+  }
+
   public void runTelnetService(Vertx vertx) throws Exception {
     ShellService service = ShellService.create(vertx,
         new ShellServiceOptions().setTelnetOptions(
@@ -40,13 +69,15 @@ public class Examples {
             new SSHOptions().
                 setHost("localhost").
                 setPort(5000).
-                setKeyStoreOptions(new JksOptions().
+                setKeyPairOptions(new JksOptions().
                         setPath("server-keystore.jks").
                         setPassword("wibble")
                 ).
                 setShiroAuthOptions(new ShiroAuthOptions().
                     setType(ShiroAuthRealmType.PROPERTIES).
-                    setConfig(new JsonObject("file:/path/to/my/auth.properties")))
+                    setConfig(new JsonObject().
+                        put("properties_path", "file:/path/to/my/auth.properties"))
+                )
         )
     );
     service.start();

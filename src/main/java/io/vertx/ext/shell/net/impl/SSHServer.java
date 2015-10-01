@@ -1,6 +1,6 @@
 package io.vertx.ext.shell.net.impl;
 
-import io.termd.core.ssh.SshTtyConnection;
+import io.termd.core.ssh.TtyCommand;
 import io.termd.core.ssh.netty.AsyncAuth;
 import io.termd.core.ssh.netty.AsyncUserAuthServiceFactory;
 import io.termd.core.ssh.netty.NettyIoServiceFactoryFactory;
@@ -19,7 +19,6 @@ import io.vertx.core.net.KeyCertOptions;
 import io.vertx.core.net.PfxOptions;
 import io.vertx.core.net.impl.KeyStoreHelper;
 import io.vertx.ext.auth.AuthProvider;
-import io.vertx.ext.auth.User;
 import io.vertx.ext.auth.shiro.ShiroAuth;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
 import io.vertx.ext.shell.net.SSHOptions;
@@ -38,9 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /**
@@ -93,7 +90,7 @@ public class SSHServer {
     vertx.executeBlocking(fut -> {
 
       try {
-        KeyCertOptions ksOptions = options.getKeyCertOptions();
+        KeyCertOptions ksOptions = options.getKeyPairOptions();
         KeyStoreHelper ksHelper = KeyStoreHelper.create((VertxInternal) vertx, ksOptions);
         if (ksHelper == null) {
           throw new VertxException("No key pair store configured");
@@ -125,7 +122,7 @@ public class SSHServer {
         };
 
         nativeServer = SshServer.setUpDefaultServer();
-        nativeServer.setShellFactory(() -> new SshTtyConnection(handler));
+        nativeServer.setShellFactory(() -> new TtyCommand(handler));
         nativeServer.setHost(options.getHost());
         nativeServer.setPort(options.getPort());
         nativeServer.setKeyPairProvider(provider);

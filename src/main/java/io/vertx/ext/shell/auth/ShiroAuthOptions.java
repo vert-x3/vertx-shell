@@ -18,7 +18,7 @@ public class ShiroAuthOptions extends AuthOptions {
   private JsonObject config;
 
   public ShiroAuthOptions() {
-    type =DEFAULT_TYPE;
+    type = DEFAULT_TYPE;
   }
 
   public ShiroAuthOptions(ShiroAuthOptions that) {

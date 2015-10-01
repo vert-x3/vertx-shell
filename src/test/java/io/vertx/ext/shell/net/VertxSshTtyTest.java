@@ -1,6 +1,6 @@
 package io.vertx.ext.shell.net;
 
-import io.termd.core.ssh.SshTtyConnection;
+import io.termd.core.ssh.TtyCommand;
 import io.termd.core.ssh.netty.NettyIoServiceFactoryFactory;
 import io.termd.core.ssh.netty.NettyIoSession;
 import io.termd.core.tty.SshTtyTestBase;
@@ -47,9 +47,9 @@ public class VertxSshTtyTest extends SshTtyTestBase {
   }
 
   @Override
-  protected SshTtyConnection createConnection(Consumer<TtyConnection> onConnect) {
+  protected TtyCommand createConnection(Consumer<TtyConnection> onConnect) {
     assertEquals(context, Vertx.currentContext());
-    return new SshTtyConnection(onConnect) {
+    return new TtyCommand(onConnect) {
       @Override
       public void execute(Runnable task) {
         Session session = this.session.getSession();

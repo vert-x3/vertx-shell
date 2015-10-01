@@ -10,12 +10,52 @@
  *
  * == Using Vert.x Shell
  *
- * todo.
+ * Vert.x Shell is a Vert.x Service and can be started programmatically via the {@link io.vertx.ext.shell.ShellService}
+ * or deployed as a service.
  *
- * == Shell Service
+ * === Deployed service
  *
- * The {@link io.vertx.ext.shell.ShellService} takes care of starting an instance of Vert.x Shell. It can be started
- * programmatically or as a service from the command line.
+ * The shell can be started as a service directly either from the command line or as a the Vert.x deployment:
+ *
+ * .Starting a shell service available via Telnet
+ * [source,subs="+attributes"]
+ * ----
+ * vertx run -conf '{"telnetOptions":{"port":5000}}' maven:{maven-groupId}:{maven-artifactId}:{maven-version}
+ * ----
+ *
+ * or
+ *
+ * .Starting a shell service available via SSH
+ * [source,subs="+attributes"]
+ * ----
+ * # create a key pair for the SSH server
+ * keytool -genkey -keyalg RSA -keystore ssh.jks -keysize 2048 -validity 1095 -dname CN=localhost -keypass secret -storepass secret
+ * # create the auth config
+ * echo user.admin=password > auth.properties
+ * # start the shell
+ * vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:{maven-groupId}:{maven-artifactId}:{maven-version}
+ * ----
+ *
+ * You can also deploy this service inside your own verticle:
+ *
+ * [source,$lang,subs="+attributes"]
+ * ----
+ * {@link examples.Examples#deployTelnetService(io.vertx.core.Vertx)}
+ * ----
+ *
+ * or
+ *
+ * [source,$lang,subs="+attributes"]
+ * ----
+ * {@link examples.Examples#deploySSHService(io.vertx.core.Vertx)}
+ * ----
+ *
+ * NOTE: when Vert.x Shell is already on your classpath you can use `service:io.vertx.ext.shell` instead
+ * or `maven:{maven-groupId}:{maven-artifactId}:{maven-version}`
+ *
+ * === Programmatic service
+ *
+ * The {@link io.vertx.ext.shell.ShellService} takes care of starting an instance of Vert.x Shell.
  *
  * Starting a shell service available via SSH:
  *
@@ -23,14 +63,6 @@
  * ----
  * {@link examples.Examples#runSSHService(io.vertx.core.Vertx)}
  * ----
- *
- * The server key configuration reuses the key store configuration scheme provided by _Vert.x Core_.
- *
- * User authenticates via login/password (no key authentication for now) and is based on _Vert.x Auth_ component supporting:
- *
- * - Shiro Authentication : _properties_ configuration or _ldap_ configuration
- * - JDBC Authentication : todo
- * - Mongo Authentication : todo
  *
  * Starting a shell service available via Telnet:
  *
@@ -44,18 +76,67 @@
  *
  * CAUTION: Telnet does not provide any authentication nor encryption at all.
  *
- * Or via the service facility:
+ * == Telnet configuration
  *
- * [source,subs="+attributes"]
- * ----
- * > vertx run maven:{maven-groupId}:{maven-artifactId}:{maven-version}
- * ----
+ * The telnet connector is configured by {@link io.vertx.ext.shell.ShellServiceOptions#setTelnetOptions},
+ * the {@link io.vertx.ext.shell.net.TelnetOptions} extends the {@link io.vertx.core.net.NetServerOptions} so they
+ * have the exact same configuration.
+ *
+ * == SSH configuration
+ *
+ * The SSH connector is configured by {@link io.vertx.ext.shell.ShellServiceOptions#setSSHOptions}:
+ *
+ * - {@link io.vertx.ext.shell.net.SSHOptions#setPort}: port
+ * - {@link io.vertx.ext.shell.net.SSHOptions#setHost}: host
+ *
+ * Only username/password authentication is supported at the moment, it can be configured with property file
+ * or LDAP, see Vert.x Auth for more info:
+ *
+ * - {@link io.vertx.ext.shell.net.SSHOptions#setShiroAuthOptions}: configures user authentication
+ *
+ * The server key configuration reuses the key pair store configuration scheme provided by _Vert.x Core_:
+ *
+ * - {@link io.vertx.ext.shell.net.SSHOptions#setKeyPairOptions}: set `.jks` key pair store
+ * - {@link io.vertx.ext.shell.net.SSHOptions#setPfxKeyPairOptions}: set `.pfx` key pair store
+ * - {@link io.vertx.ext.shell.net.SSHOptions#setPemKeyPairOptions}: set `.pem` key pair store
  *
  * == Base commands
  *
- * To find out the available commands you can use the _help_ builtin command.
+ * To find out the available commands you can use the _help_ builtin command:
  *
- * todo.
+ * . Verticle commands
+ * .. verticle-ls: list all deployed verticles
+ * .. verticle-undeploy: undeploy a verticle
+ * .. verticle-deploy: deployes a verticle
+ * .. verticle-factories: list all known verticle factories
+ * . File system commands
+ * .. ls
+ * .. cd
+ * .. pwd
+ * . Bus commands
+ * .. bus-tail: display all incoming messages on an event bus address
+ * .. bus-send: send a message on the event bus
+ * . Net commands
+ * .. net-ls: list all available net servers, including HTTP servers
+ * . Shared data commands
+ * .. local-map-put
+ * .. local-map-get
+ * .. local-map-rm
+ * . Metrics commands (requires Dropwizard metrics setup)
+ * .. metrics-ls: show all available metrics
+ * .. metrics-info: show particular metrics
+ * . Various commands
+ * .. echo
+ * .. sleep
+ * .. help
+ * .. exit
+ * .. logout
+ * . Job control
+ * .. fg
+ * .. bg
+ * .. jobs
+ *
+ * NOTE: this command list should evolve in next releases of Vert.x Shell
  *
  * == Extending Vert.x Shell
  *

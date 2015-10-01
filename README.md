@@ -26,10 +26,9 @@ in another shell:
 
 or with SSH
 
-
 > keytool -genkey -keyalg RSA -keystore ssh.jks -keysize 2048 -validity 1095 -dname CN=localhost -keypass secret -storepass secret
 > echo user.admin=password > auth.properties
-> vertx run -conf '{"sshOptions":{"port":5000,"keyStoreOptions":{"path":"ssh.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.1.0-SNAPSHOT
+> vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.1.0-SNAPSHOT
 
 > ssh -p 4000 whatever@localhost
 
@@ -42,6 +41,8 @@ or with SSH
 
 ## Roadmap
 
+- JDBC/Mongo auth
+- make telnet configurable with a remote hosts white list
 - make builtin shell commands completable
 - fg/bg with id : fg 3, bg 4
 - stream redirection : echo abc >toto.txt
@@ -52,3 +53,4 @@ or with SSH
 - stream more than just text : any T should be streamable (in particular json)
 - advanced option configuration (beyond host/port)
 - web connector
+- event bus connector

@@ -22,7 +22,7 @@ public class SSHOptions {
 
   private String host;
   private int port;
-  private KeyCertOptions keyCertOptions;
+  private KeyCertOptions keyPairOptions;
   private AuthOptions authOptions;
 
   public SSHOptions() {
@@ -33,7 +33,7 @@ public class SSHOptions {
   public SSHOptions(SSHOptions that) {
     this.host = that.host;
     this.port = that.port;
-    this.keyCertOptions = that.keyCertOptions != null ? that.keyCertOptions.clone() : null;
+    this.keyPairOptions = that.keyPairOptions != null ? that.keyPairOptions.clone() : null;
     this.authOptions = that.authOptions != null ? that.authOptions.clone() : null;
   }
 
@@ -77,39 +77,39 @@ public class SSHOptions {
   }
 
   /**
-   * @return the key cert options
+   * @return the key pair options
    */
-  public KeyCertOptions getKeyCertOptions() {
-    return keyCertOptions;
+  public KeyCertOptions getKeyPairOptions() {
+    return keyPairOptions;
   }
 
   /**
-   * Set the key/cert options in jks format, aka Java keystore.
+   * Set the key pair options in jks format, aka Java keystore.
    * @param options the key store in jks format
    * @return a reference to this, so the API can be used fluently
    */
-  public SSHOptions setKeyStoreOptions(JksOptions options) {
-    this.keyCertOptions = options;
+  public SSHOptions setKeyPairOptions(JksOptions options) {
+    this.keyPairOptions = options;
     return this;
   }
 
   /**
-   * Set the key/cert options in pfx format.
+   * Set the key pair options in pfx format.
    * @param options the key cert options in pfx format
    * @return a reference to this, so the API can be used fluently
    */
-  public SSHOptions setPfxKeyCertOptions(PfxOptions options) {
-    this.keyCertOptions = options;
+  public SSHOptions setPfxKeyPairOptions(PfxOptions options) {
+    this.keyPairOptions = options;
     return this;
   }
 
   /**
-   * Set the key/cert store options in pem format.
+   * Set the key pair store options in pem format.
    * @param options the options in pem format
    * @return a reference to this, so the API can be used fluently
    */
-  public SSHOptions setPemKeyCertOptions(PemKeyCertOptions options) {
-    this.keyCertOptions = options;
+  public SSHOptions setPemKeyPairOptions(PemKeyCertOptions options) {
+    this.keyPairOptions = options;
     return this;
   }
 

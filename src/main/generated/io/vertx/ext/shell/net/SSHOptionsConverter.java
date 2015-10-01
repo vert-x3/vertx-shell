@@ -30,14 +30,14 @@ public class SSHOptionsConverter {
     if (json.getValue("host") instanceof String) {
       obj.setHost((String)json.getValue("host"));
     }
-    if (json.getValue("keyStoreOptions") instanceof JsonObject) {
-      obj.setKeyStoreOptions(new io.vertx.core.net.JksOptions((JsonObject)json.getValue("keyStoreOptions")));
+    if (json.getValue("keyPairOptions") instanceof JsonObject) {
+      obj.setKeyPairOptions(new io.vertx.core.net.JksOptions((JsonObject)json.getValue("keyPairOptions")));
     }
-    if (json.getValue("pemKeyCertOptions") instanceof JsonObject) {
-      obj.setPemKeyCertOptions(new io.vertx.core.net.PemKeyCertOptions((JsonObject)json.getValue("pemKeyCertOptions")));
+    if (json.getValue("pemKeyPairOptions") instanceof JsonObject) {
+      obj.setPemKeyPairOptions(new io.vertx.core.net.PemKeyCertOptions((JsonObject)json.getValue("pemKeyPairOptions")));
     }
-    if (json.getValue("pfxKeyCertOptions") instanceof JsonObject) {
-      obj.setPfxKeyCertOptions(new io.vertx.core.net.PfxOptions((JsonObject)json.getValue("pfxKeyCertOptions")));
+    if (json.getValue("pfxKeyPairOptions") instanceof JsonObject) {
+      obj.setPfxKeyPairOptions(new io.vertx.core.net.PfxOptions((JsonObject)json.getValue("pfxKeyPairOptions")));
     }
     if (json.getValue("port") instanceof Number) {
       obj.setPort(((Number)json.getValue("port")).intValue());
