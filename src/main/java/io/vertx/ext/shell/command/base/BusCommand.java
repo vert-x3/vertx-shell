@@ -6,9 +6,8 @@ import io.vertx.core.cli.CLI;
 import io.vertx.core.cli.Option;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.io.EventType;
-
-import java.util.List;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -17,7 +16,7 @@ import java.util.List;
 public interface BusCommand {
 
   static Command send() {
-    Command cmd = Command.command(CLI.
+    CommandBuilder cmd = Command.builder(CLI.
             create("bus-send").
             setSummary("Send a message to the event bus").
             addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help")).
@@ -30,11 +29,11 @@ public interface BusCommand {
       process.vertx().eventBus().send(address, msg);
       process.end();
     });
-    return cmd;
+    return cmd.build();
   }
 
   static Command tail() {
-    Command cmd = Command.command(CLI.
+    CommandBuilder cmd = Command.builder(CLI.
             create("bus-tail").
             setSummary("Subscribe to an event bus address and logs received messages on the console").
             addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help")).
@@ -50,6 +49,6 @@ public interface BusCommand {
         process.end();
       });
     });
-    return cmd;
+    return cmd.build();
   }
 }

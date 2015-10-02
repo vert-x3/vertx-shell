@@ -191,8 +191,8 @@ NOTE: this command list should evolve in next releases of Vert.x Shell
 
 Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
 
-A command is created by the `link:groovydoc/io/vertx/groovy/ext/shell/command/Command.html#command(java.lang.String)[Command.command]` method: the command process handler is called
-by the shell when the command is executed, this handler can be set with the `link:groovydoc/io/vertx/groovy/ext/shell/command/Command.html#processHandler(io.vertx.core.Handler)[processHandler]`
+A command is created by the `link:groovydoc/io/vertx/groovy/ext/shell/command/Command.html#builder(java.lang.String)[Command.builder]` method: the command process handler is called
+by the shell when the command is executed, this handler can be set with the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandBuilder.html#processHandler(io.vertx.core.Handler)[processHandler]`
 method:
 
 [source,groovy]
@@ -200,8 +200,8 @@ method:
 import io.vertx.groovy.ext.shell.command.Command
 import io.vertx.groovy.ext.shell.registry.CommandRegistry
 
-def command = Command.command("my-command")
-command.processHandler({ process ->
+def builder = Command.builder("my-command")
+builder.processHandler({ process ->
 
   // Write a message to the console
   process.write("Hello World")
@@ -212,7 +212,7 @@ command.processHandler({ process ->
 
 // Register the command
 def registry = CommandRegistry.get(vertx)
-registry.registerCommand(command)
+registry.registerCommand(builder.build())
 
 ----
 
@@ -259,7 +259,7 @@ def cli = CLI.create("my-command").addArgument([
   shortName:"m",
   longName:"my-option"
 ])
-def command = Command.command(cli)
+def command = Command.builder(cli)
 command.processHandler({ process ->
 
   def commandLine = process.commandLine()
@@ -287,7 +287,7 @@ def cli = CLI.create("my-command").addArgument([
   shortName:"h",
   longName:"help"
 ])
-def command = Command.command(cli)
+def command = Command.builder(cli)
 command.processHandler({ process ->
   // ...
 })
@@ -458,7 +458,7 @@ with `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#width()[width]` and `
 
 A command can provide a completion handler when it wants to provide contextual command line interface completion.
 
-Like the process handler, the `link:groovydoc/io/vertx/groovy/ext/shell/command/Command.html#completionHandler(io.vertx.core.Handler)[completion
+Like the process handler, the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandBuilder.html#completionHandler(io.vertx.core.Handler)[completion
 handler]` is non blocking because the implementation may use Vert.x services, e.g the file system.
 
 The `link:groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#lineTokens()[lineTokens]` returns a list of `link:groovydoc/io/vertx/groovy/ext/shell/cli/CliToken.html[tokens]`

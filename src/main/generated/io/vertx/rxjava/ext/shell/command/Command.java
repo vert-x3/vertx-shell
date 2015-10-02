@@ -21,10 +21,9 @@ import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.rxjava.ext.shell.cli.Completion;
 import io.vertx.rxjava.core.cli.CLI;
-import io.vertx.core.Handler;
 
 /**
- * A shell command.
+ * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  *
  * <p/>
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.command.Command original} non RX-ified interface using Vert.x codegen.
@@ -48,8 +47,8 @@ public class Command {
    * @param name the command name
    * @return the command
    */
-  public static Command command(String name) { 
-    Command ret= Command.newInstance(io.vertx.ext.shell.command.Command.command(name));
+  public static CommandBuilder builder(String name) { 
+    CommandBuilder ret= CommandBuilder.newInstance(io.vertx.ext.shell.command.Command.builder(name));
     return ret;
   }
 
@@ -59,8 +58,8 @@ public class Command {
    * @param cli the cli to use
    * @return the command
    */
-  public static Command command(CLI cli) { 
-    Command ret= Command.newInstance(io.vertx.ext.shell.command.Command.command((io.vertx.core.cli.CLI) cli.getDelegate()));
+  public static CommandBuilder builder(CLI cli) { 
+    CommandBuilder ret= CommandBuilder.newInstance(io.vertx.ext.shell.command.Command.builder((io.vertx.core.cli.CLI) cli.getDelegate()));
     return ret;
   }
 
@@ -74,32 +73,20 @@ public class Command {
   }
 
   /**
-   * Set a command process handler on the command, the process handler is called when the command is executed.
-   * @param handler the process handler
-   * @return this command object
+   * @return the command line interface, can be null
+   * @return 
    */
-  public Command processHandler(Handler<CommandProcess> handler) { 
-    this.delegate.processHandler(new Handler<io.vertx.ext.shell.command.CommandProcess>() {
-      public void handle(io.vertx.ext.shell.command.CommandProcess event) {
-        handler.handle(new CommandProcess(event));
-      }
-    });
-    return this;
+  public CLI cli() { 
+    CLI ret= CLI.newInstance(this.delegate.cli());
+    return ret;
   }
 
-  /**
-   * Set the command completion handler, the completion handler when the user asks for contextual command line
-   * completion, usually hitting the <i>tab</i> key.
-   * @param handler the completion handler
-   * @return this command object
-   */
-  public Command completionHandler(Handler<Completion> handler) { 
-    this.delegate.completionHandler(new Handler<io.vertx.ext.shell.cli.Completion>() {
-      public void handle(io.vertx.ext.shell.cli.Completion event) {
-        handler.handle(new Completion(event));
-      }
-    });
-    return this;
+  public void process(CommandProcess process) { 
+    this.delegate.process((io.vertx.ext.shell.command.CommandProcess) process.getDelegate());
+  }
+
+  public void complete(Completion completion) { 
+    this.delegate.complete((io.vertx.ext.shell.cli.Completion) completion.getDelegate());
   }
 
 

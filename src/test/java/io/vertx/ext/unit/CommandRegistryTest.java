@@ -3,6 +3,7 @@ package io.vertx.ext.unit;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.Test;
@@ -22,12 +23,12 @@ public class CommandRegistryTest {
   @Test
   public void testEval(TestContext context) {
     CommandRegistry registry = CommandRegistry.get(vertx);
-    Command command = Command.command("hello");
+    CommandBuilder command = Command.builder("hello");
     command.processHandler(process -> {
       context.assertEquals(Arrays.asList(CliToken.createBlank(" "), CliToken.createText("world")), process.argsTokens());
       process.end(0);
     });
-    registry.registerCommand(command, context.asyncAssertSuccess(v -> {
+    registry.registerCommand(command.build(), context.asyncAssertSuccess(v -> {
       registry.createProcess("hello world", context.asyncAssertSuccess(job -> {
         Async async = context.async();
         TestProcessContext ctx = new TestProcessContext();
@@ -42,8 +43,8 @@ public class CommandRegistryTest {
   @Test
   public void testRegister(TestContext context) {
     CommandRegistry registry = CommandRegistry.get(vertx);
-    Command command = Command.command("hello");
-    registry.registerCommand(command, context.asyncAssertSuccess(reg -> {
+    CommandBuilder command = Command.builder("hello");
+    registry.registerCommand(command.build(), context.asyncAssertSuccess(reg -> {
       registry.unregisterCommand("hello", context.asyncAssertSuccess(done -> {
         context.assertEquals(Collections.emptyList(), registry.registrations());
       }));
@@ -53,9 +54,9 @@ public class CommandRegistryTest {
   @Test
   public void testDuplicateRegistration(TestContext context) {
     CommandRegistry registry = CommandRegistry.get(vertx);
-    Command command = Command.command("hello");
-    registry.registerCommand(command, context.asyncAssertSuccess(reg -> {
-      registry.registerCommand(command, context.asyncAssertFailure(err -> {
+    CommandBuilder command = Command.builder("hello");
+    registry.registerCommand(command.build(), context.asyncAssertSuccess(reg -> {
+      registry.registerCommand(command.build(), context.asyncAssertFailure(err -> {
       }));
     }));
   }

@@ -18,6 +18,7 @@
 var utils = require('vertx-js/util/utils');
 var Completion = require('vertx-shell-js/completion');
 var CLI = require('vertx-js/cli');
+var CommandBuilder = require('vertx-shell-js/command_builder');
 var CommandProcess = require('vertx-shell-js/command_process');
 
 var io = Packages.io;
@@ -25,7 +26,6 @@ var JsonObject = io.vertx.core.json.JsonObject;
 var JCommand = io.vertx.ext.shell.command.Command;
 
 /**
- A shell command.
 
  @class
 */
@@ -49,37 +49,40 @@ var Command = function(j_val) {
   };
 
   /**
-   Set a command process handler on the command, the process handler is called when the command is executed.
+   @return the command line interface, can be null
 
    @public
-   @param handler {function} the process handler 
-   @return {Command} this command object
+
+   @return {CLI}
    */
-  this.processHandler = function(handler) {
+  this.cli = function() {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_command["processHandler(io.vertx.core.Handler)"](function(jVal) {
-      handler(utils.convReturnVertxGen(jVal, CommandProcess));
-    });
-      return that;
+    if (__args.length === 0) {
+      return utils.convReturnVertxGen(j_command["cli()"](), CLI);
     } else utils.invalidArgs();
   };
 
   /**
-   Set the command completion handler, the completion handler when the user asks for contextual command line
-   completion, usually hitting the <i>tab</i> key.
 
    @public
-   @param handler {function} the completion handler 
-   @return {Command} this command object
+   @param process {CommandProcess} 
    */
-  this.completionHandler = function(handler) {
+  this.process = function(process) {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_command["completionHandler(io.vertx.core.Handler)"](function(jVal) {
-      handler(utils.convReturnVertxGen(jVal, Completion));
-    });
-      return that;
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      j_command["process(io.vertx.ext.shell.command.CommandProcess)"](process._jdel);
+    } else utils.invalidArgs();
+  };
+
+  /**
+
+   @public
+   @param completion {Completion} 
+   */
+  this.complete = function(completion) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      j_command["complete(io.vertx.ext.shell.cli.Completion)"](completion._jdel);
     } else utils.invalidArgs();
   };
 
@@ -95,14 +98,14 @@ var Command = function(j_val) {
 
  @memberof module:vertx-shell-js/command
  @param cli {CLI} the cli to use 
- @return {Command} the command
+ @return {CommandBuilder} the command
  */
-Command.command = function() {
+Command.builder = function() {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnVertxGen(JCommand["command(java.lang.String)"](__args[0]), Command);
+    return utils.convReturnVertxGen(JCommand["builder(java.lang.String)"](__args[0]), CommandBuilder);
   }else if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-    return utils.convReturnVertxGen(JCommand["command(io.vertx.core.cli.CLI)"](__args[0]._jdel), Command);
+    return utils.convReturnVertxGen(JCommand["builder(io.vertx.core.cli.CLI)"](__args[0]._jdel), CommandBuilder);
   } else utils.invalidArgs();
 };
 

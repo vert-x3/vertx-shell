@@ -142,8 +142,8 @@
  *
  * Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
  *
- * A command is created by the {@link io.vertx.ext.shell.command.Command#command} method: the command process handler is called
- * by the shell when the command is executed, this handler can be set with the {@link io.vertx.ext.shell.command.Command#processHandler}
+ * A command is created by the {@link io.vertx.ext.shell.command.Command#builder} method: the command process handler is called
+ * by the shell when the command is executed, this handler can be set with the {@link io.vertx.ext.shell.command.CommandBuilder#processHandler}
  * method:
  *
  * [source,$lang]
@@ -288,7 +288,7 @@
  *
  * A command can provide a completion handler when it wants to provide contextual command line interface completion.
  *
- * Like the process handler, the {@link io.vertx.ext.shell.command.Command#completionHandler(io.vertx.core.Handler) completion
+ * Like the process handler, the {@link io.vertx.ext.shell.command.CommandBuilder#completionHandler(io.vertx.core.Handler) completion
  * handler} is non blocking because the implementation may use Vert.x services, e.g the file system.
  *
  * The {@link io.vertx.ext.shell.cli.Completion#lineTokens()} returns a list of {@link io.vertx.ext.shell.cli.CliToken tokens}

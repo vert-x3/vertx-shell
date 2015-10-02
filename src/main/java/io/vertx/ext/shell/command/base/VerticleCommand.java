@@ -8,6 +8,7 @@ import io.vertx.core.impl.Deployment;
 import io.vertx.core.impl.VertxInternal;
 import io.vertx.core.spi.VerticleFactory;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.CommandBuilder;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -19,7 +20,7 @@ import java.io.StringWriter;
 public interface VerticleCommand {
 
   static Command ls() {
-    Command cmd = Command.command(CLI.
+    CommandBuilder cmd = Command.builder(CLI.
             create("verticle-ls").
             setSummary("List all verticles").
             addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help"))
@@ -34,11 +35,11 @@ public interface VerticleCommand {
       process.end();
 
     });
-    return cmd;
+    return cmd.build();
   }
 
   static Command deploy() {
-    Command cmd = Command.command(CLI.
+    CommandBuilder cmd = Command.builder(CLI.
             create("verticle-deploy").
             setSummary("Deploy a verticle").
             addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help")).
@@ -58,11 +59,11 @@ public interface VerticleCommand {
         }
       });
     });
-    return cmd;
+    return cmd.build();
   }
 
   static Command undeploy() {
-    Command cmd = Command.command(CLI.
+    CommandBuilder cmd = Command.builder(CLI.
             create("verticle-undeploy").
             setSummary("Undeploy a verticle").
             addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help")).
@@ -82,11 +83,11 @@ public interface VerticleCommand {
         }
       });
     });
-    return cmd;
+    return cmd.build();
   }
 
   static Command factories() {
-    Command cmd = Command.command(CLI.
+    CommandBuilder cmd = Command.builder(CLI.
             create("verticle-factories").
             setSummary("List all verticle factories").
             addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help"))
@@ -98,6 +99,6 @@ public interface VerticleCommand {
       }
       process.end();
     });
-    return cmd;
+    return cmd.build();
   }
 }

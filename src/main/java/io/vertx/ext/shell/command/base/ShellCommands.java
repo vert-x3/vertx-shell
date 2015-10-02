@@ -6,6 +6,7 @@ import io.vertx.core.cli.Argument;
 import io.vertx.core.cli.CLI;
 import io.vertx.core.cli.Option;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.CommandProcess;
 import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.registry.CommandRegistration;
@@ -65,15 +66,15 @@ public interface ShellCommands {
     }
 
     SleepImpl sleep = new SleepImpl();
-    Command sleepCmd = Command.command(CLI.create("sleep").
+    CommandBuilder sleepCmd = Command.builder(CLI.create("sleep").
         addArgument(new Argument().setArgName("seconds")).
         addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help")));
     sleepCmd.processHandler(sleep::run);
-    return sleepCmd;
+    return sleepCmd.build();
   }
 
   static Command echo() {
-    Command cmd = Command.command("echo");
+    CommandBuilder cmd = Command.builder("echo");
     cmd.processHandler(process -> {
       boolean first = true;
       for (String token : process.args()) {
@@ -86,11 +87,11 @@ public interface ShellCommands {
       process.write("\n");
       process.end();
     });
-    return cmd;
+    return cmd.build();
   }
 
   static Command help() {
-    Command cmd = Command.command("help");
+    CommandBuilder cmd = Command.builder("help");
     cmd.processHandler(process -> {
       CommandRegistry manager = CommandRegistry.get(process.vertx());
       manager.registrations();
@@ -100,6 +101,6 @@ public interface ShellCommands {
       }
       process.end();
     });
-    return cmd;
+    return cmd.build();
   }
 }

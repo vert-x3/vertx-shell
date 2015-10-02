@@ -9,6 +9,7 @@ import io.vertx.core.cli.Option;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
+import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.net.SSHOptions;
 import io.vertx.ext.shell.Session;
@@ -16,7 +17,7 @@ import io.vertx.ext.shell.ShellService;
 import io.vertx.ext.shell.ShellServiceOptions;
 import io.vertx.ext.shell.net.TelnetOptions;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
-import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.registry.CommandRegistry;
 
 /**
@@ -85,8 +86,8 @@ public class Examples {
 
   public void helloWorld(Vertx vertx) {
 
-    Command command = Command.command("my-command");
-    command.processHandler(process -> {
+    CommandBuilder builder = Command.builder("my-command");
+    builder.processHandler(process -> {
 
       // Write a message to the console
       process.write("Hello World");
@@ -97,14 +98,14 @@ public class Examples {
 
     // Register the command
     CommandRegistry registry = CommandRegistry.get(vertx);
-    registry.registerCommand(command);
+    registry.registerCommand(builder.build());
   }
 
   public void cliCommand() {
     CLI cli = CLI.create("my-command").
         addArgument(new Argument().setArgName("my-arg")).
         addOption(new Option().setShortName("m").setLongName("my-option"));
-    Command command = Command.command(cli);
+    CommandBuilder command = Command.builder(cli);
     command.processHandler(process -> {
 
       CommandLine commandLine = process.commandLine();
@@ -121,13 +122,13 @@ public class Examples {
     CLI cli = CLI.create("my-command").
         addArgument(new Argument().setArgName("my-arg")).
         addOption(new Option().setArgName("help").setShortName("h").setLongName("help"));
-    Command command = Command.command(cli);
+    CommandBuilder command = Command.builder(cli);
     command.processHandler(process -> {
       // ...
     });
   }
 
-  public void commandArgs(Command command) {
+  public void commandArgs(CommandBuilder command) {
     command.processHandler(process -> {
 
       for (String arg : process.args()) {
@@ -139,7 +140,7 @@ public class Examples {
     });
   }
 
-  public void session(Command command) {
+  public void session(CommandBuilder command) {
     command.processHandler(process -> {
 
       Session session = process.session();
@@ -153,7 +154,7 @@ public class Examples {
   }
 
 
-  public void readStdin(Command command) {
+  public void readStdin(CommandBuilder command) {
     command.processHandler(process -> {
       process.setStdin(data -> {
         System.out.println("Received " + data);
@@ -161,27 +162,27 @@ public class Examples {
     });
   }
 
-  public void writeStdout(Command command) {
+  public void writeStdout(CommandBuilder command) {
     command.processHandler(process -> {
       process.stdout().write("Hello World");
       process.end();
     });
   }
 
-  public void write(Command command) {
+  public void write(CommandBuilder command) {
     command.processHandler(process -> {
       process.write("Hello World");
       process.end();
     });
   }
 
-  public void terminalSize(Command command) {
+  public void terminalSize(CommandBuilder command) {
     command.processHandler(process -> {
       process.write("Current terminal size: (" + process.width() + ", " + process.height() + ")").end();
     });
   }
 
-  public void asyncCommand(Command command) {
+  public void asyncCommand(CommandBuilder command) {
     command.processHandler(process -> {
       Vertx vertx = process.vertx();
 
@@ -194,7 +195,7 @@ public class Examples {
     });
   }
 
-  public void SIGINT(Command command) {
+  public void SIGINT(CommandBuilder command) {
     command.processHandler(process -> {
       Vertx vertx = process.vertx();
 
@@ -211,7 +212,7 @@ public class Examples {
     });
   }
 
-  public void SIGTSTP_SIGCONT(Command command) {
+  public void SIGTSTP_SIGCONT(CommandBuilder command) {
     command.processHandler(process -> {
 
       // Command is suspended

@@ -184,14 +184,14 @@ NOTE: this command list should evolve in next releases of Vert.x Shell
 
 Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
 
-A command is created by the `link:../../apidocs/io/vertx/ext/shell/command/Command.html#command-java.lang.String-[Command.command]` method: the command process handler is called
-by the shell when the command is executed, this handler can be set with the `link:../../apidocs/io/vertx/ext/shell/command/Command.html#processHandler-io.vertx.core.Handler-[processHandler]`
+A command is created by the `link:../../apidocs/io/vertx/ext/shell/command/Command.html#builder-java.lang.String-[Command.builder]` method: the command process handler is called
+by the shell when the command is executed, this handler can be set with the `link:../../apidocs/io/vertx/ext/shell/command/CommandBuilder.html#processHandler-io.vertx.core.Handler-[processHandler]`
 method:
 
 [source,java]
 ----
-Command command = Command.command("my-command");
-command.processHandler(process -> {
+CommandBuilder builder = Command.builder("my-command");
+builder.processHandler(process -> {
 
   // Write a message to the console
   process.write("Hello World");
@@ -202,7 +202,7 @@ command.processHandler(process -> {
 
 // Register the command
 CommandRegistry registry = CommandRegistry.get(vertx);
-registry.registerCommand(command);
+registry.registerCommand(builder.build());
 ----
 
 After a command is created, it needs to be registed to a `link:../../apidocs/io/vertx/ext/shell/registry/CommandRegistry.html[CommandRegistry]`. The
@@ -242,7 +242,7 @@ write command line argument parsing:
 CLI cli = CLI.create("my-command").
     addArgument(new Argument().setArgName("my-arg")).
     addOption(new Option().setShortName("m").setLongName("my-option"));
-Command command = Command.command(cli);
+CommandBuilder command = Command.builder(cli);
 command.processHandler(process -> {
 
   CommandLine commandLine = process.commandLine();
@@ -263,7 +263,7 @@ when the option is activated:
 CLI cli = CLI.create("my-command").
     addArgument(new Argument().setArgName("my-arg")).
     addOption(new Option().setArgName("help").setShortName("h").setLongName("help"));
-Command command = Command.command(cli);
+CommandBuilder command = Command.builder(cli);
 command.processHandler(process -> {
   // ...
 });
@@ -423,7 +423,7 @@ with `link:../../apidocs/io/vertx/ext/shell/io/Tty.html#width--[width]` and `lin
 
 A command can provide a completion handler when it wants to provide contextual command line interface completion.
 
-Like the process handler, the `link:../../apidocs/io/vertx/ext/shell/command/Command.html#completionHandler-io.vertx.core.Handler-[completion
+Like the process handler, the `link:../../apidocs/io/vertx/ext/shell/command/CommandBuilder.html#completionHandler-io.vertx.core.Handler-[completion
 handler]` is non blocking because the implementation may use Vert.x services, e.g the file system.
 
 The `link:../../apidocs/io/vertx/ext/shell/cli/Completion.html#lineTokens--[lineTokens]` returns a list of `link:../../apidocs/io/vertx/ext/shell/cli/CliToken.html[tokens]`

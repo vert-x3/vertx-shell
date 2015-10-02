@@ -9,7 +9,6 @@ import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.command.impl.CommandImpl;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.registry.CommandRegistration;
 import io.vertx.ext.shell.process.Process;
@@ -58,7 +57,7 @@ public class CommandRegistryImpl implements CommandRegistry {
   @Override
   public void registerCommand(Command command, Handler<AsyncResult<CommandRegistration>> doneHandler) {
     Context context = vertx.getOrCreateContext();
-    CommandRegistrationImpl registration = new CommandRegistrationImpl(vertx, context, (CommandImpl) command);
+    CommandRegistrationImpl registration = new CommandRegistrationImpl(vertx, context, command);
     String name = command.name();
     if (commandMap.containsKey(name)) {
       doneHandler.handle(Future.failedFuture("Command " + name + " already registered"));

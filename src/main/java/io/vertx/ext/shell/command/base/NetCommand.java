@@ -1,7 +1,6 @@
 package io.vertx.ext.shell.command.base;
 
 import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.core.cli.Argument;
 import io.vertx.core.cli.CLI;
 import io.vertx.core.cli.Option;
 import io.vertx.core.http.impl.HttpServerImpl;
@@ -9,6 +8,7 @@ import io.vertx.core.impl.VertxInternal;
 import io.vertx.core.net.impl.NetServerImpl;
 import io.vertx.core.net.impl.ServerID;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.CommandBuilder;
 
 import java.util.Map;
 
@@ -19,7 +19,7 @@ import java.util.Map;
 public interface NetCommand {
 
   static Command ls() {
-    Command cmd = Command.command(CLI.
+    CommandBuilder cmd = Command.builder(CLI.
             create("net-ls").
             setSummary("List all servers").
             addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help"))
@@ -36,7 +36,7 @@ public interface NetCommand {
       }
       process.end();
     });
-    return cmd;
+    return cmd.build();
   }
 
 }

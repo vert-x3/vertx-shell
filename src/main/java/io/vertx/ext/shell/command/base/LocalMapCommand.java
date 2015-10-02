@@ -8,9 +8,9 @@ import io.vertx.core.cli.Option;
 import io.vertx.core.shareddata.LocalMap;
 import io.vertx.core.shareddata.SharedData;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.CommandBuilder;
 
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -20,7 +20,7 @@ public interface LocalMapCommand {
 
   static Command get() {
     // CLI does not support variable arguments yet
-    Command cmd = Command.command("local-map-get");
+    CommandBuilder cmd = Command.builder("local-map-get");
     cmd.processHandler(process -> {
       Iterator<String> it = process.args().iterator();
       if (!it.hasNext()) {
@@ -37,11 +37,11 @@ public interface LocalMapCommand {
       }
       process.end();
     });
-    return cmd;
+    return cmd.build();
   }
 
   static Command put() {
-    Command cmd = Command.command(CLI.
+    CommandBuilder cmd = Command.builder(CLI.
             create("local-map-put").
             setSummary("Put key/value in a local map").
             addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help")).
@@ -58,12 +58,12 @@ public interface LocalMapCommand {
       map.put(key, value);
       process.end();
     });
-    return cmd;
+    return cmd.build();
   }
 
   static Command rm() {
     // CLI does not support variable arguments yet
-    Command cmd = Command.command("local-map-rm");
+    CommandBuilder cmd = Command.builder("local-map-rm");
     cmd.processHandler(process -> {
       Iterator<String> it = process.args().iterator();
       if (!it.hasNext()) {
@@ -79,6 +79,6 @@ public interface LocalMapCommand {
       }
       process.end();
     });
-    return cmd;
+    return cmd.build();
   }
 }

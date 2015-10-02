@@ -1,15 +1,11 @@
 package io.vertx.ext.shell.command;
 
-import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.core.Handler;
 import io.vertx.core.cli.CLI;
 import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.command.impl.CommandImpl;
+import io.vertx.ext.shell.command.impl.CommandBuilderImpl;
 
 /**
- * A shell command.
- *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
@@ -22,8 +18,8 @@ public interface Command {
    * @param name the command name
    * @return the command
    */
-  static Command command(String name) {
-    return new CommandImpl(name, null);
+  static CommandBuilder builder(String name) {
+    return new CommandBuilderImpl(name, null);
   }
 
   /**
@@ -33,8 +29,8 @@ public interface Command {
    * @param cli the cli to use
    * @return the command
    */
-  static Command command(CLI cli) {
-    return new CommandImpl(cli.getName(), cli);
+  static CommandBuilder builder(CLI cli) {
+    return new CommandBuilderImpl(cli.getName(), cli);
   }
 
   /**
@@ -43,22 +39,12 @@ public interface Command {
   String name();
 
   /**
-   * Set a command process handler on the command, the process handler is called when the command is executed.
-   *
-   * @param handler the process handler
-   * @return this command object
+   * @return the command line interface, can be null
    */
-  @Fluent
-  Command processHandler(Handler<CommandProcess> handler);
+  CLI cli();
 
-  /**
-   * Set the command completion handler, the completion handler when the user asks for contextual command line
-   * completion, usually hitting the <i>tab</i> key.
-   *
-   * @param handler the completion handler
-   * @return this command object
-   */
-  @Fluent
-  Command completionHandler(Handler<Completion> handler);
+  void process(CommandProcess process);
+
+  void complete(Completion completion);
 
 }

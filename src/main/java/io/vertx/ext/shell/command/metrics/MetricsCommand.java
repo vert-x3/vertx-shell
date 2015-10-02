@@ -6,6 +6,7 @@ import io.vertx.core.cli.CLI;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.dropwizard.MetricsService;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.CommandBuilder;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -14,7 +15,7 @@ import io.vertx.ext.shell.command.Command;
 public interface MetricsCommand {
 
   static Command ls() {
-    Command cmd = Command.command(CLI.
+    CommandBuilder cmd = Command.builder(CLI.
         create("metrics-ls").
         setDescription("List the known metrics for the current Vert.x instance"));
     cmd.processHandler(process -> {
@@ -24,11 +25,11 @@ public interface MetricsCommand {
       });
       process.end();
     });
-    return cmd;
+    return cmd.build();
   }
 
   static Command info() {
-    Command cmd = Command.command(CLI.
+    CommandBuilder cmd = Command.builder(CLI.
         create("metrics-info").
         setDescription("Show metrics info for the current Vert.x instance in Json format").
         addArgument(new Argument().setArgName("name")));
@@ -39,7 +40,7 @@ public interface MetricsCommand {
       process.write(snapshot.encodePrettily() + "\n");
       process.end();
     });
-    return cmd;
+    return cmd.build();
   }
 
 }

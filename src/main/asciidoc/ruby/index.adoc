@@ -190,8 +190,8 @@ NOTE: this command list should evolve in next releases of Vert.x Shell
 
 Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
 
-A command is created by the `link:yardoc/VertxShell/Command.html#command-class_method[Command.command]` method: the command process handler is called
-by the shell when the command is executed, this handler can be set with the `link:yardoc/VertxShell/Command.html#process_handler-instance_method[processHandler]`
+A command is created by the `link:yardoc/VertxShell/Command.html#builder-class_method[Command.builder]` method: the command process handler is called
+by the shell when the command is executed, this handler can be set with the `link:yardoc/VertxShell/CommandBuilder.html#process_handler-instance_method[processHandler]`
 method:
 
 [source,ruby]
@@ -199,8 +199,8 @@ method:
 require 'vertx-shell/command'
 require 'vertx-shell/command_registry'
 
-command = VertxShell::Command.command("my-command")
-command.process_handler() { |process|
+builder = VertxShell::Command.builder("my-command")
+builder.process_handler() { |process|
 
   # Write a message to the console
   process.write("Hello World")
@@ -211,7 +211,7 @@ command.process_handler() { |process|
 
 # Register the command
 registry = VertxShell::CommandRegistry.get(vertx)
-registry.register_command(command)
+registry.register_command(builder.build())
 
 ----
 
@@ -258,7 +258,7 @@ cli = Vertx::CLI.create("my-command").add_argument({
   'shortName' => "m",
   'longName' => "my-option"
 })
-command = VertxShell::Command.command(cli)
+command = VertxShell::Command.builder(cli)
 command.process_handler() { |process|
 
   commandLine = process.command_line()
@@ -286,7 +286,7 @@ cli = Vertx::CLI.create("my-command").add_argument({
   'shortName' => "h",
   'longName' => "help"
 })
-command = VertxShell::Command.command(cli)
+command = VertxShell::Command.builder(cli)
 command.process_handler() { |process|
   # ...
 }
@@ -455,7 +455,7 @@ with `link:yardoc/VertxShell/Tty.html#width-instance_method[width]` and `link:ya
 
 A command can provide a completion handler when it wants to provide contextual command line interface completion.
 
-Like the process handler, the `link:yardoc/VertxShell/Command.html#completion_handler-instance_method[completion
+Like the process handler, the `link:yardoc/VertxShell/CommandBuilder.html#completion_handler-instance_method[completion
 handler]` is non blocking because the implementation may use Vert.x services, e.g the file system.
 
 The `link:yardoc/VertxShell/Completion.html#line_tokens-instance_method[lineTokens]` returns a list of `link:yardoc/VertxShell/CliToken.html[tokens]`

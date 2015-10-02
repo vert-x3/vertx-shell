@@ -33,10 +33,10 @@ public class ShellTest {
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
     Async async = context.async();
-    manager.registerCommand(Command.command("foo").processHandler(process -> {
+    manager.registerCommand(Command.builder("foo").processHandler(process -> {
       context.assertEquals(vertx, process.vertx());
       async.complete();
-    }));
+    }).build());
     conn.read("foo\r");
   }
 
@@ -49,14 +49,14 @@ public class ShellTest {
     context.assertNull(shell.foregroundJob());
     context.assertEquals(Collections.emptyMap(), shell.jobs());
     Async async = context.async();
-    manager.registerCommand(Command.command("foo").processHandler(process -> {
+    manager.registerCommand(Command.builder("foo").processHandler(process -> {
       context.assertEquals(1, shell.jobs().size());
       Job job = shell.getJob(1);
       context.assertEquals(job, shell.foregroundJob());
       context.assertEquals("foo", job.line());
       context.assertEquals(JobStatus.RUNNING, job.status());
       async.complete();
-    }));
+    }).build());
     conn.read("foo\r");
   }
 
@@ -67,10 +67,10 @@ public class ShellTest {
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
     Async async = context.async();
-    manager.registerCommand(Command.command("_not_consumed").processHandler(process -> {
+    manager.registerCommand(Command.builder("_not_consumed").processHandler(process -> {
       async.complete();
-    }));
-    manager.registerCommand(Command.command("read").processHandler(process -> {
+    }).build());
+    manager.registerCommand(Command.builder("read").processHandler(process -> {
       StringBuilder buffer = new StringBuilder();
       process.setStdin(line -> {
         buffer.append(line);
@@ -78,7 +78,7 @@ public class ShellTest {
           process.end();
         }
       });
-    }), context.asyncAssertSuccess(v -> {
+    }).build(), context.asyncAssertSuccess(v -> {
       conn.read("read\rthe_line_not_consumed\r");
     }));
   }
@@ -91,12 +91,12 @@ public class ShellTest {
     shell.init();
     Async async = context.async();
     AtomicInteger count = new AtomicInteger();
-    manager.registerCommand(Command.command("read").processHandler(process -> {
+    manager.registerCommand(Command.builder("read").processHandler(process -> {
       if (count.incrementAndGet() == 2) {
         async.complete();
       }
       process.end(0);
-    }), context.asyncAssertSuccess(v -> {
+    }).build(), context.asyncAssertSuccess(v -> {
       conn.read("read\rread\r");
     }));
   }
@@ -109,7 +109,7 @@ public class ShellTest {
     shell.init();
     Async async = context.async();
     CountDownLatch latch = new CountDownLatch(1);
-    manager.registerCommand(Command.command("foo").processHandler(process -> {
+    manager.registerCommand(Command.builder("foo").processHandler(process -> {
       Job job = shell.getJob(1);
       process.eventHandler(EventType.SIGTSTP, v -> {
         context.assertEquals(JobStatus.STOPPED, job.status());
@@ -117,7 +117,7 @@ public class ShellTest {
         async.complete();
       });
       latch.countDown();
-    }));
+    }).build());
     conn.read("foo\r");
     latch.await(10, TimeUnit.SECONDS);
     conn.sendEvent(TtyEvent.SUSP);
@@ -133,7 +133,7 @@ public class ShellTest {
     CountDownLatch latch1 = new CountDownLatch(1);
     CountDownLatch latch2 = new CountDownLatch(1);
     CountDownLatch latch3 = new CountDownLatch(1);
-    manager.registerCommand(Command.command("read").processHandler(process -> {
+    manager.registerCommand(Command.builder("read").processHandler(process -> {
       process.setStdin(line -> {
         context.fail("Should not process line " + line);
       });
@@ -142,18 +142,18 @@ public class ShellTest {
         latch2.countDown();
       });
       latch1.countDown();
-    }));
-    manager.registerCommand(Command.command("wait").processHandler(process -> {
+    }).build());
+    manager.registerCommand(Command.builder("wait").processHandler(process -> {
       // Do nothing, this command is used to escape from readline and make
       // sure that the read data is not sent to the stopped command
       latch3.countDown();
       process.eventHandler(EventType.SIGTSTP, v -> {
         process.end(0);
       });
-    }));
-    manager.registerCommand(Command.command("end").processHandler(process -> {
+    }).build());
+    manager.registerCommand(Command.builder("end").processHandler(process -> {
       async.complete();
-    }));
+    }).build());
     conn.read("read\r");
     latch1.await(10, TimeUnit.SECONDS);
     conn.sendEvent(TtyEvent.SUSP);
@@ -174,7 +174,7 @@ public class ShellTest {
     CountDownLatch latch2 = new CountDownLatch(1);
     CountDownLatch latch3 = new CountDownLatch(1);
     CountDownLatch latch4 = new CountDownLatch(1);
-    manager.registerCommand(Command.command("foo").processHandler(process -> {
+    manager.registerCommand(Command.builder("foo").processHandler(process -> {
       Job job = shell.getJob(1);
       process.eventHandler(EventType.SIGTSTP, v -> {
         context.assertEquals(0L, latch1.getCount());
@@ -196,7 +196,7 @@ public class ShellTest {
         latch4.countDown();
       });
       latch1.countDown();
-    }));
+    }).build());
     conn.read("foo\r");
     latch1.await(10, TimeUnit.SECONDS);
     conn.sendEvent(TtyEvent.SUSP);
@@ -217,7 +217,7 @@ public class ShellTest {
     CountDownLatch latch1 = new CountDownLatch(1);
     CountDownLatch latch2 = new CountDownLatch(1);
     CountDownLatch latch3 = new CountDownLatch(1);
-    manager.registerCommand(Command.command("foo").processHandler(process -> {
+    manager.registerCommand(Command.builder("foo").processHandler(process -> {
       Job job = shell.getJob(1);
       process.eventHandler(EventType.SIGTSTP, v -> {
         context.assertEquals(0L, latch1.getCount());
@@ -242,7 +242,7 @@ public class ShellTest {
         latch3.countDown();
       });
       latch1.countDown();
-    }));
+    }).build());
     conn.read("foo\r");
     latch1.await(10, TimeUnit.SECONDS);
     conn.sendEvent(TtyEvent.SUSP);
@@ -266,7 +266,7 @@ public class ShellTest {
     CountDownLatch latch2 = new CountDownLatch(1);
     CountDownLatch latch3 = new CountDownLatch(1);
     Async async = context.async();
-    manager.registerCommand(Command.command("foo").processHandler(process -> {
+    manager.registerCommand(Command.builder("foo").processHandler(process -> {
       process.eventHandler(EventType.SIGTSTP, v -> {
         context.assertEquals(1L, latch2.getCount());
         latch2.countDown();
@@ -279,7 +279,7 @@ public class ShellTest {
         async.complete();
       });
       latch1.countDown();
-    }));
+    }).build());
     conn.read("foo\r");
     latch1.await(10, TimeUnit.SECONDS);
     conn.sendEvent(TtyEvent.SUSP);
@@ -301,17 +301,17 @@ public class ShellTest {
     shell.init();
     CountDownLatch latch = new CountDownLatch(1);
     Async async = context.async();
-    manager.registerCommand(Command.command("foo").processHandler(process -> {
+    manager.registerCommand(Command.builder("foo").processHandler(process -> {
       context.assertEquals(null, conn.checkWritten("% foo\n"));
       conn.read("bar");
       context.assertNull(conn.checkWritten("bar"));
       process.end();
       latch.countDown();
-    }));
-    manager.registerCommand(Command.command("bar").processHandler(process -> {
+    }).build());
+    manager.registerCommand(Command.builder("bar").processHandler(process -> {
       context.assertEquals(null, conn.checkWritten("% bar\n"));
       async.complete();
-    }));
+    }).build());
     conn.read("foo\r");
     latch.await(10, TimeUnit.SECONDS);
     conn.read("\r");
@@ -324,7 +324,7 @@ public class ShellTest {
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
     Async async = context.async();
-    manager.registerCommand(Command.command("foo").processHandler(process -> {
+    manager.registerCommand(Command.builder("foo").processHandler(process -> {
       context.assertEquals(null, conn.checkWritten("% foo\n"));
       conn.read("\u0007");
       context.assertNull(conn.checkWritten("^G"));
@@ -337,7 +337,7 @@ public class ShellTest {
       conn.read("\004");
       context.assertNull(conn.checkWritten("^D"));
       async.complete();
-    }));
+    }).build());
     conn.read("foo\r");
   }
 

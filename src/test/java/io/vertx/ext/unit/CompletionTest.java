@@ -16,7 +16,6 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -33,16 +32,16 @@ public class CompletionTest {
   @Before
   public void before() {
     mgr = CommandRegistry.get(rule.vertx());
-    mgr.registerCommand(Command.command("foo").processHandler(proc -> {
+    mgr.registerCommand(Command.builder("foo").processHandler(proc -> {
     }).completionHandler(
         completion -> {
           completion.complete("completed_by_foo", false);
         }
-    ));
-    mgr.registerCommand(Command.command("bar").processHandler(proc -> {
-    }));
-    mgr.registerCommand(Command.command("baz").processHandler(proc -> {
-    }));
+    ).build());
+    mgr.registerCommand(Command.builder("bar").processHandler(proc -> {
+    }).build());
+    mgr.registerCommand(Command.builder("baz").processHandler(proc -> {
+    }).build());
   }
 
   @Test

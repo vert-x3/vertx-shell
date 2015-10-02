@@ -6,6 +6,7 @@ import io.vertx.core.cli.CLI;
 import io.vertx.core.cli.Option;
 import io.vertx.core.file.FileProps;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.CommandBuilder;
 
 import java.util.AbstractMap;
 import java.util.Date;
@@ -20,7 +21,7 @@ import java.util.stream.Stream;
 public interface FileSystemCommand {
 
   static Command cd() {
-    Command cmd = Command.command(CLI.
+    CommandBuilder cmd = Command.builder(CLI.
             create("cd").
             setSummary("Change the current working dir").
             addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help")).
@@ -45,11 +46,11 @@ public interface FileSystemCommand {
         process.end();
       }
     });
-    return cmd;
+    return cmd.build();
   }
 
   static Command pwd() {
-    Command cmd = Command.command(CLI.
+    CommandBuilder cmd = Command.builder(CLI.
             create("pwd").
             setSummary("Print the current working dir").
             addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help"))
@@ -61,7 +62,7 @@ public interface FileSystemCommand {
       }
       process.write(cwd).write("\n").end();
     });
-    return cmd;
+    return cmd.build();
   }
 
   static Command ls() {
@@ -69,7 +70,7 @@ public interface FileSystemCommand {
     Argument FILE = new Argument().setArgName("file").setRequired(false).setDescription("The file to list");
     Option HELP = new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help").setDescription("This help");
     Option ALL = new Option().setArgName("all").setFlag(true).setShortName("a").setDescription("Include files that begins with .");
-    Command cmd = Command.command(CLI.create("ls").
+    CommandBuilder cmd = Command.builder(CLI.create("ls").
         addOption(HELP).
         addOption(ELL).
         addOption(ALL).
@@ -129,6 +130,6 @@ public interface FileSystemCommand {
             process.end();
           });
     });
-    return cmd;
+    return cmd.build();
   }
 }

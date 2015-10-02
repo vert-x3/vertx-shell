@@ -1,10 +1,11 @@
 require 'vertx-shell/completion'
 require 'vertx/cli'
+require 'vertx-shell/command_builder'
 require 'vertx-shell/command_process'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.command.Command
 module VertxShell
-  #  A shell command.
+  #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
   class Command
     # @private
     # @param j_del [::VertxShell::Command] the java delegate
@@ -18,18 +19,18 @@ module VertxShell
     end
     #  Create a new commmand with its {::Vertx::CLI} descriptor. This command can then retrieve the parsed
     #  {::VertxShell::CommandProcess#command_line} when it executes to know get the command arguments and options.
-    # @overload command(name)
+    # @overload builder(name)
     #   @param [String] name the command name
-    # @overload command(cli)
+    # @overload builder(cli)
     #   @param [::Vertx::CLI] cli the cli to use
-    # @return [::VertxShell::Command] the command
-    def self.command(param_1=nil)
+    # @return [::VertxShell::CommandBuilder] the command
+    def self.builder(param_1=nil)
       if param_1.class == String && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::Command.java_method(:command, [Java::java.lang.String.java_class]).call(param_1),::VertxShell::Command)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::Command.java_method(:builder, [Java::java.lang.String.java_class]).call(param_1),::VertxShell::CommandBuilder)
       elsif param_1.class.method_defined?(:j_del) && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::Command.java_method(:command, [Java::IoVertxCoreCli::CLI.java_class]).call(param_1.j_del),::VertxShell::Command)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::Command.java_method(:builder, [Java::IoVertxCoreCli::CLI.java_class]).call(param_1.j_del),::VertxShell::CommandBuilder)
       end
-      raise ArgumentError, "Invalid arguments when calling command(param_1)"
+      raise ArgumentError, "Invalid arguments when calling builder(param_1)"
     end
     #  @return the command name
     # @return [String]
@@ -39,26 +40,29 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling name()"
     end
-    #  Set a command process handler on the command, the process handler is called when the command is executed.
-    # @yield the process handler
-    # @return [self]
-    def process_handler
-      if block_given?
-        @j_del.java_method(:processHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(::Vertx::Util::Utils.safe_create(event,::VertxShell::CommandProcess)) }))
-        return self
+    #  @return the command line interface, can be null
+    # @return [::Vertx::CLI]
+    def cli
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:cli, []).call(),::Vertx::CLI)
       end
-      raise ArgumentError, "Invalid arguments when calling process_handler()"
+      raise ArgumentError, "Invalid arguments when calling cli()"
     end
-    #  Set the command completion handler, the completion handler when the user asks for contextual command line
-    #  completion, usually hitting the <i>tab</i> key.
-    # @yield the completion handler
-    # @return [self]
-    def completion_handler
-      if block_given?
-        @j_del.java_method(:completionHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(::Vertx::Util::Utils.safe_create(event,::VertxShell::Completion)) }))
-        return self
+    # @param [::VertxShell::CommandProcess] process 
+    # @return [void]
+    def process(process=nil)
+      if process.class.method_defined?(:j_del) && !block_given?
+        return @j_del.java_method(:process, [Java::IoVertxExtShellCommand::CommandProcess.java_class]).call(process.j_del)
       end
-      raise ArgumentError, "Invalid arguments when calling completion_handler()"
+      raise ArgumentError, "Invalid arguments when calling process(process)"
+    end
+    # @param [::VertxShell::Completion] completion 
+    # @return [void]
+    def complete(completion=nil)
+      if completion.class.method_defined?(:j_del) && !block_given?
+        return @j_del.java_method(:complete, [Java::IoVertxExtShellCli::Completion.java_class]).call(completion.j_del)
+      end
+      raise ArgumentError, "Invalid arguments when calling complete(completion)"
     end
   end
 end

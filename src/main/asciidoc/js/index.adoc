@@ -190,8 +190,8 @@ NOTE: this command list should evolve in next releases of Vert.x Shell
 
 Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
 
-A command is created by the `link:jsdoc/command-Command.html#command[Command.command]` method: the command process handler is called
-by the shell when the command is executed, this handler can be set with the `link:jsdoc/command-Command.html#processHandler[processHandler]`
+A command is created by the `link:jsdoc/command-Command.html#builder[Command.builder]` method: the command process handler is called
+by the shell when the command is executed, this handler can be set with the `link:jsdoc/command_builder-CommandBuilder.html#processHandler[processHandler]`
 method:
 
 [source,js]
@@ -199,8 +199,8 @@ method:
 var Command = require("vertx-shell-js/command");
 var CommandRegistry = require("vertx-shell-js/command_registry");
 
-var command = Command.command("my-command");
-command.processHandler(function (process) {
+var builder = Command.builder("my-command");
+builder.processHandler(function (process) {
 
   // Write a message to the console
   process.write("Hello World");
@@ -211,7 +211,7 @@ command.processHandler(function (process) {
 
 // Register the command
 var registry = CommandRegistry.get(vertx);
-registry.registerCommand(command);
+registry.registerCommand(builder.build());
 
 ----
 
@@ -258,7 +258,7 @@ var cli = CLI.create("my-command").addArgument({
   "shortName" : "m",
   "longName" : "my-option"
 });
-var command = Command.command(cli);
+var command = Command.builder(cli);
 command.processHandler(function (process) {
 
   var commandLine = process.commandLine();
@@ -286,7 +286,7 @@ var cli = CLI.create("my-command").addArgument({
   "shortName" : "h",
   "longName" : "help"
 });
-var command = Command.command(cli);
+var command = Command.builder(cli);
 command.processHandler(function (process) {
   // ...
 });
@@ -455,7 +455,7 @@ with `link:jsdoc/tty-Tty.html#width[width]` and `link:jsdoc/tty-Tty.html#height[
 
 A command can provide a completion handler when it wants to provide contextual command line interface completion.
 
-Like the process handler, the `link:jsdoc/command-Command.html#completionHandler[completion
+Like the process handler, the `link:jsdoc/command_builder-CommandBuilder.html#completionHandler[completion
 handler]` is non blocking because the implementation may use Vert.x services, e.g the file system.
 
 The `link:jsdoc/completion-Completion.html#lineTokens[lineTokens]` returns a list of `link:jsdoc/cli_token-CliToken.html[tokens]`

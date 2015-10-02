@@ -20,9 +20,8 @@ import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.cli.Completion
 import io.vertx.groovy.core.cli.CLI
-import io.vertx.core.Handler
 /**
- * A shell command.
+ * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
 public class Command {
@@ -39,8 +38,8 @@ public class Command {
    * @param name the command name
    * @return the command
    */
-  public static Command command(String name) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.Command.command(name), io.vertx.groovy.ext.shell.command.Command.class);
+  public static CommandBuilder builder(String name) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.Command.builder(name), io.vertx.groovy.ext.shell.command.CommandBuilder.class);
     return ret;
   }
   /**
@@ -49,8 +48,8 @@ public class Command {
    * @param cli the cli to use
    * @return the command
    */
-  public static Command command(CLI cli) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.Command.command((io.vertx.core.cli.CLI)cli.getDelegate()), io.vertx.groovy.ext.shell.command.Command.class);
+  public static CommandBuilder builder(CLI cli) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.Command.builder((io.vertx.core.cli.CLI)cli.getDelegate()), io.vertx.groovy.ext.shell.command.CommandBuilder.class);
     return ret;
   }
   /**
@@ -62,30 +61,17 @@ public class Command {
     return ret;
   }
   /**
-   * Set a command process handler on the command, the process handler is called when the command is executed.
-   * @param handler the process handler
-   * @return this command object
+   * @return the command line interface, can be null
+   * @return 
    */
-  public Command processHandler(Handler<CommandProcess> handler) {
-    this.delegate.processHandler(new Handler<io.vertx.ext.shell.command.CommandProcess>() {
-      public void handle(io.vertx.ext.shell.command.CommandProcess event) {
-        handler.handle(new io.vertx.groovy.ext.shell.command.CommandProcess(event));
-      }
-    });
-    return this;
+  public CLI cli() {
+    def ret= InternalHelper.safeCreate(this.delegate.cli(), io.vertx.groovy.core.cli.CLI.class);
+    return ret;
   }
-  /**
-   * Set the command completion handler, the completion handler when the user asks for contextual command line
-   * completion, usually hitting the <i>tab</i> key.
-   * @param handler the completion handler
-   * @return this command object
-   */
-  public Command completionHandler(Handler<Completion> handler) {
-    this.delegate.completionHandler(new Handler<io.vertx.ext.shell.cli.Completion>() {
-      public void handle(io.vertx.ext.shell.cli.Completion event) {
-        handler.handle(new io.vertx.groovy.ext.shell.cli.Completion(event));
-      }
-    });
-    return this;
+  public void process(CommandProcess process) {
+    this.delegate.process((io.vertx.ext.shell.command.CommandProcess)process.getDelegate());
+  }
+  public void complete(Completion completion) {
+    this.delegate.complete((io.vertx.ext.shell.cli.Completion)completion.getDelegate());
   }
 }

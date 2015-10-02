@@ -8,11 +8,11 @@ import io.vertx.core.cli.CommandLine;
 import io.vertx.core.cli.Option;
 import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.cli.Completion;
+import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandProcess;
-import io.vertx.ext.shell.command.impl.CommandImpl;
 import io.vertx.ext.shell.registry.CommandRegistration;
 import io.vertx.ext.shell.process.Process;
 import io.vertx.ext.shell.process.ProcessContext;
@@ -31,19 +31,15 @@ public class CommandRegistrationImpl implements CommandRegistration {
 
   final Vertx vertx;
   final Context context;
-  final CommandImpl command;
-  final Handler<CommandProcess> processHandler;
-  final Handler<Completion> completionHandler;
+  final Command command;
 
-  public CommandRegistrationImpl(Vertx vertx, Context context, CommandImpl command) {
+  public CommandRegistrationImpl(Vertx vertx, Context context, Command command) {
     this.vertx = vertx;
     this.context = context;
     this.command = command;
-    this.processHandler = command.processHandler;
-    this.completionHandler = command.completeHandler;
   }
 
-  public CommandImpl command() {
+  public Command command() {
     return command;
   }
 
@@ -52,11 +48,7 @@ public class CommandRegistrationImpl implements CommandRegistration {
   }
 
   public void complete(Completion completion) {
-    if (completionHandler != null) {
-      context.runOnContext(v -> completionHandler.handle(completion));
-    } else {
-      completion.complete(Collections.emptyList());
-    }
+    context.runOnContext(v -> command.complete(completion));
   }
 
   public Process createProcess(List<CliToken> args) {
@@ -180,7 +172,7 @@ public class CommandRegistrationImpl implements CommandRegistration {
           }
         };
         CommandRegistrationImpl.this.context.runOnContext(v -> {
-          processHandler.handle(process);
+          command.process(process);
         });
       }
     };

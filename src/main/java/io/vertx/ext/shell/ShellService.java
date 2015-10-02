@@ -4,8 +4,8 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.command.base.ShellCommands;
 import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.base.ShellCommands;
 import io.vertx.ext.shell.command.metrics.MetricsCommand;
 import io.vertx.ext.shell.command.base.BusCommand;
 import io.vertx.ext.shell.command.base.FileSystemCommand;
@@ -50,13 +50,11 @@ public interface ShellService {
     registry.registerCommand(MetricsCommand.info());
 
     // Register builtin commands so they are listed in help
-    registry.registerCommand(Command.command("exit").processHandler(process -> {}));
-    registry.registerCommand(Command.command("logout").processHandler(process -> {}));
-    registry.registerCommand(Command.command("jobs").processHandler(process -> {}));
-    registry.registerCommand(Command.command("fg").processHandler(process -> {
-    }));
-    registry.registerCommand(Command.command("bg").processHandler(process -> {
-    }));
+    registry.registerCommand(Command.builder("exit").processHandler(process -> {}).build());
+    registry.registerCommand(Command.builder("logout").processHandler(process -> {}).build());
+    registry.registerCommand(Command.builder("jobs").processHandler(process -> {}).build());
+    registry.registerCommand(Command.builder("fg").processHandler(process -> {}).build());
+    registry.registerCommand(Command.builder("bg").processHandler(process -> {}).build());
 
     return new ShellServiceImpl(vertx, options, registry);
   }
