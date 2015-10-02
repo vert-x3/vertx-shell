@@ -52,7 +52,7 @@
  * .Starting a shell service available via Telnet
  * [source,subs="+attributes"]
  * ----
- * vertx run -conf '{"telnetOptions":{"port":5000}}' maven:{maven-groupId}:{maven-artifactId}:{maven-version}
+ * vertx run -conf '{"telnetOptions":{"port":5000}}' maven:${maven.groupId}:${maven.artifactId}:${maven.version}
  * ----
  *
  * or
@@ -65,7 +65,7 @@
  * # create the auth config
  * echo user.admin=password > auth.properties
  * # start the shell
- * vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:{maven-groupId}:{maven-artifactId}:{maven-version}
+ * vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:${maven.groupId}:${maven.artifactId}:${maven.version}
  * ----
  *
  * You can also deploy this service inside your own verticle:
@@ -83,7 +83,7 @@
  * ----
  *
  * NOTE: when Vert.x Shell is already on your classpath you can use `service:io.vertx.ext.shell` instead
- * or `maven:{maven-groupId}:{maven-artifactId}:{maven-version}`
+ * or `maven:${maven.groupId}:${maven.artifactId}:${maven.version}`
  *
  * === Programmatic service
  *
