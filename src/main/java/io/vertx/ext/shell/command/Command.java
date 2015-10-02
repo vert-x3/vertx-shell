@@ -1,15 +1,63 @@
 package io.vertx.ext.shell.command;
 
+import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.cli.CLI;
+import io.vertx.core.cli.annotations.CLIConfigurator;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.impl.CommandBuilderImpl;
+
+import java.util.Collections;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
 public interface Command {
+
+  @GenIgnore
+  static Command create(Class<? extends Command> clazz) {
+
+    CLI cli = CLIConfigurator.define(clazz);
+
+    return new Command() {
+
+      @Override
+      public String name() {
+        return cli.getName();
+      }
+
+      @Override
+      public CLI cli() {
+        return cli;
+      }
+
+      @Override
+      public void process(CommandProcess process) {
+        Command instance;
+        try {
+          instance = clazz.newInstance();
+        } catch (Exception e) {
+          process.end();
+          return;
+        }
+        CLIConfigurator.inject(process.commandLine(), instance);
+        instance.process(process);
+      }
+
+      @Override
+      public void complete(Completion completion) {
+        Command instance;
+        try {
+          instance = clazz.newInstance();
+        } catch (Exception e) {
+          completion.complete(Collections.emptyList());
+          return;
+        }
+        instance.complete(completion);
+      }
+    };
+  }
 
   /**
    * Create a new commmand, the command is responsible for managing the options and arguments via the
@@ -36,15 +84,21 @@ public interface Command {
   /**
    * @return the command name
    */
-  String name();
+  default String name() {
+    return null;
+  }
 
   /**
    * @return the command line interface, can be null
    */
-  CLI cli();
+  default CLI cli() {
+    return null;
+  }
 
   void process(CommandProcess process);
 
-  void complete(Completion completion);
+  default void complete(Completion completion) {
+
+  }
 
 }
