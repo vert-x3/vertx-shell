@@ -89,7 +89,6 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-dropwizard-metrics</artifactId>
-      <optional>true</optional>
     </dependency>
 
     <!-- Apache SSHD -->
