@@ -6,7 +6,7 @@ require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.command.Command
 module VertxShell
   #  A Vert.x Shell command, it can be created from any language using the {::VertxShell::Command#builder} or from a
-  #  Java class using {::VertxShell::Command#create}.
+  #  Java class using {::VertxShell::Command#create}
   class Command
     # @private
     # @param j_del [::VertxShell::Command] the java delegate

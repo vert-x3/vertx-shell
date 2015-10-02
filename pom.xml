@@ -59,7 +59,6 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-auth-shiro</artifactId>
-      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>

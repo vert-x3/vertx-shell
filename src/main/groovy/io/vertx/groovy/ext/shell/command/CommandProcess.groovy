@@ -28,7 +28,7 @@ import io.vertx.ext.shell.io.EventType
 import io.vertx.groovy.ext.shell.cli.CliToken
 import io.vertx.core.Handler
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * The command process provides interaction with the process of the command provided by Vert.x Shell.
 */
 @CompileStatic
 public class CommandProcess extends Tty {

@@ -1,33 +1,17 @@
 /*
- * Copyright 2015 Red Hat, Inc.
+ * Copyright 2014 Red Hat, Inc.
  *
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  and Apache License v2.0 which accompanies this distribution.
+ * Red Hat licenses this file to you under the Apache License, version 2.0
+ * (the "License"); you may not use this file except in compliance with the
+ * License.  You may obtain a copy of the License at:
  *
- *  The Eclipse Public License is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  The Apache License v2.0 is available at
- *  http://www.opensource.org/licenses/apache2.0.php
- *
- *  You may elect to redistribute this code under either of these licenses.
- *
- *
- * Copyright (c) 2015 The original author or authors
- * ------------------------------------------------------
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * and Apache License v2.0 which accompanies this distribution.
- *
- *     The Eclipse Public License is available at
- *     http://www.eclipse.org/legal/epl-v10.html
- *
- *     The Apache License v2.0 is available at
- *     http://www.opensource.org/licenses/apache2.0.php
- *
- * You may elect to redistribute this code under either of these licenses.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
  */
 
 package io.vertx.rxjava.ext.shell.command;
@@ -40,7 +24,7 @@ import io.vertx.rxjava.core.cli.CLI;
 
 /**
  * A Vert.x Shell command, it can be created from any language using the {@link io.vertx.rxjava.ext.shell.command.Command#builder} or from a
- * Java class using {@link io.vertx.rxjava.ext.shell.command.Command#create}.
+ * Java class using {@link io.vertx.rxjava.ext.shell.command.Command#create}
  *
  * <p/>
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.command.Command original} non RX-ified interface using Vert.x codegen.

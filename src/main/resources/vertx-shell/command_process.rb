@@ -7,7 +7,7 @@ require 'vertx-shell/cli_token'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.command.CommandProcess
 module VertxShell
-  #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+  #  The command process provides interaction with the process of the command provided by Vert.x Shell.
   class CommandProcess < ::VertxShell::Tty
     # @private
     # @param j_del [::VertxShell::CommandProcess] the java delegate

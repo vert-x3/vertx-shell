@@ -28,6 +28,7 @@ var JsonObject = io.vertx.core.json.JsonObject;
 var JCommandProcess = io.vertx.ext.shell.command.CommandProcess;
 
 /**
+ The command process provides interaction with the process of the command provided by Vert.x Shell.
 
  @class
 */
