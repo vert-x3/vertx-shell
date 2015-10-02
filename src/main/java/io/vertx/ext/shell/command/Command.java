@@ -41,13 +41,23 @@ import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.impl.CommandBuilderImpl;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
+ * A Vert.x Shell command, it can be created from any language using the {@link Command#builder} or from a
+ * Java class using {@link Command#create}.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
 public interface Command {
 
+  /**
+   * Create a command from a Java class, annotated with Vert.x Core CLI annotations.
+   *
+   * @param clazz the class of the command
+   * @return the command object
+   */
   @GenIgnore
   static Command create(Class<? extends Command> clazz) {
     CLI cli = CLIConfigurator.define(clazz);
@@ -158,8 +168,19 @@ public interface Command {
     return null;
   }
 
+  /**
+   * Process the command, when the command is done processing it should call the {@link CommandProcess#end()} method.
+   *
+   * @param process the command process
+   */
   void process(CommandProcess process);
 
+  /**
+   * Perform command completion, when the command is done completing it should call {@link Completion#complete(List)}
+   * or {@link Completion#complete(String, boolean)} )} method to signal completion is done.
+   *
+   * @param completion the completion object
+   */
   default void complete(Completion completion) {
     completion.complete(Collections.emptyList());
   }

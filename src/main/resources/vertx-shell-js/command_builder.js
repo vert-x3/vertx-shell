@@ -25,7 +25,7 @@ var JsonObject = io.vertx.core.json.JsonObject;
 var JCommandBuilder = io.vertx.ext.shell.command.CommandBuilder;
 
 /**
- A shell command.
+ A build for Vert.x Shell command.
 
  @class
 */
@@ -35,7 +35,7 @@ var CommandBuilder = function(j_val) {
   var that = this;
 
   /**
-   Set a command process handler on the command, the process handler is called when the command is executed.
+   Set the command process handler, the process handler is called when the command is executed.
 
    @public
    @param handler {function} the process handler 
@@ -70,6 +70,7 @@ var CommandBuilder = function(j_val) {
   };
 
   /**
+   @return the command
 
    @public
 

@@ -21,7 +21,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.cli.Completion
 import io.vertx.core.Handler
 /**
- * A shell command.
+ * A build for Vert.x Shell command.
 */
 @CompileStatic
 public class CommandBuilder {
@@ -33,7 +33,7 @@ public class CommandBuilder {
     return delegate;
   }
   /**
-   * Set a command process handler on the command, the process handler is called when the command is executed.
+   * Set the command process handler, the process handler is called when the command is executed.
    * @param handler the process handler
    * @return this command object
    */
@@ -59,6 +59,10 @@ public class CommandBuilder {
     });
     return this;
   }
+  /**
+   * @return the command
+   * @return 
+   */
   public Command build() {
     def ret= InternalHelper.safeCreate(this.delegate.build(), io.vertx.groovy.ext.shell.command.Command.class);
     return ret;

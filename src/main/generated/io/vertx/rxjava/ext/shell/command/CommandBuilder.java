@@ -23,7 +23,7 @@ import io.vertx.rxjava.ext.shell.cli.Completion;
 import io.vertx.core.Handler;
 
 /**
- * A shell command.
+ * A build for Vert.x Shell command.
  *
  * <p/>
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.command.CommandBuilder original} non RX-ified interface using Vert.x codegen.
@@ -42,7 +42,7 @@ public class CommandBuilder {
   }
 
   /**
-   * Set a command process handler on the command, the process handler is called when the command is executed.
+   * Set the command process handler, the process handler is called when the command is executed.
    * @param handler the process handler
    * @return this command object
    */
@@ -70,6 +70,10 @@ public class CommandBuilder {
     return this;
   }
 
+  /**
+   * @return the command
+   * @return 
+   */
   public Command build() { 
     Command ret= Command.newInstance(this.delegate.build());
     return ret;

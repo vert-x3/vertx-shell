@@ -5,7 +5,8 @@ require 'vertx-shell/command_process'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.command.Command
 module VertxShell
-  #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+  #  A Vert.x Shell command, it can be created from any language using the {::VertxShell::Command#builder} or from a
+  #  Java class using {::VertxShell::Command#create}.
   class Command
     # @private
     # @param j_del [::VertxShell::Command] the java delegate
@@ -48,7 +49,8 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling cli()"
     end
-    # @param [::VertxShell::CommandProcess] process 
+    #  Process the command, when the command is done processing it should call the {::VertxShell::CommandProcess#end} method.
+    # @param [::VertxShell::CommandProcess] process the command process
     # @return [void]
     def process(process=nil)
       if process.class.method_defined?(:j_del) && !block_given?
@@ -56,7 +58,9 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling process(process)"
     end
-    # @param [::VertxShell::Completion] completion 
+    #  Perform command completion, when the command is done completing it should call 
+    #  or  )} method to signal completion is done.
+    # @param [::VertxShell::Completion] completion the completion object
     # @return [void]
     def complete(completion=nil)
       if completion.class.method_defined?(:j_del) && !block_given?

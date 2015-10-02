@@ -46,6 +46,8 @@ import io.vertx.ext.shell.cli.CliToken;
 import java.util.List;
 
 /**
+ * The command process provides interaction with the process of the command provided by Vert.x Shell.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen

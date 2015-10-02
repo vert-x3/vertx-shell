@@ -4,7 +4,7 @@ require 'vertx-shell/command_process'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.command.CommandBuilder
 module VertxShell
-  #  A shell command.
+  #  A build for Vert.x Shell command.
   class CommandBuilder
     # @private
     # @param j_del [::VertxShell::CommandBuilder] the java delegate
@@ -16,7 +16,7 @@ module VertxShell
     def j_del
       @j_del
     end
-    #  Set a command process handler on the command, the process handler is called when the command is executed.
+    #  Set the command process handler, the process handler is called when the command is executed.
     # @yield the process handler
     # @return [self]
     def process_handler
@@ -37,6 +37,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling completion_handler()"
     end
+    #  @return the command
     # @return [::VertxShell::Command]
     def build
       if !block_given?

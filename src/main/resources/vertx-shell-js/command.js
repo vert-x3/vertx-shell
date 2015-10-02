@@ -63,9 +63,10 @@ var Command = function(j_val) {
   };
 
   /**
+   Process the command, when the command is done processing it should call the {@link CommandProcess#end} method.
 
    @public
-   @param process {CommandProcess} 
+   @param process {CommandProcess} the command process 
    */
   this.process = function(process) {
     var __args = arguments;
@@ -75,9 +76,11 @@ var Command = function(j_val) {
   };
 
   /**
+   Perform command completion, when the command is done completing it should call 
+   or  )} method to signal completion is done.
 
    @public
-   @param completion {Completion} 
+   @param completion {Completion} the completion object 
    */
   this.complete = function(completion) {
     var __args = arguments;

@@ -21,7 +21,8 @@ import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.cli.Completion
 import io.vertx.groovy.core.cli.CLI
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * A Vert.x Shell command, it can be created from any language using the {@link io.vertx.groovy.ext.shell.command.Command#builder} or from a
+ * Java class using {@link io.vertx.groovy.ext.shell.command.Command#create}.
 */
 @CompileStatic
 public class Command {
@@ -68,9 +69,18 @@ public class Command {
     def ret= InternalHelper.safeCreate(this.delegate.cli(), io.vertx.groovy.core.cli.CLI.class);
     return ret;
   }
+  /**
+   * Process the command, when the command is done processing it should call the {@link io.vertx.groovy.ext.shell.command.CommandProcess#end} method.
+   * @param process the command process
+   */
   public void process(CommandProcess process) {
     this.delegate.process((io.vertx.ext.shell.command.CommandProcess)process.getDelegate());
   }
+  /**
+   * Perform command completion, when the command is done completing it should call 
+   * or  )} method to signal completion is done.
+   * @param completion the completion object
+   */
   public void complete(Completion completion) {
     this.delegate.complete((io.vertx.ext.shell.cli.Completion)completion.getDelegate());
   }
