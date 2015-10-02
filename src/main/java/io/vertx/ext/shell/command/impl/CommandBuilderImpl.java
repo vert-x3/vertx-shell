@@ -58,7 +58,7 @@ public class CommandBuilderImpl implements CommandBuilder {
         if (completeHandler != null) {
           completeHandler.handle(completion);
         } else {
-          completion.complete(Collections.emptyList());
+          Command.super.complete(completion);
         }
       }
     };

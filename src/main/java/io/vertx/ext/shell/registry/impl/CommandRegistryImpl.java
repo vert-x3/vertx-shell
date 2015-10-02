@@ -49,6 +49,16 @@ public class CommandRegistryImpl implements CommandRegistry {
   }
 
   @Override
+  public void registerCommand(Class<? extends Command> command) {
+    registerCommand(Command.create(command));
+  }
+
+  @Override
+  public void registerCommand(Class<? extends Command> command, Handler<AsyncResult<CommandRegistration>> doneHandler) {
+    registerCommand(Command.create(command), doneHandler);
+  }
+
+  @Override
   public void registerCommand(Command command) {
     registerCommand(command, ar -> {
     });

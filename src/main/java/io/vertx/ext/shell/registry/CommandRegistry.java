@@ -1,5 +1,6 @@
 package io.vertx.ext.shell.registry;
 
+import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
@@ -57,6 +58,17 @@ public interface CommandRegistry {
    * @param completion the completion object
    */
   void complete(Completion completion);
+
+  /**
+   * Register a command
+   *
+   * @param command the class of the command to register
+   */
+  @GenIgnore
+  void registerCommand(Class<? extends Command> command);
+
+  @GenIgnore
+  void registerCommand(Class<? extends Command> command, Handler<AsyncResult<CommandRegistration>> doneHandler);
 
   /**
    * Register a command

@@ -3,6 +3,7 @@ package io.vertx.ext.shell.command;
 import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.cli.CLI;
+import io.vertx.core.cli.Option;
 import io.vertx.core.cli.annotations.CLIConfigurator;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.impl.CommandBuilderImpl;
@@ -17,18 +18,48 @@ public interface Command {
 
   @GenIgnore
   static Command create(Class<? extends Command> clazz) {
-
     CLI cli = CLIConfigurator.define(clazz);
+    cli.addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help"));
+
+    boolean tmp = false;
+    try {
+      clazz.getDeclaredMethod("name");
+      tmp = true;
+    } catch (NoSuchMethodException ignore) {
+    }
+    boolean overridesName = tmp;
+
+    tmp = false;
+    try {
+      clazz.getDeclaredMethod("cli");
+      tmp = true;
+    } catch (NoSuchMethodException ignore) {
+    }
+    boolean overridesCli = tmp;
 
     return new Command() {
 
       @Override
       public String name() {
+        if (overridesName) {
+          try {
+            return clazz.newInstance().name();
+          } catch (Exception ignore) {
+            // Use cli.getName() instead
+          }
+        }
         return cli.getName();
       }
 
       @Override
       public CLI cli() {
+        if (overridesCli) {
+          try {
+            return clazz.newInstance().cli();
+          } catch (Exception ignore) {
+            // Use cli instead
+          }
+        }
         return cli;
       }
 
@@ -51,7 +82,7 @@ public interface Command {
         try {
           instance = clazz.newInstance();
         } catch (Exception e) {
-          completion.complete(Collections.emptyList());
+          Command.super.complete(completion);
           return;
         }
         instance.complete(completion);
@@ -98,7 +129,6 @@ public interface Command {
   void process(CommandProcess process);
 
   default void complete(Completion completion) {
-
+    completion.complete(Collections.emptyList());
   }
-
 }

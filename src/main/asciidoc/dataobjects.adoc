@@ -22,20 +22,6 @@ Set the Shiro auth options type.
 +++
 |===
 
-[[AuthOptions]]
-== AuthOptions
-
-++++
- A common base object for authentication options.
-++++
-'''
-
-[cols=">25%,^25%,50%"]
-[frame="topbot"]
-|===
-^|Name | Type ^| Description
-|===
-
 [[ShellServiceOptions]]
 == ShellServiceOptions
 
@@ -61,6 +47,20 @@ Set the Telnet options, if the option is null, Telnet will not be started.
 +++
 Set the shell welcome message, i.e the message displayed in the user console when he connects to the shell.
 +++
+|===
+
+[[AuthOptions]]
+== AuthOptions
+
+++++
+ A common base object for authentication options.
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
 |===
 
 [[SSHOptions]]
