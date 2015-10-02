@@ -83,13 +83,5 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling unregister_command(commandName)"
     end
-    #  Release the registry.
-    # @return [void]
-    def release
-      if !block_given?
-        return @j_del.java_method(:release, []).call()
-      end
-      raise ArgumentError, "Invalid arguments when calling release()"
-    end
   end
 end

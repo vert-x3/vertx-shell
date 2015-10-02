@@ -128,10 +128,4 @@ public class CommandRegistry {
   public void unregisterCommand(String commandName, Handler<AsyncResult<Void>> doneHandler) {
     this.delegate.unregisterCommand(commandName, doneHandler);
   }
-  /**
-   * Release the registry.
-   */
-  public void release() {
-    this.delegate.release();
-  }
 }

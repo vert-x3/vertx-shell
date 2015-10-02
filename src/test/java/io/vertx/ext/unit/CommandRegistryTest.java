@@ -5,6 +5,7 @@ import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.registry.CommandRegistry;
+import io.vertx.ext.shell.registry.impl.CommandRegistryImpl;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,6 +59,16 @@ public class CommandRegistryTest {
     registry.registerCommand(command.build(), context.asyncAssertSuccess(reg -> {
       registry.registerCommand(command.build(), context.asyncAssertFailure(err -> {
       }));
+    }));
+  }
+
+  @Test
+  public void testCloseRegistryOnVertxClose(TestContext context) {
+    Vertx vertx = Vertx.vertx();
+    CommandRegistryImpl registry = (CommandRegistryImpl) CommandRegistry.get(vertx);
+    context.assertFalse(registry.isClosed());
+    vertx.close(context.asyncAssertSuccess(v -> {
+      context.assertTrue(registry.isClosed());
     }));
   }
 }

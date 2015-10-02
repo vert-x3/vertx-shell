@@ -43,7 +43,6 @@ public class FsTest {
   @After
   public void after() {
     System.clearProperty("vertx.cwd");
-    registry.release();
     vertx.close();
   }
 

@@ -1,5 +1,6 @@
 package io.vertx.ext.shell.registry.impl;
 
+import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
 import io.vertx.core.Future;
@@ -20,28 +21,46 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class CommandRegistryImpl implements CommandRegistry {
+public class CommandRegistryImpl extends AbstractVerticle implements CommandRegistry {
 
-  private static Map<Vertx, CommandRegistryImpl> managers = new ConcurrentHashMap<>();
+  private static Map<Vertx, CommandRegistryImpl> registries = new ConcurrentHashMap<>();
 
   public static CommandRegistry get(Vertx vertx) {
-    CommandRegistryImpl mgr = managers.computeIfAbsent(vertx, CommandRegistryImpl::new);
-    mgr.refCount.incrementAndGet();
-    return mgr;
+
+
+
+    return registries.computeIfAbsent(vertx, CommandRegistryImpl::new);
   }
 
-  private AtomicInteger refCount = new AtomicInteger();
   private final Vertx vertx;
   private final ConcurrentHashMap<String, CommandRegistration> commandMap = new ConcurrentHashMap<>();
+  private volatile boolean closed;
 
   public CommandRegistryImpl(Vertx vertx) {
+
+    // The registry can be removed either on purpose or when Vert.x close
+    vertx.deployVerticle(this, ar -> {
+      if (!ar.succeeded()) {
+        registries.remove(vertx);
+      }
+    });
+
     this.vertx = vertx;
+  }
+
+  @Override
+  public void stop() throws Exception {
+    closed = true;
+    registries.remove(vertx);
+  }
+
+  public boolean isClosed() {
+    return closed;
   }
 
   public List<CommandRegistration> registrations() {
@@ -93,13 +112,6 @@ public class CommandRegistryImpl implements CommandRegistry {
 
   public CommandRegistration getCommand(String name) {
     return commandMap.get(name);
-  }
-
-  @Override
-  public void release() {
-    if (refCount.decrementAndGet() == 0) {
-      managers.remove(vertx);
-    }
   }
 
   @Override

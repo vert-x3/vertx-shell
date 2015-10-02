@@ -88,8 +88,4 @@ public interface CommandRegistry {
 
   void unregisterCommand(String commandName, Handler<AsyncResult<Void>> doneHandler);
 
-  /**
-   * Release the registry.
-   */
-  void release();
 }

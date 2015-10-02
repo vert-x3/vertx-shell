@@ -180,13 +180,6 @@ public class CommandRegistry {
     return doneHandler;
   }
 
-  /**
-   * Release the registry.
-   */
-  public void release() { 
-    this.delegate.release();
-  }
-
 
   public static CommandRegistry newInstance(io.vertx.ext.shell.registry.CommandRegistry arg) {
     return arg != null ? new CommandRegistry(arg) : null;
