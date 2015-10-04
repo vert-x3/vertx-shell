@@ -30,7 +30,7 @@
  *
  */
 
-package io.vertx.ext.unit;
+package io.vertx.ext.shell.support;
 
 import io.termd.core.tty.TtyConnection;
 import io.termd.core.tty.TtyEvent;
@@ -51,8 +51,8 @@ public class TestTtyConnection implements TtyConnection {
   private BiConsumer<TtyEvent, Integer> eventHandler;
   private Consumer<int[]> stdinHandler;
   private Consumer<Void> closeHandler;
-  public final StringBuilder out = new StringBuilder();
-  boolean closed;
+  private final StringBuilder out = new StringBuilder();
+  private boolean closed;
 
   @Override
   public String term() {
@@ -109,7 +109,7 @@ public class TestTtyConnection implements TtyConnection {
   public Consumer<int[]> stdoutHandler() {
     return codePoints -> {
       synchronized (TestTtyConnection.this) {
-        Helper.appendCodePoints(codePoints, out);
+        Helper.appendCodePoints(codePoints, out());
         notify();
       }
     };
@@ -199,5 +199,13 @@ public class TestTtyConnection implements TtyConnection {
     if (report != null) {
       throw new AssertionError(report);
     }
+  }
+
+  public StringBuilder out() {
+    return out;
+  }
+
+  public boolean isClosed() {
+    return closed;
   }
 }

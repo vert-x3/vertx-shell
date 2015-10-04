@@ -30,16 +30,18 @@
  *
  */
 
-package io.vertx.ext.unit;
+package io.vertx.ext.shell;
 
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.Session;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.registry.CommandRegistry;
+import io.vertx.ext.shell.support.TestProcessContext;
+import io.vertx.ext.unit.Async;
+import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -101,7 +103,7 @@ public class ShellServiceTest {
         } catch (InterruptedException e) {
           context.fail(e);
         }
-        ctx.stdin.handle("hello_world");
+        ctx.stdin().handle("hello_world");
       }));
     }));
   }
@@ -173,7 +175,7 @@ public class ShellServiceTest {
               testContext.assertTrue(ctx.sendEvent(EventType.SIGTSTP));
               testContext.assertFalse(ctx.sendEvent(EventType.EOF));
             }));
-            ctx.stdin.handle("ping");
+            ctx.stdin().handle("ping");
           }));
         });
       }));
@@ -253,7 +255,7 @@ public class ShellServiceTest {
     manager.registerCommand(cmd.build());
     manager.createProcess("foo", context.asyncAssertSuccess(process -> {
       TestProcessContext ctx = new TestProcessContext();
-      ctx.session.put("the_key", "the_value");
+      ctx.session().put("the_key", "the_value");
       ctx.endHandler(status -> {
         context.assertEquals(0, status);
         async.complete();
@@ -279,7 +281,7 @@ public class ShellServiceTest {
       TestProcessContext ctx = new TestProcessContext();
       ctx.endHandler(status -> {
         context.assertEquals(0, status);
-        context.assertEquals("the_value", ctx.session.get("the_key"));
+        context.assertEquals("the_value", ctx.session().get("the_key"));
         async.complete();
       });
       process.execute(ctx);
@@ -300,10 +302,10 @@ public class ShellServiceTest {
     manager.registerCommand(cmd.build());
     manager.createProcess("foo", context.asyncAssertSuccess(process -> {
       TestProcessContext ctx = new TestProcessContext();
-      ctx.session.put("the_key", "the_value");
+      ctx.session().put("the_key", "the_value");
       ctx.endHandler(status -> {
         context.assertEquals(0, status);
-        context.assertNull(ctx.session.get("the_key"));
+        context.assertNull(ctx.session().get("the_key"));
         async.complete();
       });
       process.execute(ctx);

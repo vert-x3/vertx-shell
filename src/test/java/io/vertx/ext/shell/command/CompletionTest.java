@@ -30,7 +30,7 @@
  *
  */
 
-package io.vertx.ext.unit;
+package io.vertx.ext.shell.command;
 
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.Session;
@@ -38,6 +38,8 @@ import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.registry.CommandRegistry;
+import io.vertx.ext.unit.Async;
+import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.RunTestOnContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.Before;

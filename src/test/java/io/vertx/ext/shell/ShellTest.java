@@ -30,7 +30,7 @@
  *
  */
 
-package io.vertx.ext.unit;
+package io.vertx.ext.shell;
 
 import io.termd.core.tty.TtyEvent;
 import io.vertx.core.Vertx;
@@ -40,6 +40,9 @@ import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.impl.Job;
 import io.vertx.ext.shell.impl.JobStatus;
 import io.vertx.ext.shell.impl.Shell;
+import io.vertx.ext.shell.support.TestTtyConnection;
+import io.vertx.ext.unit.Async;
+import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -218,7 +221,7 @@ public class ShellTest {
         context.assertEquals(JobStatus.RUNNING, job.status());
         context.assertNotNull(process.stdout());
         context.assertEquals(job, shell.foregroundJob());
-        conn.out.setLength(0);
+        conn.out().setLength(0);
         process.stdout().write("resumed");
         latch3.countDown();
       });
@@ -279,7 +282,7 @@ public class ShellTest {
     latch1.await(10, TimeUnit.SECONDS);
     conn.sendEvent(TtyEvent.SUSP);
     latch2.await(10, TimeUnit.SECONDS);
-    conn.out.setLength(0);
+    conn.out().setLength(0);
     conn.read("bg\r");
     conn.assertWritten("bg\n[1]+ Running foo\n% ");
     latch3.countDown();
@@ -381,7 +384,7 @@ public class ShellTest {
       Shell shell = new Shell(vertx, conn, manager);
       shell.init();
       conn.read(cmd + "\r");
-      context.assertTrue(conn.closed);
+      context.assertTrue(conn.isClosed());
     }
   }
 
@@ -392,7 +395,7 @@ public class ShellTest {
     Shell shell = new Shell(vertx, conn, manager);
     shell.init();
     conn.read("\u0004");
-    context.assertTrue(conn.closed);
+    context.assertTrue(conn.isClosed());
   }
 
 }

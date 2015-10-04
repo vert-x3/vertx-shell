@@ -30,7 +30,7 @@
  *
  */
 
-package io.vertx.ext.unit;
+package io.vertx.ext.shell.support;
 
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
@@ -47,14 +47,14 @@ import java.util.HashMap;
 /**
 * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
-class TestProcessContext implements ProcessContext, Tty {
+public class TestProcessContext implements ProcessContext, Tty {
 
-  final SessionImpl session = new SessionImpl();
+  private final Session session = new SessionImpl();
   private Handler<Integer> endHandler;
   final Context context = Vertx.currentContext();
   final HashMap<EventType, Handler<Void>> eventHandlers = new HashMap<>();
   int width, height;
-  Handler<String> stdin;
+  private Handler<String> stdin;
   private Stream stdout;
 
   @Override
@@ -134,5 +134,9 @@ class TestProcessContext implements ProcessContext, Tty {
     } else {
       return false;
     }
+  }
+
+  public Handler<String> stdin() {
+    return stdin;
   }
 }

@@ -30,7 +30,7 @@
  *
  */
 
-package io.vertx.ext.unit;
+package io.vertx.ext.shell;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSch;

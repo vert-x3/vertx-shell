@@ -30,14 +30,16 @@
  *
  */
 
-package io.vertx.ext.unit;
+package io.vertx.ext.shell.registry;
 
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.support.TestProcessContext;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
-import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.registry.impl.CommandRegistryImpl;
+import io.vertx.ext.unit.Async;
+import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
