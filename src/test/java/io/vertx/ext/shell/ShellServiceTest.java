@@ -68,9 +68,31 @@ public class ShellServiceTest {
     });
     manager.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
       manager.createProcess("foo", context.asyncAssertSuccess(process -> {
+        Async async = context.async();
         TestProcessContext ctx = new TestProcessContext();
         ctx.endHandler(code -> {
           context.assertEquals(3, code);
+          async.complete();
+        });
+        process.execute(ctx);
+      }));
+    }));
+  }
+
+  @Test
+  public void testThrowExceptionInProcess(TestContext context) {
+    CommandRegistry manager = CommandRegistry.get(vertx);
+    CommandBuilder cmd = Command.builder("foo");
+    cmd.processHandler(process -> {
+      throw new RuntimeException();
+    });
+    manager.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
+      manager.createProcess("foo", context.asyncAssertSuccess(process -> {
+        Async async = context.async();
+        TestProcessContext ctx = new TestProcessContext();
+        ctx.endHandler(code -> {
+          context.assertEquals(1, code);
+          async.complete();
         });
         process.execute(ctx);
       }));

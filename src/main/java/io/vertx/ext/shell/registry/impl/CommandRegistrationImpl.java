@@ -204,7 +204,12 @@ public class CommandRegistrationImpl implements CommandRegistration {
           }
         };
         CommandRegistrationImpl.this.context.runOnContext(v -> {
-          command.process(process);
+          try {
+            command.process(process);
+          } catch (Throwable e) {
+            context.end(1);
+            throw e;
+          }
         });
       }
     };
