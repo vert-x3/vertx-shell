@@ -39,6 +39,8 @@ import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 /**
  * Shiro auth configuration options, see Vert.x Auth Shiro component and/or Apache Shiro project.
  *
+ * note: this will be moved to vertx-auth project after 3.1
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @DataObject(generateConverter = true)

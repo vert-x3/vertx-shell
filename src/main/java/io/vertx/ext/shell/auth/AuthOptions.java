@@ -38,6 +38,8 @@ import io.vertx.core.json.JsonObject;
 /**
  * A common base object for authentication options.
  *
+ * note: this will be moved to vertx-auth project after 3.1
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @DataObject
