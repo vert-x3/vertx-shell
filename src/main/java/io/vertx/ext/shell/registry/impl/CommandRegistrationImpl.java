@@ -80,7 +80,14 @@ public class CommandRegistrationImpl implements CommandRegistration {
   }
 
   public void complete(Completion completion) {
-    context.runOnContext(v -> command.complete(completion));
+    context.runOnContext(v -> {
+      try {
+        command.complete(completion);
+      } catch (Throwable t) {
+        completion.complete(Collections.emptyList());
+        throw t;
+      }
+    });
   }
 
   public Process createProcess(List<CliToken> args) {

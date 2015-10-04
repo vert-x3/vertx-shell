@@ -76,6 +76,10 @@ public class CompletionTest {
     }).build());
     mgr.registerCommand(Command.builder("baz").processHandler(proc -> {
     }).build());
+    mgr.registerCommand(Command.builder("err").processHandler(proc -> {
+    }).completionHandler(completion -> {
+      throw new RuntimeException("expected");
+    }).build());
   }
 
   @Test
@@ -84,7 +88,7 @@ public class CompletionTest {
     mgr.complete(new TestCompletion(context, "") {
       @Override
       public void complete(List<String> candidates) {
-        context.assertEquals(Arrays.asList("bar", "baz", "foo"), candidates.stream().sorted().collect(Collectors.toList()));
+        context.assertEquals(Arrays.asList("bar", "baz", "err", "foo"), candidates.stream().sorted().collect(Collectors.toList()));
         async.complete();
       }
     });
@@ -173,6 +177,18 @@ public class CompletionTest {
       @Override
       public void complete(List<String> candidates) {
         context.assertEquals(Arrays.asList("bar", "baz"), candidates.stream().sorted().collect(Collectors.toList()));
+        async.complete();
+      }
+    });
+  }
+
+  @Test
+  public void testFailure(TestContext context) {
+    Async async = context.async();
+    mgr.complete(new TestCompletion(context, "err ") {
+      @Override
+      public void complete(List<String> candidates) {
+        context.assertEquals(Collections.emptyList(), candidates);
         async.complete();
       }
     });
