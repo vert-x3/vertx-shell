@@ -35,7 +35,6 @@ package io.vertx.ext.shell.registry;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.support.TestProcessContext;
 import io.vertx.ext.shell.cli.CliToken;
-import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.registry.impl.CommandRegistryImpl;
 import io.vertx.ext.unit.Async;
@@ -58,7 +57,7 @@ public class CommandRegistryTest {
   @Test
   public void testEval(TestContext context) {
     CommandRegistry registry = CommandRegistry.get(vertx);
-    CommandBuilder command = Command.builder("hello");
+    CommandBuilder command = CommandBuilder.builder("hello");
     command.processHandler(process -> {
       context.assertEquals(Arrays.asList(CliToken.createBlank(" "), CliToken.createText("world")), process.argsTokens());
       process.end(0);
@@ -78,7 +77,7 @@ public class CommandRegistryTest {
   @Test
   public void testRegister(TestContext context) {
     CommandRegistry registry = CommandRegistry.get(vertx);
-    CommandBuilder command = Command.builder("hello");
+    CommandBuilder command = CommandBuilder.builder("hello");
     registry.registerCommand(command.build(), context.asyncAssertSuccess(reg -> {
       registry.unregisterCommand("hello", context.asyncAssertSuccess(done -> {
         context.assertEquals(Collections.emptyList(), registry.registrations());
@@ -89,7 +88,7 @@ public class CommandRegistryTest {
   @Test
   public void testDuplicateRegistration(TestContext context) {
     CommandRegistry registry = CommandRegistry.get(vertx);
-    CommandBuilder command = Command.builder("hello");
+    CommandBuilder command = CommandBuilder.builder("hello");
     registry.registerCommand(command.build(), context.asyncAssertSuccess(reg -> {
       registry.registerCommand(command.build(), context.asyncAssertFailure(err -> {
       }));

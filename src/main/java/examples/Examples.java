@@ -41,7 +41,6 @@ import io.vertx.core.cli.Option;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
-import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.net.SSHOptions;
 import io.vertx.ext.shell.Session;
@@ -118,7 +117,7 @@ public class Examples {
 
   public void helloWorld(Vertx vertx) {
 
-    CommandBuilder builder = Command.builder("my-command");
+    CommandBuilder builder = CommandBuilder.builder("my-command");
     builder.processHandler(process -> {
 
       // Write a message to the console
@@ -137,7 +136,7 @@ public class Examples {
     CLI cli = CLI.create("my-command").
         addArgument(new Argument().setArgName("my-arg")).
         addOption(new Option().setShortName("m").setLongName("my-option"));
-    CommandBuilder command = Command.builder(cli);
+    CommandBuilder command = CommandBuilder.builder(cli);
     command.processHandler(process -> {
 
       CommandLine commandLine = process.commandLine();
@@ -154,7 +153,7 @@ public class Examples {
     CLI cli = CLI.create("my-command").
         addArgument(new Argument().setArgName("my-arg")).
         addOption(new Option().setArgName("help").setShortName("h").setLongName("help"));
-    CommandBuilder command = Command.builder(cli);
+    CommandBuilder command = CommandBuilder.builder(cli);
     command.processHandler(process -> {
       // ...
     });

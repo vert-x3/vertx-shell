@@ -21,7 +21,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.cli.Completion
 import io.vertx.groovy.core.cli.CLI
 /**
- * A Vert.x Shell command, it can be created from any language using the {@link io.vertx.groovy.ext.shell.command.Command#builder} or from a
+ * A Vert.x Shell command, it can be created from any language using the {@link io.vertx.groovy.ext.shell.command.CommandBuilder#builder} or from a
  * Java class using {@link io.vertx.groovy.ext.shell.command.Command#create}
 */
 @CompileStatic
@@ -32,26 +32,6 @@ public class Command {
   }
   public Object getDelegate() {
     return delegate;
-  }
-  /**
-   * Create a new commmand, the command is responsible for managing the options and arguments via the
-   * {@link io.vertx.groovy.ext.shell.command.CommandProcess #args() arguments}.
-   * @param name the command name
-   * @return the command
-   */
-  public static CommandBuilder builder(String name) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.Command.builder(name), io.vertx.groovy.ext.shell.command.CommandBuilder.class);
-    return ret;
-  }
-  /**
-   * Create a new commmand with its {@link io.vertx.groovy.core.cli.CLI} descriptor. This command can then retrieve the parsed
-   * {@link io.vertx.groovy.ext.shell.command.CommandProcess#commandLine} when it executes to know get the command arguments and options.
-   * @param cli the cli to use
-   * @return the command
-   */
-  public static CommandBuilder builder(CLI cli) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.Command.builder((io.vertx.core.cli.CLI)cli.getDelegate()), io.vertx.groovy.ext.shell.command.CommandBuilder.class);
-    return ret;
   }
   /**
    * @return the command name

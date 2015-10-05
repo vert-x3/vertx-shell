@@ -39,7 +39,6 @@ import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.dropwizard.DropwizardMetricsOptions;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
-import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
@@ -61,7 +60,7 @@ public class Main {
 
     CommandRegistry mgr = CommandRegistry.get(vertx);
 
-    CommandBuilder echoKeyboardCmd = Command.builder("echo-keyboard");
+    CommandBuilder echoKeyboardCmd = CommandBuilder.builder("echo-keyboard");
     echoKeyboardCmd.processHandler(process -> {
       Stream stdout = process.stdout();
       process.setStdin(line -> {
@@ -71,7 +70,7 @@ public class Main {
     });
     mgr.registerCommand(echoKeyboardCmd.build());
 
-    CommandBuilder windowCmd = Command.builder("window");
+    CommandBuilder windowCmd = CommandBuilder.builder("window");
     windowCmd.processHandler(process -> {
       process.write("[" + process.width() + "," + process.height() + "]\n");
       process.eventHandler(EventType.SIGWINCH, v -> {

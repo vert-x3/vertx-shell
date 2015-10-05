@@ -36,7 +36,7 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.base.BusSend;
 import io.vertx.ext.shell.command.base.BusTail;
 import io.vertx.ext.shell.command.base.Echo;
@@ -93,11 +93,11 @@ public interface ShellService {
     registry.registerCommand(MetricsInfo.class);
 
     // Register builtin commands so they are listed in help
-    registry.registerCommand(Command.builder("exit").processHandler(process -> {}).build());
-    registry.registerCommand(Command.builder("logout").processHandler(process -> {}).build());
-    registry.registerCommand(Command.builder("jobs").processHandler(process -> {}).build());
-    registry.registerCommand(Command.builder("fg").processHandler(process -> {}).build());
-    registry.registerCommand(Command.builder("bg").processHandler(process -> {
+    registry.registerCommand(CommandBuilder.builder("exit").processHandler(process -> {}).build());
+    registry.registerCommand(CommandBuilder.builder("logout").processHandler(process -> {}).build());
+    registry.registerCommand(CommandBuilder.builder("jobs").processHandler(process -> {}).build());
+    registry.registerCommand(CommandBuilder.builder("fg").processHandler(process -> {}).build());
+    registry.registerCommand(CommandBuilder.builder("bg").processHandler(process -> {
     }).build());
 
     return new ShellServiceImpl(vertx, options, registry);

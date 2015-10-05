@@ -20,6 +20,7 @@ import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.rxjava.ext.shell.cli.Completion;
+import io.vertx.rxjava.core.cli.CLI;
 import io.vertx.core.Handler;
 
 /**
@@ -39,6 +40,28 @@ public class CommandBuilder {
 
   public Object getDelegate() {
     return delegate;
+  }
+
+  /**
+   * Create a new commmand, the command is responsible for managing the options and arguments via the
+   * {@link io.vertx.rxjava.ext.shell.command.CommandProcess #args() arguments}.
+   * @param name the command name
+   * @return the command
+   */
+  public static CommandBuilder builder(String name) { 
+    CommandBuilder ret= CommandBuilder.newInstance(io.vertx.ext.shell.command.CommandBuilder.builder(name));
+    return ret;
+  }
+
+  /**
+   * Create a new commmand with its {@link io.vertx.rxjava.core.cli.CLI} descriptor. This command can then retrieve the parsed
+   * {@link io.vertx.rxjava.ext.shell.command.CommandProcess#commandLine} when it executes to know get the command arguments and options.
+   * @param cli the cli to use
+   * @return the command
+   */
+  public static CommandBuilder builder(CLI cli) { 
+    CommandBuilder ret= CommandBuilder.newInstance(io.vertx.ext.shell.command.CommandBuilder.builder((io.vertx.core.cli.CLI) cli.getDelegate()));
+    return ret;
   }
 
   /**

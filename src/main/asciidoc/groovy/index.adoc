@@ -191,16 +191,16 @@ NOTE: this command list should evolve in next releases of Vert.x Shell
 
 Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
 
-A command is created by the `link:groovydoc/io/vertx/groovy/ext/shell/command/Command.html#builder(java.lang.String)[Command.builder]` method: the command process handler is called
+A command is created by the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandBuilder.html#builder(java.lang.String)[CommandBuilder.builder]` method: the command process handler is called
 by the shell when the command is executed, this handler can be set with the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandBuilder.html#processHandler(io.vertx.core.Handler)[processHandler]`
 method:
 
 [source,groovy]
 ----
-import io.vertx.groovy.ext.shell.command.Command
+import io.vertx.groovy.ext.shell.command.CommandBuilder
 import io.vertx.groovy.ext.shell.registry.CommandRegistry
 
-def builder = Command.builder("my-command")
+def builder = CommandBuilder.builder("my-command")
 builder.processHandler({ process ->
 
   // Write a message to the console
@@ -252,14 +252,14 @@ write command line argument parsing:
 [source,groovy]
 ----
 import io.vertx.groovy.core.cli.CLI
-import io.vertx.groovy.ext.shell.command.Command
+import io.vertx.groovy.ext.shell.command.CommandBuilder
 def cli = CLI.create("my-command").addArgument([
   argName:"my-arg"
 ]).addOption([
   shortName:"m",
   longName:"my-option"
 ])
-def command = Command.builder(cli)
+def command = CommandBuilder.builder(cli)
 command.processHandler({ process ->
 
   def commandLine = process.commandLine()
@@ -279,7 +279,7 @@ when the option is activated:
 [source,groovy]
 ----
 import io.vertx.groovy.core.cli.CLI
-import io.vertx.groovy.ext.shell.command.Command
+import io.vertx.groovy.ext.shell.command.CommandBuilder
 def cli = CLI.create("my-command").addArgument([
   argName:"my-arg"
 ]).addOption([
@@ -287,7 +287,7 @@ def cli = CLI.create("my-command").addArgument([
   shortName:"h",
   longName:"help"
 ])
-def command = Command.builder(cli)
+def command = CommandBuilder.builder(cli)
 command.processHandler({ process ->
   // ...
 })

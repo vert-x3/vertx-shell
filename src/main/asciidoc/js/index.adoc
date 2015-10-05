@@ -190,16 +190,16 @@ NOTE: this command list should evolve in next releases of Vert.x Shell
 
 Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
 
-A command is created by the `link:jsdoc/command-Command.html#builder[Command.builder]` method: the command process handler is called
+A command is created by the `link:jsdoc/command_builder-CommandBuilder.html#builder[CommandBuilder.builder]` method: the command process handler is called
 by the shell when the command is executed, this handler can be set with the `link:jsdoc/command_builder-CommandBuilder.html#processHandler[processHandler]`
 method:
 
 [source,js]
 ----
-var Command = require("vertx-shell-js/command");
+var CommandBuilder = require("vertx-shell-js/command_builder");
 var CommandRegistry = require("vertx-shell-js/command_registry");
 
-var builder = Command.builder("my-command");
+var builder = CommandBuilder.builder("my-command");
 builder.processHandler(function (process) {
 
   // Write a message to the console
@@ -251,14 +251,14 @@ write command line argument parsing:
 [source,js]
 ----
 var CLI = require("vertx-js/cli");
-var Command = require("vertx-shell-js/command");
+var CommandBuilder = require("vertx-shell-js/command_builder");
 var cli = CLI.create("my-command").addArgument({
   "argName" : "my-arg"
 }).addOption({
   "shortName" : "m",
   "longName" : "my-option"
 });
-var command = Command.builder(cli);
+var command = CommandBuilder.builder(cli);
 command.processHandler(function (process) {
 
   var commandLine = process.commandLine();
@@ -278,7 +278,7 @@ when the option is activated:
 [source,js]
 ----
 var CLI = require("vertx-js/cli");
-var Command = require("vertx-shell-js/command");
+var CommandBuilder = require("vertx-shell-js/command_builder");
 var cli = CLI.create("my-command").addArgument({
   "argName" : "my-arg"
 }).addOption({
@@ -286,7 +286,7 @@ var cli = CLI.create("my-command").addArgument({
   "shortName" : "h",
   "longName" : "help"
 });
-var command = Command.builder(cli);
+var command = CommandBuilder.builder(cli);
 command.processHandler(function (process) {
   // ...
 });

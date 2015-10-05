@@ -190,16 +190,16 @@ NOTE: this command list should evolve in next releases of Vert.x Shell
 
 Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
 
-A command is created by the `link:yardoc/VertxShell/Command.html#builder-class_method[Command.builder]` method: the command process handler is called
+A command is created by the `link:yardoc/VertxShell/CommandBuilder.html#builder-class_method[CommandBuilder.builder]` method: the command process handler is called
 by the shell when the command is executed, this handler can be set with the `link:yardoc/VertxShell/CommandBuilder.html#process_handler-instance_method[processHandler]`
 method:
 
 [source,ruby]
 ----
-require 'vertx-shell/command'
+require 'vertx-shell/command_builder'
 require 'vertx-shell/command_registry'
 
-builder = VertxShell::Command.builder("my-command")
+builder = VertxShell::CommandBuilder.builder("my-command")
 builder.process_handler() { |process|
 
   # Write a message to the console
@@ -251,14 +251,14 @@ write command line argument parsing:
 [source,ruby]
 ----
 require 'vertx/cli'
-require 'vertx-shell/command'
+require 'vertx-shell/command_builder'
 cli = Vertx::CLI.create("my-command").add_argument({
   'argName' => "my-arg"
 }).add_option({
   'shortName' => "m",
   'longName' => "my-option"
 })
-command = VertxShell::Command.builder(cli)
+command = VertxShell::CommandBuilder.builder(cli)
 command.process_handler() { |process|
 
   commandLine = process.command_line()
@@ -278,7 +278,7 @@ when the option is activated:
 [source,ruby]
 ----
 require 'vertx/cli'
-require 'vertx-shell/command'
+require 'vertx-shell/command_builder'
 cli = Vertx::CLI.create("my-command").add_argument({
   'argName' => "my-arg"
 }).add_option({
@@ -286,7 +286,7 @@ cli = Vertx::CLI.create("my-command").add_argument({
   'shortName' => "h",
   'longName' => "help"
 })
-command = VertxShell::Command.builder(cli)
+command = VertxShell::CommandBuilder.builder(cli)
 command.process_handler() { |process|
   # ...
 }

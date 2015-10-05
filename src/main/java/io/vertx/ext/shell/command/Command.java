@@ -38,13 +38,12 @@ import io.vertx.core.cli.CLI;
 import io.vertx.core.cli.Option;
 import io.vertx.core.cli.annotations.CLIConfigurator;
 import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.command.impl.CommandBuilderImpl;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
- * A Vert.x Shell command, it can be created from any language using the {@link Command#builder} or from a
+ * A Vert.x Shell command, it can be created from any language using the {@link CommandBuilder#builder} or from a
  * Java class using {@link Command#create}
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -130,28 +129,6 @@ public interface Command {
         instance.complete(completion);
       }
     };
-  }
-
-  /**
-   * Create a new commmand, the command is responsible for managing the options and arguments via the
-   * {@link CommandProcess#args() arguments}.
-   *
-   * @param name the command name
-   * @return the command
-   */
-  static CommandBuilder builder(String name) {
-    return new CommandBuilderImpl(name, null);
-  }
-
-  /**
-   * Create a new commmand with its {@link io.vertx.core.cli.CLI} descriptor. This command can then retrieve the parsed
-   * {@link CommandProcess#commandLine()} when it executes to know get the command arguments and options.
-   *
-   * @param cli the cli to use
-   * @return the command
-   */
-  static CommandBuilder builder(CLI cli) {
-    return new CommandBuilderImpl(cli.getName(), cli);
   }
 
   /**

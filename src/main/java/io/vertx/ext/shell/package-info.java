@@ -174,7 +174,7 @@
  *
  * Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
  *
- * A command is created by the {@link io.vertx.ext.shell.command.Command#builder} method: the command process handler is called
+ * A command is created by the {@link io.vertx.ext.shell.command.CommandBuilder#builder} method: the command process handler is called
  * by the shell when the command is executed, this handler can be set with the {@link io.vertx.ext.shell.command.CommandBuilder#processHandler}
  * method:
  *

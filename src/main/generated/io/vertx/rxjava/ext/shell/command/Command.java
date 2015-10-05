@@ -23,7 +23,7 @@ import io.vertx.rxjava.ext.shell.cli.Completion;
 import io.vertx.rxjava.core.cli.CLI;
 
 /**
- * A Vert.x Shell command, it can be created from any language using the {@link io.vertx.rxjava.ext.shell.command.Command#builder} or from a
+ * A Vert.x Shell command, it can be created from any language using the {@link io.vertx.rxjava.ext.shell.command.CommandBuilder#builder} or from a
  * Java class using {@link io.vertx.rxjava.ext.shell.command.Command#create}
  *
  * <p/>
@@ -40,28 +40,6 @@ public class Command {
 
   public Object getDelegate() {
     return delegate;
-  }
-
-  /**
-   * Create a new commmand, the command is responsible for managing the options and arguments via the
-   * {@link io.vertx.rxjava.ext.shell.command.CommandProcess #args() arguments}.
-   * @param name the command name
-   * @return the command
-   */
-  public static CommandBuilder builder(String name) { 
-    CommandBuilder ret= CommandBuilder.newInstance(io.vertx.ext.shell.command.Command.builder(name));
-    return ret;
-  }
-
-  /**
-   * Create a new commmand with its {@link io.vertx.rxjava.core.cli.CLI} descriptor. This command can then retrieve the parsed
-   * {@link io.vertx.rxjava.ext.shell.command.CommandProcess#commandLine} when it executes to know get the command arguments and options.
-   * @param cli the cli to use
-   * @return the command
-   */
-  public static CommandBuilder builder(CLI cli) { 
-    CommandBuilder ret= CommandBuilder.newInstance(io.vertx.ext.shell.command.Command.builder((io.vertx.core.cli.CLI) cli.getDelegate()));
-    return ret;
   }
 
   /**

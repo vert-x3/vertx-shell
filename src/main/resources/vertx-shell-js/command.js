@@ -18,7 +18,6 @@
 var utils = require('vertx-js/util/utils');
 var Completion = require('vertx-shell-js/completion');
 var CLI = require('vertx-js/cli');
-var CommandBuilder = require('vertx-shell-js/command_builder');
 var CommandProcess = require('vertx-shell-js/command_process');
 
 var io = Packages.io;
@@ -93,23 +92,6 @@ var Command = function(j_val) {
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
   this._jdel = j_command;
-};
-
-/**
- Create a new commmand with its {@link CLI} descriptor. This command can then retrieve the parsed
- {@link CommandProcess#commandLine} when it executes to know get the command arguments and options.
-
- @memberof module:vertx-shell-js/command
- @param cli {CLI} the cli to use 
- @return {CommandBuilder} the command
- */
-Command.builder = function() {
-  var __args = arguments;
-  if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnVertxGen(JCommand["builder(java.lang.String)"](__args[0]), CommandBuilder);
-  }else if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-    return utils.convReturnVertxGen(JCommand["builder(io.vertx.core.cli.CLI)"](__args[0]._jdel), CommandBuilder);
-  } else throw new TypeError('function invoked with invalid arguments');
 };
 
 // We export the Constructor function

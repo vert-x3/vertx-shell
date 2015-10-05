@@ -184,13 +184,13 @@ NOTE: this command list should evolve in next releases of Vert.x Shell
 
 Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
 
-A command is created by the `link:../../apidocs/io/vertx/ext/shell/command/Command.html#builder-java.lang.String-[Command.builder]` method: the command process handler is called
+A command is created by the `link:../../apidocs/io/vertx/ext/shell/command/CommandBuilder.html#builder-java.lang.String-[CommandBuilder.builder]` method: the command process handler is called
 by the shell when the command is executed, this handler can be set with the `link:../../apidocs/io/vertx/ext/shell/command/CommandBuilder.html#processHandler-io.vertx.core.Handler-[processHandler]`
 method:
 
 [source,java]
 ----
-CommandBuilder builder = Command.builder("my-command");
+CommandBuilder builder = CommandBuilder.builder("my-command");
 builder.processHandler(process -> {
 
   // Write a message to the console
@@ -242,7 +242,7 @@ write command line argument parsing:
 CLI cli = CLI.create("my-command").
     addArgument(new Argument().setArgName("my-arg")).
     addOption(new Option().setShortName("m").setLongName("my-option"));
-CommandBuilder command = Command.builder(cli);
+CommandBuilder command = CommandBuilder.builder(cli);
 command.processHandler(process -> {
 
   CommandLine commandLine = process.commandLine();
@@ -263,7 +263,7 @@ when the option is activated:
 CLI cli = CLI.create("my-command").
     addArgument(new Argument().setArgName("my-arg")).
     addOption(new Option().setArgName("help").setShortName("h").setLongName("help"));
-CommandBuilder command = Command.builder(cli);
+CommandBuilder command = CommandBuilder.builder(cli);
 command.processHandler(process -> {
   // ...
 });

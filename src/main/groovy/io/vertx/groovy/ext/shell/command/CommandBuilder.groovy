@@ -19,6 +19,7 @@ import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.cli.Completion
+import io.vertx.groovy.core.cli.CLI
 import io.vertx.core.Handler
 /**
  * A build for Vert.x Shell command.
@@ -31,6 +32,26 @@ public class CommandBuilder {
   }
   public Object getDelegate() {
     return delegate;
+  }
+  /**
+   * Create a new commmand, the command is responsible for managing the options and arguments via the
+   * {@link io.vertx.groovy.ext.shell.command.CommandProcess #args() arguments}.
+   * @param name the command name
+   * @return the command
+   */
+  public static CommandBuilder builder(String name) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandBuilder.builder(name), io.vertx.groovy.ext.shell.command.CommandBuilder.class);
+    return ret;
+  }
+  /**
+   * Create a new commmand with its {@link io.vertx.groovy.core.cli.CLI} descriptor. This command can then retrieve the parsed
+   * {@link io.vertx.groovy.ext.shell.command.CommandProcess#commandLine} when it executes to know get the command arguments and options.
+   * @param cli the cli to use
+   * @return the command
+   */
+  public static CommandBuilder builder(CLI cli) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandBuilder.builder((io.vertx.core.cli.CLI)cli.getDelegate()), io.vertx.groovy.ext.shell.command.CommandBuilder.class);
+    return ret;
   }
   /**
    * Set the command process handler, the process handler is called when the command is executed.

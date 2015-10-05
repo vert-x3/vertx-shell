@@ -1,5 +1,6 @@
 require 'vertx-shell/command'
 require 'vertx-shell/completion'
+require 'vertx/cli'
 require 'vertx-shell/command_process'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.command.CommandBuilder
@@ -15,6 +16,21 @@ module VertxShell
     # @return [::VertxShell::CommandBuilder] the underlying java delegate
     def j_del
       @j_del
+    end
+    #  Create a new commmand with its {::Vertx::CLI} descriptor. This command can then retrieve the parsed
+    #  {::VertxShell::CommandProcess#command_line} when it executes to know get the command arguments and options.
+    # @overload builder(name)
+    #   @param [String] name the command name
+    # @overload builder(cli)
+    #   @param [::Vertx::CLI] cli the cli to use
+    # @return [::VertxShell::CommandBuilder] the command
+    def self.builder(param_1=nil)
+      if param_1.class == String && !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandBuilder.java_method(:builder, [Java::java.lang.String.java_class]).call(param_1),::VertxShell::CommandBuilder)
+      elsif param_1.class.method_defined?(:j_del) && !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandBuilder.java_method(:builder, [Java::IoVertxCoreCli::CLI.java_class]).call(param_1.j_del),::VertxShell::CommandBuilder)
+      end
+      raise ArgumentError, "Invalid arguments when calling builder(param_1)"
     end
     #  Set the command process handler, the process handler is called when the command is executed.
     # @yield the process handler
