@@ -71,11 +71,11 @@ var CommandBuilder = function(j_val) {
   };
 
   /**
-   @return the command
+   Build the command
 
    @public
 
-   @return {Command}
+   @return {Command} the built command
    */
   this.build = function() {
     var __args = arguments;
@@ -98,12 +98,12 @@ var CommandBuilder = function(j_val) {
  @param cli {CLI} the cli to use 
  @return {CommandBuilder} the command
  */
-CommandBuilder.builder = function() {
+CommandBuilder.command = function() {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnVertxGen(JCommandBuilder["builder(java.lang.String)"](__args[0]), CommandBuilder);
+    return utils.convReturnVertxGen(JCommandBuilder["command(java.lang.String)"](__args[0]), CommandBuilder);
   }else if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-    return utils.convReturnVertxGen(JCommandBuilder["builder(io.vertx.core.cli.CLI)"](__args[0]._jdel), CommandBuilder);
+    return utils.convReturnVertxGen(JCommandBuilder["command(io.vertx.core.cli.CLI)"](__args[0]._jdel), CommandBuilder);
   } else throw new TypeError('function invoked with invalid arguments');
 };
 

@@ -4,7 +4,7 @@ require 'vertx-shell/command_process'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.command.Command
 module VertxShell
-  #  A Vert.x Shell command, it can be created from any language using the {::VertxShell::CommandBuilder#builder} or from a
+  #  A Vert.x Shell command, it can be created from any language using the {::VertxShell::CommandBuilder#command} or from a
   #  Java class using {::VertxShell::Command#create}
   class Command
     # @private

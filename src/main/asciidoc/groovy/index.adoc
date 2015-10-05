@@ -191,7 +191,7 @@ NOTE: this command list should evolve in next releases of Vert.x Shell
 
 Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
 
-A command is created by the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandBuilder.html#builder(java.lang.String)[CommandBuilder.builder]` method: the command process handler is called
+A command is created by the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandBuilder.html#command(java.lang.String)[CommandBuilder.command]` method: the command process handler is called
 by the shell when the command is executed, this handler can be set with the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandBuilder.html#processHandler(io.vertx.core.Handler)[processHandler]`
 method:
 
@@ -200,7 +200,7 @@ method:
 import io.vertx.groovy.ext.shell.command.CommandBuilder
 import io.vertx.groovy.ext.shell.registry.CommandRegistry
 
-def builder = CommandBuilder.builder("my-command")
+def builder = CommandBuilder.command("my-command")
 builder.processHandler({ process ->
 
   // Write a message to the console
@@ -259,7 +259,7 @@ def cli = CLI.create("my-command").addArgument([
   shortName:"m",
   longName:"my-option"
 ])
-def command = CommandBuilder.builder(cli)
+def command = CommandBuilder.command(cli)
 command.processHandler({ process ->
 
   def commandLine = process.commandLine()
@@ -287,7 +287,7 @@ def cli = CLI.create("my-command").addArgument([
   shortName:"h",
   longName:"help"
 ])
-def command = CommandBuilder.builder(cli)
+def command = CommandBuilder.command(cli)
 command.processHandler({ process ->
   // ...
 })

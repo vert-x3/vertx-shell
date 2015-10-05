@@ -190,7 +190,7 @@ NOTE: this command list should evolve in next releases of Vert.x Shell
 
 Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
 
-A command is created by the `link:yardoc/VertxShell/CommandBuilder.html#builder-class_method[CommandBuilder.builder]` method: the command process handler is called
+A command is created by the `link:yardoc/VertxShell/CommandBuilder.html#command-class_method[CommandBuilder.command]` method: the command process handler is called
 by the shell when the command is executed, this handler can be set with the `link:yardoc/VertxShell/CommandBuilder.html#process_handler-instance_method[processHandler]`
 method:
 
@@ -199,7 +199,7 @@ method:
 require 'vertx-shell/command_builder'
 require 'vertx-shell/command_registry'
 
-builder = VertxShell::CommandBuilder.builder("my-command")
+builder = VertxShell::CommandBuilder.command("my-command")
 builder.process_handler() { |process|
 
   # Write a message to the console
@@ -258,7 +258,7 @@ cli = Vertx::CLI.create("my-command").add_argument({
   'shortName' => "m",
   'longName' => "my-option"
 })
-command = VertxShell::CommandBuilder.builder(cli)
+command = VertxShell::CommandBuilder.command(cli)
 command.process_handler() { |process|
 
   commandLine = process.command_line()
@@ -286,7 +286,7 @@ cli = Vertx::CLI.create("my-command").add_argument({
   'shortName' => "h",
   'longName' => "help"
 })
-command = VertxShell::CommandBuilder.builder(cli)
+command = VertxShell::CommandBuilder.command(cli)
 command.process_handler() { |process|
   # ...
 }

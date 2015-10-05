@@ -65,17 +65,17 @@ public class CompletionTest {
   @Before
   public void before() {
     mgr = CommandRegistry.get(rule.vertx());
-    mgr.registerCommand(CommandBuilder.builder("foo").processHandler(proc -> {
+    mgr.registerCommand(CommandBuilder.command("foo").processHandler(proc -> {
     }).completionHandler(
         completion -> {
           completion.complete("completed_by_foo", false);
         }
     ).build());
-    mgr.registerCommand(CommandBuilder.builder("bar").processHandler(proc -> {
+    mgr.registerCommand(CommandBuilder.command("bar").processHandler(proc -> {
     }).build());
-    mgr.registerCommand(CommandBuilder.builder("baz").processHandler(proc -> {
+    mgr.registerCommand(CommandBuilder.command("baz").processHandler(proc -> {
     }).build());
-    mgr.registerCommand(CommandBuilder.builder("err").processHandler(proc -> {
+    mgr.registerCommand(CommandBuilder.command("err").processHandler(proc -> {
     }).completionHandler(completion -> {
       throw new RuntimeException("expected");
     }).build());

@@ -21,7 +21,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.cli.Completion
 import io.vertx.groovy.core.cli.CLI
 /**
- * A Vert.x Shell command, it can be created from any language using the {@link io.vertx.groovy.ext.shell.command.CommandBuilder#builder} or from a
+ * A Vert.x Shell command, it can be created from any language using the {@link io.vertx.groovy.ext.shell.command.CommandBuilder#command} or from a
  * Java class using {@link io.vertx.groovy.ext.shell.command.Command#create}
 */
 @CompileStatic

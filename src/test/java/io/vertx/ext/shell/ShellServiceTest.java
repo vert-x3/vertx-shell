@@ -61,7 +61,7 @@ public class ShellServiceTest {
   @Test
   public void testRun(TestContext context) {
     CommandRegistry manager = CommandRegistry.get(vertx);
-    CommandBuilder cmd = CommandBuilder.builder("foo");
+    CommandBuilder cmd = CommandBuilder.command("foo");
     cmd.processHandler(process -> {
       process.end(3);
     });
@@ -81,7 +81,7 @@ public class ShellServiceTest {
   @Test
   public void testThrowExceptionInProcess(TestContext context) {
     CommandRegistry manager = CommandRegistry.get(vertx);
-    CommandBuilder cmd = CommandBuilder.builder("foo");
+    CommandBuilder cmd = CommandBuilder.command("foo");
     cmd.processHandler(process -> {
       throw new RuntimeException();
     });
@@ -101,7 +101,7 @@ public class ShellServiceTest {
   @Test
   public void testStdin(TestContext context) {
     CommandRegistry manager = CommandRegistry.get(vertx);
-    CommandBuilder cmd = CommandBuilder.builder("foo");
+    CommandBuilder cmd = CommandBuilder.command("foo");
     CountDownLatch latch = new CountDownLatch(1);
     cmd.processHandler(process -> {
       process.setStdin(data -> {
@@ -132,7 +132,7 @@ public class ShellServiceTest {
   @Test
   public void testStdout(TestContext context) {
     CommandRegistry manager = CommandRegistry.get(vertx);
-    CommandBuilder cmd = CommandBuilder.builder("foo");
+    CommandBuilder cmd = CommandBuilder.command("foo");
     cmd.processHandler(process -> {
       process.stdout().write("bye_world");
       process.end(0);
@@ -161,7 +161,7 @@ public class ShellServiceTest {
     Async async = testContext.async();
     CountDownLatch latch = new CountDownLatch(1);
     commandCtx.runOnContext(v1 -> {
-      CommandBuilder cmd = CommandBuilder.builder("foo");
+      CommandBuilder cmd = CommandBuilder.command("foo");
       cmd.processHandler(process -> {
         testContext.assertTrue(commandCtx == Vertx.currentContext());
         process.setStdin(text -> {
@@ -206,7 +206,7 @@ public class ShellServiceTest {
   @Test
   public void testSendEvent(TestContext context) {
     CommandRegistry manager = CommandRegistry.get(vertx);
-    CommandBuilder cmd = CommandBuilder.builder("foo");
+    CommandBuilder cmd = CommandBuilder.command("foo");
     CountDownLatch latch = new CountDownLatch(1);
     cmd.processHandler(process -> {
       process.eventHandler(EventType.SIGTSTP, v -> {
@@ -235,7 +235,7 @@ public class ShellServiceTest {
   @Test
   public void testResize(TestContext context) {
     CommandRegistry manager = CommandRegistry.get(vertx);
-    CommandBuilder cmd = CommandBuilder.builder("foo");
+    CommandBuilder cmd = CommandBuilder.command("foo");
     cmd.processHandler(process -> {
       context.assertEquals(20, process.width());
       context.assertEquals(10, process.height());
@@ -265,7 +265,7 @@ public class ShellServiceTest {
   @Test
   public void testSessionGet(TestContext context) throws Exception {
     CommandRegistry manager = CommandRegistry.get(vertx);
-    CommandBuilder cmd = CommandBuilder.builder("foo");
+    CommandBuilder cmd = CommandBuilder.command("foo");
     Async async = context.async();
     cmd.processHandler(process -> {
       Session session = process.session();
@@ -288,7 +288,7 @@ public class ShellServiceTest {
   @Test
   public void testSessionPut(TestContext context) throws Exception {
     CommandRegistry manager = CommandRegistry.get(vertx);
-    CommandBuilder cmd = CommandBuilder.builder("foo");
+    CommandBuilder cmd = CommandBuilder.command("foo");
     Async async = context.async();
     cmd.processHandler(process -> {
       Session session = process.session();
@@ -312,7 +312,7 @@ public class ShellServiceTest {
   @Test
   public void testSessionRemove(TestContext context) throws Exception {
     CommandRegistry manager = CommandRegistry.get(vertx);
-    CommandBuilder cmd = CommandBuilder.builder("foo");
+    CommandBuilder cmd = CommandBuilder.command("foo");
     Async async = context.async();
     cmd.processHandler(process -> {
       Session session = process.session();

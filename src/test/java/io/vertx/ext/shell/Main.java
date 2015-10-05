@@ -60,7 +60,7 @@ public class Main {
 
     CommandRegistry mgr = CommandRegistry.get(vertx);
 
-    CommandBuilder echoKeyboardCmd = CommandBuilder.builder("echo-keyboard");
+    CommandBuilder echoKeyboardCmd = CommandBuilder.command("echo-keyboard");
     echoKeyboardCmd.processHandler(process -> {
       Stream stdout = process.stdout();
       process.setStdin(line -> {
@@ -70,7 +70,7 @@ public class Main {
     });
     mgr.registerCommand(echoKeyboardCmd.build());
 
-    CommandBuilder windowCmd = CommandBuilder.builder("window");
+    CommandBuilder windowCmd = CommandBuilder.command("window");
     windowCmd.processHandler(process -> {
       process.write("[" + process.width() + "," + process.height() + "]\n");
       process.eventHandler(EventType.SIGWINCH, v -> {

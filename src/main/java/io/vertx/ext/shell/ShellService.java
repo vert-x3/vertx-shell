@@ -93,11 +93,11 @@ public interface ShellService {
     registry.registerCommand(MetricsInfo.class);
 
     // Register builtin commands so they are listed in help
-    registry.registerCommand(CommandBuilder.builder("exit").processHandler(process -> {}).build());
-    registry.registerCommand(CommandBuilder.builder("logout").processHandler(process -> {}).build());
-    registry.registerCommand(CommandBuilder.builder("jobs").processHandler(process -> {}).build());
-    registry.registerCommand(CommandBuilder.builder("fg").processHandler(process -> {}).build());
-    registry.registerCommand(CommandBuilder.builder("bg").processHandler(process -> {
+    registry.registerCommand(CommandBuilder.command("exit").processHandler(process -> {}).build());
+    registry.registerCommand(CommandBuilder.command("logout").processHandler(process -> {}).build());
+    registry.registerCommand(CommandBuilder.command("jobs").processHandler(process -> {}).build());
+    registry.registerCommand(CommandBuilder.command("fg").processHandler(process -> {}).build());
+    registry.registerCommand(CommandBuilder.command("bg").processHandler(process -> {
     }).build());
 
     return new ShellServiceImpl(vertx, options, registry);

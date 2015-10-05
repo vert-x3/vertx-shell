@@ -19,18 +19,18 @@ module VertxShell
     end
     #  Create a new commmand with its {::Vertx::CLI} descriptor. This command can then retrieve the parsed
     #  {::VertxShell::CommandProcess#command_line} when it executes to know get the command arguments and options.
-    # @overload builder(name)
+    # @overload command(name)
     #   @param [String] name the command name
-    # @overload builder(cli)
+    # @overload command(cli)
     #   @param [::Vertx::CLI] cli the cli to use
     # @return [::VertxShell::CommandBuilder] the command
-    def self.builder(param_1=nil)
+    def self.command(param_1=nil)
       if param_1.class == String && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandBuilder.java_method(:builder, [Java::java.lang.String.java_class]).call(param_1),::VertxShell::CommandBuilder)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandBuilder.java_method(:command, [Java::java.lang.String.java_class]).call(param_1),::VertxShell::CommandBuilder)
       elsif param_1.class.method_defined?(:j_del) && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandBuilder.java_method(:builder, [Java::IoVertxCoreCli::CLI.java_class]).call(param_1.j_del),::VertxShell::CommandBuilder)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandBuilder.java_method(:command, [Java::IoVertxCoreCli::CLI.java_class]).call(param_1.j_del),::VertxShell::CommandBuilder)
       end
-      raise ArgumentError, "Invalid arguments when calling builder(param_1)"
+      raise ArgumentError, "Invalid arguments when calling command(param_1)"
     end
     #  Set the command process handler, the process handler is called when the command is executed.
     # @yield the process handler
@@ -53,8 +53,8 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling completion_handler()"
     end
-    #  @return the command
-    # @return [::VertxShell::Command]
+    #  Build the command
+    # @return [::VertxShell::Command] the built command
     def build
       if !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:build, []).call(),::VertxShell::Command)

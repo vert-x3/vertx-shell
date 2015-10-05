@@ -57,7 +57,7 @@ public class CommandRegistryTest {
   @Test
   public void testEval(TestContext context) {
     CommandRegistry registry = CommandRegistry.get(vertx);
-    CommandBuilder command = CommandBuilder.builder("hello");
+    CommandBuilder command = CommandBuilder.command("hello");
     command.processHandler(process -> {
       context.assertEquals(Arrays.asList(CliToken.createBlank(" "), CliToken.createText("world")), process.argsTokens());
       process.end(0);
@@ -77,7 +77,7 @@ public class CommandRegistryTest {
   @Test
   public void testRegister(TestContext context) {
     CommandRegistry registry = CommandRegistry.get(vertx);
-    CommandBuilder command = CommandBuilder.builder("hello");
+    CommandBuilder command = CommandBuilder.command("hello");
     registry.registerCommand(command.build(), context.asyncAssertSuccess(reg -> {
       registry.unregisterCommand("hello", context.asyncAssertSuccess(done -> {
         context.assertEquals(Collections.emptyList(), registry.registrations());
@@ -88,7 +88,7 @@ public class CommandRegistryTest {
   @Test
   public void testDuplicateRegistration(TestContext context) {
     CommandRegistry registry = CommandRegistry.get(vertx);
-    CommandBuilder command = CommandBuilder.builder("hello");
+    CommandBuilder command = CommandBuilder.command("hello");
     registry.registerCommand(command.build(), context.asyncAssertSuccess(reg -> {
       registry.registerCommand(command.build(), context.asyncAssertFailure(err -> {
       }));

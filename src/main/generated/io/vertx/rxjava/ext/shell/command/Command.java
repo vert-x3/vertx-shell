@@ -23,7 +23,7 @@ import io.vertx.rxjava.ext.shell.cli.Completion;
 import io.vertx.rxjava.core.cli.CLI;
 
 /**
- * A Vert.x Shell command, it can be created from any language using the {@link io.vertx.rxjava.ext.shell.command.CommandBuilder#builder} or from a
+ * A Vert.x Shell command, it can be created from any language using the {@link io.vertx.rxjava.ext.shell.command.CommandBuilder#command} or from a
  * Java class using {@link io.vertx.rxjava.ext.shell.command.Command#create}
  *
  * <p/>

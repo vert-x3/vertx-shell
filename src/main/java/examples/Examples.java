@@ -117,7 +117,7 @@ public class Examples {
 
   public void helloWorld(Vertx vertx) {
 
-    CommandBuilder builder = CommandBuilder.builder("my-command");
+    CommandBuilder builder = CommandBuilder.command("my-command");
     builder.processHandler(process -> {
 
       // Write a message to the console
@@ -136,7 +136,7 @@ public class Examples {
     CLI cli = CLI.create("my-command").
         addArgument(new Argument().setArgName("my-arg")).
         addOption(new Option().setShortName("m").setLongName("my-option"));
-    CommandBuilder command = CommandBuilder.builder(cli);
+    CommandBuilder command = CommandBuilder.command(cli);
     command.processHandler(process -> {
 
       CommandLine commandLine = process.commandLine();
@@ -153,7 +153,7 @@ public class Examples {
     CLI cli = CLI.create("my-command").
         addArgument(new Argument().setArgName("my-arg")).
         addOption(new Option().setArgName("help").setShortName("h").setLongName("help"));
-    CommandBuilder command = CommandBuilder.builder(cli);
+    CommandBuilder command = CommandBuilder.command(cli);
     command.processHandler(process -> {
       // ...
     });

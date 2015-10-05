@@ -34,13 +34,13 @@ public class CommandBuilder {
     return delegate;
   }
   /**
-   * Create a new commmand, the command is responsible for managing the options and arguments via the
+   * Create a new commmand builder, the command is responsible for managing the options and arguments via the
    * {@link io.vertx.groovy.ext.shell.command.CommandProcess #args() arguments}.
    * @param name the command name
    * @return the command
    */
-  public static CommandBuilder builder(String name) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandBuilder.builder(name), io.vertx.groovy.ext.shell.command.CommandBuilder.class);
+  public static CommandBuilder command(String name) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandBuilder.command(name), io.vertx.groovy.ext.shell.command.CommandBuilder.class);
     return ret;
   }
   /**
@@ -49,8 +49,8 @@ public class CommandBuilder {
    * @param cli the cli to use
    * @return the command
    */
-  public static CommandBuilder builder(CLI cli) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandBuilder.builder((io.vertx.core.cli.CLI)cli.getDelegate()), io.vertx.groovy.ext.shell.command.CommandBuilder.class);
+  public static CommandBuilder command(CLI cli) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandBuilder.command((io.vertx.core.cli.CLI)cli.getDelegate()), io.vertx.groovy.ext.shell.command.CommandBuilder.class);
     return ret;
   }
   /**
@@ -81,8 +81,8 @@ public class CommandBuilder {
     return this;
   }
   /**
-   * @return the command
-   * @return 
+   * Build the command
+   * @return the built command
    */
   public Command build() {
     def ret= InternalHelper.safeCreate(this.delegate.build(), io.vertx.groovy.ext.shell.command.Command.class);

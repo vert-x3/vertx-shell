@@ -43,7 +43,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A Vert.x Shell command, it can be created from any language using the {@link CommandBuilder#builder} or from a
+ * A Vert.x Shell command, it can be created from any language using the {@link CommandBuilder#command} or from a
  * Java class using {@link Command#create}
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>

@@ -43,13 +43,13 @@ public class CommandBuilder {
   }
 
   /**
-   * Create a new commmand, the command is responsible for managing the options and arguments via the
+   * Create a new commmand builder, the command is responsible for managing the options and arguments via the
    * {@link io.vertx.rxjava.ext.shell.command.CommandProcess #args() arguments}.
    * @param name the command name
    * @return the command
    */
-  public static CommandBuilder builder(String name) { 
-    CommandBuilder ret= CommandBuilder.newInstance(io.vertx.ext.shell.command.CommandBuilder.builder(name));
+  public static CommandBuilder command(String name) { 
+    CommandBuilder ret= CommandBuilder.newInstance(io.vertx.ext.shell.command.CommandBuilder.command(name));
     return ret;
   }
 
@@ -59,8 +59,8 @@ public class CommandBuilder {
    * @param cli the cli to use
    * @return the command
    */
-  public static CommandBuilder builder(CLI cli) { 
-    CommandBuilder ret= CommandBuilder.newInstance(io.vertx.ext.shell.command.CommandBuilder.builder((io.vertx.core.cli.CLI) cli.getDelegate()));
+  public static CommandBuilder command(CLI cli) { 
+    CommandBuilder ret= CommandBuilder.newInstance(io.vertx.ext.shell.command.CommandBuilder.command((io.vertx.core.cli.CLI) cli.getDelegate()));
     return ret;
   }
 
@@ -94,8 +94,8 @@ public class CommandBuilder {
   }
 
   /**
-   * @return the command
-   * @return 
+   * Build the command
+   * @return the built command
    */
   public Command build() { 
     Command ret= Command.newInstance(this.delegate.build());

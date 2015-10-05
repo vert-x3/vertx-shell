@@ -48,13 +48,13 @@ import io.vertx.ext.shell.command.impl.CommandBuilderImpl;
 public interface CommandBuilder {
 
   /**
-   * Create a new commmand, the command is responsible for managing the options and arguments via the
+   * Create a new commmand builder, the command is responsible for managing the options and arguments via the
    * {@link CommandProcess#args() arguments}.
    *
    * @param name the command name
    * @return the command
    */
-  static CommandBuilder builder(String name) {
+  static CommandBuilder command(String name) {
     return new CommandBuilderImpl(name, null);
   }
 
@@ -65,7 +65,7 @@ public interface CommandBuilder {
    * @param cli the cli to use
    * @return the command
    */
-  static CommandBuilder builder(CLI cli) {
+  static CommandBuilder command(CLI cli) {
     return new CommandBuilderImpl(cli.getName(), cli);
   }
 
@@ -89,7 +89,9 @@ public interface CommandBuilder {
   CommandBuilder completionHandler(Handler<Completion> handler);
 
   /**
-   * @return the command
+   * Build the command
+   *
+   * @return the built command
    */
   Command build();
 
