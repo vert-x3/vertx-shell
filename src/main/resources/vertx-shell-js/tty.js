@@ -43,7 +43,7 @@ var Tty = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return j_tty["width()"]();
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -57,7 +57,7 @@ var Tty = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return j_tty["height()"]();
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -77,7 +77,7 @@ var Tty = function(j_val) {
       __args[0](jVal);
     });
       return that;
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -91,7 +91,7 @@ var Tty = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return utils.convReturnVertxGen(j_tty["stdout()"](), Stream);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -107,7 +107,7 @@ var Tty = function(j_val) {
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
       j_tty["eventHandler(io.vertx.ext.shell.io.EventType,io.vertx.core.Handler)"](io.vertx.ext.shell.io.EventType.valueOf(__args[0]), handler);
       return that;
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   // A reference to the underlying Java delegate

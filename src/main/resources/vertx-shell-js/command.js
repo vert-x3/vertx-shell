@@ -45,7 +45,7 @@ var Command = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return j_command["name()"]();
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -59,7 +59,7 @@ var Command = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return utils.convReturnVertxGen(j_command["cli()"](), CLI);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -72,7 +72,7 @@ var Command = function(j_val) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
       j_command["process(io.vertx.ext.shell.command.CommandProcess)"](process._jdel);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -86,7 +86,7 @@ var Command = function(j_val) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
       j_command["complete(io.vertx.ext.shell.cli.Completion)"](completion._jdel);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   // A reference to the underlying Java delegate
@@ -109,7 +109,7 @@ Command.builder = function() {
     return utils.convReturnVertxGen(JCommand["builder(java.lang.String)"](__args[0]), CommandBuilder);
   }else if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
     return utils.convReturnVertxGen(JCommand["builder(io.vertx.core.cli.CLI)"](__args[0]._jdel), CommandBuilder);
-  } else utils.invalidArgs();
+  } else throw new TypeError('function invoked with invalid arguments');
 };
 
 // We export the Constructor function

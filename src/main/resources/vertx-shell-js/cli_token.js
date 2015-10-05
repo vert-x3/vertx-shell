@@ -42,7 +42,7 @@ var CliToken = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return j_cliToken["value()"]();
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -56,7 +56,7 @@ var CliToken = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return j_cliToken["raw()"]();
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -70,7 +70,7 @@ var CliToken = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return j_cliToken["isText()"]();
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -84,7 +84,7 @@ var CliToken = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return j_cliToken["isBlank()"]();
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   // A reference to the underlying Java delegate
@@ -104,7 +104,7 @@ CliToken.createText = function(text) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'string') {
     return utils.convReturnVertxGen(JCliToken["createText(java.lang.String)"](text), CliToken);
-  } else utils.invalidArgs();
+  } else throw new TypeError('function invoked with invalid arguments');
 };
 
 /**
@@ -118,7 +118,7 @@ CliToken.createBlank = function(blank) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'string') {
     return utils.convReturnVertxGen(JCliToken["createBlank(java.lang.String)"](blank), CliToken);
-  } else utils.invalidArgs();
+  } else throw new TypeError('function invoked with invalid arguments');
 };
 
 /**
@@ -132,7 +132,7 @@ CliToken.tokenize = function(s) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'string') {
     return utils.convReturnListSetVertxGen(JCliToken["tokenize(java.lang.String)"](s), CliToken);
-  } else utils.invalidArgs();
+  } else throw new TypeError('function invoked with invalid arguments');
 };
 
 // We export the Constructor function

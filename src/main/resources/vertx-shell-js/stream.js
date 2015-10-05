@@ -44,7 +44,7 @@ var Stream = function(j_val) {
     }  else if (__args.length === 1 && typeof __args[0] === 'object') {
       j_stream["write(io.vertx.core.json.JsonObject)"](utils.convParamJsonObject(__args[0]));
       return that;
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   // A reference to the underlying Java delegate
@@ -65,7 +65,7 @@ Stream.ofString = function(handler) {
     return utils.convReturnVertxGen(JStream["ofString(io.vertx.core.Handler)"](function(jVal) {
     handler(jVal);
   }), Stream);
-  } else utils.invalidArgs();
+  } else throw new TypeError('function invoked with invalid arguments');
 };
 
 /**
@@ -80,7 +80,7 @@ Stream.ofJson = function(handler) {
     return utils.convReturnVertxGen(JStream["ofJson(io.vertx.core.Handler)"](function(jVal) {
     handler(utils.convReturnJson(jVal));
   }), Stream);
-  } else utils.invalidArgs();
+  } else throw new TypeError('function invoked with invalid arguments');
 };
 
 // We export the Constructor function

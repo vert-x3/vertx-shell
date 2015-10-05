@@ -48,7 +48,7 @@ var CommandRegistry = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return utils.convReturnListSetVertxGen(j_commandRegistry["registrations()"](), CommandRegistration);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -76,7 +76,7 @@ var CommandRegistry = function(j_val) {
         __args[1](null, ar.cause());
       }
     });
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -89,7 +89,7 @@ var CommandRegistry = function(j_val) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
       j_commandRegistry["complete(io.vertx.ext.shell.cli.Completion)"](completion._jdel);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -110,7 +110,7 @@ var CommandRegistry = function(j_val) {
         __args[1](null, ar.cause());
       }
     });
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -131,7 +131,7 @@ var CommandRegistry = function(j_val) {
         __args[1](null, ar.cause());
       }
     });
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   // A reference to the underlying Java delegate
@@ -151,7 +151,7 @@ CommandRegistry.get = function(vertx) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
     return utils.convReturnVertxGen(JCommandRegistry["get(io.vertx.core.Vertx)"](vertx._jdel), CommandRegistry);
-  } else utils.invalidArgs();
+  } else throw new TypeError('function invoked with invalid arguments');
 };
 
 // We export the Constructor function

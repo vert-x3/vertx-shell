@@ -49,7 +49,7 @@ var CommandProcess = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return utils.convReturnVertxGen(j_commandProcess["vertx()"](), Vertx);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -63,7 +63,7 @@ var CommandProcess = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return utils.convReturnListSetVertxGen(j_commandProcess["argsTokens()"](), CliToken);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -77,7 +77,7 @@ var CommandProcess = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return j_commandProcess["args()"]();
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -91,7 +91,7 @@ var CommandProcess = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return utils.convReturnVertxGen(j_commandProcess["commandLine()"](), CommandLine);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -105,7 +105,7 @@ var CommandProcess = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return utils.convReturnVertxGen(j_commandProcess["session()"](), Session);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -119,7 +119,7 @@ var CommandProcess = function(j_val) {
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
       j_commandProcess["setStdin(io.vertx.ext.shell.io.Stream)"](stdin._jdel);
       return that;
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -134,7 +134,7 @@ var CommandProcess = function(j_val) {
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
       j_commandProcess["eventHandler(io.vertx.ext.shell.io.EventType,io.vertx.core.Handler)"](io.vertx.ext.shell.io.EventType.valueOf(__args[0]), handler);
       return that;
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -148,7 +148,7 @@ var CommandProcess = function(j_val) {
     if (__args.length === 1 && typeof __args[0] === 'string') {
       j_commandProcess["write(java.lang.String)"](text);
       return that;
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -163,7 +163,7 @@ var CommandProcess = function(j_val) {
       j_commandProcess["end()"]();
     }  else if (__args.length === 1 && typeof __args[0] ==='number') {
       j_commandProcess["end(int)"](__args[0]);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   // A reference to the underlying Java delegate

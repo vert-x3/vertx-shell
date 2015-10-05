@@ -45,7 +45,7 @@ var CommandRegistration = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return utils.convReturnVertxGen(j_commandRegistration["command()"](), Command);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -58,7 +58,7 @@ var CommandRegistration = function(j_val) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
       j_commandRegistration["complete(io.vertx.ext.shell.cli.Completion)"](completion._jdel);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -72,7 +72,7 @@ var CommandRegistration = function(j_val) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0] instanceof Array) {
       return utils.convReturnVertxGen(j_commandRegistration["createProcess(java.util.List)"](utils.convParamListVertxGen(args)), Process);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   // A reference to the underlying Java delegate

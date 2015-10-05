@@ -5,6 +5,8 @@
 
 ++++
  Shiro auth configuration options, see Vert.x Auth Shiro component and/or Apache Shiro project.
+
+ note: this will be moved to vertx-auth project after 3.1
 ++++
 '''
 
@@ -54,6 +56,8 @@ Set the shell welcome message, i.e the message displayed in the user console whe
 
 ++++
  A common base object for authentication options.
+
+ note: this will be moved to vertx-auth project after 3.1
 ++++
 '''
 

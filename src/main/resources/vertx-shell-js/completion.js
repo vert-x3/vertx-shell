@@ -45,7 +45,7 @@ var Completion = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return utils.convReturnVertxGen(j_completion["vertx()"](), Vertx);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -59,7 +59,7 @@ var Completion = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return utils.convReturnVertxGen(j_completion["session()"](), Session);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -73,7 +73,7 @@ var Completion = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return j_completion["rawLine()"]();
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -87,7 +87,7 @@ var Completion = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return utils.convReturnListSetVertxGen(j_completion["lineTokens()"](), CliToken);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -103,7 +103,7 @@ var Completion = function(j_val) {
       j_completion["complete(java.util.List)"](__args[0]);
     }  else if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] ==='boolean') {
       j_completion["complete(java.lang.String,boolean)"](__args[0], __args[1]);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   // A reference to the underlying Java delegate

@@ -48,7 +48,7 @@ var CommandBuilder = function(j_val) {
       handler(utils.convReturnVertxGen(jVal, CommandProcess));
     });
       return that;
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -66,7 +66,7 @@ var CommandBuilder = function(j_val) {
       handler(utils.convReturnVertxGen(jVal, Completion));
     });
       return that;
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -80,7 +80,7 @@ var CommandBuilder = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return utils.convReturnVertxGen(j_commandBuilder["build()"](), Command);
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   // A reference to the underlying Java delegate
