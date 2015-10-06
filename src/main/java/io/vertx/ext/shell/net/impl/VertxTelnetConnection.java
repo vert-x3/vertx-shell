@@ -47,7 +47,6 @@ public class VertxTelnetConnection extends TelnetConnection {
 
   final NetSocket socket;
   final Context context;
-  private Buffer pending;
 
   public VertxTelnetConnection(TelnetHandler handler, Context context, NetSocket socket) {
     super(handler);
@@ -66,20 +65,9 @@ public class VertxTelnetConnection extends TelnetConnection {
     context.owner().setTimer(millis, event -> task.run());
   }
 
-  // Not properly synchronized, but ok for now
   @Override
   protected void send(byte[] data) {
-    if (pending == null) {
-      pending = Buffer.buffer();
-      pending.appendBytes(data);
-      context.runOnContext(event -> {
-        Buffer buf = pending;
-        pending = null;
-        socket.write(buf);
-      });
-    } else {
-      pending.appendBytes(data);
-    }
+    socket.write(Buffer.buffer(data));
   }
 
   @Override
@@ -89,7 +77,6 @@ public class VertxTelnetConnection extends TelnetConnection {
 
   @Override
   public void close() {
-    // Check there is no
     socket.close();
   }
 }

@@ -118,6 +118,7 @@ Set the auth options as a Shiro auth.
 |===
 ^|Name | Type ^| Description
 |[[acceptBacklog]]`acceptBacklog`|`Number (int)`|-
+|[[clientAuth]]`clientAuth`|`link:enums.html#ClientAuth[ClientAuth]`|-
 |[[clientAuthRequired]]`clientAuthRequired`|`Boolean`|-
 |[[crlPaths]]`crlPaths`|`Array of String`|-
 |[[crlValues]]`crlValues`|`Array of Buffer`|-
