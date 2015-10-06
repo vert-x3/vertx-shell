@@ -98,7 +98,15 @@ public class CommandRegistryTest {
   @Test
   public void testCloseRegistryOnVertxClose(TestContext context) {
     Vertx vertx = Vertx.vertx();
+    int size = vertx.deploymentIDs().size();
     CommandRegistryImpl registry = (CommandRegistryImpl) CommandRegistry.get(vertx);
+    while (vertx.deploymentIDs().size() < size + 1) {
+      try {
+        Thread.sleep(10);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
+    }
     context.assertFalse(registry.isClosed());
     vertx.close(context.asyncAssertSuccess(v -> {
       context.assertTrue(registry.isClosed());
