@@ -32,7 +32,7 @@
 
 package io.vertx.ext.shell.impl;
 
-import io.vertx.ext.shell.Session;
+import io.vertx.ext.shell.session.Session;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -37,8 +37,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.cli.CLIException;
 import io.vertx.core.cli.CommandLine;
-import io.vertx.core.cli.Option;
-import io.vertx.ext.shell.Session;
+import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.io.EventType;
@@ -51,7 +50,6 @@ import io.vertx.ext.shell.process.ProcessContext;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**

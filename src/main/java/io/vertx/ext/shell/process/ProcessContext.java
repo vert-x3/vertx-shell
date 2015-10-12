@@ -33,7 +33,7 @@
 package io.vertx.ext.shell.process;
 
 import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.ext.shell.Session;
+import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.io.Tty;
 
 /**

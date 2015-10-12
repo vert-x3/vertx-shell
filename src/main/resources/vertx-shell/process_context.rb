@@ -1,5 +1,5 @@
-require 'vertx-shell/session'
 require 'vertx-shell/tty'
+require 'vertx-shell/session'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.process.ProcessContext
 module VertxShell

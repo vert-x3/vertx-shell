@@ -20,8 +20,8 @@ import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
-import io.vertx.rxjava.ext.shell.Session;
 import io.vertx.rxjava.core.Vertx;
+import io.vertx.rxjava.ext.shell.session.Session;
 
 /**
  * The completion object

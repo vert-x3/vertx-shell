@@ -33,7 +33,7 @@
 package io.vertx.ext.shell.command;
 
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.Session;
+import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.registry.CommandRegistry;

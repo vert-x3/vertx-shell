@@ -19,8 +19,8 @@ package io.vertx.rxjava.ext.shell.process;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
-import io.vertx.rxjava.ext.shell.Session;
 import io.vertx.rxjava.ext.shell.io.Tty;
+import io.vertx.rxjava.ext.shell.session.Session;
 
 /**
  * Allow a process to interact with its context during execution.

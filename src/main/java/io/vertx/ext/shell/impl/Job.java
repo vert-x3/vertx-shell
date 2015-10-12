@@ -34,7 +34,7 @@ package io.vertx.ext.shell.impl;
 
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.Session;
+import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
 

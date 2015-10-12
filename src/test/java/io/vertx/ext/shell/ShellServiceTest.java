@@ -38,6 +38,7 @@ import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.registry.CommandRegistry;
+import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.support.TestProcessContext;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;

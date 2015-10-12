@@ -18,8 +18,8 @@ package io.vertx.groovy.ext.shell.process;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
-import io.vertx.groovy.ext.shell.Session
 import io.vertx.groovy.ext.shell.io.Tty
+import io.vertx.groovy.ext.shell.session.Session
 /**
  * Allow a process to interact with its context during execution.
 */
@@ -45,7 +45,7 @@ public class ProcessContext {
    * @return 
    */
   public Session session() {
-    def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.groovy.ext.shell.Session.class);
+    def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.groovy.ext.shell.session.Session.class);
     return ret;
   }
   /**

@@ -36,11 +36,10 @@ import io.termd.core.util.Helper;
 import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.Session;
+import io.vertx.ext.shell.session.Session;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**

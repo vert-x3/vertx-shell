@@ -20,13 +20,13 @@ import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import java.util.List
 import io.vertx.groovy.core.cli.CommandLine
-import io.vertx.groovy.ext.shell.Session
 import io.vertx.groovy.ext.shell.io.Stream
 import io.vertx.groovy.ext.shell.io.Tty
 import io.vertx.groovy.core.Vertx
 import io.vertx.ext.shell.io.EventType
 import io.vertx.groovy.ext.shell.cli.CliToken
 import io.vertx.core.Handler
+import io.vertx.groovy.ext.shell.session.Session
 /**
  * The command process provides interaction with the process of the command provided by Vert.x Shell.
 */
@@ -77,7 +77,7 @@ public class CommandProcess extends Tty {
    * @return 
    */
   public Session session() {
-    def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.groovy.ext.shell.Session.class);
+    def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.groovy.ext.shell.session.Session.class);
     return ret;
   }
   public CommandProcess setStdin(Stream stdin) {

@@ -19,7 +19,7 @@ var utils = require('vertx-js/util/utils');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JSession = io.vertx.ext.shell.Session;
+var JSession = io.vertx.ext.shell.session.Session;
 
 /**
  A shell session.

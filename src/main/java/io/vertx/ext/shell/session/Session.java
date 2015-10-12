@@ -30,7 +30,7 @@
  *
  */
 
-package io.vertx.ext.shell;
+package io.vertx.ext.shell.session;
 
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;

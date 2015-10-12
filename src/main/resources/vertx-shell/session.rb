@@ -1,5 +1,5 @@
 require 'vertx/util/utils.rb'
-# Generated from io.vertx.ext.shell.Session
+# Generated from io.vertx.ext.shell.session.Session
 module VertxShell
   #  A shell session.
   class Session

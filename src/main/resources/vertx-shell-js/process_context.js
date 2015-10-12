@@ -16,8 +16,8 @@
 
 /** @module vertx-shell-js/process_context */
 var utils = require('vertx-js/util/utils');
-var Session = require('vertx-shell-js/session');
 var Tty = require('vertx-shell-js/tty');
+var Session = require('vertx-shell-js/session');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;

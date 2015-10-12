@@ -37,7 +37,7 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.cli.CommandLine;
-import io.vertx.ext.shell.Session;
+import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.io.Tty;

@@ -1,9 +1,9 @@
 require 'vertx/command_line'
-require 'vertx-shell/session'
 require 'vertx-shell/stream'
 require 'vertx-shell/tty'
 require 'vertx/vertx'
 require 'vertx-shell/cli_token'
+require 'vertx-shell/session'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.command.CommandProcess
 module VertxShell
