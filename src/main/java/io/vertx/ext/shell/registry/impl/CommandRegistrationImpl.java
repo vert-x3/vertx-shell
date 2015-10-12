@@ -99,8 +99,7 @@ public class CommandRegistrationImpl implements CommandRegistration {
         if (command.cli() != null) {
 
           // Build to skip validation problems
-          Optional<Option> helpOpt = command.cli().getOptions().stream().filter(o -> "help".equals(o.getArgName())).findFirst();
-          if (helpOpt.isPresent() && command.cli().parse(args2, false).isSeenInCommandLine(helpOpt.get())) {
+          if (command.cli().parse(args2, false).isAskingForHelp()) {
             StringBuilder usage = new StringBuilder();
             command.cli().usage(usage);
             usage.append('\n');

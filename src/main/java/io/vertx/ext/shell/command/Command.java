@@ -60,7 +60,7 @@ public interface Command {
   @GenIgnore
   static Command create(Class<? extends Command> clazz) {
     CLI cli = CLIConfigurator.define(clazz);
-    cli.addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help"));
+    cli.addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help").setDescription("this help").setHelp(true));
 
     boolean tmp = false;
     try {
