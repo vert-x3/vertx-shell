@@ -33,41 +33,46 @@
 package io.vertx.ext.shell.command.base;
 
 import io.vertx.core.Vertx;
-import io.vertx.core.cli.CLI;
+import io.vertx.core.cli.annotations.Argument;
+import io.vertx.core.cli.annotations.Description;
+import io.vertx.core.cli.annotations.Name;
+import io.vertx.core.cli.annotations.Summary;
 import io.vertx.core.shareddata.LocalMap;
 import io.vertx.core.shareddata.SharedData;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandProcess;
 
-import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
+@Name("local-map-get")
+@Summary("Get values from a local map")
 public class LocalMapGet implements Command {
 
-  @Override
-  public String name() {
-    return "local-map-get";
+  private String map;
+  private List<String> keys;
+
+  @Argument(index = 0, argName = "map")
+  @Description("the name of the map to get from")
+  public void setMap(String map) {
+    this.map = map;
   }
 
-  @Override
-  public CLI cli() {
-    // CLI does not support variable arguments yet
-    return null;
+  @Argument(index = 1, argName = "keys", required = false)
+  @Description("the keys to get")
+  public void setKeys(List<String> keys) {
+    this.keys = keys;
   }
 
   @Override
   public void process(CommandProcess process) {
-    Iterator<String> it = process.args().iterator();
-    if (!it.hasNext()) {
-      process.write("usage: local-map-get map keys...\n");
-    } else {
-      Vertx vertx = process.vertx();
-      SharedData sharedData = vertx.sharedData();
-      LocalMap<Object, Object> map = sharedData.getLocalMap(it.next());
-      while (it.hasNext()) {
-        String key = it.next();
+    Vertx vertx = process.vertx();
+    SharedData sharedData = vertx.sharedData();
+    LocalMap<Object, Object> map = sharedData.getLocalMap(this.map);
+    if (keys != null) {
+      for (String key : keys) {
         Object value = map.get(key);
         process.write(key + ": " + value + "\n");
       }
