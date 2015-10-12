@@ -30,7 +30,7 @@
  *
  */
 
-package io.vertx.ext.shell.impl;
+package io.vertx.ext.shell.system;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>

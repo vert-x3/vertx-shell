@@ -19,6 +19,8 @@ import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.io.Tty
+import io.vertx.ext.shell.io.EventType
+import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.session.Session
 /**
  * Allow a process to interact with its context during execution.
@@ -47,6 +49,14 @@ public class ProcessContext {
   public Session session() {
     def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.groovy.ext.shell.session.Session.class);
     return ret;
+  }
+  /**
+   * Set an event handler to be notified by events.
+   * @param eventType the event type
+   * @param handler the handler
+   */
+  public void eventHandler(EventType eventType, Handler<Void> handler) {
+    this.delegate.eventHandler(eventType, handler);
   }
   /**
    * End the process.

@@ -100,8 +100,14 @@ public class CommandProcess extends Tty {
     return this;
   }
 
+  /**
+   * Set an event handler to be notified by events.
+   * @param eventType the event type
+   * @param handler the handler
+   * @return this object
+   */
   public CommandProcess eventHandler(EventType eventType, Handler<Void> handler) { 
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) delegate).eventHandler(eventType, handler);
+    this.delegate.eventHandler(eventType, handler);
     return this;
   }
 

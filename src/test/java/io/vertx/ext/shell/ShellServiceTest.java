@@ -125,7 +125,7 @@ public class ShellServiceTest {
         } catch (InterruptedException e) {
           context.fail(e);
         }
-        ctx.stdin().handle("hello_world");
+        ctx.stdin().write("hello_world");
       }));
     }));
   }
@@ -195,9 +195,9 @@ public class ShellServiceTest {
               testContext.assertTrue(shellCtx == Vertx.currentContext());
               testContext.assertEquals("pong", text);
               testContext.assertTrue(ctx.sendEvent(EventType.SIGTSTP));
-              testContext.assertFalse(ctx.sendEvent(EventType.EOF));
+              testContext.assertFalse(ctx.sendEvent(EventType.SIGWINCH));
             }));
-            ctx.stdin().handle("ping");
+            ctx.stdin().write("ping");
           }));
         });
       }));

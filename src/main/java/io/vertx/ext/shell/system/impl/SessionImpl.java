@@ -30,36 +30,37 @@
  *
  */
 
-package io.vertx.ext.shell.io;
+package io.vertx.ext.shell.system.impl;
 
-import io.vertx.codegen.annotations.VertxGen;
+import io.vertx.ext.shell.session.Session;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * An event emitted by a {@link Tty}
- *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@VertxGen
-public enum EventType {
+public class SessionImpl implements Session {
 
-  /**
-   * Fired when the process is running and is stopped.
-   */
-  SIGTSTP,
+  private Map<String, Object> data = new HashMap<>();
 
-  /**
-   * Fired when the process is interrupted.
-   */
-  SIGINT,
+  @Override
+  public Session put(String key, Object obj) {
+    if (obj == null) {
+      data.remove(key);
+    } else {
+      data.put(key, obj);
+    }
+    return this;
+  }
 
-  /**
-   * Fired when the size of the terminal changes.
-   */
-  SIGWINCH,
+  @Override
+  public <T> T get(String key) {
+    return (T) data.get(key);
+  }
 
-  /**
-   * Fired when the process is resumed.
-   */
-  SIGCONT
-
+  @Override
+  public <T> T remove(String key) {
+    return (T) data.remove(key);
+  }
 }

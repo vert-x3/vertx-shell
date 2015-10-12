@@ -30,80 +30,30 @@
  *
  */
 
-package io.vertx.ext.shell.command;
+package io.vertx.ext.shell.system;
 
-import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
-import io.vertx.core.cli.CommandLine;
-import io.vertx.ext.shell.session.Session;
-import io.vertx.ext.shell.io.EventType;
-import io.vertx.ext.shell.io.Stream;
-import io.vertx.ext.shell.io.Tty;
 import io.vertx.ext.shell.cli.CliToken;
+import io.vertx.ext.shell.session.Session;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * The command process provides interaction with the process of the command provided by Vert.x Shell.
- *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
-public interface CommandProcess extends Tty {
+public interface ShellSession {
 
-  /**
-   * @return the current Vert.x instance
-   */
-  Vertx vertx();
-
-  /**
-   * @return the unparsed arguments tokens
-   */
-  List<CliToken> argsTokens();
-
-  /**
-   * @return the actual string arguments of the command
-   */
-  List<String> args();
-
-  /**
-   * @return the command line object or null
-   */
-  CommandLine commandLine();
-
-  /**
-   * @return the shell session
-   */
   Session session();
 
-  @Fluent
-  CommandProcess setStdin(Stream stdin);
+  Set<Job> jobs();
 
-  /**
-   * Set an event handler to be notified by events.
-   *
-   * @param eventType the event type
-   * @param handler the handler
-   * @return this object
-   */
-  @Fluent
-  CommandProcess eventHandler(EventType eventType, Handler<Void> handler);
+  Job getJob(int id);
 
-  @Fluent
-  CommandProcess write(String text);
-
-  /**
-   * End the process with the exit status {@literal 0}
-   */
-  void end();
-
-  /**
-   * End the process.
-   *
-   * @param status the exit status.
-   */
-  void end(int status);
+  void createJob(List<CliToken> args, Handler<AsyncResult<Job>> handler);
 
 }

@@ -30,42 +30,42 @@
  *
  */
 
-package io.vertx.ext.shell.impl;
+package io.vertx.ext.shell.system.impl;
 
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.io.EventType;
-import io.vertx.ext.shell.io.Stream;
 
 import io.vertx.ext.shell.process.*;
 import io.vertx.ext.shell.process.Process;
 import io.vertx.ext.shell.io.Tty;
+import io.vertx.ext.shell.system.Job;
+import io.vertx.ext.shell.system.JobStatus;
 
 import java.util.HashMap;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class Job {
+public class JobImpl implements Job {
 
   final int id;
-  final Shell shell;
+  final ShellSessionImpl shell;
   final io.vertx.ext.shell.process.Process process;
   final String line;
   final HashMap<EventType, Handler<Void>> eventHandlers = new HashMap<>();
-  volatile JobStatus status;
+  private volatile JobStatus status;
   volatile long lastStopped; // When the job was last stopped
-  volatile Stream stdout;
-  volatile Handler<String> stdin;
+  volatile Tty tty;
 
-  public Job(int id, Shell shell, Process process, String line) {
+  public JobImpl(int id, ShellSessionImpl shell, Process process, String line) {
     this.id = id;
     this.shell = shell;
     this.process = process;
     this.line = line;
   }
 
-  boolean sendEvent(EventType event) {
+  private boolean sendEvent(EventType event) {
     Handler<Void> handler = eventHandlers.get(event);
     if (handler != null) {
       handler.handle(null);
@@ -73,6 +73,32 @@ public class Job {
     } else {
       return false;
     }
+  }
+
+  @Override
+  public void resize() {
+    sendEvent(EventType.SIGWINCH);
+  }
+
+  @Override
+  public boolean interrupt() {
+    return sendEvent(EventType.SIGINT);
+  }
+
+  @Override
+  public void resume() {
+    status = JobStatus.RUNNING;
+    sendEvent(EventType.SIGCONT);
+  }
+
+  @Override
+  public void suspend() {
+    status = JobStatus.STOPPED;
+    sendEvent(EventType.SIGTSTP);
+  }
+
+  public long lastStopped() {
+    return lastStopped;
   }
 
   public JobStatus status() {
@@ -83,58 +109,38 @@ public class Job {
     return line;
   }
 
-  public String statusLine() {
-    StringBuilder sb = new StringBuilder("[").append(id).append("]");
-    if (shell.findJob() == this) {
-      sb.append("+");
-    }
-    sb.append(" ").append(Character.toUpperCase(status.name().charAt(0))).append(status.name().substring(1).toLowerCase());
-    sb.append(" ").append(line);
-    return sb.toString();
+  @Override
+  public int id() {
+    return id;
   }
 
-  public void run() {
+  @Override
+  public Tty getTty() {
+    return tty;
+  }
+
+  @Override
+  public void setTty(Tty tty) {
+    this.tty = tty;
+  }
+
+  @Override
+  public void run(Handler<Integer> endHandler) {
     status = JobStatus.RUNNING;
-    Tty tty = new Tty() {
-      @Override
-      public int width() {
-        return shell.size() != null ? shell.size().x() : -1;
-      }
-      @Override
-      public int height() {
-        return shell.size() != null ? shell.size().y() : -1;
-      }
-      @Override
-      public Tty setStdin(Handler<String> stdin) {
-        Job.this.stdin = stdin;
-        if (shell.foregroundJob == Job.this) {
-          shell.checkPending();
-        }
-        return this;
-      }
-      @Override
-      public Tty setStdin(Stream stdin) {
-        return setStdin((Handler<String>) stdin::write);
-      }
-      @Override
-      public Stream stdout() {
-        return Job.this.stdout;
-      }
-      @Override
-      public Tty eventHandler(EventType eventType, Handler<Void> handler) {
-        if (handler != null) {
-          eventHandlers.put(eventType, handler);
-        } else {
-          eventHandlers.remove(eventType);
-        }
-        return this;
-      }
-    };
     ProcessContext processContext = new ProcessContext() {
 
       @Override
       public Tty tty() {
         return tty;
+      }
+
+      @Override
+      public void eventHandler(EventType eventType, Handler<Void> handler) {
+        if (handler != null) {
+          eventHandlers.put(eventType, handler);
+        } else {
+          eventHandlers.remove(eventType);
+        }
       }
 
       @Override
@@ -144,13 +150,9 @@ public class Job {
 
       @Override
       public void end(int status) {
-        Job.this.status = JobStatus.TERMINATED;
-        shell.jobs.remove(Job.this.id);
-        stdout = null;
-        if (shell.foregroundJob == Job.this) {
-          shell.foregroundJob = null;
-          shell.read(shell.readline);
-        }
+        JobImpl.this.status = JobStatus.TERMINATED;
+        shell.jobs.remove(JobImpl.this.id);
+        endHandler.handle(status);
       }
     };
     process.execute(processContext);

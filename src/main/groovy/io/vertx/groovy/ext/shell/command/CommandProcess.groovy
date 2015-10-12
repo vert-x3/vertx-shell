@@ -84,8 +84,14 @@ public class CommandProcess extends Tty {
     ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).setStdin((io.vertx.ext.shell.io.Stream)stdin.getDelegate());
     return this;
   }
+  /**
+   * Set an event handler to be notified by events.
+   * @param eventType the event type
+   * @param handler the handler
+   * @return this object
+   */
   public CommandProcess eventHandler(EventType eventType, Handler<Void> handler) {
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).eventHandler(eventType, handler);
+    this.delegate.eventHandler(eventType, handler);
     return this;
   }
   public CommandProcess write(String text) {

@@ -38,7 +38,7 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
-import io.vertx.ext.shell.impl.SessionImpl;
+import io.vertx.ext.shell.system.impl.SessionImpl;
 import io.vertx.ext.shell.process.ProcessContext;
 import io.vertx.ext.shell.io.Tty;
 
@@ -54,7 +54,7 @@ public class TestProcessContext implements ProcessContext, Tty {
   final Context context = Vertx.currentContext();
   final HashMap<EventType, Handler<Void>> eventHandlers = new HashMap<>();
   int width, height;
-  private Handler<String> stdin;
+  private Stream stdin;
   private Stream stdout;
 
   @Override
@@ -91,14 +91,9 @@ public class TestProcessContext implements ProcessContext, Tty {
   }
 
   @Override
-  public TestProcessContext setStdin(Handler<String> stdin) {
+  public Tty setStdin(Stream stdin) {
     this.stdin = stdin;
     return this;
-  }
-
-  @Override
-  public Tty setStdin(Stream stdin) {
-    return setStdin((Handler<String>)stdin::write);
   }
 
   @Override
@@ -112,13 +107,12 @@ public class TestProcessContext implements ProcessContext, Tty {
   }
 
   @Override
-  public TestProcessContext eventHandler(EventType eventType, Handler<Void> handler) {
+  public void eventHandler(EventType eventType, Handler<Void> handler) {
     if (handler != null) {
       eventHandlers.put(eventType, handler);
     } else {
       eventHandlers.remove(eventType);
     }
-    return this;
   }
 
   @Override
@@ -136,7 +130,7 @@ public class TestProcessContext implements ProcessContext, Tty {
     }
   }
 
-  public Handler<String> stdin() {
+  public Stream stdin() {
     return stdin;
   }
 }

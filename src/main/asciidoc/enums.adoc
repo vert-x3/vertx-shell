@@ -16,10 +16,6 @@
 +++
 Fired when the process is running and is stopped.
 +++
-|[[EOF]]`EOF`|
-+++
-Fired when an End Of File is encountered.
-+++
 |[[SIGINT]]`SIGINT`|
 +++
 Fired when the process is interrupted.

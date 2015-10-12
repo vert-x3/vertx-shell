@@ -123,11 +123,12 @@ var CommandProcess = function(j_val) {
   };
 
   /**
+   Set an event handler to be notified by events.
 
    @public
-   @param eventType {Object} 
-   @param handler {function} 
-   @return {CommandProcess}
+   @param eventType {Object} the event type 
+   @param handler {function} the handler 
+   @return {CommandProcess} this object
    */
   this.eventHandler = function(eventType, handler) {
     var __args = arguments;

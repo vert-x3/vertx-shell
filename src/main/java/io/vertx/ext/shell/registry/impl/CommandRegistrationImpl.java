@@ -168,11 +168,6 @@ public class CommandRegistrationImpl implements CommandRegistration {
           }
 
           @Override
-          public CommandProcess setStdin(Handler<String> stdin) {
-            return setStdin(Stream.ofString(stdin));
-          }
-
-          @Override
           public Stream stdout() {
             return context.tty().stdout();
           }
@@ -186,13 +181,13 @@ public class CommandRegistrationImpl implements CommandRegistration {
           @Override
           public CommandProcess eventHandler(EventType eventType, Handler<Void> handler) {
             if (handler != null) {
-              context.tty().eventHandler(eventType, v -> {
+              context.eventHandler(eventType, v -> {
                 CommandRegistrationImpl.this.context.runOnContext(v2 -> {
                   handler.handle(null);
                 });
               });
             } else {
-              context.tty().eventHandler(eventType, null);
+              context.eventHandler(eventType, null);
             }
             return this;
           }

@@ -70,21 +70,13 @@ public interface Tty {
    * @return this object
    */
   @Fluent
-  Tty setStdin(Handler<String> stdin);
+  default Tty setStdin(Handler<String> stdin) {
+    return setStdin(Stream.ofString(stdin));
+  }
 
   /**
    * @return the standard output for emitting data
    */
   Stream stdout();
-
-  /**
-   * Set an event handler to be notified by Shell events.
-   *
-   * @param eventType the event type
-   * @param handler
-   * @return
-   */
-  @Fluent
-  Tty eventHandler(EventType eventType, Handler<Void> handler);
 
 }

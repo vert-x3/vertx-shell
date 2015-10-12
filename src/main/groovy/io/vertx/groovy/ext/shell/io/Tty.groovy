@@ -18,7 +18,6 @@ package io.vertx.groovy.ext.shell.io;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
-import io.vertx.ext.shell.io.EventType
 import io.vertx.core.Handler
 /**
  * Provide interactions with the Shell TTY.
@@ -73,15 +72,5 @@ public class Tty {
   public Stream stdout() {
     def ret= InternalHelper.safeCreate(this.delegate.stdout(), io.vertx.groovy.ext.shell.io.Stream.class);
     return ret;
-  }
-  /**
-   * Set an event handler to be notified by Shell events.
-   * @param eventType the event type
-   * @param handler 
-   * @return 
-   */
-  public Tty eventHandler(EventType eventType, Handler<Void> handler) {
-    this.delegate.eventHandler(eventType, handler);
-    return this;
   }
 }

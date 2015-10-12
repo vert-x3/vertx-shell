@@ -37,10 +37,12 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.registry.CommandRegistry;
-import io.vertx.ext.shell.impl.Job;
-import io.vertx.ext.shell.impl.JobStatus;
+import io.vertx.ext.shell.system.Job;
+import io.vertx.ext.shell.system.JobStatus;
 import io.vertx.ext.shell.impl.Shell;
 import io.vertx.ext.shell.support.TestTtyConnection;
+import io.vertx.ext.shell.system.ShellSession;
+import io.vertx.ext.shell.system.impl.ShellSessionImpl;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -63,12 +65,12 @@ public class ShellTest {
 
   @Test
   public void testVertx(TestContext context) {
-    CommandRegistry manager = CommandRegistry.get(vertx);
+    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    Shell shell = new Shell(vertx, conn, manager);
+    Shell shell = new Shell(vertx, conn, new ShellSessionImpl(registry), registry);
     shell.init();
     Async async = context.async();
-    manager.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
+    registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
       context.assertEquals(vertx, process.vertx());
       async.complete();
     }).build());
@@ -77,14 +79,14 @@ public class ShellTest {
 
   @Test
   public void testExecuteProcess(TestContext context) {
-    CommandRegistry manager = CommandRegistry.get(vertx);
+    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    Shell shell = new Shell(vertx, conn, manager);
+    Shell shell = new Shell(vertx, conn, new ShellSessionImpl(registry), registry);
     shell.init();
     context.assertNull(shell.foregroundJob());
-    context.assertEquals(Collections.emptyMap(), shell.jobs());
+    context.assertEquals(Collections.emptySet(), shell.jobs());
     Async async = context.async();
-    manager.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
+    registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
       context.assertEquals(1, shell.jobs().size());
       Job job = shell.getJob(1);
       context.assertEquals(job, shell.foregroundJob());
@@ -97,15 +99,15 @@ public class ShellTest {
 
   @Test
   public void testHandleReadlineBuffered(TestContext context) {
-    CommandRegistry manager = CommandRegistry.get(vertx);
+    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    Shell shell = new Shell(vertx, conn, manager);
+    Shell shell = new Shell(vertx, conn, new ShellSessionImpl(registry), registry);
     shell.init();
     Async async = context.async();
-    manager.registerCommand(CommandBuilder.command("_not_consumed").processHandler(process -> {
+    registry.registerCommand(CommandBuilder.command("_not_consumed").processHandler(process -> {
       async.complete();
     }).build());
-    manager.registerCommand(CommandBuilder.command("read").processHandler(process -> {
+    registry.registerCommand(CommandBuilder.command("read").processHandler(process -> {
       StringBuilder buffer = new StringBuilder();
       process.setStdin(line -> {
         buffer.append(line);
@@ -120,13 +122,13 @@ public class ShellTest {
 
   @Test
   public void testExecuteReadlineBuffered(TestContext context) {
-    CommandRegistry manager = CommandRegistry.get(vertx);
+    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    Shell shell = new Shell(vertx, conn, manager);
+    Shell shell = new Shell(vertx, conn, new ShellSessionImpl(registry), registry);
     shell.init();
     Async async = context.async();
     AtomicInteger count = new AtomicInteger();
-    manager.registerCommand(CommandBuilder.command("read").processHandler(process -> {
+    registry.registerCommand(CommandBuilder.command("read").processHandler(process -> {
       if (count.incrementAndGet() == 2) {
         async.complete();
       }
@@ -138,13 +140,13 @@ public class ShellTest {
 
   @Test
   public void testSuspendProcess(TestContext context) throws Exception {
-    CommandRegistry manager = CommandRegistry.get(vertx);
+    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    Shell shell = new Shell(vertx, conn, manager);
+    Shell shell = new Shell(vertx, conn, new ShellSessionImpl(registry), registry);
     shell.init();
     Async async = context.async();
     CountDownLatch latch = new CountDownLatch(1);
-    manager.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
+    registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
       Job job = shell.getJob(1);
       process.eventHandler(EventType.SIGTSTP, v -> {
         context.assertEquals(JobStatus.STOPPED, job.status());
@@ -160,15 +162,15 @@ public class ShellTest {
 
   @Test
   public void testSuspendedProcessDisconnectedFromTty(TestContext context) throws Exception {
-    CommandRegistry manager = CommandRegistry.get(vertx);
+    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    Shell shell = new Shell(vertx, conn, manager);
+    Shell shell = new Shell(vertx, conn, new ShellSessionImpl(registry), registry);
     shell.init();
     Async async = context.async();
     CountDownLatch latch1 = new CountDownLatch(1);
     CountDownLatch latch2 = new CountDownLatch(1);
     CountDownLatch latch3 = new CountDownLatch(1);
-    manager.registerCommand(CommandBuilder.command("read").processHandler(process -> {
+    registry.registerCommand(CommandBuilder.command("read").processHandler(process -> {
       process.setStdin(line -> {
         context.fail("Should not process line " + line);
       });
@@ -178,7 +180,7 @@ public class ShellTest {
       });
       latch1.countDown();
     }).build());
-    manager.registerCommand(CommandBuilder.command("wait").processHandler(process -> {
+    registry.registerCommand(CommandBuilder.command("wait").processHandler(process -> {
       // Do nothing, this command is used to escape from readline and make
       // sure that the read data is not sent to the stopped command
       latch3.countDown();
@@ -186,7 +188,7 @@ public class ShellTest {
         process.end(0);
       });
     }).build());
-    manager.registerCommand(CommandBuilder.command("end").processHandler(process -> {
+    registry.registerCommand(CommandBuilder.command("end").processHandler(process -> {
       async.complete();
     }).build());
     conn.read("read\r");
@@ -201,15 +203,15 @@ public class ShellTest {
 
   @Test
   public void testResumeProcessToForeground(TestContext context) throws Exception {
-    CommandRegistry manager = CommandRegistry.get(vertx);
+    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    Shell shell = new Shell(vertx, conn, manager);
+    Shell shell = new Shell(vertx, conn, new ShellSessionImpl(registry), registry);
     shell.init();
     CountDownLatch latch1 = new CountDownLatch(1);
     CountDownLatch latch2 = new CountDownLatch(1);
     CountDownLatch latch3 = new CountDownLatch(1);
     CountDownLatch latch4 = new CountDownLatch(1);
-    manager.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
+    registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
       Job job = shell.getJob(1);
       process.eventHandler(EventType.SIGTSTP, v -> {
         context.assertEquals(0L, latch1.getCount());
@@ -245,14 +247,14 @@ public class ShellTest {
 
   @Test
   public void testResumeProcessToBackground(TestContext context) throws Exception {
-    CommandRegistry manager = CommandRegistry.get(vertx);
+    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    Shell shell = new Shell(vertx, conn, manager);
+    Shell shell = new Shell(vertx, conn, new ShellSessionImpl(registry), registry);
     shell.init();
     CountDownLatch latch1 = new CountDownLatch(1);
     CountDownLatch latch2 = new CountDownLatch(1);
     CountDownLatch latch3 = new CountDownLatch(1);
-    manager.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
+    registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
       Job job = shell.getJob(1);
       process.eventHandler(EventType.SIGTSTP, v -> {
         context.assertEquals(0L, latch1.getCount());
@@ -293,15 +295,15 @@ public class ShellTest {
 
   @Test
   public void backgroundToForeground(TestContext context) throws Exception {
-    CommandRegistry manager = CommandRegistry.get(vertx);
+    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    Shell shell = new Shell(vertx, conn, manager);
+    Shell shell = new Shell(vertx, conn, new ShellSessionImpl(registry), registry);
     shell.init();
     CountDownLatch latch1 = new CountDownLatch(1);
     CountDownLatch latch2 = new CountDownLatch(1);
     CountDownLatch latch3 = new CountDownLatch(1);
     Async async = context.async();
-    manager.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
+    registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
       process.eventHandler(EventType.SIGTSTP, v -> {
         context.assertEquals(1L, latch2.getCount());
         latch2.countDown();
@@ -330,20 +332,20 @@ public class ShellTest {
 
   @Test
   public void testExecuteBufferedCommand(TestContext context) throws Exception {
-    CommandRegistry manager = CommandRegistry.get(vertx);
+    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    Shell shell = new Shell(vertx, conn, manager);
+    Shell shell = new Shell(vertx, conn, new ShellSessionImpl(registry), registry);
     shell.init();
     CountDownLatch latch = new CountDownLatch(1);
     Async async = context.async();
-    manager.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
+    registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
       context.assertEquals(null, conn.checkWritten("% foo\n"));
       conn.read("bar");
       context.assertNull(conn.checkWritten("bar"));
       process.end();
       latch.countDown();
     }).build());
-    manager.registerCommand(CommandBuilder.command("bar").processHandler(process -> {
+    registry.registerCommand(CommandBuilder.command("bar").processHandler(process -> {
       context.assertEquals(null, conn.checkWritten("% bar\n"));
       async.complete();
     }).build());
@@ -354,12 +356,12 @@ public class ShellTest {
 
   @Test
   public void testEchoCharsDuringExecute(TestContext context) throws Exception {
-    CommandRegistry manager = CommandRegistry.get(vertx);
+    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    Shell shell = new Shell(vertx, conn, manager);
+    Shell shell = new Shell(vertx, conn, new ShellSessionImpl(registry), registry);
     shell.init();
     Async async = context.async();
-    manager.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
+    registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
       context.assertEquals(null, conn.checkWritten("% foo\n"));
       conn.read("\u0007");
       context.assertNull(conn.checkWritten("^G"));
@@ -379,9 +381,9 @@ public class ShellTest {
   @Test
   public void testExit(TestContext context) throws Exception {
     for (String cmd : Arrays.asList("exit", "logout")) {
-      CommandRegistry manager = CommandRegistry.get(vertx);
+      CommandRegistry registry = CommandRegistry.get(vertx);
       TestTtyConnection conn = new TestTtyConnection();
-      Shell shell = new Shell(vertx, conn, manager);
+      Shell shell = new Shell(vertx, conn, new ShellSessionImpl(registry), registry);
       shell.init();
       conn.read(cmd + "\r");
       context.assertTrue(conn.isClosed());
@@ -390,9 +392,9 @@ public class ShellTest {
 
   @Test
   public void testEOF(TestContext context) throws Exception {
-    CommandRegistry manager = CommandRegistry.get(vertx);
+    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    Shell shell = new Shell(vertx, conn, manager);
+    Shell shell = new Shell(vertx, conn, new ShellSessionImpl(registry), registry);
     shell.init();
     conn.read("\u0004");
     context.assertTrue(conn.isClosed());

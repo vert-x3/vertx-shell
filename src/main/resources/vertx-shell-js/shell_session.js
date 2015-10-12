@@ -14,41 +14,26 @@
  * under the License.
  */
 
-/** @module vertx-shell-js/process_context */
+/** @module vertx-shell-js/shell_session */
 var utils = require('vertx-js/util/utils');
-var Tty = require('vertx-shell-js/tty');
+var Job = require('vertx-shell-js/job');
+var CliToken = require('vertx-shell-js/cli_token');
 var Session = require('vertx-shell-js/session');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JProcessContext = io.vertx.ext.shell.process.ProcessContext;
+var JShellSession = io.vertx.ext.shell.system.ShellSession;
 
 /**
- Allow a process to interact with its context during execution.
 
  @class
 */
-var ProcessContext = function(j_val) {
+var ShellSession = function(j_val) {
 
-  var j_processContext = j_val;
+  var j_shellSession = j_val;
   var that = this;
 
   /**
-   @return the tty assocated with this process
-
-   @public
-
-   @return {Tty}
-   */
-  this.tty = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_processContext["tty()"](), Tty);
-    } else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-   @return the shell session
 
    @public
 
@@ -57,42 +42,60 @@ var ProcessContext = function(j_val) {
   this.session = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_processContext["session()"](), Session);
+      return utils.convReturnVertxGen(j_shellSession["session()"](), Session);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
-   Set an event handler to be notified by events.
 
    @public
-   @param eventType {Object} the event type 
-   @param handler {function} the handler 
+
+   @return {Array.<Job>}
    */
-  this.eventHandler = function(eventType, handler) {
+  this.jobs = function() {
     var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_processContext["eventHandler(io.vertx.ext.shell.io.EventType,io.vertx.core.Handler)"](io.vertx.ext.shell.io.EventType.valueOf(__args[0]), handler);
+    if (__args.length === 0) {
+      return utils.convReturnListSetVertxGen(j_shellSession["jobs()"](), Job);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
-   End the process.
 
    @public
-   @param status {number} the termination status 
+   @param id {number} 
+   @return {Job}
    */
-  this.end = function(status) {
+  this.getJob = function(id) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] ==='number') {
-      j_processContext["end(int)"](status);
+      return utils.convReturnVertxGen(j_shellSession["getJob(int)"](id), Job);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param args {Array.<CliToken>} 
+   @param handler {function} 
+   */
+  this.createJob = function(args, handler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'object' && __args[0] instanceof Array && typeof __args[1] === 'function') {
+      j_shellSession["createJob(java.util.List,io.vertx.core.Handler)"](utils.convParamListVertxGen(args), function(ar) {
+      if (ar.succeeded()) {
+        handler(utils.convReturnVertxGen(ar.result(), Job), null);
+      } else {
+        handler(null, ar.cause());
+      }
+    });
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
-  this._jdel = j_processContext;
+  this._jdel = j_shellSession;
 };
 
 // We export the Constructor function
-module.exports = ProcessContext;
+module.exports = ShellSession;

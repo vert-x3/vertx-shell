@@ -69,8 +69,9 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling set_stdin(stdin)"
     end
-    # @param [:SIGTSTP,:EOF,:SIGINT,:SIGWINCH,:SIGCONT] eventType 
-    # @yield 
+    #  Set an event handler to be notified by events.
+    # @param [:SIGTSTP,:SIGINT,:SIGWINCH,:SIGCONT] eventType the event type
+    # @yield the handler
     # @return [self]
     def event_handler(eventType=nil)
       if eventType.class == Symbol && block_given?

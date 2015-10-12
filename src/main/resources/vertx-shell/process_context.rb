@@ -31,6 +31,16 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling session()"
     end
+    #  Set an event handler to be notified by events.
+    # @param [:SIGTSTP,:SIGINT,:SIGWINCH,:SIGCONT] eventType the event type
+    # @yield the handler
+    # @return [void]
+    def event_handler(eventType=nil)
+      if eventType.class == Symbol && block_given?
+        return @j_del.java_method(:eventHandler, [Java::IoVertxExtShellIo::EventType.java_class,Java::IoVertxCore::Handler.java_class]).call(Java::IoVertxExtShellIo::EventType.valueOf(eventType),Proc.new { yield })
+      end
+      raise ArgumentError, "Invalid arguments when calling event_handler(eventType)"
+    end
     #  End the process.
     # @param [Fixnum] status the termination status
     # @return [void]

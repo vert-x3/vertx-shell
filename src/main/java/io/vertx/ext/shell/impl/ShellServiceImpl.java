@@ -44,6 +44,8 @@ import io.vertx.ext.shell.net.TelnetOptions;
 import io.vertx.ext.shell.net.impl.SSHServer;
 import io.vertx.ext.shell.net.impl.TelnetServer;
 import io.vertx.ext.shell.registry.CommandRegistry;
+import io.vertx.ext.shell.system.ShellSession;
+import io.vertx.ext.shell.system.impl.ShellSessionImpl;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -74,7 +76,8 @@ public class ShellServiceImpl implements ShellService {
   public void start(Handler<AsyncResult<Void>> startHandler) {
 
     Consumer<TtyConnection> shellBoostrap = conn -> {
-      Shell shell = new Shell(vertx, conn, registry);
+      ShellSession session = new ShellSessionImpl(registry);
+      Shell shell = new Shell(vertx, conn, session, registry);
       conn.setCloseHandler(v -> {
         shell.close();
       });

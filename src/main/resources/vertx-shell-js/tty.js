@@ -94,22 +94,6 @@ var Tty = function(j_val) {
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
-  /**
-   Set an event handler to be notified by Shell events.
-
-   @public
-   @param eventType {Object} the event type 
-   @param handler {function} 
-   @return {Tty} 
-   */
-  this.eventHandler = function(eventType, handler) {
-    var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_tty["eventHandler(io.vertx.ext.shell.io.EventType,io.vertx.core.Handler)"](io.vertx.ext.shell.io.EventType.valueOf(__args[0]), handler);
-      return that;
-    } else throw new TypeError('function invoked with invalid arguments');
-  };
-
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.

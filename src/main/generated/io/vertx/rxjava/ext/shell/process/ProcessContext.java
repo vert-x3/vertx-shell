@@ -20,6 +20,8 @@ import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.rxjava.ext.shell.io.Tty;
+import io.vertx.ext.shell.io.EventType;
+import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.session.Session;
 
 /**
@@ -57,6 +59,15 @@ public class ProcessContext {
   public Session session() { 
     Session ret= Session.newInstance(this.delegate.session());
     return ret;
+  }
+
+  /**
+   * Set an event handler to be notified by events.
+   * @param eventType the event type
+   * @param handler the handler
+   */
+  public void eventHandler(EventType eventType, Handler<Void> handler) { 
+    this.delegate.eventHandler(eventType, handler);
   }
 
   /**

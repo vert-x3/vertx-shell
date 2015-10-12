@@ -51,16 +51,5 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling stdout()"
     end
-    #  Set an event handler to be notified by Shell events.
-    # @param [:SIGTSTP,:EOF,:SIGINT,:SIGWINCH,:SIGCONT] eventType the event type
-    # @yield 
-    # @return [self]
-    def event_handler(eventType=nil)
-      if eventType.class == Symbol && block_given?
-        @j_del.java_method(:eventHandler, [Java::IoVertxExtShellIo::EventType.java_class,Java::IoVertxCore::Handler.java_class]).call(Java::IoVertxExtShellIo::EventType.valueOf(eventType),Proc.new { yield })
-        return self
-      end
-      raise ArgumentError, "Invalid arguments when calling event_handler(eventType)"
-    end
   end
 end

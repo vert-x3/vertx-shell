@@ -19,7 +19,6 @@ package io.vertx.rxjava.ext.shell.io;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
-import io.vertx.ext.shell.io.EventType;
 import io.vertx.core.Handler;
 
 /**
@@ -86,17 +85,6 @@ public class Tty {
   public Stream stdout() { 
     Stream ret= Stream.newInstance(this.delegate.stdout());
     return ret;
-  }
-
-  /**
-   * Set an event handler to be notified by Shell events.
-   * @param eventType the event type
-   * @param handler 
-   * @return 
-   */
-  public Tty eventHandler(EventType eventType, Handler<Void> handler) { 
-    this.delegate.eventHandler(eventType, handler);
-    return this;
   }
 
 

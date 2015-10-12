@@ -30,37 +30,38 @@
  *
  */
 
-package io.vertx.ext.shell.impl;
+package io.vertx.ext.shell.system;
 
-import io.vertx.ext.shell.session.Session;
-
-import java.util.HashMap;
-import java.util.Map;
+import io.vertx.codegen.annotations.VertxGen;
+import io.vertx.core.Handler;
+import io.vertx.ext.shell.io.Tty;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class SessionImpl implements Session {
+@VertxGen
+public interface Job {
 
-  private Map<String, Object> data = new HashMap<>();
+  int id();
 
-  @Override
-  public Session put(String key, Object obj) {
-    if (obj == null) {
-      data.remove(key);
-    } else {
-      data.put(key, obj);
-    }
-    return this;
-  }
+  JobStatus status();
 
-  @Override
-  public <T> T get(String key) {
-    return (T) data.get(key);
-  }
+  long lastStopped();
 
-  @Override
-  public <T> T remove(String key) {
-    return (T) data.remove(key);
-  }
+  String line();
+
+  Tty getTty();
+
+  void setTty(Tty tty);
+
+  void run(Handler<Integer> endHandler);
+
+  void resize();
+
+  boolean interrupt();
+
+  void resume();
+
+  void suspend();
+
 }
