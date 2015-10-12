@@ -32,7 +32,6 @@
 
 package io.vertx.ext.shell.impl;
 
-import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.io.EventType;
@@ -96,7 +95,6 @@ public class Job {
 
   public void run() {
     status = JobStatus.RUNNING;
-    Context context = shell.vertx.getOrCreateContext(); // Maybe just a current context since it may run with SSHD
     Tty tty = new Tty() {
       @Override
       public int width() {
