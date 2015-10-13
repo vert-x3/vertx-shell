@@ -76,8 +76,9 @@ public class JobImpl implements Job {
   }
 
   @Override
-  public void resize() {
+  public JobImpl resize() {
     sendEvent(EventType.SIGWINCH);
+    return this;
   }
 
   @Override
@@ -86,15 +87,17 @@ public class JobImpl implements Job {
   }
 
   @Override
-  public void resume() {
+  public JobImpl resume() {
     status = JobStatus.RUNNING;
     sendEvent(EventType.SIGCONT);
+    return this;
   }
 
   @Override
-  public void suspend() {
+  public JobImpl suspend() {
     status = JobStatus.STOPPED;
     sendEvent(EventType.SIGTSTP);
+    return this;
   }
 
   public long lastStopped() {
@@ -120,8 +123,9 @@ public class JobImpl implements Job {
   }
 
   @Override
-  public void setTty(Tty tty) {
+  public JobImpl setTty(Tty tty) {
     this.tty = tty;
+    return this;
   }
 
   @Override

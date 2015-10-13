@@ -30,43 +30,29 @@
  *
  */
 
-package io.vertx.ext.shell.system;
+package io.vertx.ext.shell.io;
 
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.core.Handler;
-import io.vertx.ext.shell.io.Tty;
+import io.vertx.ext.shell.io.impl.PtyImpl;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
-public interface Job {
+public interface Pty {
 
-  int id();
+  static Pty create() {
+    return new PtyImpl();
+  }
 
-  JobStatus status();
-
-  long lastStopped();
-
-  String line();
-
-  Tty getTty();
+  Stream stdin();
 
   @Fluent
-  Job setTty(Tty tty);
+  Pty setSize(int width, int height);
 
-  @Fluent
-  Job resize();
+  Tty slave();
 
-  boolean interrupt();
 
-  void run(Handler<Integer> endHandler);
-
-  @Fluent
-  Job resume();
-
-  @Fluent
-  Job suspend();
 
 }

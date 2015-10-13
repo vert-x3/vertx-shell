@@ -69,7 +69,6 @@ public class Shell {
   Job foregroundJob; // The currently running job
   String welcome;
 
-
   public Shell(Vertx vertx, TtyConnection conn, ShellSession session, CommandRegistry registry) {
 
     InputStream inputrc = Keymap.class.getResourceAsStream("inputrc");

@@ -67,16 +67,14 @@ public class Job {
     return ret;
   }
 
-  public void setTty(Tty tty) { 
+  public Job setTty(Tty tty) { 
     this.delegate.setTty((io.vertx.ext.shell.io.Tty) tty.getDelegate());
+    return this;
   }
 
-  public void run(Handler<Integer> endHandler) { 
-    this.delegate.run(endHandler);
-  }
-
-  public void resize() { 
+  public Job resize() { 
     this.delegate.resize();
+    return this;
   }
 
   public boolean interrupt() { 
@@ -84,12 +82,18 @@ public class Job {
     return ret;
   }
 
-  public void resume() { 
-    this.delegate.resume();
+  public void run(Handler<Integer> endHandler) { 
+    this.delegate.run(endHandler);
   }
 
-  public void suspend() { 
+  public Job resume() { 
+    this.delegate.resume();
+    return this;
+  }
+
+  public Job suspend() { 
     this.delegate.suspend();
+    return this;
   }
 
 

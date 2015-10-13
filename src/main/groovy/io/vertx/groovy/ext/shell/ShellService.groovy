@@ -18,6 +18,7 @@ package io.vertx.groovy.ext.shell;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
+import io.vertx.groovy.ext.shell.system.ShellSession
 import io.vertx.ext.shell.ShellServiceOptions
 import io.vertx.groovy.core.Vertx
 import io.vertx.groovy.ext.shell.registry.CommandRegistry
@@ -35,6 +36,10 @@ public class ShellService {
   }
   public Object getDelegate() {
     return delegate;
+  }
+  public static ShellService create(Vertx vertx) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.ShellService.class);
+    return ret;
   }
   public static ShellService create(Vertx vertx, Map<String, Object> options) {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx)vertx.getDelegate(), options != null ? new io.vertx.ext.shell.ShellServiceOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.ShellService.class);
@@ -60,6 +65,10 @@ public class ShellService {
    */
   public void start(Handler<AsyncResult<Void>> startHandler) {
     this.delegate.start(startHandler);
+  }
+  public ShellSession openSession() {
+    def ret= InternalHelper.safeCreate(this.delegate.openSession(), io.vertx.groovy.ext.shell.system.ShellSession.class);
+    return ret;
   }
   /**
    * Stop the shell service, this is an asynchronous stop.

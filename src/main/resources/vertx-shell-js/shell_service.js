@@ -16,6 +16,7 @@
 
 /** @module vertx-shell-js/shell_service */
 var utils = require('vertx-js/util/utils');
+var ShellSession = require('vertx-shell-js/shell_session');
 var Vertx = require('vertx-js/vertx');
 var CommandRegistry = require('vertx-shell-js/command_registry');
 
@@ -69,6 +70,19 @@ var ShellService = function(j_val) {
   };
 
   /**
+
+   @public
+
+   @return {ShellSession}
+   */
+  this.openSession = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return utils.convReturnVertxGen(j_shellService["openSession()"](), ShellSession);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
    Stop the shell service, this is an asynchronous start.
 
    @public
@@ -102,10 +116,12 @@ var ShellService = function(j_val) {
  @param options {Object} 
  @return {ShellService}
  */
-ShellService.create = function(vertx, options) {
+ShellService.create = function() {
   var __args = arguments;
-  if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'object') {
-    return utils.convReturnVertxGen(JShellService["create(io.vertx.core.Vertx,io.vertx.ext.shell.ShellServiceOptions)"](vertx._jdel, options != null ? new ShellServiceOptions(new JsonObject(JSON.stringify(options))) : null), ShellService);
+  if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+    return utils.convReturnVertxGen(JShellService["create(io.vertx.core.Vertx)"](__args[0]._jdel), ShellService);
+  }else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'object') {
+    return utils.convReturnVertxGen(JShellService["create(io.vertx.core.Vertx,io.vertx.ext.shell.ShellServiceOptions)"](__args[0]._jdel, __args[1] != null ? new ShellServiceOptions(new JsonObject(JSON.stringify(__args[1]))) : null), ShellService);
   } else throw new TypeError('function invoked with invalid arguments');
 };
 

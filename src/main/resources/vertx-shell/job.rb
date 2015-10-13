@@ -50,25 +50,19 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling get_tty()"
     end
     # @param [::VertxShell::Tty] tty 
-    # @return [void]
+    # @return [self]
     def set_tty(tty=nil)
       if tty.class.method_defined?(:j_del) && !block_given?
-        return @j_del.java_method(:setTty, [Java::IoVertxExtShellIo::Tty.java_class]).call(tty.j_del)
+        @j_del.java_method(:setTty, [Java::IoVertxExtShellIo::Tty.java_class]).call(tty.j_del)
+        return self
       end
       raise ArgumentError, "Invalid arguments when calling set_tty(tty)"
     end
-    # @yield 
-    # @return [void]
-    def run
-      if block_given?
-        return @j_del.java_method(:run, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
-      end
-      raise ArgumentError, "Invalid arguments when calling run()"
-    end
-    # @return [void]
+    # @return [self]
     def resize
       if !block_given?
-        return @j_del.java_method(:resize, []).call()
+        @j_del.java_method(:resize, []).call()
+        return self
       end
       raise ArgumentError, "Invalid arguments when calling resize()"
     end
@@ -79,17 +73,27 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling interrupt?()"
     end
+    # @yield 
     # @return [void]
+    def run
+      if block_given?
+        return @j_del.java_method(:run, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
+      end
+      raise ArgumentError, "Invalid arguments when calling run()"
+    end
+    # @return [self]
     def resume
       if !block_given?
-        return @j_del.java_method(:resume, []).call()
+        @j_del.java_method(:resume, []).call()
+        return self
       end
       raise ArgumentError, "Invalid arguments when calling resume()"
     end
-    # @return [void]
+    # @return [self]
     def suspend
       if !block_given?
-        return @j_del.java_method(:suspend, []).call()
+        @j_del.java_method(:suspend, []).call()
+        return self
       end
       raise ArgumentError, "Invalid arguments when calling suspend()"
     end

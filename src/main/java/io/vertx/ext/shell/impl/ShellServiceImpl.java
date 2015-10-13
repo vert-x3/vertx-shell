@@ -76,8 +76,7 @@ public class ShellServiceImpl implements ShellService {
   public void start(Handler<AsyncResult<Void>> startHandler) {
 
     Consumer<TtyConnection> shellBoostrap = conn -> {
-      ShellSession session = new ShellSessionImpl(registry);
-      Shell shell = new Shell(vertx, conn, session, registry);
+      Shell shell = new Shell(vertx, conn, openSession(), registry);
       conn.setCloseHandler(v -> {
         shell.close();
       });
@@ -114,6 +113,11 @@ public class ShellServiceImpl implements ShellService {
       ssh.setHandler(shellBoostrap);
       ssh.listen(listenHandler);
     }
+  }
+
+  @Override
+  public ShellSession openSession() {
+    return new ShellSessionImpl(registry);
   }
 
   @Override

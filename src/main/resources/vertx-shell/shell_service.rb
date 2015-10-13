@@ -1,3 +1,4 @@
+require 'vertx-shell/shell_session'
 require 'vertx/vertx'
 require 'vertx-shell/command_registry'
 require 'vertx/util/utils.rb'
@@ -20,7 +21,9 @@ module VertxShell
     # @param [Hash] options 
     # @return [::VertxShell::ShellService]
     def self.create(vertx=nil,options=nil)
-      if vertx.class.method_defined?(:j_del) && options.class == Hash && !block_given?
+      if vertx.class.method_defined?(:j_del) && !block_given? && options == nil
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShell::ShellService.java_method(:create, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::ShellService)
+      elsif vertx.class.method_defined?(:j_del) && options.class == Hash && !block_given?
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShell::ShellService.java_method(:create, [Java::IoVertxCore::Vertx.java_class,Java::IoVertxExtShell::ShellServiceOptions.java_class]).call(vertx.j_del,Java::IoVertxExtShell::ShellServiceOptions.new(::Vertx::Util::Utils.to_json_object(options))),::VertxShell::ShellService)
       end
       raise ArgumentError, "Invalid arguments when calling create(vertx,options)"
@@ -43,6 +46,13 @@ module VertxShell
         return @j_del.java_method(:start, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |ar| yield(ar.failed ? ar.cause : nil) }))
       end
       raise ArgumentError, "Invalid arguments when calling start()"
+    end
+    # @return [::VertxShell::ShellSession]
+    def open_session
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:openSession, []).call(),::VertxShell::ShellSession)
+      end
+      raise ArgumentError, "Invalid arguments when calling open_session()"
     end
     #  Stop the shell service, this is an asynchronous start.
     # @yield handler for getting notified when service is stopped

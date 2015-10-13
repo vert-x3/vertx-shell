@@ -30,43 +30,56 @@
  *
  */
 
-package io.vertx.ext.shell.system;
+package io.vertx.ext.shell.io.impl;
 
-import io.vertx.codegen.annotations.Fluent;
-import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.core.Handler;
+import io.vertx.ext.shell.io.Pty;
+import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.io.Tty;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@VertxGen
-public interface Job {
+public class PtyImpl implements Pty {
 
-  int id();
+  private int width = 80;
+  private int height = 24;
+  private Stream stdin;
+  private Stream stdout;
+  final Tty slave = new Tty() {
+    @Override
+    public int width() {
+      return width;
+    }
 
-  JobStatus status();
+    @Override
+    public int height() {
+      return height;
+    }
 
-  long lastStopped();
+    @Override
+    public Tty setStdin(Stream stdin) {
+      PtyImpl.this.stdin = stdin;
+      return this;
+    }
 
-  String line();
+    @Override
+    public Stream stdout() {
+      return stdout;
+    }
+  };
 
-  Tty getTty();
+  @Override
+  public Tty slave() {
+    return slave;
+  }
 
-  @Fluent
-  Job setTty(Tty tty);
+  public Pty setSize(int width, int height) {
+    this.width = width;
+    this.height = height;
+    return this;
+  }
 
-  @Fluent
-  Job resize();
-
-  boolean interrupt();
-
-  void run(Handler<Integer> endHandler);
-
-  @Fluent
-  Job resume();
-
-  @Fluent
-  Job suspend();
-
+  public Stream stdin() {
+    return stdin;
+  }
 }

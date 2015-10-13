@@ -34,15 +34,20 @@ package io.vertx.ext.shell;
 
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.io.EventType;
+import io.vertx.ext.shell.io.Pty;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.support.TestProcessContext;
+import io.vertx.ext.shell.system.ShellSession;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -57,37 +62,48 @@ import java.util.concurrent.TimeUnit;
 @RunWith(VertxUnitRunner.class)
 public class ShellServiceTest {
 
-  Vertx vertx = Vertx.vertx();
+  Vertx vertx;
+  CommandRegistry registry;
+  ShellService service;
+
+  @Before
+  public void before() {
+    vertx = Vertx.vertx();
+    registry = CommandRegistry.get(vertx);
+    service = ShellService.create(vertx);
+  }
+
+  @After
+  public void after(TestContext context) {
+    vertx.close(context.asyncAssertSuccess());
+  }
 
   @Test
   public void testRun(TestContext context) {
-    CommandRegistry manager = CommandRegistry.get(vertx);
     CommandBuilder cmd = CommandBuilder.command("foo");
     cmd.processHandler(process -> {
       process.end(3);
     });
-    manager.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      manager.createProcess("foo", context.asyncAssertSuccess(process -> {
+    registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
+      ShellSession session = service.openSession();
+      session.createJob(CliToken.tokenize("foo"), context.asyncAssertSuccess(job -> {
         Async async = context.async();
-        TestProcessContext ctx = new TestProcessContext();
-        ctx.endHandler(code -> {
+        job.run(code -> {
           context.assertEquals(3, code);
           async.complete();
         });
-        process.execute(ctx);
       }));
     }));
   }
 
   @Test
   public void testThrowExceptionInProcess(TestContext context) {
-    CommandRegistry manager = CommandRegistry.get(vertx);
     CommandBuilder cmd = CommandBuilder.command("foo");
     cmd.processHandler(process -> {
       throw new RuntimeException();
     });
-    manager.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      manager.createProcess("foo", context.asyncAssertSuccess(process -> {
+    registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
+      registry.createProcess("foo", context.asyncAssertSuccess(process -> {
         Async async = context.async();
         TestProcessContext ctx = new TestProcessContext();
         ctx.endHandler(code -> {
@@ -101,7 +117,6 @@ public class ShellServiceTest {
 
   @Test
   public void testStdin(TestContext context) {
-    CommandRegistry manager = CommandRegistry.get(vertx);
     CommandBuilder cmd = CommandBuilder.command("foo");
     CountDownLatch latch = new CountDownLatch(1);
     cmd.processHandler(process -> {
@@ -111,35 +126,35 @@ public class ShellServiceTest {
       });
       latch.countDown();
     });
-    manager.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      Async async = context.async();
-      manager.createProcess("foo", context.asyncAssertSuccess(job -> {
-        TestProcessContext ctx = new TestProcessContext();
-        ctx.endHandler(code -> {
+    registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
+      ShellSession session = service.openSession();
+      session.createJob(CliToken.tokenize("foo"), context.asyncAssertSuccess(job -> {
+        Async async = context.async();
+        Pty pty = Pty.create();
+        job.setTty(pty.slave());
+        job.run(code -> {
           context.assertEquals(0, code);
           async.complete();
         });
-        job.execute(ctx);
         try {
           latch.await(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
           context.fail(e);
         }
-        ctx.stdin().write("hello_world");
+        pty.stdin().write("hello_world");
       }));
     }));
   }
 
   @Test
   public void testStdout(TestContext context) {
-    CommandRegistry manager = CommandRegistry.get(vertx);
     CommandBuilder cmd = CommandBuilder.command("foo");
     cmd.processHandler(process -> {
       process.stdout().write("bye_world");
       process.end(0);
     });
-    manager.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      manager.createProcess("foo", context.asyncAssertSuccess(job -> {
+    registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
+      registry.createProcess("foo", context.asyncAssertSuccess(job -> {
         Async async = context.async();
         LinkedList<String> out = new LinkedList<>();
         TestProcessContext ctx = new TestProcessContext();
@@ -158,7 +173,6 @@ public class ShellServiceTest {
   public void testVertxContext(TestContext testContext) throws Exception {
     Context commandCtx = vertx.getOrCreateContext();
     Context shellCtx = vertx.getOrCreateContext();
-    CommandRegistry manager = CommandRegistry.get(vertx);
     Async async = testContext.async();
     CountDownLatch latch = new CountDownLatch(1);
     commandCtx.runOnContext(v1 -> {
@@ -176,9 +190,9 @@ public class ShellServiceTest {
         });
         latch.countDown();
       });
-      manager.registerCommand(cmd.build(), testContext.asyncAssertSuccess(v2 -> {
+      registry.registerCommand(cmd.build(), testContext.asyncAssertSuccess(v2 -> {
         shellCtx.runOnContext(v3 -> {
-          manager.createProcess("foo", testContext.asyncAssertSuccess(job -> {
+          registry.createProcess("foo", testContext.asyncAssertSuccess(job -> {
             testContext.assertTrue(shellCtx == Vertx.currentContext());
             TestProcessContext ctx = new TestProcessContext();
             ctx.endHandler(code -> {
@@ -206,7 +220,6 @@ public class ShellServiceTest {
 
   @Test
   public void testSendEvent(TestContext context) {
-    CommandRegistry manager = CommandRegistry.get(vertx);
     CommandBuilder cmd = CommandBuilder.command("foo");
     CountDownLatch latch = new CountDownLatch(1);
     cmd.processHandler(process -> {
@@ -215,8 +228,8 @@ public class ShellServiceTest {
       });
       latch.countDown();
     });
-    manager.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      manager.createProcess("foo", context.asyncAssertSuccess(job -> {
+    registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
+      registry.createProcess("foo", context.asyncAssertSuccess(job -> {
         Async async = context.async();
         TestProcessContext ctx = new TestProcessContext();
         ctx.endHandler(status -> {
@@ -235,7 +248,6 @@ public class ShellServiceTest {
 
   @Test
   public void testResize(TestContext context) {
-    CommandRegistry manager = CommandRegistry.get(vertx);
     CommandBuilder cmd = CommandBuilder.command("foo");
     cmd.processHandler(process -> {
       context.assertEquals(20, process.width());
@@ -247,8 +259,8 @@ public class ShellServiceTest {
       });
       process.stdout().write("ping");
     });
-    manager.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      manager.createProcess("foo", context.asyncAssertSuccess(job -> {
+    registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
+      registry.createProcess("foo", context.asyncAssertSuccess(job -> {
         Async async = context.async();
         TestProcessContext ctx = new TestProcessContext();
         ctx.endHandler(status -> {
@@ -265,7 +277,6 @@ public class ShellServiceTest {
 
   @Test
   public void testSessionGet(TestContext context) throws Exception {
-    CommandRegistry manager = CommandRegistry.get(vertx);
     CommandBuilder cmd = CommandBuilder.command("foo");
     Async async = context.async();
     cmd.processHandler(process -> {
@@ -274,8 +285,8 @@ public class ShellServiceTest {
       context.assertEquals("the_value", session.get("the_key"));
       process.end();
     });
-    manager.registerCommand(cmd.build());
-    manager.createProcess("foo", context.asyncAssertSuccess(process -> {
+    registry.registerCommand(cmd.build());
+    registry.createProcess("foo", context.asyncAssertSuccess(process -> {
       TestProcessContext ctx = new TestProcessContext();
       ctx.session().put("the_key", "the_value");
       ctx.endHandler(status -> {
@@ -288,7 +299,6 @@ public class ShellServiceTest {
 
   @Test
   public void testSessionPut(TestContext context) throws Exception {
-    CommandRegistry manager = CommandRegistry.get(vertx);
     CommandBuilder cmd = CommandBuilder.command("foo");
     Async async = context.async();
     cmd.processHandler(process -> {
@@ -298,8 +308,8 @@ public class ShellServiceTest {
       session.put("the_key", "the_value");
       process.end();
     });
-    manager.registerCommand(cmd.build());
-    manager.createProcess("foo", context.asyncAssertSuccess(process -> {
+    registry.registerCommand(cmd.build());
+    registry.createProcess("foo", context.asyncAssertSuccess(process -> {
       TestProcessContext ctx = new TestProcessContext();
       ctx.endHandler(status -> {
         context.assertEquals(0, status);
@@ -312,7 +322,6 @@ public class ShellServiceTest {
 
   @Test
   public void testSessionRemove(TestContext context) throws Exception {
-    CommandRegistry manager = CommandRegistry.get(vertx);
     CommandBuilder cmd = CommandBuilder.command("foo");
     Async async = context.async();
     cmd.processHandler(process -> {
@@ -321,8 +330,8 @@ public class ShellServiceTest {
       context.assertEquals("the_value", session.remove("the_key"));
       process.end();
     });
-    manager.registerCommand(cmd.build());
-    manager.createProcess("foo", context.asyncAssertSuccess(process -> {
+    registry.registerCommand(cmd.build());
+    registry.createProcess("foo", context.asyncAssertSuccess(process -> {
       TestProcessContext ctx = new TestProcessContext();
       ctx.session().put("the_key", "the_value");
       ctx.endHandler(status -> {
