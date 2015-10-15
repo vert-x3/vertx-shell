@@ -76,7 +76,7 @@ public class ShellServiceImpl implements ShellService {
   public void start(Handler<AsyncResult<Void>> startHandler) {
 
     Consumer<TtyConnection> shellBoostrap = conn -> {
-      Shell shell = new Shell(vertx, conn, openSession(), registry);
+      TtyAdapter shell = new TtyAdapter(vertx, conn, openSession(), registry);
       conn.setCloseHandler(v -> {
         shell.close();
       });

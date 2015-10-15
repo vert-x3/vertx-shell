@@ -59,7 +59,7 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class Shell {
+public class TtyAdapter {
 
   final CommandRegistry registry;
   final ShellSession session;
@@ -69,7 +69,7 @@ public class Shell {
   Job foregroundJob; // The currently running job
   String welcome;
 
-  public Shell(Vertx vertx, TtyConnection conn, ShellSession session, CommandRegistry registry) {
+  public TtyAdapter(Vertx vertx, TtyConnection conn, ShellSession session, CommandRegistry registry) {
 
     InputStream inputrc = Keymap.class.getResourceAsStream("inputrc");
     Keymap keymap = new Keymap(inputrc);
