@@ -33,6 +33,7 @@
 
   <properties>
     <stack.version>3.2.0-SNAPSHOT</stack.version>
+    <termd.version>1.0.1-SNAPSHOT</termd.version>
   </properties>
 
   <dependencyManagement>
@@ -83,7 +84,7 @@
     <dependency>
       <groupId>io.termd</groupId>
       <artifactId>termd-core</artifactId>
-      <version>1.0.0</version>
+      <version>${termd.version}</version>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
@@ -122,7 +123,7 @@
     <dependency>
       <groupId>io.termd</groupId>
       <artifactId>termd-core</artifactId>
-      <version>1.0.0</version>
+      <version>${termd.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
