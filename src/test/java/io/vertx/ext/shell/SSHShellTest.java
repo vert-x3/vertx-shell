@@ -67,7 +67,7 @@ import java.util.concurrent.TimeoutException;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @RunWith(VertxUnitRunner.class)
-public class SSHTest {
+public class SSHShellTest {
 
   ShellService service;
   Vertx vertx;

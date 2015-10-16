@@ -41,10 +41,11 @@ import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.JobStatus;
 import io.vertx.ext.shell.impl.TtyAdapter;
 import io.vertx.ext.shell.support.TestTtyConnection;
-import io.vertx.ext.shell.system.impl.ShellSessionImpl;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -58,15 +59,28 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @RunWith(VertxUnitRunner.class)
-public class ShellTest {
+public class TtyAdapterTest {
 
-  Vertx vertx = Vertx.vertx();
+  Vertx vertx;
+  CommandRegistry registry;
+  ShellService service;
+
+  @Before
+  public void before() {
+    vertx = Vertx.vertx();
+    registry = CommandRegistry.get(vertx);
+    service = ShellService.create(vertx);
+  }
+
+  @After
+  public void after(TestContext context) {
+    vertx.close(context.asyncAssertSuccess());
+  }
 
   @Test
   public void testVertx(TestContext context) {
-    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, new ShellSessionImpl(registry), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, service.openSession(), registry);
     shell.init();
     Async async = context.async();
     registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
@@ -78,9 +92,8 @@ public class ShellTest {
 
   @Test
   public void testExecuteProcess(TestContext context) {
-    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, new ShellSessionImpl(registry), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, service.openSession(), registry);
     shell.init();
     context.assertNull(shell.foregroundJob());
     context.assertEquals(Collections.emptySet(), shell.jobs());
@@ -98,9 +111,8 @@ public class ShellTest {
 
   @Test
   public void testHandleReadlineBuffered(TestContext context) {
-    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, new ShellSessionImpl(registry), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, service.openSession(), registry);
     shell.init();
     Async async = context.async();
     registry.registerCommand(CommandBuilder.command("_not_consumed").processHandler(process -> {
@@ -121,9 +133,8 @@ public class ShellTest {
 
   @Test
   public void testExecuteReadlineBuffered(TestContext context) {
-    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, new ShellSessionImpl(registry), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, service.openSession(), registry);
     shell.init();
     Async async = context.async();
     AtomicInteger count = new AtomicInteger();
@@ -139,9 +150,8 @@ public class ShellTest {
 
   @Test
   public void testSuspendProcess(TestContext context) throws Exception {
-    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, new ShellSessionImpl(registry), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, service.openSession(), registry);
     shell.init();
     Async async = context.async();
     CountDownLatch latch = new CountDownLatch(1);
@@ -161,9 +171,8 @@ public class ShellTest {
 
   @Test
   public void testSuspendedProcessDisconnectedFromTty(TestContext context) throws Exception {
-    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, new ShellSessionImpl(registry), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, service.openSession(), registry);
     shell.init();
     Async async = context.async();
     CountDownLatch latch1 = new CountDownLatch(1);
@@ -202,9 +211,8 @@ public class ShellTest {
 
   @Test
   public void testResumeProcessToForeground(TestContext context) throws Exception {
-    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, new ShellSessionImpl(registry), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, service.openSession(), registry);
     shell.init();
     CountDownLatch latch1 = new CountDownLatch(1);
     CountDownLatch latch2 = new CountDownLatch(1);
@@ -246,9 +254,8 @@ public class ShellTest {
 
   @Test
   public void testResumeProcessToBackground(TestContext context) throws Exception {
-    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, new ShellSessionImpl(registry), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, service.openSession(), registry);
     shell.init();
     CountDownLatch latch1 = new CountDownLatch(1);
     CountDownLatch latch2 = new CountDownLatch(1);
@@ -294,9 +301,8 @@ public class ShellTest {
 
   @Test
   public void backgroundToForeground(TestContext context) throws Exception {
-    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, new ShellSessionImpl(registry), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, service.openSession(), registry);
     shell.init();
     CountDownLatch latch1 = new CountDownLatch(1);
     CountDownLatch latch2 = new CountDownLatch(1);
@@ -331,9 +337,8 @@ public class ShellTest {
 
   @Test
   public void testExecuteBufferedCommand(TestContext context) throws Exception {
-    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, new ShellSessionImpl(registry), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, service.openSession(), registry);
     shell.init();
     CountDownLatch latch = new CountDownLatch(1);
     Async async = context.async();
@@ -355,9 +360,8 @@ public class ShellTest {
 
   @Test
   public void testEchoCharsDuringExecute(TestContext context) throws Exception {
-    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, new ShellSessionImpl(registry), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, service.openSession(), registry);
     shell.init();
     Async async = context.async();
     registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
@@ -380,9 +384,8 @@ public class ShellTest {
   @Test
   public void testExit(TestContext context) throws Exception {
     for (String cmd : Arrays.asList("exit", "logout")) {
-      CommandRegistry registry = CommandRegistry.get(vertx);
       TestTtyConnection conn = new TestTtyConnection();
-      TtyAdapter shell = new TtyAdapter(vertx, conn, new ShellSessionImpl(registry), registry);
+      TtyAdapter shell = new TtyAdapter(vertx, conn, service.openSession(), registry);
       shell.init();
       conn.read(cmd + "\r");
       context.assertTrue(conn.isClosed());
@@ -391,9 +394,8 @@ public class ShellTest {
 
   @Test
   public void testEOF(TestContext context) throws Exception {
-    CommandRegistry registry = CommandRegistry.get(vertx);
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, new ShellSessionImpl(registry), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, service.openSession(), registry);
     shell.init();
     conn.read("\u0004");
     context.assertTrue(conn.isClosed());
