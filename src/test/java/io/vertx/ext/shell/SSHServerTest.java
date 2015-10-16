@@ -32,49 +32,60 @@
 
 package io.vertx.ext.shell;
 
-import io.vertx.core.AsyncResult;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.Session;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.net.SSHOptions;
+import io.vertx.ext.shell.net.SSHServer;
+import io.vertx.ext.shell.net.Terminal;
+import io.vertx.ext.unit.Async;
+import io.vertx.ext.unit.TestContext;
 import org.junit.After;
+import org.junit.Test;
 
-import static org.junit.Assert.*;
-
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class SSHShellTest extends SSHTestBase {
+public class SSHServerTest extends SSHTestBase {
 
-  ShellService service;
+  SSHServer server;
+  Handler<Terminal> termHandler;
+
+  @Override
+  public void before() {
+    super.before();
+    termHandler = term -> term.stdout().write("% ");
+  }
 
   @After
   public void after() throws Exception {
-    if (service != null) {
+    if (server != null) {
       CountDownLatch latch = new CountDownLatch(1);
-      Handler<AsyncResult<Void>> handler = ar -> latch.countDown();
-      service.stop(handler);
+      server.close(ar -> latch.countDown());
       assertTrue(latch.await(10, TimeUnit.SECONDS));
     }
     super.after();
   }
 
   protected void startShell(SSHOptions options) throws ExecutionException, InterruptedException, TimeoutException {
-
-    if (service != null) {
+    if (server != null) {
       throw new IllegalStateException();
     }
-
-    service = ShellService.create(vertx, new ShellServiceOptions().
-        setWelcomeMessage("").
-        setSSHOptions(options));
-
+    server = SSHServer.create(vertx, options);
     CompletableFuture<Void> fut = new CompletableFuture<>();
-    service.start(ar -> {
+    server.termHandler(termHandler);
+    server.listen(ar -> {
       if (ar.succeeded()) {
         fut.complete(null);
       } else {
@@ -82,5 +93,26 @@ public class SSHShellTest extends SSHTestBase {
       }
     });
     fut.get(10, TimeUnit.SECONDS);
+  }
+
+  @Test
+  public void testRead(TestContext context) throws Exception {
+    Async async = context.async();
+    termHandler = term -> {
+      term.setStdin(s -> {
+        context.assertEquals("hello", s);
+        async.complete();
+      });
+    };
+    startShell();
+    Session session = createSession("paulo", "secret", false);
+    session.connect();
+    Channel channel = session.openChannel("shell");
+    channel.connect();
+    OutputStream out = channel.getOutputStream();
+    out.write("hello".getBytes());
+    out.flush();
+    channel.disconnect();
+    session.disconnect();
   }
 }

@@ -37,6 +37,7 @@ import io.termd.core.ssh.netty.AsyncAuth;
 import io.termd.core.ssh.netty.AsyncUserAuthServiceFactory;
 import io.termd.core.ssh.netty.NettyIoServiceFactoryFactory;
 import io.termd.core.tty.TtyConnection;
+import io.termd.core.util.Helper;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
 import io.vertx.core.Future;
@@ -53,7 +54,10 @@ import io.vertx.core.net.impl.KeyStoreHelper;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.shiro.ShiroAuth;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
+import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.net.SSHOptions;
+import io.vertx.ext.shell.net.SSHServer;
+import io.vertx.ext.shell.net.Terminal;
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.apache.sshd.server.SshServer;
@@ -77,7 +81,7 @@ import java.util.function.Consumer;
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class SSHServer {
+public class SSHServerImpl implements SSHServer {
 
   private static final int STATUS_STOPPED = 0, STATUS_STARTING = 1, STATUS_STARTED = 2, STATUS_STOPPING = 3;
 
@@ -88,7 +92,7 @@ public class SSHServer {
   private final AtomicInteger status = new AtomicInteger(STATUS_STOPPED);
   private ContextInternal listenContext;
 
-  public SSHServer(Vertx vertx, SSHOptions options) {
+  public SSHServerImpl(Vertx vertx, SSHOptions options) {
     this.vertx = vertx;
     this.options = new SSHOptions(options);
   }
@@ -101,7 +105,7 @@ public class SSHServer {
     return handler;
   }
 
-  public SSHServer setHandler(Consumer<TtyConnection> handler) {
+  public SSHServerImpl setHandler(Consumer<TtyConnection> handler) {
     this.handler = handler;
     return this;
   }
@@ -113,10 +117,64 @@ public class SSHServer {
     return nativeServer;
   }
 
-  public void listen(Handler<AsyncResult<Void>> listenHandler) {
+  @Override
+  public SSHServer termHandler(Handler<Terminal> handler) {
+    if (handler != null) {
+      setHandler(conn -> {
+        handler.handle(new Terminal() {
+          @Override
+          public Terminal setStdin(Stream stdin) {
+            if (stdin == null) {
+              conn.setStdinHandler(null);
+            } else {
+              conn.setStdinHandler(keys -> {
+                stdin.write(Helper.fromCodePoints(keys));
+              });
+            }
+            return this;
+          }
+
+          @Override
+          public int width() {
+            return conn.size().x();
+          }
+
+          @Override
+          public int height() {
+            return conn.size().y();
+          }
+
+          @Override
+          public Stream stdout() {
+            return Stream.ofString(conn::write);
+          }
+
+          @Override
+          public Terminal closeHandler(Handler<Void> handler) {
+            if (handler == null) {
+              conn.setCloseHandler(null);
+            } else {
+              conn.setCloseHandler(handler::handle);
+            }
+            return this;
+          }
+
+          @Override
+          public void close() {
+            conn.close();
+          }
+        });
+      });
+    } else {
+      setHandler(null);
+    }
+    return this;
+  }
+
+  public SSHServerImpl listen(Handler<AsyncResult<SSHServer>> listenHandler) {
     if (!status.compareAndSet(STATUS_STOPPED, STATUS_STARTING)) {
       listenHandler.handle(Future.failedFuture("Invalid state:" + status.get()));
-      return;
+      return this;
     }
     listenContext = (ContextInternal) vertx.getOrCreateContext();
     vertx.executeBlocking(fut -> {
@@ -188,12 +246,18 @@ public class SSHServer {
         //
         nativeServer.start();
         status.set(STATUS_STARTED);
-        fut.complete(null);
+        fut.complete(this);
       } catch (Exception e) {
         status.set(STATUS_STOPPED);
         fut.fail(e);
       }
     }, listenHandler);
+    return this;
+  }
+
+  @Override
+  public void close() {
+    close(ar -> {});
   }
 
   public void close(Handler<AsyncResult<Void>> closeHandler) {

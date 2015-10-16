@@ -41,7 +41,7 @@ import io.vertx.ext.shell.net.SSHOptions;
 import io.vertx.ext.shell.ShellService;
 import io.vertx.ext.shell.ShellServiceOptions;
 import io.vertx.ext.shell.net.TelnetOptions;
-import io.vertx.ext.shell.net.impl.SSHServer;
+import io.vertx.ext.shell.net.impl.SSHServerImpl;
 import io.vertx.ext.shell.net.impl.TelnetServer;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.system.ShellSession;
@@ -59,7 +59,7 @@ public class ShellServiceImpl implements ShellService {
   private final ShellServiceOptions options;
   private final CommandRegistry registry;
   private TelnetServer telnet;
-  private SSHServer ssh;
+  private SSHServerImpl ssh;
 
   public ShellServiceImpl(Vertx vertx, ShellServiceOptions options, CommandRegistry registry) {
     this.vertx = vertx;
@@ -109,9 +109,15 @@ public class ShellServiceImpl implements ShellService {
       telnet.listen(listenHandler);
     }
     if (sshOptions != null) {
-      ssh = new SSHServer(vertx, sshOptions);
+      ssh = new SSHServerImpl(vertx, sshOptions);
       ssh.setHandler(shellBoostrap);
-      ssh.listen(listenHandler);
+      ssh.listen(ar -> {
+        if (ar.succeeded()) {
+          listenHandler.handle(Future.succeededFuture());
+        } else {
+          listenHandler.handle(Future.failedFuture(ar.cause()));
+        }
+      });
     }
   }
 
