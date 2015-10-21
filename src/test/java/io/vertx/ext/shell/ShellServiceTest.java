@@ -178,7 +178,8 @@ public class ShellServiceTest {
     commandCtx.runOnContext(v1 -> {
       CommandBuilder cmd = CommandBuilder.command("foo");
       cmd.processHandler(process -> {
-        testContext.assertTrue(commandCtx == Vertx.currentContext());
+        Context currentCtx = Vertx.currentContext();
+        testContext.assertTrue(commandCtx == currentCtx);
         process.setStdin(text -> {
           testContext.assertTrue(commandCtx == Vertx.currentContext());
           testContext.assertEquals("ping", text);

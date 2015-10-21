@@ -32,6 +32,8 @@
 
 package io.vertx.ext.shell.registry;
 
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.support.TestProcessContext;
 import io.vertx.ext.shell.cli.CliToken;
@@ -45,6 +47,8 @@ import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -110,6 +114,35 @@ public class CommandRegistryTest {
     context.assertFalse(registry.isClosed());
     vertx.close(context.asyncAssertSuccess(v -> {
       context.assertTrue(registry.isClosed());
+    }));
+  }
+
+  @Test
+  public void testUndeployInVerticleContext(TestContext context) {
+    CommandRegistry registry = CommandRegistry.get(vertx);
+    Async async = context.async();
+    AtomicReference<String> ref = new AtomicReference<>();
+    vertx.deployVerticle(new AbstractVerticle() {
+      @Override
+      public void start(Future<Void> startFuture) throws Exception {
+        CommandBuilder command = CommandBuilder.command("hello");
+        command.processHandler(process -> {
+        });
+        registry.registerCommand(command.build(), ar -> {
+          if (ar.succeeded()) {
+            startFuture.complete();
+          } else {
+            startFuture.fail(ar.cause());
+          }
+        });
+      }
+    }, context.asyncAssertSuccess(id -> {
+      ref.set(id);
+      async.complete();
+    }));
+    async.awaitSuccess(5000);
+    vertx.undeploy(ref.get(), context.asyncAssertSuccess(v -> {
+      context.assertEquals(Collections.emptyList(), registry.registrations());
     }));
   }
 }

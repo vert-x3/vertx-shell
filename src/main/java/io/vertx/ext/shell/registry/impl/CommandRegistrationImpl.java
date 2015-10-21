@@ -59,14 +59,16 @@ import java.util.stream.Collectors;
  */
 public class CommandRegistrationImpl implements CommandRegistration {
 
-  final Vertx vertx;
-  final Context context;
+  final CommandRegistryImpl registry;
   final Command command;
+  final Context context;
+  final String deploymendID;
 
-  public CommandRegistrationImpl(Vertx vertx, Context context, Command command) {
-    this.vertx = vertx;
-    this.context = context;
+  public CommandRegistrationImpl(CommandRegistryImpl registry, Command command, Context context, String deploymentID) {
+    this.registry = registry;
     this.command = command;
+    this.deploymendID = deploymentID;
+    this.context = context;
   }
 
   public Command command() {
@@ -122,7 +124,7 @@ public class CommandRegistrationImpl implements CommandRegistration {
 
           @Override
           public Vertx vertx() {
-            return vertx;
+            return registry.vertx;
           }
 
           @Override

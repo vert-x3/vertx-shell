@@ -69,8 +69,8 @@ public class CommandRegistryImpl extends AbstractVerticle implements CommandRegi
     return registries.computeIfAbsent(vertx, CommandRegistryImpl::new);
   }
 
-  private final Vertx vertx;
-  private final ConcurrentHashMap<String, CommandRegistration> commandMap = new ConcurrentHashMap<>();
+  final Vertx vertx;
+  final ConcurrentHashMap<String, CommandRegistrationImpl> commandMap = new ConcurrentHashMap<>();
   private volatile boolean closed;
 
   public CommandRegistryImpl(Vertx vertx) {
@@ -117,26 +117,50 @@ public class CommandRegistryImpl extends AbstractVerticle implements CommandRegi
 
   @Override
   public void registerCommand(Command command, Handler<AsyncResult<CommandRegistration>> doneHandler) {
-    Context context = vertx.getOrCreateContext();
-    CommandRegistrationImpl registration = new CommandRegistrationImpl(vertx, context, command);
+    Context commandCtx = vertx.getOrCreateContext();
     String name = command.name();
-    if (commandMap.containsKey(name)) {
-      doneHandler.handle(Future.failedFuture("Command " + name + " already registered"));
-    } else {
-      commandMap.put(name, registration);
-      doneHandler.handle(Future.succeededFuture(registration));
-    }
+    vertx.deployVerticle(new AbstractVerticle() {
+      @Override
+      public void start() throws Exception {
+        CommandRegistrationImpl registration = new CommandRegistrationImpl(CommandRegistryImpl.this, command, commandCtx, context.deploymentID());
+        if (commandMap.putIfAbsent(name, registration) != null) {
+          throw new Exception("Command " + name + " already registered");
+        }
+      }
+      @Override
+      public void stop() throws Exception {
+        commandMap.remove(name);
+      }
+    }, ar -> {
+      if (ar.succeeded()) {
+        CommandRegistrationImpl registration = null;
+        for (CommandRegistrationImpl r : commandMap.values()) {
+          if (r.deploymendID.equals(ar.result())) {
+            registration = r;
+          }
+        }
+        if (registration != null) {
+          doneHandler.handle(Future.succeededFuture(registration));
+        } else {
+          doneHandler.handle(Future.failedFuture("Internal error"));
+        }
+      } else {
+        doneHandler.handle(Future.failedFuture(ar.cause()));
+      }
+    });
   }
 
   @Override
   public void unregisterCommand(String commandName) {
-    unregisterCommand(commandName, done -> {});
+    unregisterCommand(commandName, done -> {
+    });
   }
 
   @Override
   public void unregisterCommand(String name, Handler<AsyncResult<Void>> doneHandler) {
-    if (commandMap.remove(name) != null) {
-      doneHandler.handle(Future.succeededFuture());
+    CommandRegistrationImpl registration = commandMap.get(name);
+    if (registration != null) {
+      vertx.undeploy(registration.deploymendID, doneHandler);
     } else {
       doneHandler.handle(Future.failedFuture("Command " + name + " not registered"));
     }
