@@ -33,8 +33,10 @@
 package io.vertx.ext.shell;
 
 import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.Session;
 import io.vertx.core.Handler;
+import io.vertx.ext.shell.io.Tty;
 import io.vertx.ext.shell.net.SSHOptions;
 import io.vertx.ext.shell.net.SSHServer;
 import io.vertx.ext.shell.net.Terminal;
@@ -44,12 +46,15 @@ import org.junit.After;
 import org.junit.Test;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -114,5 +119,103 @@ public class SSHServerTest extends SSHTestBase {
     out.flush();
     channel.disconnect();
     session.disconnect();
+  }
+
+  @Test
+  public void testWrite() throws Exception {
+    termHandler = term -> {
+      term.stdout().write("hello");
+    };
+    startShell();
+    Session session = createSession("paulo", "secret", false);
+    session.connect();
+    Channel channel = session.openChannel("shell");
+    channel.connect();
+    Reader in = new InputStreamReader(channel.getInputStream());
+    int count = 5;
+    StringBuilder sb = new StringBuilder();
+    while (count > 0) {
+      int code = in.read();
+      if (code == -1) {
+        count = 0;
+      } else {
+        count--;
+        sb.append((char)code);
+      }
+    }
+    assertEquals("hello", sb.toString());
+    channel.disconnect();
+    session.disconnect();
+  }
+
+  @Test
+  public void testResizeHandler(TestContext context) throws Exception {
+    Async async = context.async();
+    termHandler = term -> {
+      term.resizehandler(v -> {
+        context.assertEquals(20, term.width());
+        context.assertEquals(10, term.height());
+        async.complete();
+      });
+    };
+    startShell();
+    Session session = createSession("paulo", "secret", false);
+    session.connect();
+    ChannelShell channel = (ChannelShell) session.openChannel("shell");
+    channel.connect();
+    OutputStream out = channel.getOutputStream();
+    channel.setPtySize(20, 10, 20 * 8, 10 * 8);
+    out.flush();
+    channel.disconnect();
+    session.disconnect();
+  }
+
+  @Test
+  public void testCloseHandler(TestContext context) throws Exception {
+    Async async = context.async();
+    termHandler = term -> {
+      term.closeHandler(v -> {
+        async.complete();
+      });
+    };
+    startShell();
+    Session session = createSession("paulo", "secret", false);
+    session.connect();
+    Channel channel = session.openChannel("shell");
+    channel.connect();
+    channel.disconnect();
+    session.disconnect();
+  }
+
+  @Test
+  public void testClose(TestContext context) throws Exception {
+    testClose(context, term -> {
+      vertx.setTimer(10, id -> {
+        term.close();
+      });
+    });
+  }
+
+  @Test
+  public void testCloseImmediatly(TestContext context) throws Exception {
+    testClose(context, Terminal::close);
+  }
+
+  private void testClose(TestContext context, Consumer<Terminal> closer) throws Exception {
+    Async async = context.async();
+    termHandler = term -> {
+      term.closeHandler(v -> {
+        async.complete();
+      });
+      closer.accept(term);
+    };
+    startShell();
+    Session session = createSession("paulo", "secret", false);
+    session.connect();
+    Channel channel = session.openChannel("shell");
+    channel.connect();
+    while (channel.isClosed()) {
+      Thread.sleep(10);
+    }
   }
 }
