@@ -114,20 +114,6 @@ var Job = function(j_val) {
 
    @public
 
-   @return {Job}
-   */
-  this.resize = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      j_job["resize()"]();
-      return that;
-    } else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-
-   @public
-
    @return {boolean}
    */
   this.interrupt = function() {

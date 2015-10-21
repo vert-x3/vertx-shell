@@ -76,12 +76,6 @@ public class JobImpl implements Job {
   }
 
   @Override
-  public JobImpl resize() {
-    sendEvent(EventType.SIGWINCH);
-    return this;
-  }
-
-  @Override
   public boolean interrupt() {
     return sendEvent(EventType.SIGINT);
   }

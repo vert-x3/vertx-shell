@@ -16,6 +16,15 @@ module VertxShell
     def j_del
       @j_del
     end
+    # @yield 
+    # @return [self]
+    def resizehandler
+      if block_given?
+        @j_del.java_method(:resizehandler, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
+        return self
+      end
+      raise ArgumentError, "Invalid arguments when calling resizehandler()"
+    end
     # @param [::VertxShell::Stream] stdin 
     # @return [self]
     def set_stdin(stdin=nil)

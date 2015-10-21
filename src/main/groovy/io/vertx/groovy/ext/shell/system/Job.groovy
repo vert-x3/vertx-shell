@@ -57,10 +57,6 @@ public class Job {
     this.delegate.setTty((io.vertx.ext.shell.io.Tty)tty.getDelegate());
     return this;
   }
-  public Job resize() {
-    this.delegate.resize();
-    return this;
-  }
   public boolean interrupt() {
     def ret = this.delegate.interrupt();
     return ret;

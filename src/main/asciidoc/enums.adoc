@@ -20,10 +20,6 @@ Fired when the process is running and is stopped.
 +++
 Fired when the process is interrupted.
 +++
-|[[SIGWINCH]]`SIGWINCH`|
-+++
-Fired when the size of the terminal changes.
-+++
 |[[SIGCONT]]`SIGCONT`|
 +++
 Fired when the process is resumed.

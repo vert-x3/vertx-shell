@@ -19,6 +19,7 @@ package io.vertx.rxjava.ext.shell.io;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
+import io.vertx.core.Handler;
 
 /**
  * Provide interactions with the Shell TTY.
@@ -74,6 +75,16 @@ public class Tty {
   public Stream stdout() { 
     Stream ret= Stream.newInstance(this.delegate.stdout());
     return ret;
+  }
+
+  /**
+   * Set a resize handler.
+   * @param handler the resize handler
+   * @return 
+   */
+  public Tty resizehandler(Handler<Void> handler) { 
+    this.delegate.resizehandler(handler);
+    return this;
   }
 
 

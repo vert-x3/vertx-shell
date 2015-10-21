@@ -182,6 +182,16 @@ public class CommandRegistrationImpl implements CommandRegistration {
           }
 
           @Override
+          public CommandProcess resizehandler(Handler<Void> handler) {
+            if (handler != null) {
+              context.tty().resizehandler(v -> CommandRegistrationImpl.this.context.runOnContext(handler::handle));
+            } else {
+              context.tty().resizehandler(null);
+            }
+            return this;
+          }
+
+          @Override
           public CommandProcess eventHandler(EventType eventType, Handler<Void> handler) {
             if (handler != null) {
               context.eventHandler(eventType, v -> {

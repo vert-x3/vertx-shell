@@ -56,6 +56,7 @@ public class TestProcessContext implements ProcessContext, Tty {
   int width, height;
   private Stream stdin;
   private Stream stdout;
+  private Handler<Void> resizeHandler;
 
   @Override
   public Tty tty() {
@@ -87,7 +88,15 @@ public class TestProcessContext implements ProcessContext, Tty {
   public void setWindowSize(int width, int height) {
     this.width = width;
     this.height = height;
-    sendEvent(EventType.SIGWINCH);
+    if (resizeHandler != null) {
+      resizeHandler.handle(null);
+    }
+  }
+
+  @Override
+  public Tty resizehandler(Handler<Void> handler) {
+    resizeHandler = handler;
+    return this;
   }
 
   @Override

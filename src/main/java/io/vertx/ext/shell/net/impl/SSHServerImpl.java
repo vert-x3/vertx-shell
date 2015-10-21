@@ -150,6 +150,18 @@ public class SSHServerImpl implements SSHServer {
           }
 
           @Override
+          public Terminal resizehandler(Handler<Void> handler) {
+            if (handler != null) {
+              conn.setSizeHandler(v -> {
+                handler.handle(null);
+              });
+            } else {
+              conn.setSizeHandler(null);
+            }
+            return null;
+          }
+
+          @Override
           public Terminal closeHandler(Handler<Void> handler) {
             if (handler == null) {
               conn.setCloseHandler(null);

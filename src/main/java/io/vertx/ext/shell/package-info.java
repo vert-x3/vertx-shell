@@ -315,9 +315,9 @@
  * {@link examples.Examples#SIGTSTP_SIGCONT}
  * ----
  *
- * ==== `SIGWINCH` event
+ * ==== Resize event
  *
- * The {@link io.vertx.ext.shell.io.EventType#SIGWINCH} event is fired when the size of the terminal changes, the new terminal size can be obtained
+ * When the size of the terminal changes the {@link io.vertx.ext.shell.command.CommandProcess#resizehandler(io.vertx.core.Handler)} is notified, the new terminal size can be obtained
  * with {@link io.vertx.ext.shell.command.CommandProcess#width()} and {@link io.vertx.ext.shell.command.CommandProcess#height()}.
  *
  * === Command completion

@@ -58,14 +58,6 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling set_tty(tty)"
     end
-    # @return [self]
-    def resize
-      if !block_given?
-        @j_del.java_method(:resize, []).call()
-        return self
-      end
-      raise ArgumentError, "Invalid arguments when calling resize()"
-    end
     # @return [true,false]
     def interrupt?
       if !block_given?

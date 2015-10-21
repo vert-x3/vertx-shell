@@ -72,11 +72,6 @@ public class Job {
     return this;
   }
 
-  public Job resize() { 
-    this.delegate.resize();
-    return this;
-  }
-
   public boolean interrupt() { 
     boolean ret = this.delegate.interrupt();
     return ret;

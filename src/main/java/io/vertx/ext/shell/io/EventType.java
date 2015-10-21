@@ -53,11 +53,6 @@ public enum EventType {
   SIGINT,
 
   /**
-   * Fired when the size of the terminal changes.
-   */
-  SIGWINCH,
-
-  /**
    * Fired when the process is resumed.
    */
   SIGCONT

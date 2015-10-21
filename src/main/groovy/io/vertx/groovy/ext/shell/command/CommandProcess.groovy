@@ -98,6 +98,10 @@ public class CommandProcess extends Tty {
     this.delegate.write(text);
     return this;
   }
+  public CommandProcess resizehandler(Handler<Void> handler) {
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).resizehandler(handler);
+    return this;
+  }
   /**
    * End the process with the exit status 
    */

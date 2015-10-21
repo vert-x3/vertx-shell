@@ -89,6 +89,21 @@ var Tty = function(j_val) {
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
+  /**
+   Set a resize handler.
+
+   @public
+   @param handler {function} the resize handler 
+   @return {Tty}
+   */
+  this.resizehandler = function(handler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_tty["resizehandler(io.vertx.core.Handler)"](handler);
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.

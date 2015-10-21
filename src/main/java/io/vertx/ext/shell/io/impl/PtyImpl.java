@@ -32,6 +32,7 @@
 
 package io.vertx.ext.shell.io.impl;
 
+import io.vertx.core.Handler;
 import io.vertx.ext.shell.io.Pty;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.io.Tty;
@@ -45,6 +46,7 @@ public class PtyImpl implements Pty {
   private int height = 24;
   private Stream stdin;
   private Stream stdout;
+  private Handler<Void> resizeHandler;
   final Tty slave = new Tty() {
     @Override
     public int width() {
@@ -66,6 +68,12 @@ public class PtyImpl implements Pty {
     public Stream stdout() {
       return stdout;
     }
+
+    @Override
+    public Tty resizehandler(Handler<Void> handler) {
+      resizeHandler = handler;
+      return this;
+    }
   };
 
   @Override
@@ -76,6 +84,10 @@ public class PtyImpl implements Pty {
   public Pty setSize(int width, int height) {
     this.width = width;
     this.height = height;
+    if (resizeHandler != null) {
+      // Perhaps use a context or something ?
+      resizeHandler.handle(null);
+    }
     return this;
   }
 

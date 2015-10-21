@@ -450,9 +450,9 @@ command.processHandler(function (process) {
 
 ----
 
-==== `SIGWINCH` event
+==== Resize event
 
-The `link:todo[SIGWINCH]` event is fired when the size of the terminal changes, the new terminal size can be obtained
+When the size of the terminal changes the `link:jsdoc/command_process-CommandProcess.html#resizehandler[resizehandler]` is notified, the new terminal size can be obtained
 with `link:jsdoc/tty-Tty.html#width[width]` and `link:jsdoc/tty-Tty.html#height[height]`.
 
 === Command completion

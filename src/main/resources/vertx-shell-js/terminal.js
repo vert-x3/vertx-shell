@@ -37,6 +37,20 @@ var Terminal = function(j_val) {
   /**
 
    @public
+   @param handler {function} 
+   @return {Terminal}
+   */
+  this.resizehandler = function(handler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_terminal["resizehandler(io.vertx.core.Handler)"](handler);
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
    @param stdin {Stream} 
    @return {Terminal}
    */

@@ -73,7 +73,7 @@ public class Main {
     CommandBuilder windowCmd = CommandBuilder.command("window");
     windowCmd.processHandler(process -> {
       process.write("[" + process.width() + "," + process.height() + "]\n");
-      process.eventHandler(EventType.SIGWINCH, v -> {
+      process.resizehandler(v -> {
         process.write("[" + process.width() + "," + process.height() + "]\n");
       });
       process.eventHandler(EventType.SIGINT, v -> {

@@ -18,6 +18,7 @@ package io.vertx.groovy.ext.shell.io;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
+import io.vertx.core.Handler
 /**
  * Provide interactions with the Shell TTY.
 */
@@ -62,5 +63,14 @@ public class Tty {
   public Stream stdout() {
     def ret= InternalHelper.safeCreate(this.delegate.stdout(), io.vertx.groovy.ext.shell.io.Stream.class);
     return ret;
+  }
+  /**
+   * Set a resize handler.
+   * @param handler the resize handler
+   * @return 
+   */
+  public Tty resizehandler(Handler<Void> handler) {
+    this.delegate.resizehandler(handler);
+    return this;
   }
 }

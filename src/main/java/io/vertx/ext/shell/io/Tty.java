@@ -34,6 +34,7 @@ package io.vertx.ext.shell.io;
 
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
+import io.vertx.core.Handler;
 
 /**
  * Provide interactions with the Shell TTY.
@@ -66,5 +67,13 @@ public interface Tty {
    * @return the standard output for emitting data
    */
   Stream stdout();
+
+  /**
+   * Set a resize handler.
+   *
+   * @param handler the resize handler
+   */
+  @Fluent
+  Tty resizehandler(Handler<Void> handler);
 
 }

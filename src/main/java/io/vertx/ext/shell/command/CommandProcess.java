@@ -94,6 +94,9 @@ public interface CommandProcess extends Tty {
   @Fluent
   CommandProcess write(String text);
 
+  @Override
+  CommandProcess resizehandler(Handler<Void> handler);
+
   /**
    * End the process with the exit status {@literal 0}
    */

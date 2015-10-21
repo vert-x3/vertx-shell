@@ -37,6 +37,7 @@ import io.termd.core.readline.Readline;
 import io.termd.core.tty.TtyConnection;
 import io.termd.core.util.Helper;
 import io.termd.core.util.Vector;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.io.Tty;
 import io.vertx.ext.shell.session.Session;
@@ -115,7 +116,10 @@ public class TtyAdapter {
     conn.setSizeHandler(resize -> {
       Job job = foregroundJob;
       if (job != null) {
-        job.resize();
+        TtyImpl tty = (TtyImpl) job.getTty();
+        if (tty.resizeHandler != null) {
+          tty.resizeHandler.handle(null);
+        }
       }
     });
     conn.setEventHandler((event, key) -> {
@@ -358,6 +362,7 @@ public class TtyAdapter {
     final Job job;
     volatile Stream stdin;
     volatile Stream stdout;
+    volatile Handler<Void> resizeHandler;
 
     public TtyImpl(Job job) {
       this.job = job;
@@ -379,6 +384,12 @@ public class TtyAdapter {
       if (foregroundJob == job) {
         checkPending();
       }
+      return this;
+    }
+
+    @Override
+    public Tty resizehandler(Handler<Void> handler) {
+      resizeHandler = handler;
       return this;
     }
 

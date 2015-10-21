@@ -70,7 +70,7 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling set_stdin(stdin)"
     end
     #  Set an event handler to be notified by events.
-    # @param [:SIGTSTP,:SIGINT,:SIGWINCH,:SIGCONT] eventType the event type
+    # @param [:SIGTSTP,:SIGINT,:SIGCONT] eventType the event type
     # @yield the handler
     # @return [self]
     def event_handler(eventType=nil)
@@ -88,6 +88,15 @@ module VertxShell
         return self
       end
       raise ArgumentError, "Invalid arguments when calling write(text)"
+    end
+    # @yield 
+    # @return [self]
+    def resizehandler
+      if block_given?
+        @j_del.java_method(:resizehandler, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
+        return self
+      end
+      raise ArgumentError, "Invalid arguments when calling resizehandler()"
     end
     #  End the process.
     # @param [Fixnum] status the exit status.

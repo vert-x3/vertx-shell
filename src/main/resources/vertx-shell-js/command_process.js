@@ -153,6 +153,20 @@ var CommandProcess = function(j_val) {
   };
 
   /**
+
+   @public
+   @param handler {function} 
+   @return {CommandProcess}
+   */
+  this.resizehandler = function(handler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_commandProcess["resizehandler(io.vertx.core.Handler)"](handler);
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
    End the process.
 
    @public

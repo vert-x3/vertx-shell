@@ -34,6 +34,10 @@ public class Terminal extends Tty {
   public Object getDelegate() {
     return delegate;
   }
+  public Terminal resizehandler(Handler<Void> handler) {
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).resizehandler(handler);
+    return this;
+  }
   public Terminal setStdin(Stream stdin) {
     ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).setStdin((io.vertx.ext.shell.io.Stream)stdin.getDelegate());
     return this;

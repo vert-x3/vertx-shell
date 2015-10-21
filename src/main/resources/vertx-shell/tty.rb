@@ -48,5 +48,15 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling stdout()"
     end
+    #  Set a resize handler.
+    # @yield the resize handler
+    # @return [self]
+    def resizehandler
+      if block_given?
+        @j_del.java_method(:resizehandler, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
+        return self
+      end
+      raise ArgumentError, "Invalid arguments when calling resizehandler()"
+    end
   end
 end

@@ -32,7 +32,7 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling session()"
     end
     #  Set an event handler to be notified by events.
-    # @param [:SIGTSTP,:SIGINT,:SIGWINCH,:SIGCONT] eventType the event type
+    # @param [:SIGTSTP,:SIGINT,:SIGCONT] eventType the event type
     # @yield the handler
     # @return [void]
     def event_handler(eventType=nil)

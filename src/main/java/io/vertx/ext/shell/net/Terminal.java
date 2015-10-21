@@ -47,6 +47,9 @@ import io.vertx.ext.shell.io.Tty;
 public interface Terminal extends Tty {
 
   @Override
+  Terminal resizehandler(Handler<Void> handler);
+
+  @Override
   Terminal setStdin(Stream stdin);
 
   @Fluent

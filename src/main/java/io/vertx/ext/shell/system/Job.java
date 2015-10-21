@@ -56,9 +56,6 @@ public interface Job {
   @Fluent
   Job setTty(Tty tty);
 
-  @Fluent
-  Job resize();
-
   boolean interrupt();
 
   void run(Handler<Integer> endHandler);

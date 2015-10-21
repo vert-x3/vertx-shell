@@ -210,7 +210,7 @@ public class ShellServiceTest {
               testContext.assertTrue(shellCtx == Vertx.currentContext());
               testContext.assertEquals("pong", text);
               testContext.assertTrue(ctx.sendEvent(EventType.SIGTSTP));
-              testContext.assertFalse(ctx.sendEvent(EventType.SIGWINCH));
+              testContext.assertFalse(ctx.sendEvent(EventType.SIGCONT));
             });
             ctx.stdin().write("ping");
           }));
@@ -253,7 +253,7 @@ public class ShellServiceTest {
     cmd.processHandler(process -> {
       context.assertEquals(20, process.width());
       context.assertEquals(10, process.height());
-      process.eventHandler(EventType.SIGWINCH, v -> {
+      process.resizehandler(v -> {
         context.assertEquals(25, process.width());
         context.assertEquals(15, process.height());
         process.end(0);

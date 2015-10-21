@@ -450,9 +450,9 @@ command.process_handler() { |process|
 
 ----
 
-==== `SIGWINCH` event
+==== Resize event
 
-The `link:todo[SIGWINCH]` event is fired when the size of the terminal changes, the new terminal size can be obtained
+When the size of the terminal changes the `link:yardoc/VertxShell/CommandProcess.html#resizehandler-instance_method[resizehandler]` is notified, the new terminal size can be obtained
 with `link:yardoc/VertxShell/Tty.html#width-instance_method[width]` and `link:yardoc/VertxShell/Tty.html#height-instance_method[height]`.
 
 === Command completion
