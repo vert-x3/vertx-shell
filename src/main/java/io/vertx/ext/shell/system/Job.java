@@ -32,7 +32,6 @@
 
 package io.vertx.ext.shell.system;
 
-import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.io.Tty;
@@ -53,17 +52,14 @@ public interface Job {
 
   Tty getTty();
 
-  @Fluent
-  Job setTty(Tty tty);
+  void setTty(Tty tty);
 
   boolean interrupt();
 
   void run(Handler<Integer> endHandler);
 
-  @Fluent
-  Job resume();
+  void resume();
 
-  @Fluent
-  Job suspend();
+  void suspend();
 
 }

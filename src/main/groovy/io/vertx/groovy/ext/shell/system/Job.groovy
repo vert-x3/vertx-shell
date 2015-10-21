@@ -53,9 +53,8 @@ public class Job {
     def ret= InternalHelper.safeCreate(this.delegate.getTty(), io.vertx.groovy.ext.shell.io.Tty.class);
     return ret;
   }
-  public Job setTty(Tty tty) {
+  public void setTty(Tty tty) {
     this.delegate.setTty((io.vertx.ext.shell.io.Tty)tty.getDelegate());
-    return this;
   }
   public boolean interrupt() {
     def ret = this.delegate.interrupt();
@@ -64,12 +63,10 @@ public class Job {
   public void run(Handler<Integer> endHandler) {
     this.delegate.run(endHandler);
   }
-  public Job resume() {
+  public void resume() {
     this.delegate.resume();
-    return this;
   }
-  public Job suspend() {
+  public void suspend() {
     this.delegate.suspend();
-    return this;
   }
 }

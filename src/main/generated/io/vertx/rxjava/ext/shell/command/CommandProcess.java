@@ -24,7 +24,6 @@ import io.vertx.rxjava.core.cli.CommandLine;
 import io.vertx.rxjava.ext.shell.io.Stream;
 import io.vertx.rxjava.ext.shell.io.Tty;
 import io.vertx.rxjava.core.Vertx;
-import io.vertx.ext.shell.io.EventType;
 import io.vertx.rxjava.ext.shell.cli.CliToken;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.session.Session;
@@ -101,13 +100,35 @@ public class CommandProcess extends Tty {
   }
 
   /**
-   * Set an event handler to be notified by events.
-   * @param eventType the event type
-   * @param handler the handler
-   * @return this object
+   * Set an interrupt handler, this handler is called when the command is interrupted, for instance user
+   * press <code>Ctrl-C</code>.
+   * @param handler the interrupt handler
+   * @return this command
    */
-  public CommandProcess eventHandler(EventType eventType, Handler<Void> handler) { 
-    this.delegate.eventHandler(eventType, handler);
+  public CommandProcess interruptHandler(Handler<Void> handler) { 
+    this.delegate.interruptHandler(handler);
+    return this;
+  }
+
+  /**
+   * Set a suspend handler, this handler is called when the command is suspend, for instance user
+   * press <code>Ctrl-Z</code>.
+   * @param handler the interrupt handler
+   * @return this command
+   */
+  public CommandProcess suspendHandler(Handler<Void> handler) { 
+    this.delegate.suspendHandler(handler);
+    return this;
+  }
+
+  /**
+   * Set a resume handler, this handler is called when the command is resumed, for instance user
+   * types <code>bg</code> or <code>fg</code> to resume the command.
+   * @param handler the interrupt handler
+   * @return this command
+   */
+  public CommandProcess resumeHandler(Handler<Void> handler) { 
+    this.delegate.resumeHandler(handler);
     return this;
   }
 

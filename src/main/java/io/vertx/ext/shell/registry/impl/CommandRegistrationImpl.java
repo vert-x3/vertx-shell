@@ -41,7 +41,6 @@ import io.vertx.core.cli.CommandLine;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandProcess;
@@ -192,15 +191,43 @@ public class CommandRegistrationImpl implements CommandRegistration {
           }
 
           @Override
-          public CommandProcess eventHandler(EventType eventType, Handler<Void> handler) {
+          public CommandProcess interruptHandler(Handler<Void> handler) {
             if (handler != null) {
-              context.eventHandler(eventType, v -> {
+              context.interruptHandler(v -> {
                 CommandRegistrationImpl.this.context.runOnContext(v2 -> {
                   handler.handle(null);
                 });
               });
             } else {
-              context.eventHandler(eventType, null);
+              context.interruptHandler(null);
+            }
+            return this;
+          }
+
+          @Override
+          public CommandProcess suspendHandler(Handler<Void> handler) {
+            if (handler != null) {
+              context.suspendHandler(v -> {
+                CommandRegistrationImpl.this.context.runOnContext(v2 -> {
+                  handler.handle(null);
+                });
+              });
+            } else {
+              context.suspendHandler(null);
+            }
+            return this;
+          }
+
+          @Override
+          public CommandProcess resumeHandler(Handler<Void> handler) {
+            if (handler != null) {
+              context.resumeHandler(v -> {
+                CommandRegistrationImpl.this.context.runOnContext(v2 -> {
+                  handler.handle(null);
+                });
+              });
+            } else {
+              context.resumeHandler(null);
             }
             return this;
           }

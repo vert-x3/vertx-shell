@@ -38,7 +38,6 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.cli.CommandLine;
 import io.vertx.ext.shell.session.Session;
-import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.io.Tty;
 import io.vertx.ext.shell.cli.CliToken;
@@ -82,14 +81,34 @@ public interface CommandProcess extends Tty {
   CommandProcess setStdin(Stream stdin);
 
   /**
-   * Set an event handler to be notified by events.
+   * Set an interrupt handler, this handler is called when the command is interrupted, for instance user
+   * press <code>Ctrl-C</code>.
    *
-   * @param eventType the event type
-   * @param handler the handler
-   * @return this object
+   * @param handler the interrupt handler
+   * @return this command
    */
   @Fluent
-  CommandProcess eventHandler(EventType eventType, Handler<Void> handler);
+  CommandProcess interruptHandler(Handler<Void> handler);
+
+  /**
+   * Set a suspend handler, this handler is called when the command is suspend, for instance user
+   * press <code>Ctrl-Z</code>.
+   *
+   * @param handler the interrupt handler
+   * @return this command
+   */
+  @Fluent
+  CommandProcess suspendHandler(Handler<Void> handler);
+
+  /**
+   * Set a resume handler, this handler is called when the command is resumed, for instance user
+   * types <code>bg</code> or <code>fg</code> to resume the command.
+   *
+   * @param handler the interrupt handler
+   * @return this command
+   */
+  @Fluent
+  CommandProcess resumeHandler(Handler<Void> handler);
 
   @Fluent
   CommandProcess write(String text);

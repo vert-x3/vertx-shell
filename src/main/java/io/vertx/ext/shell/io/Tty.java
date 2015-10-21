@@ -69,7 +69,7 @@ public interface Tty {
   Stream stdout();
 
   /**
-   * Set a resize handler.
+   * Set a resize handler, the handler is called when the tty size changes.
    *
    * @param handler the resize handler
    */

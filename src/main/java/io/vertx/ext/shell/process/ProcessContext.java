@@ -32,10 +32,8 @@
 
 package io.vertx.ext.shell.process;
 
-import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.io.Tty;
 
@@ -57,13 +55,11 @@ public interface ProcessContext {
    */
   Session session();
 
-  /**
-   * Set an event handler to be notified by events.
-   *
-   * @param eventType the event type
-   * @param handler the handler
-   */
-  void eventHandler(EventType eventType, Handler<Void> handler);
+  void interruptHandler(Handler<Void> handler);
+
+  void suspendHandler(Handler<Void> handler);
+
+  void resumeHandler(Handler<Void> handler);
 
   /**
    * End the process.

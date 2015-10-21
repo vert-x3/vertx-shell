@@ -280,45 +280,47 @@
  *
  * === Process events
  *
- * A command can subscribe to a few process events, named after the posix signals.
+ * A command can subscribe to a few process events.
  *
- * ==== `SIGINT` event
+ * ==== Interrupted event
  *
- * The {@link io.vertx.ext.shell.io.EventType#SIGINT} event is fired when the process is interrupted, this event is fired when the user press
+ * The {@link io.vertx.ext.shell.command.CommandProcess#interruptHandler(io.vertx.core.Handler)} is called when the process is interrupted, this event is fired when the user press
  * _Ctrl+C_ during the execution of a command. This handler can be used for interrupting commands _blocking_ the CLI and
  * gracefully ending the command process:
  *
  * [source,$lang]
  * ----
- * {@link examples.Examples#SIGINT}
+ * {@link examples.Examples#interruptHandler}
  * ----
  *
- * When no `SIGINT` handler is registered, pressing _Ctrl+C_ will have no effect on the current process and the event
+ * When no interrupt handler is registered, pressing _Ctrl+C_ will have no effect on the current process and the event
  * will be delayed and will likely be handled by the shell, like printing a new line on the console.
  *
- * ==== `SIGTSTP`/`SIGCONT` events
+ * ==== Suspend/resume events
  *
- * The {@link io.vertx.ext.shell.io.EventType#SIGTSTP} event is fired when the process is running and the user press _Ctrl+Z_: the command
- * is _suspended_:
+ * The {@link io.vertx.ext.shell.command.CommandProcess#suspendHandler(io.vertx.core.Handler)} is called when the process
+ * is running and the user press _Ctrl+Z_, the command is _suspended_:
  *
- * - the command can receive the `SIGTSTP` event when it has registered an handler for this event
+ * - the command can receive the suspend event when it has registered an handler for this event
  * - the command will not receive anymore data from the standard input
  * - the shell prompt the user for input
  *
- * The {@link io.vertx.ext.shell.io.EventType#SIGCONT} event is fired when the process is resumed, usually when the user types _fg_:
+ * The {@link io.vertx.ext.shell.command.CommandProcess#resumeHandler(io.vertx.core.Handler)} is called when the process
+ * is resumed, usually when the user types _fg_:
  *
- * - the command can receive the `SIGCONT` event when it has registered an handler for this event
+ * - the command can receive the resume event when it has registered an handler for this event
  * - the command will receive anymore data from the standard input when it has registered an stdin handler
  *
  * [source,$lang]
  * ----
- * {@link examples.Examples#SIGTSTP_SIGCONT}
+ * {@link examples.Examples#suspendResumeHandler}
  * ----
  *
  * ==== Resize event
  *
- * When the size of the terminal changes the {@link io.vertx.ext.shell.command.CommandProcess#resizehandler(io.vertx.core.Handler)} is notified, the new terminal size can be obtained
- * with {@link io.vertx.ext.shell.command.CommandProcess#width()} and {@link io.vertx.ext.shell.command.CommandProcess#height()}.
+ * When the size of the terminal changes the {@link io.vertx.ext.shell.command.CommandProcess#resizehandler(io.vertx.core.Handler)}
+ * is called, the new terminal size can be obtained with {@link io.vertx.ext.shell.command.CommandProcess#width()} and
+ * {@link io.vertx.ext.shell.command.CommandProcess#height()}.
  *
  * === Command completion
  *

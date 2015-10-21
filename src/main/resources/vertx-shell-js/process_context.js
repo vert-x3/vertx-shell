@@ -62,16 +62,38 @@ var ProcessContext = function(j_val) {
   };
 
   /**
-   Set an event handler to be notified by events.
 
    @public
-   @param eventType {Object} the event type 
-   @param handler {function} the handler 
+   @param handler {function} 
    */
-  this.eventHandler = function(eventType, handler) {
+  this.interruptHandler = function(handler) {
     var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_processContext["eventHandler(io.vertx.ext.shell.io.EventType,io.vertx.core.Handler)"](io.vertx.ext.shell.io.EventType.valueOf(__args[0]), handler);
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_processContext["interruptHandler(io.vertx.core.Handler)"](handler);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param handler {function} 
+   */
+  this.suspendHandler = function(handler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_processContext["suspendHandler(io.vertx.core.Handler)"](handler);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param handler {function} 
+   */
+  this.resumeHandler = function(handler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_processContext["resumeHandler(io.vertx.core.Handler)"](handler);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

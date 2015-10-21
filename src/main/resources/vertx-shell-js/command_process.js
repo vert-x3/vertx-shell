@@ -123,17 +123,49 @@ var CommandProcess = function(j_val) {
   };
 
   /**
-   Set an event handler to be notified by events.
+   Set an interrupt handler, this handler is called when the command is interrupted, for instance user
+   press <code>Ctrl-C</code>.
 
    @public
-   @param eventType {Object} the event type 
-   @param handler {function} the handler 
-   @return {CommandProcess} this object
+   @param handler {function} the interrupt handler 
+   @return {CommandProcess} this command
    */
-  this.eventHandler = function(eventType, handler) {
+  this.interruptHandler = function(handler) {
     var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_commandProcess["eventHandler(io.vertx.ext.shell.io.EventType,io.vertx.core.Handler)"](io.vertx.ext.shell.io.EventType.valueOf(__args[0]), handler);
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_commandProcess["interruptHandler(io.vertx.core.Handler)"](handler);
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Set a suspend handler, this handler is called when the command is suspend, for instance user
+   press <code>Ctrl-Z</code>.
+
+   @public
+   @param handler {function} the interrupt handler 
+   @return {CommandProcess} this command
+   */
+  this.suspendHandler = function(handler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_commandProcess["suspendHandler(io.vertx.core.Handler)"](handler);
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Set a resume handler, this handler is called when the command is resumed, for instance user
+   types <code>bg</code> or <code>fg</code> to resume the command.
+
+   @public
+   @param handler {function} the interrupt handler 
+   @return {CommandProcess} this command
+   */
+  this.resumeHandler = function(handler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_commandProcess["resumeHandler(io.vertx.core.Handler)"](handler);
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };

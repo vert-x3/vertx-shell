@@ -39,7 +39,6 @@ import io.vertx.core.cli.annotations.Summary;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandProcess;
-import io.vertx.ext.shell.io.EventType;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -61,7 +60,7 @@ public class BusTail implements Command {
     MessageConsumer<Object> consumer = process.vertx().eventBus().consumer(address, msg -> {
       process.write("" + msg.body() + "\n");
     });
-    process.eventHandler(EventType.SIGINT, done -> {
+    process.interruptHandler(done -> {
       consumer.unregister();
       process.end();
     });

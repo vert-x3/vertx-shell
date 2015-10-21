@@ -50,11 +50,10 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling get_tty()"
     end
     # @param [::VertxShell::Tty] tty 
-    # @return [self]
+    # @return [void]
     def set_tty(tty=nil)
       if tty.class.method_defined?(:j_del) && !block_given?
-        @j_del.java_method(:setTty, [Java::IoVertxExtShellIo::Tty.java_class]).call(tty.j_del)
-        return self
+        return @j_del.java_method(:setTty, [Java::IoVertxExtShellIo::Tty.java_class]).call(tty.j_del)
       end
       raise ArgumentError, "Invalid arguments when calling set_tty(tty)"
     end
@@ -73,19 +72,17 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling run()"
     end
-    # @return [self]
+    # @return [void]
     def resume
       if !block_given?
-        @j_del.java_method(:resume, []).call()
-        return self
+        return @j_del.java_method(:resume, []).call()
       end
       raise ArgumentError, "Invalid arguments when calling resume()"
     end
-    # @return [self]
+    # @return [void]
     def suspend
       if !block_given?
-        @j_del.java_method(:suspend, []).call()
-        return self
+        return @j_del.java_method(:suspend, []).call()
       end
       raise ArgumentError, "Invalid arguments when calling suspend()"
     end

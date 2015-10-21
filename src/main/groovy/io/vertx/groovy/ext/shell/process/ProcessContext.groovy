@@ -19,7 +19,6 @@ import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.io.Tty
-import io.vertx.ext.shell.io.EventType
 import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.session.Session
 /**
@@ -50,13 +49,14 @@ public class ProcessContext {
     def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.groovy.ext.shell.session.Session.class);
     return ret;
   }
-  /**
-   * Set an event handler to be notified by events.
-   * @param eventType the event type
-   * @param handler the handler
-   */
-  public void eventHandler(EventType eventType, Handler<Void> handler) {
-    this.delegate.eventHandler(eventType, handler);
+  public void interruptHandler(Handler<Void> handler) {
+    this.delegate.interruptHandler(handler);
+  }
+  public void suspendHandler(Handler<Void> handler) {
+    this.delegate.suspendHandler(handler);
+  }
+  public void resumeHandler(Handler<Void> handler) {
+    this.delegate.resumeHandler(handler);
   }
   /**
    * End the process.

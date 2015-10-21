@@ -40,7 +40,6 @@ import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.dropwizard.DropwizardMetricsOptions;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
 import io.vertx.ext.shell.command.CommandBuilder;
-import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.net.SSHOptions;
 import io.vertx.ext.shell.net.TelnetOptions;
@@ -66,7 +65,7 @@ public class Main {
       process.setStdin(line -> {
         stdout.write("-> " + line + "\n");
       });
-      process.eventHandler(EventType.SIGINT, v -> process.end());
+      process.interruptHandler(v -> process.end());
     });
     mgr.registerCommand(echoKeyboardCmd.build());
 
@@ -76,7 +75,7 @@ public class Main {
       process.resizehandler(v -> {
         process.write("[" + process.width() + "," + process.height() + "]\n");
       });
-      process.eventHandler(EventType.SIGINT, v -> {
+      process.interruptHandler(v -> {
         process.end();
       });
     });

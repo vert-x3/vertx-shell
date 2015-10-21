@@ -34,15 +34,12 @@ package io.vertx.ext.shell.system.impl;
 
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.session.Session;
-import io.vertx.ext.shell.io.EventType;
 
 import io.vertx.ext.shell.process.*;
 import io.vertx.ext.shell.process.Process;
 import io.vertx.ext.shell.io.Tty;
 import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.JobStatus;
-
-import java.util.HashMap;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -53,10 +50,12 @@ public class JobImpl implements Job {
   final ShellSessionImpl shell;
   final io.vertx.ext.shell.process.Process process;
   final String line;
-  final HashMap<EventType, Handler<Void>> eventHandlers = new HashMap<>();
   private volatile JobStatus status;
   volatile long lastStopped; // When the job was last stopped
   volatile Tty tty;
+  volatile Handler<Void> suspendHandler;
+  volatile Handler<Void> interruptHandler;
+  volatile Handler<Void> resumeHandler;
 
   public JobImpl(int id, ShellSessionImpl shell, Process process, String line) {
     this.id = id;
@@ -65,33 +64,28 @@ public class JobImpl implements Job {
     this.line = line;
   }
 
-  private boolean sendEvent(EventType event) {
-    Handler<Void> handler = eventHandlers.get(event);
-    if (handler != null) {
-      handler.handle(null);
-      return true;
-    } else {
-      return false;
+  @Override
+  public boolean interrupt() {
+    if (interruptHandler != null) {
+      interruptHandler.handle(null);
+    }
+    return interruptHandler != null;
+  }
+
+  @Override
+  public void resume() {
+    status = JobStatus.RUNNING;
+    if (resumeHandler != null) {
+      resumeHandler.handle(null);
     }
   }
 
   @Override
-  public boolean interrupt() {
-    return sendEvent(EventType.SIGINT);
-  }
-
-  @Override
-  public JobImpl resume() {
-    status = JobStatus.RUNNING;
-    sendEvent(EventType.SIGCONT);
-    return this;
-  }
-
-  @Override
-  public JobImpl suspend() {
+  public void suspend() {
     status = JobStatus.STOPPED;
-    sendEvent(EventType.SIGTSTP);
-    return this;
+    if (suspendHandler != null) {
+      suspendHandler.handle(null);
+    }
   }
 
   public long lastStopped() {
@@ -117,9 +111,8 @@ public class JobImpl implements Job {
   }
 
   @Override
-  public JobImpl setTty(Tty tty) {
+  public void setTty(Tty tty) {
     this.tty = tty;
-    return this;
   }
 
   @Override
@@ -133,12 +126,18 @@ public class JobImpl implements Job {
       }
 
       @Override
-      public void eventHandler(EventType eventType, Handler<Void> handler) {
-        if (handler != null) {
-          eventHandlers.put(eventType, handler);
-        } else {
-          eventHandlers.remove(eventType);
-        }
+      public void interruptHandler(Handler<Void> handler) {
+        interruptHandler = handler;
+      }
+
+      @Override
+      public void suspendHandler(Handler<Void> handler) {
+        suspendHandler = handler;
+      }
+
+      @Override
+      public void resumeHandler(Handler<Void> handler) {
+        resumeHandler = handler;
       }
 
       @Override

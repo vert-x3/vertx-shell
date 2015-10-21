@@ -35,7 +35,6 @@ package io.vertx.ext.shell;
 import io.termd.core.tty.TtyEvent;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.CommandBuilder;
-import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.JobStatus;
@@ -157,7 +156,7 @@ public class TtyAdapterTest {
     CountDownLatch latch = new CountDownLatch(1);
     registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
       Job job = shell.getJob(1);
-      process.eventHandler(EventType.SIGTSTP, v -> {
+      process.suspendHandler(v -> {
         context.assertEquals(JobStatus.STOPPED, job.status());
         context.assertNull(shell.foregroundJob());
         async.complete();
@@ -182,7 +181,7 @@ public class TtyAdapterTest {
       process.setStdin(line -> {
         context.fail("Should not process line " + line);
       });
-      process.eventHandler(EventType.SIGTSTP, v -> {
+      process.suspendHandler(v -> {
         context.assertNull(process.stdout());
         latch2.countDown();
       });
@@ -192,7 +191,7 @@ public class TtyAdapterTest {
       // Do nothing, this command is used to escape from readline and make
       // sure that the read data is not sent to the stopped command
       latch3.countDown();
-      process.eventHandler(EventType.SIGTSTP, v -> {
+      process.suspendHandler(v -> {
         process.end(0);
       });
     }).build());
@@ -220,12 +219,12 @@ public class TtyAdapterTest {
     CountDownLatch latch4 = new CountDownLatch(1);
     registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
       Job job = shell.getJob(1);
-      process.eventHandler(EventType.SIGTSTP, v -> {
+      process.suspendHandler(v -> {
         context.assertEquals(0L, latch1.getCount());
         context.assertNull(process.stdout());
         latch2.countDown();
       });
-      process.eventHandler(EventType.SIGCONT, v -> {
+      process.resumeHandler(v -> {
         context.assertEquals(0L, latch2.getCount());
         context.assertEquals(JobStatus.RUNNING, job.status());
         context.assertNotNull(process.stdout());
@@ -262,12 +261,12 @@ public class TtyAdapterTest {
     CountDownLatch latch3 = new CountDownLatch(1);
     registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
       Job job = shell.getJob(1);
-      process.eventHandler(EventType.SIGTSTP, v -> {
+      process.suspendHandler(v -> {
         context.assertEquals(0L, latch1.getCount());
         context.assertNull(process.stdout());
         latch2.countDown();
       });
-      process.eventHandler(EventType.SIGCONT, v -> {
+      process.resumeHandler(v -> {
         context.assertEquals(0L, latch2.getCount());
         context.assertEquals(JobStatus.RUNNING, job.status());
         context.assertNotNull(process.stdout());
@@ -309,11 +308,11 @@ public class TtyAdapterTest {
     CountDownLatch latch3 = new CountDownLatch(1);
     Async async = context.async();
     registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
-      process.eventHandler(EventType.SIGTSTP, v -> {
+      process.suspendHandler(v -> {
         context.assertEquals(1L, latch2.getCount());
         latch2.countDown();
       });
-      process.eventHandler(EventType.SIGCONT, v -> {
+      process.resumeHandler(v -> {
         context.assertEquals(1L, latch3.getCount());
         latch3.countDown();
       });

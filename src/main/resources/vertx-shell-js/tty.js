@@ -90,7 +90,7 @@ var Tty = function(j_val) {
   };
 
   /**
-   Set a resize handler.
+   Set a resize handler, the handler is called when the tty size changes.
 
    @public
    @param handler {function} the resize handler 

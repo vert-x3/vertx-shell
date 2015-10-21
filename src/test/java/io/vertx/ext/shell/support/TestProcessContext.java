@@ -36,13 +36,10 @@ import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.session.Session;
-import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.system.impl.SessionImpl;
 import io.vertx.ext.shell.process.ProcessContext;
 import io.vertx.ext.shell.io.Tty;
-
-import java.util.HashMap;
 
 /**
 * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -52,11 +49,11 @@ public class TestProcessContext implements ProcessContext, Tty {
   private final Session session = new SessionImpl();
   private Handler<Integer> endHandler;
   final Context context = Vertx.currentContext();
-  final HashMap<EventType, Handler<Void>> eventHandlers = new HashMap<>();
   int width, height;
   private Stream stdin;
   private Stream stdout;
   private Handler<Void> resizeHandler;
+  private Handler<Void> suspendHandler;
 
   @Override
   public Tty tty() {
@@ -116,27 +113,31 @@ public class TestProcessContext implements ProcessContext, Tty {
   }
 
   @Override
-  public void eventHandler(EventType eventType, Handler<Void> handler) {
-    if (handler != null) {
-      eventHandlers.put(eventType, handler);
-    } else {
-      eventHandlers.remove(eventType);
-    }
-  }
-
-  @Override
   public Session session() {
     return session;
   }
 
-  public boolean sendEvent(EventType eventType) {
-    Handler<Void> handler = eventHandlers.get(eventType);
-    if (handler != null) {
-      handler.handle(null);
+  public boolean suspend() {
+    if (suspendHandler != null) {
+      suspendHandler.handle(null);
       return true;
     } else {
       return false;
     }
+  }
+
+  @Override
+  public void interruptHandler(Handler<Void> handler) {
+
+  }
+
+  @Override
+  public void suspendHandler(Handler<Void> handler) {
+    suspendHandler = handler;
+  }
+
+  @Override
+  public void resumeHandler(Handler<Void> handler) {
   }
 
   public Stream stdin() {

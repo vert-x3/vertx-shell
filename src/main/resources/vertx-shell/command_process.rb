@@ -69,16 +69,38 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling set_stdin(stdin)"
     end
-    #  Set an event handler to be notified by events.
-    # @param [:SIGTSTP,:SIGINT,:SIGCONT] eventType the event type
-    # @yield the handler
+    #  Set an interrupt handler, this handler is called when the command is interrupted, for instance user
+    #  press <code>Ctrl-C</code>.
+    # @yield the interrupt handler
     # @return [self]
-    def event_handler(eventType=nil)
-      if eventType.class == Symbol && block_given?
-        @j_del.java_method(:eventHandler, [Java::IoVertxExtShellIo::EventType.java_class,Java::IoVertxCore::Handler.java_class]).call(Java::IoVertxExtShellIo::EventType.valueOf(eventType),Proc.new { yield })
+    def interrupt_handler
+      if block_given?
+        @j_del.java_method(:interruptHandler, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling event_handler(eventType)"
+      raise ArgumentError, "Invalid arguments when calling interrupt_handler()"
+    end
+    #  Set a suspend handler, this handler is called when the command is suspend, for instance user
+    #  press <code>Ctrl-Z</code>.
+    # @yield the interrupt handler
+    # @return [self]
+    def suspend_handler
+      if block_given?
+        @j_del.java_method(:suspendHandler, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
+        return self
+      end
+      raise ArgumentError, "Invalid arguments when calling suspend_handler()"
+    end
+    #  Set a resume handler, this handler is called when the command is resumed, for instance user
+    #  types <code>bg</code> or <code>fg</code> to resume the command.
+    # @yield the interrupt handler
+    # @return [self]
+    def resume_handler
+      if block_given?
+        @j_del.java_method(:resumeHandler, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
+        return self
+      end
+      raise ArgumentError, "Invalid arguments when calling resume_handler()"
     end
     # @param [String] text 
     # @return [self]

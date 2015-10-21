@@ -36,9 +36,7 @@ import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandBuilder;
-import io.vertx.ext.shell.io.EventType;
 import io.vertx.ext.shell.io.Pty;
-import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.support.TestProcessContext;
@@ -185,7 +183,7 @@ public class ShellServiceTest {
           testContext.assertEquals("ping", text);
           process.write("pong");
         });
-        process.eventHandler(EventType.SIGTSTP, event -> {
+        process.suspendHandler(event -> {
           testContext.assertTrue(commandCtx == Vertx.currentContext());
           process.end(0);
         });
@@ -209,8 +207,7 @@ public class ShellServiceTest {
             ctx.setStdout(text -> {
               testContext.assertTrue(shellCtx == Vertx.currentContext());
               testContext.assertEquals("pong", text);
-              testContext.assertTrue(ctx.sendEvent(EventType.SIGTSTP));
-              testContext.assertFalse(ctx.sendEvent(EventType.SIGCONT));
+              testContext.assertTrue(ctx.suspend());
             });
             ctx.stdin().write("ping");
           }));
@@ -224,7 +221,7 @@ public class ShellServiceTest {
     CommandBuilder cmd = CommandBuilder.command("foo");
     CountDownLatch latch = new CountDownLatch(1);
     cmd.processHandler(process -> {
-      process.eventHandler(EventType.SIGTSTP, v -> {
+      process.suspendHandler(v -> {
         process.end(0);
       });
       latch.countDown();
@@ -242,7 +239,7 @@ public class ShellServiceTest {
         } catch (InterruptedException e) {
           context.fail(e);
         }
-        ctx.sendEvent(EventType.SIGTSTP);
+        ctx.suspend();
       }));
     }));
   }

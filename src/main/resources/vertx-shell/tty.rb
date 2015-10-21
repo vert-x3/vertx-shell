@@ -48,7 +48,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling stdout()"
     end
-    #  Set a resize handler.
+    #  Set a resize handler, the handler is called when the tty size changes.
     # @yield the resize handler
     # @return [self]
     def resizehandler

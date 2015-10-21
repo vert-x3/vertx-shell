@@ -100,13 +100,11 @@ var Job = function(j_val) {
 
    @public
    @param tty {Tty} 
-   @return {Job}
    */
   this.setTty = function(tty) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
       j_job["setTty(io.vertx.ext.shell.io.Tty)"](tty._jdel);
-      return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -141,13 +139,11 @@ var Job = function(j_val) {
 
    @public
 
-   @return {Job}
    */
   this.resume = function() {
     var __args = arguments;
     if (__args.length === 0) {
       j_job["resume()"]();
-      return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -155,13 +151,11 @@ var Job = function(j_val) {
 
    @public
 
-   @return {Job}
    */
   this.suspend = function() {
     var __args = arguments;
     if (__args.length === 0) {
       j_job["suspend()"]();
-      return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

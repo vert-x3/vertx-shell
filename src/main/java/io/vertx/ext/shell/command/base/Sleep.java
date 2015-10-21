@@ -39,7 +39,6 @@ import io.vertx.core.cli.annotations.Name;
 import io.vertx.core.cli.annotations.Summary;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandProcess;
-import io.vertx.ext.shell.io.EventType;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -76,17 +75,17 @@ public class Sleep implements Command {
       long id = process.vertx().setTimer(millis, v -> {
         process.end();
       });
-      process.eventHandler(EventType.SIGINT, v -> {
+      process.interruptHandler(v -> {
         if (vertx.cancelTimer(id)) {
           process.end();
         }
       });
-      process.eventHandler(EventType.SIGTSTP, v -> {
+      process.suspendHandler(v -> {
         if (vertx.cancelTimer(id)) {
           remaining.set(millis - (System.currentTimeMillis() - now));
         }
       });
-      process.eventHandler(EventType.SIGCONT, v -> {
+      process.resumeHandler(v -> {
         scheduleSleep(process, remaining.get());
       });
     } else {
