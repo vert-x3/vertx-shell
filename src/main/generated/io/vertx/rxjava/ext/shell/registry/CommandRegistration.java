@@ -22,7 +22,9 @@ import rx.Observable;
 import io.vertx.rxjava.ext.shell.command.Command;
 import java.util.List;
 import io.vertx.rxjava.ext.shell.cli.Completion;
+import io.vertx.core.AsyncResult;
 import io.vertx.rxjava.ext.shell.cli.CliToken;
+import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.process.Process;
 
 /**
@@ -69,6 +71,31 @@ public class CommandRegistration {
   public Process createProcess(List<CliToken> args) { 
     Process ret= Process.newInstance(this.delegate.createProcess(args.stream().map(element -> (io.vertx.ext.shell.cli.CliToken)element.getDelegate()).collect(java.util.stream.Collectors.toList())));
     return ret;
+  }
+
+  /**
+   * Unregister the current command
+   */
+  public void unregister() { 
+    this.delegate.unregister();
+  }
+
+  /**
+   * Unregister the current command
+   * @param handler 
+   */
+  public void unregister(Handler<AsyncResult<Void>> handler) { 
+    this.delegate.unregister(handler);
+  }
+
+  /**
+   * Unregister the current command
+   * @return 
+   */
+  public Observable<Void> unregisterObservable() { 
+    io.vertx.rx.java.ObservableFuture<Void> handler = io.vertx.rx.java.RxHelper.observableFuture();
+    unregister(handler.toHandler());
+    return handler;
   }
 
 

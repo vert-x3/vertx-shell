@@ -75,6 +75,27 @@ var CommandRegistration = function(j_val) {
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
+  /**
+   Unregister the current command
+
+   @public
+   @param handler {function} 
+   */
+  this.unregister = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      j_commandRegistration["unregister()"]();
+    }  else if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_commandRegistration["unregister(io.vertx.core.Handler)"](function(ar) {
+      if (ar.succeeded()) {
+        __args[0](null, null);
+      } else {
+        __args[0](null, ar.cause());
+      }
+    });
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.

@@ -111,8 +111,7 @@ public class CommandRegistryImpl extends AbstractVerticle implements CommandRegi
 
   @Override
   public void registerCommand(Command command) {
-    registerCommand(command, ar -> {
-    });
+    registerCommand(command, null);
   }
 
   @Override
@@ -127,41 +126,43 @@ public class CommandRegistryImpl extends AbstractVerticle implements CommandRegi
           throw new Exception("Command " + name + " already registered");
         }
       }
+
       @Override
       public void stop() throws Exception {
         commandMap.remove(name);
       }
     }, ar -> {
-      if (ar.succeeded()) {
-        CommandRegistrationImpl registration = null;
-        for (CommandRegistrationImpl r : commandMap.values()) {
-          if (r.deploymendID.equals(ar.result())) {
-            registration = r;
+      if (doneHandler != null) {
+        if (ar.succeeded()) {
+          CommandRegistrationImpl registration = null;
+          for (CommandRegistrationImpl r : commandMap.values()) {
+            if (r.deploymendID.equals(ar.result())) {
+              registration = r;
+            }
           }
-        }
-        if (registration != null) {
-          doneHandler.handle(Future.succeededFuture(registration));
+          if (registration != null) {
+            doneHandler.handle(Future.succeededFuture(registration));
+          } else {
+            doneHandler.handle(Future.failedFuture("Internal error"));
+          }
         } else {
-          doneHandler.handle(Future.failedFuture("Internal error"));
+          doneHandler.handle(Future.failedFuture(ar.cause()));
         }
-      } else {
-        doneHandler.handle(Future.failedFuture(ar.cause()));
       }
     });
   }
 
   @Override
   public void unregisterCommand(String commandName) {
-    unregisterCommand(commandName, done -> {
-    });
+    unregisterCommand(commandName, null);
   }
 
   @Override
   public void unregisterCommand(String name, Handler<AsyncResult<Void>> doneHandler) {
     CommandRegistrationImpl registration = commandMap.get(name);
     if (registration != null) {
-      vertx.undeploy(registration.deploymendID, doneHandler);
-    } else {
+      registration.unregister(doneHandler);
+    } else if (doneHandler != null) {
       doneHandler.handle(Future.failedFuture("Command " + name + " not registered"));
     }
   }

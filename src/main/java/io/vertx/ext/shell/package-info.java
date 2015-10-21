@@ -186,6 +186,10 @@
  * After a command is created, it needs to be registed to a {@link io.vertx.ext.shell.registry.CommandRegistry}. The
  * command registry holds all the commands for a Vert.x instance.
  *
+ * A command is registered until it is unregistered with the {@link io.vertx.ext.shell.registry.CommandRegistration#unregister()}
+ * method or the {@link io.vertx.ext.shell.registry.CommandRegistry#unregisterCommand(java.lang.String)}. When a command is
+ * registered from a Verticle, this command is unregistered when this verticle is undeployed.
+ *
  * NOTE: Command callbacks are invoked in the {@literal io.vertx.core.Context} when the command is registered in the
  * registry. Keep this in mind if you maintain state in a command.
  *

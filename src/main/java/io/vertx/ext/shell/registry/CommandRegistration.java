@@ -33,6 +33,8 @@
 package io.vertx.ext.shell.registry;
 
 import io.vertx.codegen.annotations.VertxGen;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.Command;
@@ -67,5 +69,15 @@ public interface CommandRegistration {
    * @return the process
    */
   Process createProcess(List<CliToken> args);
+
+  /**
+   * Unregister the current command
+   */
+  void unregister();
+
+  /**
+   * Unregister the current command
+   */
+  void unregister(Handler<AsyncResult<Void>> handler);
 
 }

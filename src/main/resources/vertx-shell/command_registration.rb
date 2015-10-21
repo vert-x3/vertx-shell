@@ -43,5 +43,16 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling create_process(args)"
     end
+    #  Unregister the current command
+    # @yield 
+    # @return [void]
+    def unregister
+      if !block_given?
+        return @j_del.java_method(:unregister, []).call()
+      elsif block_given?
+        return @j_del.java_method(:unregister, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |ar| yield(ar.failed ? ar.cause : nil) }))
+      end
+      raise ArgumentError, "Invalid arguments when calling unregister()"
+    end
   end
 end

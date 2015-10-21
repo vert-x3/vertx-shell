@@ -32,6 +32,7 @@
 
 package io.vertx.ext.shell.registry.impl;
 
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -214,5 +215,19 @@ public class CommandRegistrationImpl implements CommandRegistration {
         });
       }
     };
+  }
+
+  @Override
+  public void unregister() {
+    unregister(null);
+  }
+
+  @Override
+  public void unregister(Handler<AsyncResult<Void>> handler) {
+    if (handler != null) {
+      registry.vertx.undeploy(deploymendID, handler);
+    } else {
+      registry.vertx.undeploy(deploymendID);
+    }
   }
 }
