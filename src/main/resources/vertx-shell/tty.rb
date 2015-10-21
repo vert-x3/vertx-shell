@@ -30,15 +30,12 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling height()"
     end
-    #  Set an handler the standard input to read the data in String format.
-    # @yield the standard input
+    #  Set a stream on the standard input to read the data.
+    # @param [::VertxShell::Stream] stdin the standard input
     # @return [self]
     def set_stdin(stdin=nil)
       if stdin.class.method_defined?(:j_del) && !block_given?
         @j_del.java_method(:setStdin, [Java::IoVertxExtShellIo::Stream.java_class]).call(stdin.j_del)
-        return self
-      elsif block_given? && stdin == nil
-        @j_del.java_method(:setStdin, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
         return self
       end
       raise ArgumentError, "Invalid arguments when calling set_stdin(stdin)"

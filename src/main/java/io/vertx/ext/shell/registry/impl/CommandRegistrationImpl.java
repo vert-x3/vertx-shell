@@ -104,7 +104,7 @@ public class CommandRegistrationImpl implements CommandRegistration {
             StringBuilder usage = new StringBuilder();
             command.cli().usage(usage);
             usage.append('\n');
-            context.tty().stdout().write(usage.toString());
+            context.tty().stdout().handle(usage.toString());
             context.end(0);
             return;
           }
@@ -113,7 +113,7 @@ public class CommandRegistrationImpl implements CommandRegistration {
           try {
             cl = command.cli().parse(args2);
           } catch (CLIException e) {
-            context.tty().stdout().write(e.getMessage() + "\n");
+            context.tty().stdout().handle(e.getMessage() + "\n");
             context.end(0);
             return;
           }
@@ -162,7 +162,7 @@ public class CommandRegistrationImpl implements CommandRegistration {
           public CommandProcess setStdin(Stream stdin) {
             Stream s;
             if (stdin != null) {
-              s = Stream.ofObject(data -> CommandRegistrationImpl.this.context.runOnContext(v -> stdin.write(data)));
+              s = data -> CommandRegistrationImpl.this.context.runOnContext(v -> stdin.handle(data));
             } else {
               s = null;
             }
@@ -177,7 +177,7 @@ public class CommandRegistrationImpl implements CommandRegistration {
 
           @Override
           public CommandProcess write(String text) {
-            context.tty().stdout().write(text);
+            context.tty().stdout().handle(text);
             return this;
           }
 

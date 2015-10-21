@@ -332,15 +332,15 @@ command.process_handler() { |process|
 
 === Process I/O
 
-A command can set a `link:yardoc/VertxShell/Tty.html#set_stdin-instance_method[setStdin]` handler
+A command can set a `link:yardoc/VertxShell/CommandProcess.html#set_stdin-instance_method[setStdin]` handler
 to be notified when the shell receives data, e.g the user uses his keyboard:
 
 [source,ruby]
 ----
 command.process_handler() { |process|
-  process.set_stdin() { |data|
+  process.set_stdin(lambda { |data|
     puts "Received #{data}"
-  }
+  })
 }
 
 ----

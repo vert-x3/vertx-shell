@@ -332,7 +332,7 @@ command.processHandler(function (process) {
 
 === Process I/O
 
-A command can set a `link:jsdoc/tty-Tty.html#setStdin[setStdin]` handler
+A command can set a `link:jsdoc/command_process-CommandProcess.html#setStdin[setStdin]` handler
 to be notified when the shell receives data, e.g the user uses his keyboard:
 
 [source,js]

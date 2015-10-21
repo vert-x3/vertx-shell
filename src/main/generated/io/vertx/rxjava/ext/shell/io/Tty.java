@@ -19,7 +19,6 @@ package io.vertx.rxjava.ext.shell.io;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
-import io.vertx.core.Handler;
 
 /**
  * Provide interactions with the Shell TTY.
@@ -65,16 +64,6 @@ public class Tty {
    */
   public Tty setStdin(Stream stdin) { 
     this.delegate.setStdin((io.vertx.ext.shell.io.Stream) stdin.getDelegate());
-    return this;
-  }
-
-  /**
-   * Set an handler the standard input to read the data in String format.
-   * @param stdin the standard input
-   * @return this object
-   */
-  public Tty setStdin(Handler<String> stdin) { 
-    this.delegate.setStdin(stdin);
     return this;
   }
 

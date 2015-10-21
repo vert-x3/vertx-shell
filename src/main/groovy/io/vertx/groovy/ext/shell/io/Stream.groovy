@@ -18,13 +18,12 @@ package io.vertx.groovy.ext.shell.io;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
-import io.vertx.core.json.JsonObject
 import io.vertx.core.Handler
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
-public class Stream {
+public class Stream implements Handler<String> {
   private final def io.vertx.ext.shell.io.Stream delegate;
   public Stream(Object delegate) {
     this.delegate = (io.vertx.ext.shell.io.Stream) delegate;
@@ -32,24 +31,10 @@ public class Stream {
   public Object getDelegate() {
     return delegate;
   }
-  public static Stream ofString(Handler<String> handler) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.io.Stream.ofString(handler), io.vertx.groovy.ext.shell.io.Stream.class);
-    return ret;
+  public void handle(String event) {
+    this.delegate.handle(event);
   }
-  public static Stream ofJson(Handler<Map<String, Object>> handler) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.io.Stream.ofJson(new Handler<JsonObject>() {
-      public void handle(JsonObject event) {
-        handler.handle((Map<String, Object>)InternalHelper.wrapObject(event));
-      }
-    }), io.vertx.groovy.ext.shell.io.Stream.class);
-    return ret;
-  }
-  public Stream write(String data) {
+  public void write(String data) {
     this.delegate.write(data);
-    return this;
-  }
-  public Stream write(Map<String, Object> data) {
-    this.delegate.write(data != null ? new io.vertx.core.json.JsonObject(data) : null);
-    return this;
   }
 }

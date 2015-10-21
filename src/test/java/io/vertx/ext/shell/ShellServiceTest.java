@@ -158,7 +158,7 @@ public class ShellServiceTest {
         Async async = context.async();
         LinkedList<String> out = new LinkedList<>();
         TestProcessContext ctx = new TestProcessContext();
-        ctx.setStdout(Stream.ofString(out::add));
+        ctx.setStdout(out::add);
         ctx.endHandler(code -> {
           context.assertEquals(0, code);
           context.assertEquals(Arrays.asList("bye_world"), out);
@@ -206,12 +206,12 @@ public class ShellServiceTest {
             } catch (InterruptedException e) {
               testContext.fail(e);
             }
-            ctx.setStdout(Stream.ofObject(text -> {
+            ctx.setStdout(text -> {
               testContext.assertTrue(shellCtx == Vertx.currentContext());
               testContext.assertEquals("pong", text);
               testContext.assertTrue(ctx.sendEvent(EventType.SIGTSTP));
               testContext.assertFalse(ctx.sendEvent(EventType.SIGWINCH));
-            }));
+            });
             ctx.stdin().write("ping");
           }));
         });
@@ -268,9 +268,9 @@ public class ShellServiceTest {
           async.complete();
         });
         ctx.setWindowSize(20, 10);
-        ctx.setStdout(Stream.ofObject(text -> {
+        ctx.setStdout(text -> {
           ctx.setWindowSize(25, 15);
-        }));
+        });
         job.execute(ctx);
       }));
     }));

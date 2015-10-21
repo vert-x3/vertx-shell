@@ -102,7 +102,7 @@ public class TestProcessContext implements ProcessContext, Tty {
   }
 
   public TestProcessContext setStdout(Stream stream) {
-    stdout = context != null ? Stream.ofObject(txt -> context.runOnContext(v -> stream.write(txt))) : stream;
+    stdout = context != null ? txt -> context.runOnContext(v -> stream.write(txt)) : stream;
     return this;
   }
 

@@ -19,7 +19,6 @@ package io.vertx.rxjava.ext.shell.io;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
-import io.vertx.core.json.JsonObject;
 import io.vertx.core.Handler;
 
 /**
@@ -29,7 +28,7 @@ import io.vertx.core.Handler;
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.io.Stream original} non RX-ified interface using Vert.x codegen.
  */
 
-public class Stream {
+public class Stream implements Handler<String> {
 
   final io.vertx.ext.shell.io.Stream delegate;
 
@@ -41,24 +40,12 @@ public class Stream {
     return delegate;
   }
 
-  public static Stream ofString(Handler<String> handler) { 
-    Stream ret= Stream.newInstance(io.vertx.ext.shell.io.Stream.ofString(handler));
-    return ret;
+  public void handle(String event) { 
+    this.delegate.handle(event);
   }
 
-  public static Stream ofJson(Handler<JsonObject> handler) { 
-    Stream ret= Stream.newInstance(io.vertx.ext.shell.io.Stream.ofJson(handler));
-    return ret;
-  }
-
-  public Stream write(String data) { 
+  public void write(String data) { 
     this.delegate.write(data);
-    return this;
-  }
-
-  public Stream write(JsonObject data) { 
-    this.delegate.write(data);
-    return this;
   }
 
 

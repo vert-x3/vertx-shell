@@ -61,21 +61,16 @@ var Tty = function(j_val) {
   };
 
   /**
-   Set an handler the standard input to read the data in String format.
+   Set a stream on the standard input to read the data.
 
    @public
-   @param stdin {function} the standard input 
+   @param stdin {Stream} the standard input 
    @return {Tty} this object
    */
-  this.setStdin = function() {
+  this.setStdin = function(stdin) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_tty["setStdin(io.vertx.ext.shell.io.Stream)"](__args[0]._jdel);
-      return that;
-    }  else if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_tty["setStdin(io.vertx.core.Handler)"](function(jVal) {
-      __args[0](jVal);
-    });
+      j_tty["setStdin(io.vertx.ext.shell.io.Stream)"](stdin._jdel);
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };

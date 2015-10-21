@@ -37,19 +37,40 @@ var Terminal = function(j_val) {
   /**
 
    @public
-   @param stdin {function} 
+   @param stdin {Stream} 
    @return {Terminal}
    */
-  this.setStdin = function() {
+  this.setStdin = function(stdin) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_terminal["setStdin(io.vertx.ext.shell.io.Stream)"](__args[0]._jdel);
+      j_terminal["setStdin(io.vertx.ext.shell.io.Stream)"](stdin._jdel);
       return that;
-    }  else if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_terminal["setStdin(io.vertx.core.Handler)"](function(jVal) {
-      __args[0](jVal);
-    });
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param handler {function} 
+   @return {Terminal}
+   */
+  this.closeHandler = function(handler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_terminal["closeHandler(io.vertx.core.Handler)"](handler);
       return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+
+   */
+  this.close = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      j_terminal["close()"]();
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

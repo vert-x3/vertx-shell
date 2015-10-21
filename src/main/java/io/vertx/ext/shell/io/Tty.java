@@ -34,7 +34,6 @@ package io.vertx.ext.shell.io;
 
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.core.Handler;
 
 /**
  * Provide interactions with the Shell TTY.
@@ -62,17 +61,6 @@ public interface Tty {
    */
   @Fluent
   Tty setStdin(Stream stdin);
-
-  /**
-   * Set an handler the standard input to read the data in String format.
-   *
-   * @param stdin the standard input
-   * @return this object
-   */
-  @Fluent
-  default Tty setStdin(Handler<String> stdin) {
-    return setStdin(Stream.ofString(stdin));
-  }
 
   /**
    * @return the standard output for emitting data

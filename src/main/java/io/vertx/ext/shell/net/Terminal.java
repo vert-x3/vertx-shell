@@ -49,11 +49,6 @@ public interface Terminal extends Tty {
   @Override
   Terminal setStdin(Stream stdin);
 
-  @Override
-  default Terminal setStdin(Handler<String> stdin) {
-    return (Terminal) Tty.super.setStdin(stdin);
-  }
-
   @Fluent
   Terminal closeHandler(Handler<Void> handler);
 

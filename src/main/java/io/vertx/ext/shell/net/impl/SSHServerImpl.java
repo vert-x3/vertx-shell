@@ -128,7 +128,7 @@ public class SSHServerImpl implements SSHServer {
               conn.setStdinHandler(null);
             } else {
               conn.setStdinHandler(keys -> {
-                stdin.write(Helper.fromCodePoints(keys));
+                stdin.handle(Helper.fromCodePoints(keys));
               });
             }
             return this;
@@ -146,7 +146,7 @@ public class SSHServerImpl implements SSHServer {
 
           @Override
           public Stream stdout() {
-            return Stream.ofString(conn::write);
+            return conn::write;
           }
 
           @Override

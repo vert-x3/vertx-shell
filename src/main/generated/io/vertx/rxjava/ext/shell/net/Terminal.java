@@ -48,9 +48,13 @@ public class Terminal extends Tty {
     return this;
   }
 
-  public Terminal setStdin(Handler<String> stdin) { 
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) delegate).setStdin(stdin);
+  public Terminal closeHandler(Handler<Void> handler) { 
+    this.delegate.closeHandler(handler);
     return this;
+  }
+
+  public void close() { 
+    this.delegate.close();
   }
 
 

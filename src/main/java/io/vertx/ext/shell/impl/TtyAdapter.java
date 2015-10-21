@@ -104,7 +104,7 @@ public class TtyAdapter {
       } else {
         if (((TtyImpl)foregroundJob.getTty()).stdin != null) {
           // Forward
-          ((TtyImpl)foregroundJob.getTty()).stdin.write(Helper.fromCodePoints(codePoints));
+          ((TtyImpl)foregroundJob.getTty()).stdin.handle(Helper.fromCodePoints(codePoints));
         } else {
           // Echo
           echo(codePoints);
@@ -132,7 +132,7 @@ public class TtyAdapter {
         case EOF:
           // Pseudo signal
           if (((TtyImpl)foregroundJob.getTty()).stdin != null) {
-            ((TtyImpl)foregroundJob.getTty()).stdin.write(Helper.fromCodePoints(new int[]{key}));
+            ((TtyImpl)foregroundJob.getTty()).stdin.handle(Helper.fromCodePoints(new int[]{key}));
           } else {
             echo(key);
             readline.queueEvent(new int[]{key});
@@ -179,7 +179,7 @@ public class TtyAdapter {
 
   void checkPending() {
     if (foregroundJob != null && ((TtyImpl)foregroundJob.getTty()).stdin != null && readline.hasEvent()) {
-      ((TtyImpl)foregroundJob.getTty()).stdin.write(Helper.fromCodePoints(readline.nextEvent().buffer().array()));
+      ((TtyImpl)foregroundJob.getTty()).stdin.handle(Helper.fromCodePoints(readline.nextEvent().buffer().array()));
       vertx.runOnContext(v -> {
         checkPending();
       });
@@ -262,7 +262,7 @@ public class TtyAdapter {
               foregroundJob = job;
               echo(Helper.toCodePoints(job.line() + "\n"));
               if (job.status() == JobStatus.STOPPED) {
-                ((TtyImpl)job.getTty()).stdout = Stream.ofString(conn::write); // We set stdout whether or not it's background (maybe do something different)
+                ((TtyImpl)job.getTty()).stdout = conn::write; // We set stdout whether or not it's background (maybe do something different)
                 job.resume();
               } else {
                 // BG -> FG : nothing to do for now
@@ -276,7 +276,7 @@ public class TtyAdapter {
               conn.write("no such job\n");
             } else {
               if (job.status() == JobStatus.STOPPED) {
-                ((TtyImpl)job.getTty()).stdout = Stream.ofString(conn::write); // We set stdout whether or not it's background (maybe do something different)
+                ((TtyImpl)job.getTty()).stdout = conn::write; // We set stdout whether or not it's background (maybe do something different)
                 job.resume();
                 echo(Helper.toCodePoints(statusLine(job) + "\n"));
               } else {
@@ -294,7 +294,7 @@ public class TtyAdapter {
           Job job = ar.result();
           foregroundJob = job;
           TtyImpl tty = new TtyImpl(job);
-          tty.stdout = Stream.ofString(conn::write);
+          tty.stdout = conn::write;
           job.setTty(tty);
           job.run(status -> {
             if (foregroundJob == job) {

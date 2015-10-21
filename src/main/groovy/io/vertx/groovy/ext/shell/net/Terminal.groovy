@@ -38,8 +38,11 @@ public class Terminal extends Tty {
     ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).setStdin((io.vertx.ext.shell.io.Stream)stdin.getDelegate());
     return this;
   }
-  public Terminal setStdin(Handler<String> stdin) {
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).setStdin(stdin);
+  public Terminal closeHandler(Handler<Void> handler) {
+    this.delegate.closeHandler(handler);
     return this;
+  }
+  public void close() {
+    this.delegate.close();
   }
 }
