@@ -30,30 +30,42 @@
  *
  */
 
-package io.vertx.ext.shell.net;
+package io.vertx.ext.shell.term.impl;
 
-import io.vertx.codegen.annotations.Fluent;
-import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.core.Handler;
-import io.vertx.ext.shell.io.Stream;
-import io.vertx.ext.shell.io.Tty;
+import io.termd.core.ssh.netty.NettyIoHandlerBridge;
+import io.vertx.core.impl.ContextInternal;
+import org.apache.sshd.common.io.IoHandler;
+import org.apache.sshd.common.io.IoSession;
 
 /**
- * The remote terminal.
- *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@VertxGen
-public interface Terminal extends Tty {
+public class VertxIoHandlerBridge extends NettyIoHandlerBridge {
+
+  private final ContextInternal context;
+
+  public VertxIoHandlerBridge(ContextInternal context) {
+    this.context = context;
+  }
 
   @Override
-  Terminal resizehandler(Handler<Void> handler);
+  public void sessionCreated(IoHandler handler, IoSession session) throws Exception {
+    context.executeFromIO(() -> {
+      super.sessionCreated(handler, session);
+    });
+  }
 
   @Override
-  Terminal setStdin(Stream stdin);
+  public void sessionClosed(IoHandler handler, IoSession session) throws Exception {
+    context.executeFromIO(() -> {
+      super.sessionClosed(handler, session);
+    });
+  }
 
-  @Fluent
-  Terminal closeHandler(Handler<Void> handler);
-
-  void close();
+  @Override
+  public void messageReceived(IoHandler handler, IoSession session, org.apache.sshd.common.util.Readable message) throws Exception {
+    context.executeFromIO(() -> {
+      super.messageReceived(handler, session, message);
+    });
+  }
 }

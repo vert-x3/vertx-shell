@@ -41,8 +41,8 @@ import io.vertx.ext.dropwizard.DropwizardMetricsOptions;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.io.Stream;
-import io.vertx.ext.shell.net.SSHOptions;
-import io.vertx.ext.shell.net.TelnetOptions;
+import io.vertx.ext.shell.term.SSHOptions;
+import io.vertx.ext.shell.term.TelnetOptions;
 import io.vertx.ext.shell.registry.CommandRegistry;
 
 /**

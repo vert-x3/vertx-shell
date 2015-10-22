@@ -30,12 +30,21 @@
  *
  */
 
-package io.vertx.ext.shell.net;
+package io.vertx.ext.shell.term;
 
+import io.termd.core.TestBase;
 import io.termd.core.telnet.TelnetHandler;
-import io.termd.core.telnet.TelnetHandlerTest;
+import io.termd.core.telnet.TelnetTermTest;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Vertx;
+import io.vertx.core.net.NetServer;
+import io.vertx.ext.shell.term.impl.TelnetSocketHandler;
 
 import java.io.Closeable;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -44,10 +53,37 @@ import java.util.function.Supplier;
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class VertxTelnetHandlerTest extends TelnetHandlerTest {
+public class VertxTelnetTermTest extends TelnetTermTest {
+
+  public static final Function<Supplier<TelnetHandler>, Closeable> VERTX_SERVER = handlerFactory -> {
+    Vertx vertx= Vertx.vertx();
+    NetServer server = vertx.createNetServer().connectHandler(new TelnetSocketHandler(vertx, handlerFactory));
+    BlockingQueue<AsyncResult<NetServer>> latch = new ArrayBlockingQueue<>(1);
+    server.listen(4000, "localhost", latch::add);
+    AsyncResult<NetServer> result;
+    try {
+      result = latch.poll(2, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {
+      throw TestBase.failure(e);
+    }
+    if (result.failed()) {
+      throw TestBase.failure(result.cause());
+    }
+    return () -> {
+      CountDownLatch closeLatch = new CountDownLatch(1);
+      vertx.close(done -> {
+        closeLatch.countDown();
+      });
+      try {
+        closeLatch.await(10, TimeUnit.SECONDS);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
+    };
+  };
 
   @Override
   protected Function<Supplier<TelnetHandler>, Closeable> serverFactory() {
-    return VertxTelnetTermTest.VERTX_SERVER;
+    return VERTX_SERVER;
   }
 }

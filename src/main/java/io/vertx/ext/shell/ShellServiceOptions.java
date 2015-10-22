@@ -34,15 +34,15 @@ package io.vertx.ext.shell;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.shell.net.SSHOptions;
-import io.vertx.ext.shell.net.TelnetOptions;
+import io.vertx.ext.shell.term.SSHOptions;
+import io.vertx.ext.shell.term.TelnetOptions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 /**
  * The configurations options for the shell service, the shell connectors can be configured
- * with {@link io.vertx.ext.shell.net.TelnetOptions} and {@link io.vertx.ext.shell.net.SSHOptions}.
+ * with {@link io.vertx.ext.shell.term.TelnetOptions} and {@link io.vertx.ext.shell.term.SSHOptions}.
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */

@@ -37,12 +37,13 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.net.SSHOptions;
+import io.vertx.ext.shell.term.SSHOptions;
 import io.vertx.ext.shell.ShellService;
 import io.vertx.ext.shell.ShellServiceOptions;
-import io.vertx.ext.shell.net.TelnetOptions;
-import io.vertx.ext.shell.net.impl.SSHServerImpl;
-import io.vertx.ext.shell.net.impl.TelnetServer;
+import io.vertx.ext.shell.term.TelnetOptions;
+import io.vertx.ext.shell.term.TermServer;
+import io.vertx.ext.shell.term.impl.SSHServer;
+import io.vertx.ext.shell.term.impl.TelnetServer;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.system.ShellSession;
 import io.vertx.ext.shell.system.impl.ShellSessionImpl;
@@ -59,7 +60,7 @@ public class ShellServiceImpl implements ShellService {
   private final ShellServiceOptions options;
   private final CommandRegistry registry;
   private TelnetServer telnet;
-  private SSHServerImpl ssh;
+  private SSHServer ssh;
 
   public ShellServiceImpl(Vertx vertx, ShellServiceOptions options, CommandRegistry registry) {
     this.vertx = vertx;
@@ -93,14 +94,14 @@ public class ShellServiceImpl implements ShellService {
       startHandler.handle(Future.succeededFuture());
       return;
     }
-    Handler<AsyncResult<Void>> listenHandler = ar -> {
+    Handler<AsyncResult<TermServer>> listenHandler = ar -> {
       if (ar.succeeded()) {
         if (count.decrementAndGet() == 0) {
           startHandler.handle(Future.succeededFuture());
         }
       } else {
         count.set(0);
-        startHandler.handle(ar);
+        startHandler.handle(Future.failedFuture(ar.cause()));
       }
     };
     if (telnetOptions != null) {
@@ -109,7 +110,7 @@ public class ShellServiceImpl implements ShellService {
       telnet.listen(listenHandler);
     }
     if (sshOptions != null) {
-      ssh = new SSHServerImpl(vertx, sshOptions);
+      ssh = new SSHServer(vertx, sshOptions);
       ssh.setHandler(shellBoostrap);
       ssh.listen(ar -> {
         if (ar.succeeded()) {

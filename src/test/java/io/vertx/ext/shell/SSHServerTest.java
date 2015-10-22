@@ -36,16 +36,14 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.Session;
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.io.Tty;
-import io.vertx.ext.shell.net.SSHOptions;
-import io.vertx.ext.shell.net.SSHServer;
-import io.vertx.ext.shell.net.Terminal;
+import io.vertx.ext.shell.term.SSHOptions;
+import io.vertx.ext.shell.term.TermServer;
+import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import org.junit.After;
 import org.junit.Test;
 
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -64,8 +62,8 @@ import static org.junit.Assert.assertTrue;
  */
 public class SSHServerTest extends SSHTestBase {
 
-  SSHServer server;
-  Handler<Terminal> termHandler;
+  TermServer server;
+  Handler<Term> termHandler;
 
   @Override
   public void before() {
@@ -87,7 +85,7 @@ public class SSHServerTest extends SSHTestBase {
     if (server != null) {
       throw new IllegalStateException();
     }
-    server = SSHServer.create(vertx, options);
+    server = TermServer.createSSHServer(vertx, options);
     CompletableFuture<Void> fut = new CompletableFuture<>();
     server.termHandler(termHandler);
     server.listen(ar -> {
@@ -198,10 +196,10 @@ public class SSHServerTest extends SSHTestBase {
 
   @Test
   public void testCloseImmediatly(TestContext context) throws Exception {
-    testClose(context, Terminal::close);
+    testClose(context, Term::close);
   }
 
-  private void testClose(TestContext context, Consumer<Terminal> closer) throws Exception {
+  private void testClose(TestContext context, Consumer<Term> closer) throws Exception {
     Async async = context.async();
     termHandler = term -> {
       term.closeHandler(v -> {

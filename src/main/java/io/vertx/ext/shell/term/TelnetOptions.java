@@ -30,7 +30,7 @@
  *
  */
 
-package io.vertx.ext.shell.net;
+package io.vertx.ext.shell.term;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.buffer.Buffer;

@@ -30,7 +30,7 @@
  *
  */
 
-package io.vertx.ext.shell.net.impl;
+package io.vertx.ext.shell.term.impl;
 
 import io.termd.core.telnet.TelnetConnection;
 import io.termd.core.telnet.TelnetHandler;

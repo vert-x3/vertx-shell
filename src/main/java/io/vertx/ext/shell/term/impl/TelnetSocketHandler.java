@@ -30,31 +30,36 @@
  *
  */
 
-package io.vertx.ext.shell.net;
+package io.vertx.ext.shell.term.impl;
 
-import io.vertx.codegen.annotations.Fluent;
-import io.vertx.core.AsyncResult;
+import io.termd.core.telnet.TelnetHandler;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.net.impl.SSHServerImpl;
+import io.vertx.core.net.NetSocket;
+
+import java.util.function.Supplier;
 
 /**
+ * Telnet server integration with Vert.x {@link io.vertx.core.net.NetServer}.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public interface SSHServer {
+public class TelnetSocketHandler implements Handler<NetSocket> {
 
-  static SSHServer create(Vertx vertx, SSHOptions options) {
-    return new SSHServerImpl(vertx, options);
+  final Vertx vertx;
+  final Supplier<TelnetHandler> factory;
+
+  public TelnetSocketHandler(Vertx vertx, Supplier<TelnetHandler> factory) {
+    this.vertx = vertx;
+    this.factory = factory;
   }
 
-  @Fluent
-  SSHServer termHandler(Handler<Terminal> handler);
-
-  @Fluent
-  SSHServer listen(Handler<AsyncResult<SSHServer>> listenHandler);
-
-  void close();
-
-  void close(Handler<AsyncResult<Void>> ar);
-
+  @Override
+  public void handle(final NetSocket socket) {
+    TelnetHandler handler = factory.get();
+    final VertxTelnetConnection connection = new VertxTelnetConnection(handler, Vertx.currentContext(), socket);
+    socket.handler(event -> connection.receive(event.getBytes()));
+    socket.closeHandler(event -> connection.onClose());
+    connection.onInit();
+  }
 }

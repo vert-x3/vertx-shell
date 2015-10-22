@@ -14,23 +14,23 @@
  * under the License.
  */
 
-/** @module vertx-shell-js/terminal */
+/** @module vertx-shell-js/term */
 var utils = require('vertx-js/util/utils');
 var Stream = require('vertx-shell-js/stream');
 var Tty = require('vertx-shell-js/tty');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JTerminal = io.vertx.ext.shell.net.Terminal;
+var JTerm = io.vertx.ext.shell.term.Term;
 
 /**
  The remote terminal.
 
  @class
 */
-var Terminal = function(j_val) {
+var Term = function(j_val) {
 
-  var j_terminal = j_val;
+  var j_term = j_val;
   var that = this;
   Tty.call(this, j_val);
 
@@ -38,12 +38,12 @@ var Terminal = function(j_val) {
 
    @public
    @param handler {function} 
-   @return {Terminal}
+   @return {Term}
    */
   this.resizehandler = function(handler) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_terminal["resizehandler(io.vertx.core.Handler)"](handler);
+      j_term["resizehandler(io.vertx.core.Handler)"](handler);
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
@@ -52,12 +52,12 @@ var Terminal = function(j_val) {
 
    @public
    @param stdin {Stream} 
-   @return {Terminal}
+   @return {Term}
    */
   this.setStdin = function(stdin) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_terminal["setStdin(io.vertx.ext.shell.io.Stream)"](stdin._jdel);
+      j_term["setStdin(io.vertx.ext.shell.io.Stream)"](stdin._jdel);
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
@@ -66,12 +66,12 @@ var Terminal = function(j_val) {
 
    @public
    @param handler {function} 
-   @return {Terminal}
+   @return {Term}
    */
   this.closeHandler = function(handler) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_terminal["closeHandler(io.vertx.core.Handler)"](handler);
+      j_term["closeHandler(io.vertx.core.Handler)"](handler);
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
@@ -84,15 +84,15 @@ var Terminal = function(j_val) {
   this.close = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      j_terminal["close()"]();
+      j_term["close()"]();
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
-  this._jdel = j_terminal;
+  this._jdel = j_term;
 };
 
 // We export the Constructor function
-module.exports = Terminal;
+module.exports = Term;

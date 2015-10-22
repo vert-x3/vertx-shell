@@ -30,14 +30,13 @@
  *
  */
 
-package io.vertx.ext.shell.net.impl;
+package io.vertx.ext.shell.term.impl;
 
 import io.termd.core.ssh.TtyCommand;
 import io.termd.core.ssh.netty.AsyncAuth;
 import io.termd.core.ssh.netty.AsyncUserAuthServiceFactory;
 import io.termd.core.ssh.netty.NettyIoServiceFactoryFactory;
 import io.termd.core.tty.TtyConnection;
-import io.termd.core.util.Helper;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
 import io.vertx.core.Future;
@@ -54,10 +53,9 @@ import io.vertx.core.net.impl.KeyStoreHelper;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.shiro.ShiroAuth;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
-import io.vertx.ext.shell.io.Stream;
-import io.vertx.ext.shell.net.SSHOptions;
-import io.vertx.ext.shell.net.SSHServer;
-import io.vertx.ext.shell.net.Terminal;
+import io.vertx.ext.shell.term.SSHOptions;
+import io.vertx.ext.shell.term.TermServer;
+import io.vertx.ext.shell.term.Term;
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.apache.sshd.server.SshServer;
@@ -81,7 +79,7 @@ import java.util.function.Consumer;
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class SSHServerImpl implements SSHServer {
+public class SSHServer implements TermServer {
 
   private static final int STATUS_STOPPED = 0, STATUS_STARTING = 1, STATUS_STARTED = 2, STATUS_STOPPING = 3;
 
@@ -92,7 +90,7 @@ public class SSHServerImpl implements SSHServer {
   private final AtomicInteger status = new AtomicInteger(STATUS_STOPPED);
   private ContextInternal listenContext;
 
-  public SSHServerImpl(Vertx vertx, SSHOptions options) {
+  public SSHServer(Vertx vertx, SSHOptions options) {
     this.vertx = vertx;
     this.options = new SSHOptions(options);
   }
@@ -105,7 +103,7 @@ public class SSHServerImpl implements SSHServer {
     return handler;
   }
 
-  public SSHServerImpl setHandler(Consumer<TtyConnection> handler) {
+  public SSHServer setHandler(Consumer<TtyConnection> handler) {
     this.handler = handler;
     return this;
   }
@@ -118,72 +116,16 @@ public class SSHServerImpl implements SSHServer {
   }
 
   @Override
-  public SSHServer termHandler(Handler<Terminal> handler) {
+  public TermServer termHandler(Handler<Term> handler) {
     if (handler != null) {
-      setHandler(conn -> {
-        handler.handle(new Terminal() {
-          @Override
-          public Terminal setStdin(Stream stdin) {
-            if (stdin == null) {
-              conn.setStdinHandler(null);
-            } else {
-              conn.setStdinHandler(keys -> {
-                stdin.handle(Helper.fromCodePoints(keys));
-              });
-            }
-            return this;
-          }
-
-          @Override
-          public int width() {
-            return conn.size().x();
-          }
-
-          @Override
-          public int height() {
-            return conn.size().y();
-          }
-
-          @Override
-          public Stream stdout() {
-            return conn::write;
-          }
-
-          @Override
-          public Terminal resizehandler(Handler<Void> handler) {
-            if (handler != null) {
-              conn.setSizeHandler(v -> {
-                handler.handle(null);
-              });
-            } else {
-              conn.setSizeHandler(null);
-            }
-            return null;
-          }
-
-          @Override
-          public Terminal closeHandler(Handler<Void> handler) {
-            if (handler == null) {
-              conn.setCloseHandler(null);
-            } else {
-              conn.setCloseHandler(handler::handle);
-            }
-            return this;
-          }
-
-          @Override
-          public void close() {
-            conn.close();
-          }
-        });
-      });
+      setHandler(new TermConnectionHandler(handler));
     } else {
       setHandler(null);
     }
     return this;
   }
 
-  public SSHServerImpl listen(Handler<AsyncResult<SSHServer>> listenHandler) {
+  public SSHServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
     if (!status.compareAndSet(STATUS_STOPPED, STATUS_STARTING)) {
       listenHandler.handle(Future.failedFuture("Invalid state:" + status.get()));
       return this;

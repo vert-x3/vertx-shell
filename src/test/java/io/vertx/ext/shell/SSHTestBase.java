@@ -45,7 +45,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
-import io.vertx.ext.shell.net.SSHOptions;
+import io.vertx.ext.shell.term.SSHOptions;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.After;
 import org.junit.Before;
@@ -53,7 +53,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.InputStream;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;

@@ -30,36 +30,32 @@
  *
  */
 
-package io.vertx.ext.shell.net.impl;
+package io.vertx.ext.shell.term;
 
 import io.termd.core.telnet.TelnetHandler;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
-import io.vertx.core.net.NetSocket;
+import io.termd.core.tty.TelnetTtyTestBase;
 
+import java.io.Closeable;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Telnet server integration with Vert.x {@link io.vertx.core.net.NetServer}.
- *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class TelnetSocketHandler implements Handler<NetSocket> {
+public class VertxAsciiTelnetTtyTest extends TelnetTtyTestBase {
 
-  final Vertx vertx;
-  final Supplier<TelnetHandler> factory;
-
-  public TelnetSocketHandler(Vertx vertx, Supplier<TelnetHandler> factory) {
-    this.vertx = vertx;
-    this.factory = factory;
+  public VertxAsciiTelnetTtyTest() {
+    binary = false;
   }
 
   @Override
-  public void handle(final NetSocket socket) {
-    TelnetHandler handler = factory.get();
-    final VertxTelnetConnection connection = new VertxTelnetConnection(handler, Vertx.currentContext(), socket);
-    socket.handler(event -> connection.receive(event.getBytes()));
-    socket.closeHandler(event -> connection.onClose());
-    connection.onInit();
+  protected Function<Supplier<TelnetHandler>, Closeable> serverFactory() {
+    return VertxTelnetTermTest.VERTX_SERVER;
+  }
+
+  @Override
+  protected void assertThreading(Thread connThread, Thread schedulerThread) throws Exception {
+    assertTrue(connThread.getName().startsWith("vert.x-eventloop-thread"));
+    assertEquals(connThread, schedulerThread);
   }
 }

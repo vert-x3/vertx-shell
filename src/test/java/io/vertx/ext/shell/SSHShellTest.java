@@ -34,7 +34,7 @@ package io.vertx.ext.shell;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.net.SSHOptions;
+import io.vertx.ext.shell.term.SSHOptions;
 import org.junit.After;
 
 import static org.junit.Assert.*;

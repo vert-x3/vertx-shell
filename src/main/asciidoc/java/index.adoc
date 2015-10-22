@@ -113,34 +113,34 @@ ShellService service = ShellService.create(vertx,
 service.start();
 ----
 
-The `link:../../apidocs/io/vertx/ext/shell/net/TelnetOptions.html[TelnetOptions]` extends the Vert.x Core `NetServerOptions` as the Telnet server
+The `link:../../apidocs/io/vertx/ext/shell/term/TelnetOptions.html[TelnetOptions]` extends the Vert.x Core `NetServerOptions` as the Telnet server
 implementation is based on a `NetServer`.
 
 CAUTION: Telnet does not provide any authentication nor encryption at all.
 
 == Telnet configuration
 
-The telnet connector is configured by `link:../../apidocs/io/vertx/ext/shell/ShellServiceOptions.html#setTelnetOptions-io.vertx.ext.shell.net.TelnetOptions-[setTelnetOptions]`,
-the `link:../../apidocs/io/vertx/ext/shell/net/TelnetOptions.html[TelnetOptions]` extends the `link:../../apidocs/io/vertx/core/net/NetServerOptions.html[NetServerOptions]` so they
+The telnet connector is configured by `link:../../apidocs/io/vertx/ext/shell/ShellServiceOptions.html#setTelnetOptions-io.vertx.ext.shell.term.TelnetOptions-[setTelnetOptions]`,
+the `link:../../apidocs/io/vertx/ext/shell/term/TelnetOptions.html[TelnetOptions]` extends the `link:../../apidocs/io/vertx/core/net/NetServerOptions.html[NetServerOptions]` so they
 have the exact same configuration.
 
 == SSH configuration
 
-The SSH connector is configured by `link:../../apidocs/io/vertx/ext/shell/ShellServiceOptions.html#setSSHOptions-io.vertx.ext.shell.net.SSHOptions-[setSSHOptions]`:
+The SSH connector is configured by `link:../../apidocs/io/vertx/ext/shell/ShellServiceOptions.html#setSSHOptions-io.vertx.ext.shell.term.SSHOptions-[setSSHOptions]`:
 
-- `link:../../apidocs/io/vertx/ext/shell/net/SSHOptions.html#setPort-int-[setPort]`: port
-- `link:../../apidocs/io/vertx/ext/shell/net/SSHOptions.html#setHost-java.lang.String-[setHost]`: host
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHOptions.html#setPort-int-[setPort]`: port
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHOptions.html#setHost-java.lang.String-[setHost]`: host
 
 Only username/password authentication is supported at the moment, it can be configured with property file
 or LDAP, see Vert.x Auth for more info:
 
-- `link:../../apidocs/io/vertx/ext/shell/net/SSHOptions.html#setShiroAuthOptions-io.vertx.ext.shell.auth.ShiroAuthOptions-[setShiroAuthOptions]`: configures user authentication
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHOptions.html#setShiroAuthOptions-io.vertx.ext.shell.auth.ShiroAuthOptions-[setShiroAuthOptions]`: configures user authentication
 
 The server key configuration reuses the key pair store configuration scheme provided by _Vert.x Core_:
 
-- `link:../../apidocs/io/vertx/ext/shell/net/SSHOptions.html#setKeyPairOptions-io.vertx.core.net.JksOptions-[setKeyPairOptions]`: set `.jks` key pair store
-- `link:../../apidocs/io/vertx/ext/shell/net/SSHOptions.html#setPfxKeyPairOptions-io.vertx.core.net.PfxOptions-[setPfxKeyPairOptions]`: set `.pfx` key pair store
-- `link:../../apidocs/io/vertx/ext/shell/net/SSHOptions.html#setPemKeyPairOptions-io.vertx.core.net.PemKeyCertOptions-[setPemKeyPairOptions]`: set `.pem` key pair store
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHOptions.html#setKeyPairOptions-io.vertx.core.net.JksOptions-[setKeyPairOptions]`: set `.jks` key pair store
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHOptions.html#setPfxKeyPairOptions-io.vertx.core.net.PfxOptions-[setPfxKeyPairOptions]`: set `.pfx` key pair store
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHOptions.html#setPemKeyPairOptions-io.vertx.core.net.PemKeyCertOptions-[setPemKeyPairOptions]`: set `.pem` key pair store
 
 == Base commands
 

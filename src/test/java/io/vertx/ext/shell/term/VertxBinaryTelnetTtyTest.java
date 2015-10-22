@@ -30,42 +30,32 @@
  *
  */
 
-package io.vertx.ext.shell.net.impl;
+package io.vertx.ext.shell.term;
 
-import io.termd.core.ssh.netty.NettyIoHandlerBridge;
-import io.vertx.core.impl.ContextInternal;
-import org.apache.sshd.common.io.IoHandler;
-import org.apache.sshd.common.io.IoSession;
+import io.termd.core.telnet.TelnetHandler;
+import io.termd.core.tty.TelnetTtyTestBase;
+
+import java.io.Closeable;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class VertxIoHandlerBridge extends NettyIoHandlerBridge {
+public class VertxBinaryTelnetTtyTest extends TelnetTtyTestBase {
 
-  private final ContextInternal context;
-
-  public VertxIoHandlerBridge(ContextInternal context) {
-    this.context = context;
+  public VertxBinaryTelnetTtyTest() {
+    binary = true;
   }
 
   @Override
-  public void sessionCreated(IoHandler handler, IoSession session) throws Exception {
-    context.executeFromIO(() -> {
-      super.sessionCreated(handler, session);
-    });
+  protected Function<Supplier<TelnetHandler>, Closeable> serverFactory() {
+    return VertxTelnetTermTest.VERTX_SERVER;
   }
 
   @Override
-  public void sessionClosed(IoHandler handler, IoSession session) throws Exception {
-    context.executeFromIO(() -> {
-      super.sessionClosed(handler, session);
-    });
-  }
-
-  @Override
-  public void messageReceived(IoHandler handler, IoSession session, org.apache.sshd.common.util.Readable message) throws Exception {
-    context.executeFromIO(() -> {
-      super.messageReceived(handler, session, message);
-    });
+  protected void assertThreading(Thread connThread, Thread schedulerThread) throws Exception {
+    assertTrue(connThread.getName().startsWith("vert.x-eventloop-thread"));
+    assertEquals(connThread, schedulerThread);
   }
 }

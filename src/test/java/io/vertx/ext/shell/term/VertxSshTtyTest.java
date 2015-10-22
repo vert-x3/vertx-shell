@@ -30,7 +30,7 @@
  *
  */
 
-package io.vertx.ext.shell.net;
+package io.vertx.ext.shell.term;
 
 import io.termd.core.ssh.TtyCommand;
 import io.termd.core.ssh.netty.NettyIoServiceFactoryFactory;
@@ -39,7 +39,7 @@ import io.termd.core.tty.SshTtyTestBase;
 import io.termd.core.tty.TtyConnection;
 import io.vertx.core.Vertx;
 import io.vertx.core.impl.ContextInternal;
-import io.vertx.ext.shell.net.impl.VertxIoHandlerBridge;
+import io.vertx.ext.shell.term.impl.VertxIoHandlerBridge;
 import org.apache.sshd.common.session.Session;
 import org.apache.sshd.server.SshServer;
 import org.junit.After;

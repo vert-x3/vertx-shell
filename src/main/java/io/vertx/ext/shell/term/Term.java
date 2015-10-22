@@ -30,32 +30,30 @@
  *
  */
 
-package io.vertx.ext.shell.net;
+package io.vertx.ext.shell.term;
 
-import io.termd.core.telnet.TelnetHandler;
-import io.termd.core.tty.TelnetTtyTestBase;
-
-import java.io.Closeable;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import io.vertx.codegen.annotations.Fluent;
+import io.vertx.codegen.annotations.VertxGen;
+import io.vertx.core.Handler;
+import io.vertx.ext.shell.io.Stream;
+import io.vertx.ext.shell.io.Tty;
 
 /**
+ * The remote terminal.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class VertxAsciiTelnetTtyTest extends TelnetTtyTestBase {
-
-  public VertxAsciiTelnetTtyTest() {
-    binary = false;
-  }
+@VertxGen
+public interface Term extends Tty {
 
   @Override
-  protected Function<Supplier<TelnetHandler>, Closeable> serverFactory() {
-    return VertxTelnetTermTest.VERTX_SERVER;
-  }
+  Term resizehandler(Handler<Void> handler);
 
   @Override
-  protected void assertThreading(Thread connThread, Thread schedulerThread) throws Exception {
-    assertTrue(connThread.getName().startsWith("vert.x-eventloop-thread"));
-    assertEquals(connThread, schedulerThread);
-  }
+  Term setStdin(Stream stdin);
+
+  @Fluent
+  Term closeHandler(Handler<Void> handler);
+
+  void close();
 }

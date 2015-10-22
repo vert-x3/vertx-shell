@@ -28,10 +28,10 @@ public class ShellServiceOptionsConverter {
 
   public static void fromJson(JsonObject json, ShellServiceOptions obj) {
     if (json.getValue("sshOptions") instanceof JsonObject) {
-      obj.setSSHOptions(new io.vertx.ext.shell.net.SSHOptions((JsonObject)json.getValue("sshOptions")));
+      obj.setSSHOptions(new io.vertx.ext.shell.term.SSHOptions((JsonObject)json.getValue("sshOptions")));
     }
     if (json.getValue("telnetOptions") instanceof JsonObject) {
-      obj.setTelnetOptions(new io.vertx.ext.shell.net.TelnetOptions((JsonObject)json.getValue("telnetOptions")));
+      obj.setTelnetOptions(new io.vertx.ext.shell.term.TelnetOptions((JsonObject)json.getValue("telnetOptions")));
     }
     if (json.getValue("welcomeMessage") instanceof String) {
       obj.setWelcomeMessage((String)json.getValue("welcomeMessage"));

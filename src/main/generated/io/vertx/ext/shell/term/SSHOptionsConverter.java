@@ -14,15 +14,15 @@
  * under the License.
  */
 
-package io.vertx.ext.shell.net;
+package io.vertx.ext.shell.term;
 
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.JsonArray;
 
 /**
- * Converter for {@link io.vertx.ext.shell.net.SSHOptions}.
+ * Converter for {@link io.vertx.ext.shell.term.SSHOptions}.
  *
- * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.net.SSHOptions} original class using Vert.x codegen.
+ * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.term.SSHOptions} original class using Vert.x codegen.
  */
 public class SSHOptionsConverter {
 

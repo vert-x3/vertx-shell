@@ -127,13 +127,13 @@ CAUTION: Telnet does not provide any authentication nor encryption at all.
 
 == Telnet configuration
 
-The telnet connector is configured by `link:../dataobjects.html#ShellServiceOptions#setTelnetOptions(io.vertx.ext.shell.net.TelnetOptions)[telnetOptions]`,
+The telnet connector is configured by `link:../dataobjects.html#ShellServiceOptions#setTelnetOptions(io.vertx.ext.shell.term.TelnetOptions)[telnetOptions]`,
 the `link:../dataobjects.html#TelnetOptions[TelnetOptions]` extends the `link:../../vertx-core/dataobjects.html#NetServerOptions[NetServerOptions]` so they
 have the exact same configuration.
 
 == SSH configuration
 
-The SSH connector is configured by `link:../dataobjects.html#ShellServiceOptions#setSSHOptions(io.vertx.ext.shell.net.SSHOptions)[SSHOptions]`:
+The SSH connector is configured by `link:../dataobjects.html#ShellServiceOptions#setSSHOptions(io.vertx.ext.shell.term.SSHOptions)[SSHOptions]`:
 
 - `link:../dataobjects.html#SSHOptions#setPort(int)[port]`: port
 - `link:../dataobjects.html#SSHOptions#setHost(java.lang.String)[host]`: host

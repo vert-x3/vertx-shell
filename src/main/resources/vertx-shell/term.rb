@@ -1,18 +1,18 @@
 require 'vertx-shell/stream'
 require 'vertx-shell/tty'
 require 'vertx/util/utils.rb'
-# Generated from io.vertx.ext.shell.net.Terminal
+# Generated from io.vertx.ext.shell.term.Term
 module VertxShell
   #  The remote terminal.
-  class Terminal < ::VertxShell::Tty
+  class Term < ::VertxShell::Tty
     # @private
-    # @param j_del [::VertxShell::Terminal] the java delegate
+    # @param j_del [::VertxShell::Term] the java delegate
     def initialize(j_del)
       super(j_del)
       @j_del = j_del
     end
     # @private
-    # @return [::VertxShell::Terminal] the underlying java delegate
+    # @return [::VertxShell::Term] the underlying java delegate
     def j_del
       @j_del
     end

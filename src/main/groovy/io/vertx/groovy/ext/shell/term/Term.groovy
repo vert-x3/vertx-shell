@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package io.vertx.groovy.ext.shell.net;
+package io.vertx.groovy.ext.shell.term;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
@@ -25,24 +25,24 @@ import io.vertx.core.Handler
  * The remote terminal.
 */
 @CompileStatic
-public class Terminal extends Tty {
-  private final def io.vertx.ext.shell.net.Terminal delegate;
-  public Terminal(Object delegate) {
-    super((io.vertx.ext.shell.net.Terminal) delegate);
-    this.delegate = (io.vertx.ext.shell.net.Terminal) delegate;
+public class Term extends Tty {
+  private final def io.vertx.ext.shell.term.Term delegate;
+  public Term(Object delegate) {
+    super((io.vertx.ext.shell.term.Term) delegate);
+    this.delegate = (io.vertx.ext.shell.term.Term) delegate;
   }
   public Object getDelegate() {
     return delegate;
   }
-  public Terminal resizehandler(Handler<Void> handler) {
+  public Term resizehandler(Handler<Void> handler) {
     ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).resizehandler(handler);
     return this;
   }
-  public Terminal setStdin(Stream stdin) {
+  public Term setStdin(Stream stdin) {
     ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).setStdin((io.vertx.ext.shell.io.Stream)stdin.getDelegate());
     return this;
   }
-  public Terminal closeHandler(Handler<Void> handler) {
+  public Term closeHandler(Handler<Void> handler) {
     this.delegate.closeHandler(handler);
     return this;
   }

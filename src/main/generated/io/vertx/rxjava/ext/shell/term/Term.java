@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package io.vertx.rxjava.ext.shell.net;
+package io.vertx.rxjava.ext.shell.term;
 
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
@@ -27,14 +27,14 @@ import io.vertx.core.Handler;
  * The remote terminal.
  *
  * <p/>
- * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.net.Terminal original} non RX-ified interface using Vert.x codegen.
+ * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.term.Term original} non RX-ified interface using Vert.x codegen.
  */
 
-public class Terminal extends Tty {
+public class Term extends Tty {
 
-  final io.vertx.ext.shell.net.Terminal delegate;
+  final io.vertx.ext.shell.term.Term delegate;
 
-  public Terminal(io.vertx.ext.shell.net.Terminal delegate) {
+  public Term(io.vertx.ext.shell.term.Term delegate) {
     super(delegate);
     this.delegate = delegate;
   }
@@ -43,17 +43,17 @@ public class Terminal extends Tty {
     return delegate;
   }
 
-  public Terminal resizehandler(Handler<Void> handler) { 
+  public Term resizehandler(Handler<Void> handler) { 
     ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) delegate).resizehandler(handler);
     return this;
   }
 
-  public Terminal setStdin(Stream stdin) { 
+  public Term setStdin(Stream stdin) { 
     ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) delegate).setStdin((io.vertx.ext.shell.io.Stream) stdin.getDelegate());
     return this;
   }
 
-  public Terminal closeHandler(Handler<Void> handler) { 
+  public Term closeHandler(Handler<Void> handler) { 
     this.delegate.closeHandler(handler);
     return this;
   }
@@ -63,7 +63,7 @@ public class Terminal extends Tty {
   }
 
 
-  public static Terminal newInstance(io.vertx.ext.shell.net.Terminal arg) {
-    return arg != null ? new Terminal(arg) : null;
+  public static Term newInstance(io.vertx.ext.shell.term.Term arg) {
+    return arg != null ? new Term(arg) : null;
   }
 }

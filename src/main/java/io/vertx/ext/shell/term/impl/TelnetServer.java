@@ -30,7 +30,7 @@
  *
  */
 
-package io.vertx.ext.shell.net.impl;
+package io.vertx.ext.shell.term.impl;
 
 import io.termd.core.telnet.TelnetTtyConnection;
 import io.termd.core.tty.TtyConnection;
@@ -39,7 +39,9 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.net.NetServer;
-import io.vertx.ext.shell.net.TelnetOptions;
+import io.vertx.ext.shell.term.TelnetOptions;
+import io.vertx.ext.shell.term.TermServer;
+import io.vertx.ext.shell.term.Term;
 
 import java.util.function.Consumer;
 
@@ -48,7 +50,7 @@ import java.util.function.Consumer;
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class TelnetServer {
+public class TelnetServer implements TermServer {
 
   private final Vertx vertx;
   private final TelnetOptions options;
@@ -69,13 +71,24 @@ public class TelnetServer {
     return this;
   }
 
-  public void listen(Handler<AsyncResult<Void>> listenHandler) {
+  @Override
+  public TermServer termHandler(Handler<Term> handler) {
+    if (handler != null) {
+      setHandler(new TermConnectionHandler(handler));
+    } else {
+      setHandler(null);
+    }
+    return this;
+  }
+
+  @Override
+  public TermServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
     if (server == null) {
       server = vertx.createNetServer(options);
       server.connectHandler(new TelnetSocketHandler(vertx, () -> new TelnetTtyConnection(true, true, handler)));
       server.listen(ar -> {
         if (ar.succeeded()) {
-          listenHandler.handle(Future.succeededFuture());
+          listenHandler.handle(Future.succeededFuture(this));
         } else {
           listenHandler.handle(Future.failedFuture(ar.cause()));
         }
@@ -83,6 +96,12 @@ public class TelnetServer {
     } else {
       listenHandler.handle(Future.failedFuture("Already started"));
     }
+    return this;
+  }
+
+  @Override
+  public void close() {
+    close(null);
   }
 
   public void close(Handler<AsyncResult<Void>> listenHandler) {
