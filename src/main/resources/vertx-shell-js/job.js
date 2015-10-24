@@ -53,7 +53,7 @@ var Job = function(j_val) {
   this.status = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return (j_job["status()"]()).toString();
+      return utils.convReturnEnum(j_job["status()"]());
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

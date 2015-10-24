@@ -41,7 +41,7 @@ var Stream = function(j_val) {
     if (__args.length === 1 && typeof __args[0] === 'string') {
       j_stream["write(java.lang.String)"](__args[0]);
       return that;
-    }  else if (__args.length === 1 && typeof __args[0] === 'object') {
+    }  else if (__args.length === 1 && (typeof __args[0] === 'object' && __args[0] != null)) {
       j_stream["write(io.vertx.core.json.JsonObject)"](utils.convParamJsonObject(__args[0]));
       return that;
     } else throw new TypeError('function invoked with invalid arguments');

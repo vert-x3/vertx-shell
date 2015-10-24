@@ -286,15 +286,16 @@ public class ShellServiceTest {
       context.assertEquals("the_value", session.get("the_key"));
       process.end();
     });
-    registry.registerCommand(cmd.build());
-    registry.createProcess("foo", context.asyncAssertSuccess(process -> {
-      TestProcessContext ctx = new TestProcessContext();
-      ctx.session().put("the_key", "the_value");
-      ctx.endHandler(status -> {
-        context.assertEquals(0, status);
-        async.complete();
-      });
-      process.execute(ctx);
+    registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
+      registry.createProcess("foo", context.asyncAssertSuccess(process -> {
+        TestProcessContext ctx = new TestProcessContext();
+        ctx.session().put("the_key", "the_value");
+        ctx.endHandler(status -> {
+          context.assertEquals(0, status);
+          async.complete();
+        });
+        process.execute(ctx);
+      }));
     }));
   }
 
@@ -309,15 +310,16 @@ public class ShellServiceTest {
       session.put("the_key", "the_value");
       process.end();
     });
-    registry.registerCommand(cmd.build());
-    registry.createProcess("foo", context.asyncAssertSuccess(process -> {
-      TestProcessContext ctx = new TestProcessContext();
-      ctx.endHandler(status -> {
-        context.assertEquals(0, status);
-        context.assertEquals("the_value", ctx.session().get("the_key"));
-        async.complete();
-      });
-      process.execute(ctx);
+    registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
+      registry.createProcess("foo", context.asyncAssertSuccess(process -> {
+        TestProcessContext ctx = new TestProcessContext();
+        ctx.endHandler(status -> {
+          context.assertEquals(0, status);
+          context.assertEquals("the_value", ctx.session().get("the_key"));
+          async.complete();
+        });
+        process.execute(ctx);
+      }));
     }));
   }
 
@@ -331,16 +333,17 @@ public class ShellServiceTest {
       context.assertEquals("the_value", session.remove("the_key"));
       process.end();
     });
-    registry.registerCommand(cmd.build());
-    registry.createProcess("foo", context.asyncAssertSuccess(process -> {
-      TestProcessContext ctx = new TestProcessContext();
-      ctx.session().put("the_key", "the_value");
-      ctx.endHandler(status -> {
-        context.assertEquals(0, status);
-        context.assertNull(ctx.session().get("the_key"));
-        async.complete();
-      });
-      process.execute(ctx);
+    registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
+      registry.createProcess("foo", context.asyncAssertSuccess(process -> {
+        TestProcessContext ctx = new TestProcessContext();
+        ctx.session().put("the_key", "the_value");
+        ctx.endHandler(status -> {
+          context.assertEquals(0, status);
+          context.assertNull(ctx.session().get("the_key"));
+          async.complete();
+        });
+        process.execute(ctx);
+      }));
     }));
   }
 
