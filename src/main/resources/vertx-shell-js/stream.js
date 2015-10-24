@@ -33,17 +33,24 @@ var Stream = function(j_val) {
   /**
 
    @public
-   @param data {Object} 
-   @return {Stream}
+   @param event {string} 
    */
-  this.write = function() {
+  this.handle = function(event) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'string') {
-      j_stream["write(java.lang.String)"](__args[0]);
-      return that;
-    }  else if (__args.length === 1 && (typeof __args[0] === 'object' && __args[0] != null)) {
-      j_stream["write(io.vertx.core.json.JsonObject)"](utils.convParamJsonObject(__args[0]));
-      return that;
+      j_stream["handle(java.lang.String)"](event);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param data {string} 
+   */
+  this.write = function(data) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'string') {
+      j_stream["write(java.lang.String)"](data);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -51,36 +58,6 @@ var Stream = function(j_val) {
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
   this._jdel = j_stream;
-};
-
-/**
-
- @memberof module:vertx-shell-js/stream
- @param handler {function} 
- @return {Stream}
- */
-Stream.ofString = function(handler) {
-  var __args = arguments;
-  if (__args.length === 1 && typeof __args[0] === 'function') {
-    return utils.convReturnVertxGen(JStream["ofString(io.vertx.core.Handler)"](function(jVal) {
-    handler(jVal);
-  }), Stream);
-  } else throw new TypeError('function invoked with invalid arguments');
-};
-
-/**
-
- @memberof module:vertx-shell-js/stream
- @param handler {function} 
- @return {Stream}
- */
-Stream.ofJson = function(handler) {
-  var __args = arguments;
-  if (__args.length === 1 && typeof __args[0] === 'function') {
-    return utils.convReturnVertxGen(JStream["ofJson(io.vertx.core.Handler)"](function(jVal) {
-    handler(utils.convReturnJson(jVal));
-  }), Stream);
-  } else throw new TypeError('function invoked with invalid arguments');
 };
 
 // We export the Constructor function

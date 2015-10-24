@@ -210,6 +210,11 @@ public class SSHServer implements TermServer {
   }
 
   @Override
+  public int actualPort() {
+    return nativeServer.getPort();
+  }
+
+  @Override
   public void close() {
     close(ar -> {});
   }

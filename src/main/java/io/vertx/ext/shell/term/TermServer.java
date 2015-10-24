@@ -37,6 +37,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.term.impl.SSHServer;
+import io.vertx.ext.shell.term.impl.TelnetServer;
 
 /**
  * A server for terminal based applications.
@@ -63,8 +64,8 @@ public interface TermServer {
    * @param options the telnet options
    * @return the term server
    */
-  static TermServer createTelnetServer(Vertx vertx, SSHOptions options) {
-    return new SSHServer(vertx, options);
+  static TermServer createTelnetServer(Vertx vertx, TelnetOptions options) {
+    return new TelnetServer(vertx, options);
   }
 
   /**
@@ -96,6 +97,14 @@ public interface TermServer {
    */
   @Fluent
   TermServer listen(Handler<AsyncResult<TermServer>> listenHandler);
+
+  /**
+   * The actual port the server is listening on. This is useful if you bound the server specifying 0 as port number
+   * signifying an ephemeral port
+   *
+   * @return the actual port the server is listening on.
+   */
+  int actualPort();
 
   void close();
 

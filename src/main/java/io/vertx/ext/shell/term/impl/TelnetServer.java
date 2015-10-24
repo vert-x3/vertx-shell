@@ -85,7 +85,9 @@ public class TelnetServer implements TermServer {
   public TermServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
     if (server == null) {
       server = vertx.createNetServer(options);
-      server.connectHandler(new TelnetSocketHandler(vertx, () -> new TelnetTtyConnection(true, true, handler)));
+      server.connectHandler(new TelnetSocketHandler(vertx, () -> {
+        return new TelnetTtyConnection(true, true, handler);
+      }));
       server.listen(ar -> {
         if (ar.succeeded()) {
           listenHandler.handle(Future.succeededFuture(this));
@@ -110,5 +112,9 @@ public class TelnetServer implements TermServer {
     } else {
       listenHandler.handle(Future.failedFuture("No started"));
     }
+  }
+
+  public int actualPort() {
+    return server.actualPort();
   }
 }
