@@ -297,16 +297,66 @@ command.process_handler() { |process|
 
 ----
 
-=== Terminal size
+When the command executes the `link:yardoc/VertxShell/CommandProcess.html[process]` is provided for interacting
+with the shell. A `link:yardoc/VertxShell/CommandProcess.html[CommandProcess]` extends `link:yardoc/VertxShell/Tty.html[Tty]`
+which is used for interacting with the terminal.
+
+=== Terminal usage
+
+==== terminal I/O
+
+The `link:yardoc/VertxShell/Tty.html#set_stdin-instance_method[setStdin]` handler is used to be notified when the terminal
+receives data, e.g the user uses his keyboard:
+
+[source,ruby]
+----
+tty.set_stdin(lambda { |data|
+  puts "Received #{data}"
+})
+
+----
+
+A command can use the `link:yardoc/VertxShell/Tty.html#stdout-instance_method[stdout]` to write to the standard output.
+
+[source,ruby]
+----
+tty.stdout().write("Hello World")
+
+----
+
+==== Terminal size
 
 The current terminal size can be obtained using `link:yardoc/VertxShell/Tty.html#width-instance_method[width]` and
 `link:yardoc/VertxShell/Tty.html#height-instance_method[height]`.
 
 [source,ruby]
 ----
-command.process_handler() { |process|
-  process.write("Current terminal size: (#{process.width()}, #{process.height()})").end()
+tty.stdout().write("Current terminal size: (#{tty.width()}, #{tty.height()})")
+
+----
+
+==== Resize event
+
+When the size of the terminal changes the `link:yardoc/VertxShell/Tty.html#resizehandler-instance_method[resizehandler]`
+is called, the new terminal size can be obtained with `link:yardoc/VertxShell/Tty.html#width-instance_method[width]` and
+`link:yardoc/VertxShell/Tty.html#height-instance_method[height]`.
+
+[source,ruby]
+----
+tty.resizehandler() { |v|
+  puts "terminal resized : #{tty.width()} #{tty.height()}"
 }
+
+----
+
+==== Terminal type
+
+The terminal type is useful for sending escape codes to the remote terminal: `link:yardoc/VertxShell/Tty.html#type-instance_method[type]`
+returns the current terminal type, it can be null if the terminal has not advertised the value.
+
+[source,ruby]
+----
+puts "terminal type : #{tty.type()}"
 
 ----
 
@@ -325,43 +375,6 @@ command.process_handler() { |process|
     session.put("my key", "my value")
   end
 
-  process.end()
-}
-
-----
-
-=== Process I/O
-
-A command can set a `link:yardoc/VertxShell/CommandProcess.html#set_stdin-instance_method[setStdin]` handler
-to be notified when the shell receives data, e.g the user uses his keyboard:
-
-[source,ruby]
-----
-command.process_handler() { |process|
-  process.set_stdin(lambda { |data|
-    puts "Received #{data}"
-  })
-}
-
-----
-
-A command can use the `link:yardoc/VertxShell/Tty.html#stdout-instance_method[stdout]` to write to the standard output.
-
-[source,ruby]
-----
-command.process_handler() { |process|
-  process.stdout().write("Hello World")
-  process.end()
-}
-
-----
-
-Or it can use the `link:yardoc/VertxShell/CommandProcess.html#write-instance_method[write]` method:
-
-[source,ruby]
-----
-command.process_handler() { |process|
-  process.write("Hello World")
   process.end()
 }
 
@@ -451,12 +464,6 @@ command.process_handler() { |process|
 
 ----
 
-==== Resize event
-
-When the size of the terminal changes the `link:yardoc/VertxShell/CommandProcess.html#resizehandler-instance_method[resizehandler]`
-is called, the new terminal size can be obtained with `link:yardoc/VertxShell/Tty.html#width-instance_method[width]` and
-`link:yardoc/VertxShell/Tty.html#height-instance_method[height]`.
-
 === Command completion
 
 A command can provide a completion handler when it wants to provide contextual command line interface completion.
@@ -513,13 +520,5 @@ server.listen()
 
 ----
 
-The `link:yardoc/VertxShell/Tty.html#resizehandler-instance_method[resizehandler]` is useful for being noticed when the user resize the terminal
-window:
-
-[source,ruby]
-----
-term.resizehandler() { |v|
-  puts "terminal resized : #{term.width()} #{term.height()}"
-}
-
-----
+The `link:yardoc/VertxShell/Term.html[Term]` is also a `link:yardoc/VertxShell/Tty.html[Tty]`, this section explains
+how to use the tty.

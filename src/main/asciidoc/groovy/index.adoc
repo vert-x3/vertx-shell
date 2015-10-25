@@ -298,16 +298,66 @@ command.processHandler({ process ->
 
 ----
 
-=== Terminal size
+When the command executes the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html[process]` is provided for interacting
+with the shell. A `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html[CommandProcess]` extends `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html[Tty]`
+which is used for interacting with the terminal.
+
+=== Terminal usage
+
+==== terminal I/O
+
+The `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#setStdin(io.vertx.ext.shell.io.Stream)[setStdin]` handler is used to be notified when the terminal
+receives data, e.g the user uses his keyboard:
+
+[source,groovy]
+----
+tty.setStdin({ data ->
+  println("Received ${data}")
+})
+
+----
+
+A command can use the `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#stdout()[stdout]` to write to the standard output.
+
+[source,groovy]
+----
+tty.stdout().write("Hello World")
+
+----
+
+==== Terminal size
 
 The current terminal size can be obtained using `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#width()[width]` and
 `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#height()[height]`.
 
 [source,groovy]
 ----
-command.processHandler({ process ->
-  process.write("Current terminal size: (${process.width()}, ${process.height()})").end()
+tty.stdout().write("Current terminal size: (${tty.width()}, ${tty.height()})")
+
+----
+
+==== Resize event
+
+When the size of the terminal changes the `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#resizehandler(io.vertx.core.Handler)[resizehandler]`
+is called, the new terminal size can be obtained with `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#width()[width]` and
+`link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#height()[height]`.
+
+[source,groovy]
+----
+tty.resizehandler({ v ->
+  println("terminal resized : ${tty.width()} ${tty.height()}")
 })
+
+----
+
+==== Terminal type
+
+The terminal type is useful for sending escape codes to the remote terminal: `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#type()[type]`
+returns the current terminal type, it can be null if the terminal has not advertised the value.
+
+[source,groovy]
+----
+println("terminal type : ${tty.type()}")
 
 ----
 
@@ -326,43 +376,6 @@ command.processHandler({ process ->
     session.put("my key", "my value")
   }
 
-  process.end()
-})
-
-----
-
-=== Process I/O
-
-A command can set a `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#setStdin(io.vertx.ext.shell.io.Stream)[setStdin]` handler
-to be notified when the shell receives data, e.g the user uses his keyboard:
-
-[source,groovy]
-----
-command.processHandler({ process ->
-  process.setStdin({ data ->
-    println("Received ${data}")
-  })
-})
-
-----
-
-A command can use the `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#stdout()[stdout]` to write to the standard output.
-
-[source,groovy]
-----
-command.processHandler({ process ->
-  process.stdout().write("Hello World")
-  process.end()
-})
-
-----
-
-Or it can use the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#write(java.lang.String)[write]` method:
-
-[source,groovy]
-----
-command.processHandler({ process ->
-  process.write("Hello World")
   process.end()
 })
 
@@ -452,12 +465,6 @@ command.processHandler({ process ->
 
 ----
 
-==== Resize event
-
-When the size of the terminal changes the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#resizehandler(io.vertx.core.Handler)[resizehandler]`
-is called, the new terminal size can be obtained with `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#width()[width]` and
-`link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#height()[height]`.
-
 === Command completion
 
 A command can provide a completion handler when it wants to provide contextual command line interface completion.
@@ -514,13 +521,5 @@ server.listen()
 
 ----
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#resizehandler(io.vertx.core.Handler)[resizehandler]` is useful for being noticed when the user resize the terminal
-window:
-
-[source,groovy]
-----
-term.resizehandler({ v ->
-  println("terminal resized : ${term.width()} ${term.height()}")
-})
-
-----
+The `link:groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` is also a `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html[Tty]`, this section explains
+how to use the tty.

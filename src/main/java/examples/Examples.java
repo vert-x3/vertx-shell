@@ -41,6 +41,7 @@ import io.vertx.core.cli.Option;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
+import io.vertx.ext.shell.io.Tty;
 import io.vertx.ext.shell.term.SSHOptions;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.ShellService;
@@ -186,32 +187,28 @@ public class Examples {
   }
 
 
-  public void readStdin(CommandBuilder command) {
-    command.processHandler(process -> {
-      process.setStdin(data -> {
-        System.out.println("Received " + data);
-      });
+  public void readStdin(Tty tty) {
+    tty.setStdin(data -> {
+      System.out.println("Received " + data);
     });
   }
 
-  public void writeStdout(CommandBuilder command) {
-    command.processHandler(process -> {
-      process.stdout().write("Hello World");
-      process.end();
+  public void writeStdout(Tty tty) {
+    tty.stdout().write("Hello World");
+  }
+
+  public void terminalSize(Tty tty) {
+    tty.stdout().write("Current terminal size: (" + tty.width() + ", " + tty.height() + ")");
+  }
+
+  public void resizeHandlerTerminal(Tty tty) {
+    tty.resizehandler(v -> {
+      System.out.println("terminal resized : " + tty.width() + " " + tty.height());
     });
   }
 
-  public void write(CommandBuilder command) {
-    command.processHandler(process -> {
-      process.write("Hello World");
-      process.end();
-    });
-  }
-
-  public void terminalSize(CommandBuilder command) {
-    command.processHandler(process -> {
-      process.write("Current terminal size: (" + process.width() + ", " + process.height() + ")").end();
-    });
+  public void terminalType(Tty tty) {
+    System.out.println("terminal type : " + tty.type());
   }
 
   public void asyncCommand(CommandBuilder command) {
@@ -277,11 +274,5 @@ public class Examples {
       });
     });
     server.listen();
-  }
-
-  public void resizeHandlerTerminal(Term term) {
-    term.resizehandler(v -> {
-      System.out.println("terminal resized : " + term.width() + " " + term.height());
-    });
   }
 }

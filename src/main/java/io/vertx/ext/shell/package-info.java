@@ -224,14 +224,58 @@
  * {@link examples.Examples#cliCommandWithHelp()}
  * ----
  *
- * === Terminal size
+ * When the command executes the {@link io.vertx.ext.shell.command.CommandProcess process} is provided for interacting
+ * with the shell. A {@link io.vertx.ext.shell.command.CommandProcess} extends {@link io.vertx.ext.shell.io.Tty}
+ * which is used for interacting with the terminal.
  *
- * The current terminal size can be obtained using {@link io.vertx.ext.shell.command.CommandProcess#width()} and
- * {@link io.vertx.ext.shell.command.CommandProcess#height()}.
+ * === Terminal usage
+ *
+ * ==== terminal I/O
+ *
+ * The {@link io.vertx.ext.shell.io.Tty#setStdin} handler is used to be notified when the terminal
+ * receives data, e.g the user uses his keyboard:
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#readStdin}
+ * ----
+ *
+ * A command can use the {@link io.vertx.ext.shell.io.Tty#stdout()} to write to the standard output.
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#writeStdout}
+ * ----
+ *
+ * ==== Terminal size
+ *
+ * The current terminal size can be obtained using {@link io.vertx.ext.shell.io.Tty#width()} and
+ * {@link io.vertx.ext.shell.io.Tty#height()}.
  *
  * [source,$lang]
  * ----
  * {@link examples.Examples#terminalSize}
+ * ----
+ *
+ * ==== Resize event
+ *
+ * When the size of the terminal changes the {@link io.vertx.ext.shell.io.Tty#resizehandler(io.vertx.core.Handler)}
+ * is called, the new terminal size can be obtained with {@link io.vertx.ext.shell.io.Tty#width()} and
+ * {@link io.vertx.ext.shell.io.Tty#height()}.
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#resizeHandlerTerminal}
+ * ----
+ *
+ * ==== Terminal type
+ *
+ * The terminal type is useful for sending escape codes to the remote terminal: {@link io.vertx.ext.shell.io.Tty#type()}
+ * returns the current terminal type, it can be null if the terminal has not advertised the value.
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#terminalType}
  * ----
  *
  * === Shell session
@@ -242,30 +286,6 @@
  * [source,$lang]
  * ----
  * {@link examples.Examples#session}
- * ----
- *
- * === Process I/O
- *
- * A command can set a {@link io.vertx.ext.shell.command.CommandProcess#setStdin} handler
- * to be notified when the shell receives data, e.g the user uses his keyboard:
- *
- * [source,$lang]
- * ----
- * {@link examples.Examples#readStdin}
- * ----
- *
- * A command can use the {@link io.vertx.ext.shell.command.CommandProcess#stdout()} to write to the standard output.
- *
- * [source,$lang]
- * ----
- * {@link examples.Examples#writeStdout}
- * ----
- *
- * Or it can use the {@link io.vertx.ext.shell.command.CommandProcess#write(java.lang.String)} method:
- *
- * [source,$lang]
- * ----
- * {@link examples.Examples#write}
  * ----
  *
  * === Process termination
@@ -316,12 +336,6 @@
  * {@link examples.Examples#suspendResumeHandler}
  * ----
  *
- * ==== Resize event
- *
- * When the size of the terminal changes the {@link io.vertx.ext.shell.command.CommandProcess#resizehandler(io.vertx.core.Handler)}
- * is called, the new terminal size can be obtained with {@link io.vertx.ext.shell.command.CommandProcess#width()} and
- * {@link io.vertx.ext.shell.command.CommandProcess#height()}.
- *
  * === Command completion
  *
  * A command can provide a completion handler when it wants to provide contextual command line interface completion.
@@ -358,15 +372,8 @@
  * {@link examples.Examples#telnetEchoTerminal(io.vertx.core.Vertx)}
  * ----
  *
- * The {@link io.vertx.ext.shell.io.Tty#resizehandler} is useful for being noticed when the user resize the terminal
- * window:
- *
- * [source,$lang]
- * ----
- * {@link examples.Examples#resizeHandlerTerminal(io.vertx.ext.shell.term.Term)}
- * ----
- *
- *
+ * The {@link io.vertx.ext.shell.term.Term} is also a {@link io.vertx.ext.shell.io.Tty}, this section explains
+ * how to use the tty.
  */
 @ModuleGen(name = "vertx-shell", groupPackage = "io.vertx")
 @Document(fileName = "index.adoc")
