@@ -476,7 +476,7 @@ Completion ends with a call to `link:groovydoc/io/vertx/groovy/ext/shell/cli/Com
 
 == Terminal servers
 
-Vert.x Shell provides also bare terminal servers for those who need to write pure terminal applications.
+Vert.x Shell also provides bare terminal servers for those who need to write pure terminal applications.
 
 The terminal server `link:groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` handler accepts incoming terminal connections.
 When a remote terminal connects, the `link:groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` can be used to interact with connected

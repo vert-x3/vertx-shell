@@ -44,6 +44,11 @@ public class Pty {
     return ret;
   }
 
+  public static Pty create(String term) { 
+    Pty ret= Pty.newInstance(io.vertx.ext.shell.io.Pty.create(term));
+    return ret;
+  }
+
   public Stream stdin() { 
     Stream ret= Stream.newInstance(this.delegate.stdin());
     return ret;

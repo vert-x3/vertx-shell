@@ -33,6 +33,21 @@ var Tty = function(j_val) {
   var that = this;
 
   /**
+   @return the declared tty type, for instance , ,  etc... it can be null
+   when the tty does not have declared its type.
+
+   @public
+
+   @return {string}
+   */
+  this.type = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return j_tty["type()"]();
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
    @return the current width, i.e the number of rows or  if unknown
 
    @public

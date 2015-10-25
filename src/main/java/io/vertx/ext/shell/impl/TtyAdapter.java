@@ -369,6 +369,11 @@ public class TtyAdapter {
     }
 
     @Override
+    public String type() {
+      return conn.terminalType();
+    }
+
+    @Override
     public int width() {
       return size() != null ? size().x() : -1;
     }

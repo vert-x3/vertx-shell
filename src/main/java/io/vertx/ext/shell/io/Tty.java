@@ -45,6 +45,12 @@ import io.vertx.core.Handler;
 public interface Tty {
 
   /**
+   * @return the declared tty type, for instance {@literal vt100}, {@literal xterm-256},  etc... it can be null
+   * when the tty does not have declared its type.
+   */
+  String type();
+
+  /**
    * @return the current width, i.e the number of rows or {@literal -1} if unknown
    */
   int width();

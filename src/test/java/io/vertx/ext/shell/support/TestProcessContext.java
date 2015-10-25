@@ -56,6 +56,11 @@ public class TestProcessContext implements ProcessContext, Tty {
   private Handler<Void> suspendHandler;
 
   @Override
+  public String type() {
+    return null;
+  }
+
+  @Override
   public Tty tty() {
     return this;
   }

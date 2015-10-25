@@ -43,7 +43,11 @@ import io.vertx.ext.shell.io.impl.PtyImpl;
 public interface Pty {
 
   static Pty create() {
-    return new PtyImpl();
+    return new PtyImpl(null);
+  }
+
+  static Pty create(String term) {
+    return new PtyImpl(term);
   }
 
   Stream stdin();
@@ -52,7 +56,5 @@ public interface Pty {
   Pty setSize(int width, int height);
 
   Tty slave();
-
-
 
 }

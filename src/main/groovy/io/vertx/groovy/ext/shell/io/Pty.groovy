@@ -34,6 +34,10 @@ public class Pty {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.io.Pty.create(), io.vertx.groovy.ext.shell.io.Pty.class);
     return ret;
   }
+  public static Pty create(String term) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.io.Pty.create(term), io.vertx.groovy.ext.shell.io.Pty.class);
+    return ret;
+  }
   public Stream stdin() {
     def ret= InternalHelper.safeCreate(this.delegate.stdin(), io.vertx.groovy.ext.shell.io.Stream.class);
     return ret;

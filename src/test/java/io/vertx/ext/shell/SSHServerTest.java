@@ -216,4 +216,18 @@ public class SSHServerTest extends SSHTestBase {
       Thread.sleep(10);
     }
   }
+
+  @Test
+  public void testType(TestContext context) throws Exception {
+    Async async = context.async();
+    termHandler = term -> {
+      context.assertEquals("vt100", term.type());
+      async.complete();
+    };
+    startShell();
+    Session session = createSession("paulo", "secret", false);
+    session.connect();
+    Channel channel = session.openChannel("shell");
+    channel.connect();
+  }
 }

@@ -46,8 +46,14 @@ public class PtyImpl implements Pty {
   private int height = 24;
   private Stream stdin;
   private Stream stdout;
+  private final String term ;
   private Handler<Void> resizeHandler;
   final Tty slave = new Tty() {
+    @Override
+    public String type() {
+      return term;
+    }
+
     @Override
     public int width() {
       return width;
@@ -75,6 +81,10 @@ public class PtyImpl implements Pty {
       return this;
     }
   };
+
+  public PtyImpl(String term) {
+    this.term = term;
+  }
 
   @Override
   public Tty slave() {

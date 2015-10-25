@@ -41,6 +41,16 @@ public class Tty {
   }
 
   /**
+   * @return the declared tty type, for instance , ,  etc... it can be null
+   * when the tty does not have declared its type.
+   * @return 
+   */
+  public String type() { 
+    String ret = this.delegate.type();
+    return ret;
+  }
+
+  /**
    * @return the current width, i.e the number of rows or  if unknown
    * @return 
    */

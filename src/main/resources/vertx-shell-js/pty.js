@@ -82,13 +82,15 @@ var Pty = function(j_val) {
 /**
 
  @memberof module:vertx-shell-js/pty
-
+ @param term {string} 
  @return {Pty}
  */
 Pty.create = function() {
   var __args = arguments;
   if (__args.length === 0) {
     return utils.convReturnVertxGen(JPty["create()"](), Pty);
+  }else if (__args.length === 1 && typeof __args[0] === 'string') {
+    return utils.convReturnVertxGen(JPty["create(java.lang.String)"](__args[0]), Pty);
   } else throw new TypeError('function invoked with invalid arguments');
 };
 

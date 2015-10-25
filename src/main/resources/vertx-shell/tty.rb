@@ -14,6 +14,15 @@ module VertxShell
     def j_del
       @j_del
     end
+    #  @return the declared tty type, for instance , ,  etc... it can be null
+    #  when the tty does not have declared its type.
+    # @return [String]
+    def type
+      if !block_given?
+        return @j_del.java_method(:type, []).call()
+      end
+      raise ArgumentError, "Invalid arguments when calling type()"
+    end
     #  @return the current width, i.e the number of rows or  if unknown
     # @return [Fixnum]
     def width

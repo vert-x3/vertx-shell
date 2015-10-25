@@ -54,6 +54,12 @@ class TermConnectionHandler implements Consumer<TtyConnection> {
   @Override
   public void accept(TtyConnection conn) {
     handler.handle(new Term() {
+
+      @Override
+      public String type() {
+        return conn.terminalType();
+      }
+
       @Override
       public Term setStdin(Stream stdin) {
         if (stdin == null) {

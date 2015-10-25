@@ -15,12 +15,15 @@ module VertxShell
     def j_del
       @j_del
     end
+    # @param [String] term 
     # @return [::VertxShell::Pty]
-    def self.create
-      if !block_given?
+    def self.create(term=nil)
+      if !block_given? && term == nil
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellIo::Pty.java_method(:create, []).call(),::VertxShell::Pty)
+      elsif term.class == String && !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellIo::Pty.java_method(:create, [Java::java.lang.String.java_class]).call(term),::VertxShell::Pty)
       end
-      raise ArgumentError, "Invalid arguments when calling create()"
+      raise ArgumentError, "Invalid arguments when calling create(term)"
     end
     # @return [::VertxShell::Stream]
     def stdin

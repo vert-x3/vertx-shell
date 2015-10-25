@@ -128,6 +128,11 @@ public class CommandRegistrationImpl implements CommandRegistration {
           }
 
           @Override
+          public String type() {
+            return context.tty().type();
+          }
+
+          @Override
           public CommandLine commandLine() {
             return cl;
           }

@@ -475,7 +475,7 @@ Completion ends with a call to `link:jsdoc/completion-Completion.html#complete[c
 
 == Terminal servers
 
-Vert.x Shell provides also bare terminal servers for those who need to write pure terminal applications.
+Vert.x Shell also provides bare terminal servers for those who need to write pure terminal applications.
 
 The terminal server `link:jsdoc/term-Term.html[Term]` handler accepts incoming terminal connections.
 When a remote terminal connects, the `link:jsdoc/term-Term.html[Term]` can be used to interact with connected

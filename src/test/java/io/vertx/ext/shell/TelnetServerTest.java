@@ -32,7 +32,6 @@
 
 package io.vertx.ext.shell;
 
-import io.termd.core.telnet.TelnetClientRule;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.term.TelnetOptions;
@@ -47,7 +46,6 @@ import org.apache.commons.net.telnet.TelnetClient;
 import org.apache.commons.net.telnet.TerminalTypeOptionHandler;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -57,7 +55,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.net.Socket;
 import java.util.function.Consumer;
 
 /**
@@ -66,7 +63,6 @@ import java.util.function.Consumer;
 @RunWith(VertxUnitRunner.class)
 public class TelnetServerTest {
 
-  private Socket socket;
   private TelnetClient client;
   private Vertx vertx;
   private TermServer server;
@@ -74,13 +70,7 @@ public class TelnetServerTest {
   @Before
   public void before() throws Exception {
     vertx = Vertx.vertx();
-    client = new TelnetClient() {
-      @Override
-      protected void _connectAction_() throws IOException {
-        super._connectAction_();
-        socket = _socket_;
-      }
-    };
+    client = new TelnetClient();
     client.addOptionHandler(new EchoOptionHandler(false, false, true, true));
     client.addOptionHandler(new SimpleOptionHandler(0, false, false, true, true));
     client.addOptionHandler(new TerminalTypeOptionHandler("xterm-color", false, false, true, false));
@@ -189,5 +179,22 @@ public class TelnetServerTest {
       }
       Thread.sleep(10);
     }
+  }
+
+  @Test
+  public void testType(TestContext context) throws Exception {
+    Async async = context.async();
+    startTelnet(context, term -> {
+      long now = System.currentTimeMillis();
+      vertx.setPeriodic(10, id -> {
+        context.assertTrue(System.currentTimeMillis() - now < 10000);
+        if (term.type() != null) {
+          vertx.cancelTimer(id);
+          context.assertEquals("xterm-color", term.type());
+          async.complete();
+        }
+      });
+    });
+    client.connect("localhost", server.actualPort());
   }
 }
