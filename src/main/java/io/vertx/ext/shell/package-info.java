@@ -338,6 +338,35 @@
  *
  * Completion ends with a call to {@link io.vertx.ext.shell.cli.Completion#complete(java.util.List)}.
  *
+ * == Terminal servers
+ *
+ * Vert.x Shell also provides bare terminal servers for those who need to write pure terminal applications.
+ *
+ * The terminal server {@link io.vertx.ext.shell.term.Term} handler accepts incoming terminal connections.
+ * When a remote terminal connects, the {@link io.vertx.ext.shell.term.Term} can be used to interact with connected
+ * terminal.
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#sshEchoTerminal(io.vertx.core.Vertx)}
+ * ----
+ *
+ * The telnet protocol is also supported:
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#telnetEchoTerminal(io.vertx.core.Vertx)}
+ * ----
+ *
+ * The {@link io.vertx.ext.shell.io.Tty#resizehandler} is useful for being noticed when the user resize the terminal
+ * window:
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#resizeHandlerTerminal(io.vertx.ext.shell.term.Term)}
+ * ----
+ *
+ *
  */
 @ModuleGen(name = "vertx-shell", groupPackage = "io.vertx")
 @Document(fileName = "index.adoc")

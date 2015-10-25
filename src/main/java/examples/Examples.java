@@ -49,6 +49,8 @@ import io.vertx.ext.shell.term.TelnetOptions;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.registry.CommandRegistry;
+import io.vertx.ext.shell.term.Term;
+import io.vertx.ext.shell.term.TermServer;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -105,9 +107,9 @@ public class Examples {
                         setPassword("wibble")
                 ).
                 setShiroAuthOptions(new ShiroAuthOptions().
-                    setType(ShiroAuthRealmType.PROPERTIES).
-                    setConfig(new JsonObject().
-                        put("properties_path", "file:/path/to/my/auth.properties"))
+                        setType(ShiroAuthRealmType.PROPERTIES).
+                        setConfig(new JsonObject().
+                            put("properties_path", "file:/path/to/my/auth.properties"))
                 )
         )
     );
@@ -254,6 +256,32 @@ public class Examples {
       process.resumeHandler(v -> {
         System.out.println("Resumed");
       });
+    });
+  }
+
+  public void telnetEchoTerminal(Vertx vertx) {
+    TermServer server = TermServer.createTelnetServer(vertx, new TelnetOptions().setPort(5000).setHost("localhost"));
+    server.termHandler(term -> {
+      term.setStdin(line -> {
+        term.stdout().write(line);
+      });
+    });
+    server.listen();
+  }
+
+  public void sshEchoTerminal(Vertx vertx) {
+    TermServer server = TermServer.createSSHServer(vertx, new SSHOptions().setPort(5000).setHost("localhost"));
+    server.termHandler(term -> {
+      term.setStdin(line -> {
+        term.stdout().write(line);
+      });
+    });
+    server.listen();
+  }
+
+  public void resizeHandlerTerminal(Term term) {
+    term.resizehandler(v -> {
+      System.out.println("terminal resized : " + term.width() + " " + term.height());
     });
   }
 }

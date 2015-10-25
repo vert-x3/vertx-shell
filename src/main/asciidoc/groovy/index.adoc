@@ -473,3 +473,54 @@ The `link:groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#rawLine()[rawL
 of the line to the cursor position, in raw format, i.e without any char escape performed.
 
 Completion ends with a call to `link:groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#complete(java.util.List)[complete]`.
+
+== Terminal servers
+
+Vert.x Shell provides also bare terminal servers for those who need to write pure terminal applications.
+
+The terminal server `link:groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` handler accepts incoming terminal connections.
+When a remote terminal connects, the `link:groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` can be used to interact with connected
+terminal.
+
+[source,groovy]
+----
+def server = io.vertx.ext.shell.term.TermServer.createSSHServer(vertx, [
+  port:5000,
+  host:"localhost"
+])
+server.termHandler({ term ->
+  term.setStdin({ line ->
+    term.stdout().write(line)
+  })
+})
+server.listen()
+
+----
+
+The telnet protocol is also supported:
+
+[source,groovy]
+----
+def server = io.vertx.ext.shell.term.TermServer.createTelnetServer(vertx, [
+  port:5000,
+  host:"localhost"
+])
+server.termHandler({ term ->
+  term.setStdin({ line ->
+    term.stdout().write(line)
+  })
+})
+server.listen()
+
+----
+
+The `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#resizehandler(io.vertx.core.Handler)[resizehandler]` is useful for being noticed when the user resize the terminal
+window:
+
+[source,groovy]
+----
+term.resizehandler({ v ->
+  println("terminal resized : ${term.width()} ${term.height()}")
+})
+
+----

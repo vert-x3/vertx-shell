@@ -90,9 +90,9 @@ ShellService service = ShellService.create(vertx,
                     setPassword("wibble")
             ).
             setShiroAuthOptions(new ShiroAuthOptions().
-                setType(ShiroAuthRealmType.PROPERTIES).
-                setConfig(new JsonObject().
-                    put("properties_path", "file:/path/to/my/auth.properties"))
+                    setType(ShiroAuthRealmType.PROPERTIES).
+                    setConfig(new JsonObject().
+                        put("properties_path", "file:/path/to/my/auth.properties"))
             )
     )
 );
@@ -440,3 +440,45 @@ The `link:../../apidocs/io/vertx/ext/shell/cli/Completion.html#rawLine--[rawLine
 of the line to the cursor position, in raw format, i.e without any char escape performed.
 
 Completion ends with a call to `link:../../apidocs/io/vertx/ext/shell/cli/Completion.html#complete-java.util.List-[complete]`.
+
+== Terminal servers
+
+Vert.x Shell provides also bare terminal servers for those who need to write pure terminal applications.
+
+The terminal server `link:../../apidocs/io/vertx/ext/shell/term/Term.html[Term]` handler accepts incoming terminal connections.
+When a remote terminal connects, the `link:../../apidocs/io/vertx/ext/shell/term/Term.html[Term]` can be used to interact with connected
+terminal.
+
+[source,java]
+----
+TermServer server = TermServer.createSSHServer(vertx, new SSHOptions().setPort(5000).setHost("localhost"));
+server.termHandler(term -> {
+  term.setStdin(line -> {
+    term.stdout().write(line);
+  });
+});
+server.listen();
+----
+
+The telnet protocol is also supported:
+
+[source,java]
+----
+TermServer server = TermServer.createTelnetServer(vertx, new TelnetOptions().setPort(5000).setHost("localhost"));
+server.termHandler(term -> {
+  term.setStdin(line -> {
+    term.stdout().write(line);
+  });
+});
+server.listen();
+----
+
+The `link:../../apidocs/io/vertx/ext/shell/io/Tty.html#resizehandler-io.vertx.core.Handler-[resizehandler]` is useful for being noticed when the user resize the terminal
+window:
+
+[source,java]
+----
+term.resizehandler(v -> {
+  System.out.println("terminal resized : " + term.width() + " " + term.height());
+});
+----

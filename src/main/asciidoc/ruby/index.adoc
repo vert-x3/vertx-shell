@@ -472,3 +472,54 @@ The `link:yardoc/VertxShell/Completion.html#raw_line-instance_method[rawLine]` r
 of the line to the cursor position, in raw format, i.e without any char escape performed.
 
 Completion ends with a call to `link:yardoc/VertxShell/Completion.html#complete-instance_method[complete]`.
+
+== Terminal servers
+
+Vert.x Shell provides also bare terminal servers for those who need to write pure terminal applications.
+
+The terminal server `link:yardoc/VertxShell/Term.html[Term]` handler accepts incoming terminal connections.
+When a remote terminal connects, the `link:yardoc/VertxShell/Term.html[Term]` can be used to interact with connected
+terminal.
+
+[source,ruby]
+----
+server = Java::IoVertxExtShellTerm::TermServer.create_ssh_server(vertx, {
+  'port' => 5000,
+  'host' => "localhost"
+})
+server.term_handler() { |term|
+  term.set_stdin(lambda { |line|
+    term.stdout().write(line)
+  })
+}
+server.listen()
+
+----
+
+The telnet protocol is also supported:
+
+[source,ruby]
+----
+server = Java::IoVertxExtShellTerm::TermServer.create_telnet_server(vertx, {
+  'port' => 5000,
+  'host' => "localhost"
+})
+server.term_handler() { |term|
+  term.set_stdin(lambda { |line|
+    term.stdout().write(line)
+  })
+}
+server.listen()
+
+----
+
+The `link:yardoc/VertxShell/Tty.html#resizehandler-instance_method[resizehandler]` is useful for being noticed when the user resize the terminal
+window:
+
+[source,ruby]
+----
+term.resizehandler() { |v|
+  puts "terminal resized : #{term.width()} #{term.height()}"
+}
+
+----

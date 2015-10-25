@@ -472,3 +472,54 @@ The `link:jsdoc/completion-Completion.html#rawLine[rawLine]` returns the current
 of the line to the cursor position, in raw format, i.e without any char escape performed.
 
 Completion ends with a call to `link:jsdoc/completion-Completion.html#complete[complete]`.
+
+== Terminal servers
+
+Vert.x Shell provides also bare terminal servers for those who need to write pure terminal applications.
+
+The terminal server `link:jsdoc/term-Term.html[Term]` handler accepts incoming terminal connections.
+When a remote terminal connects, the `link:jsdoc/term-Term.html[Term]` can be used to interact with connected
+terminal.
+
+[source,js]
+----
+var server = Java.type("io.vertx.ext.shell.term.TermServer").createSSHServer(vertx, {
+  "port" : 5000,
+  "host" : "localhost"
+});
+server.termHandler(function (term) {
+  term.setStdin(function (line) {
+    term.stdout().write(line);
+  });
+});
+server.listen();
+
+----
+
+The telnet protocol is also supported:
+
+[source,js]
+----
+var server = Java.type("io.vertx.ext.shell.term.TermServer").createTelnetServer(vertx, {
+  "port" : 5000,
+  "host" : "localhost"
+});
+server.termHandler(function (term) {
+  term.setStdin(function (line) {
+    term.stdout().write(line);
+  });
+});
+server.listen();
+
+----
+
+The `link:jsdoc/tty-Tty.html#resizehandler[resizehandler]` is useful for being noticed when the user resize the terminal
+window:
+
+[source,js]
+----
+term.resizehandler(function (v) {
+  console.log("terminal resized : " + term.width() + " " + term.height());
+});
+
+----
