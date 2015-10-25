@@ -36,6 +36,7 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.core.net.KeyCertOptions;
+import io.vertx.core.net.NetServerOptions;
 import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.core.net.PfxOptions;
 import io.vertx.ext.shell.auth.AuthOptions;
@@ -49,8 +50,8 @@ import io.vertx.ext.shell.auth.ShiroAuthOptions;
 @DataObject(generateConverter = true)
 public class SSHOptions {
 
-  private static final String DEFAULT_HOST = "localhost";
-  private static final int DEFAULT_PORT = 4000;
+  private static final String DEFAULT_HOST = NetServerOptions.DEFAULT_HOST;
+  private static final int DEFAULT_PORT = NetServerOptions.DEFAULT_PORT;
 
   private String host;
   private int port;
