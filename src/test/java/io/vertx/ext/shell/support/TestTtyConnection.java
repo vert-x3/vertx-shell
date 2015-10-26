@@ -46,7 +46,7 @@ import java.util.function.Consumer;
  */
 public class TestTtyConnection implements TtyConnection {
 
-  private Consumer<String> termHandler;
+  private Consumer<String> terminalTypeHandler;
   private Consumer<Vector> sizeHandler;
   private BiConsumer<TtyEvent, Integer> eventHandler;
   private Consumer<int[]> stdinHandler;
@@ -55,7 +55,7 @@ public class TestTtyConnection implements TtyConnection {
   private boolean closed;
 
   @Override
-  public String term() {
+  public String terminalType() {
     return "xterm";
   }
 
@@ -65,13 +65,13 @@ public class TestTtyConnection implements TtyConnection {
   }
 
   @Override
-  public Consumer<String> getTermHandler() {
-    return termHandler;
+  public Consumer<String> getTerminalTypeHandler() {
+    return terminalTypeHandler;
   }
 
   @Override
-  public void setTermHandler(Consumer<String> handler) {
-    termHandler = handler;
+  public void setTerminalTypeHandler(Consumer<String> handler) {
+    terminalTypeHandler = handler;
   }
 
   @Override

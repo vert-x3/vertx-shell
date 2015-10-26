@@ -32,9 +32,9 @@
 
 package io.vertx.ext.shell.net;
 
+import io.termd.core.TestBase;
 import io.termd.core.telnet.TelnetHandler;
 import io.termd.core.telnet.TelnetTermTest;
-import io.termd.core.telnet.TestBase;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Vertx;
 import io.vertx.core.net.NetServer;
