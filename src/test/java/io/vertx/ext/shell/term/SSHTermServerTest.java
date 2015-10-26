@@ -30,12 +30,13 @@
  *
  */
 
-package io.vertx.ext.shell;
+package io.vertx.ext.shell.term;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.Session;
 import io.vertx.core.Handler;
+import io.vertx.ext.shell.SSHTestBase;
 import io.vertx.ext.shell.term.SSHOptions;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.Term;
@@ -60,7 +61,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class SSHServerTest extends SSHTestBase {
+public class SSHTermServerTest extends SSHTestBase {
 
   TermServer server;
   Handler<Term> termHandler;

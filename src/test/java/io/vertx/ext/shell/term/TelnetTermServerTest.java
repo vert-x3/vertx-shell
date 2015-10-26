@@ -30,7 +30,7 @@
  *
  */
 
-package io.vertx.ext.shell;
+package io.vertx.ext.shell.term;
 
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -61,7 +61,7 @@ import java.util.function.Consumer;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @RunWith(VertxUnitRunner.class)
-public class TelnetServerTest {
+public class TelnetTermServerTest {
 
   private TelnetClient client;
   private Vertx vertx;

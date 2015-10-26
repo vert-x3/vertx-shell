@@ -68,7 +68,7 @@ import static org.junit.Assert.fail;
 @RunWith(VertxUnitRunner.class)
 public abstract class SSHTestBase {
 
-  Vertx vertx;
+  protected Vertx vertx;
 
   @Before
   public void before() {
