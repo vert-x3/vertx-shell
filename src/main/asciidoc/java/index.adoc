@@ -449,12 +449,40 @@ Completion ends with a call to `link:../../apidocs/io/vertx/ext/shell/cli/Comple
 
 == In process shell session
 
-An in process shell session can be created, this can be useful for testing commands.
+In process shell session can be created with `link:../../apidocs/io/vertx/ext/shell/ShellService.html#createShell--[createShell]`:
 
-`link:../../apidocs/io/vertx/ext/shell/ShellService.html#createShell--[createShell]` returns a `link:../../apidocs/io/vertx/ext/shell/system/Shell.html[shell session]`.
-This session can be used for running commands:
+[source,java]
+----
+Shell shell = shellService.createShell();
+----
 
+The main use case is running or testing a command:
 
+[source,java]
+----
+Shell shell = shellService.createShell();
+
+// Create a job fo the command
+Job job = shell.createJob("my-command 1234");
+
+// Create a pseudo terminal
+Pty pty = Pty.create();
+pty.setStdout(data -> {
+  System.out.println("Command wrote " + data);
+});
+
+// Run the command
+job.setTty(pty.slave());
+job.run(status -> {
+  System.out.println("Command terminated with status " + status);
+});
+----
+
+The `link:../../apidocs/io/vertx/ext/shell/io/Pty.html[Pty]` pseudo terminal is the main interface for interacting with the command
+when it's running:
+
+- uses standard input/output for writing or reading strings
+- resize the terminal
 
 == Terminal servers
 

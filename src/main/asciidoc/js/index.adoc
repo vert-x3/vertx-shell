@@ -482,12 +482,48 @@ Completion ends with a call to `link:jsdoc/completion-Completion.html#complete[c
 
 == In process shell session
 
-An in process shell session can be created, this can be useful for testing commands.
+In process shell session can be created with `link:jsdoc/shell_service-ShellService.html#createShell[createShell]`:
 
-`link:jsdoc/shell_service-ShellService.html#createShell[createShell]` returns a `link:jsdoc/shell-Shell.html[shell session]`.
-This session can be used for running commands:
+[source,js]
+----
+
+// Create a shell ession
+var shell = shellService.createShell();
 
 
+----
+
+The main use case is running or testing a command:
+
+[source,js]
+----
+var Pty = require("vertx-shell-js/pty");
+
+// Create a shell
+var shell = shellService.createShell();
+
+// Create a job fo the command
+var job = shell.createJob("my-command 1234");
+
+// Create a pseudo terminal
+var pty = Pty.create();
+pty.setStdout(function (data) {
+  console.log("Command wrote " + data);
+});
+
+// Run the command
+job.setTty(pty.slave());
+job.run(function (status) {
+  console.log("Command terminated with status " + status);
+});
+
+----
+
+The `link:jsdoc/pty-Pty.html[Pty]` pseudo terminal is the main interface for interacting with the command
+when it's running:
+
+- uses standard input/output for writing or reading strings
+- resize the terminal
 
 == Terminal servers
 

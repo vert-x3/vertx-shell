@@ -354,12 +354,25 @@
  *
  * == In process shell session
  *
- * An in process shell session can be created, this can be useful for testing commands.
+ * In process shell session can be created with {@link io.vertx.ext.shell.ShellService#createShell}:
  *
- * {@link io.vertx.ext.shell.ShellService#createShell} returns a {@link io.vertx.ext.shell.system.Shell shell session}.
- * This session can be used for running commands:
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#creatingShell}
+ * ----
  *
+ * The main use case is running or testing a command:
  *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#runningShellCommand}
+ * ----
+ *
+ * The {@link io.vertx.ext.shell.io.Pty} pseudo terminal is the main interface for interacting with the command
+ * when it's running:
+ *
+ * - uses standard input/output for writing or reading strings
+ * - resize the terminal
  *
  * == Terminal servers
  *

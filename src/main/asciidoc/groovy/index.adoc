@@ -483,12 +483,48 @@ Completion ends with a call to `link:groovydoc/io/vertx/groovy/ext/shell/cli/Com
 
 == In process shell session
 
-An in process shell session can be created, this can be useful for testing commands.
+In process shell session can be created with `link:groovydoc/io/vertx/groovy/ext/shell/ShellService.html#createShell()[createShell]`:
 
-`link:groovydoc/io/vertx/groovy/ext/shell/ShellService.html#createShell()[createShell]` returns a `link:groovydoc/io/vertx/groovy/ext/shell/system/Shell.html[shell session]`.
-This session can be used for running commands:
+[source,groovy]
+----
+
+// Create a shell ession
+def shell = shellService.createShell()
 
 
+----
+
+The main use case is running or testing a command:
+
+[source,groovy]
+----
+import io.vertx.groovy.ext.shell.io.Pty
+
+// Create a shell
+def shell = shellService.createShell()
+
+// Create a job fo the command
+def job = shell.createJob("my-command 1234")
+
+// Create a pseudo terminal
+def pty = Pty.create()
+pty.setStdout({ data ->
+  println("Command wrote ${data}")
+})
+
+// Run the command
+job.setTty(pty.slave())
+job.run({ status ->
+  println("Command terminated with status ${status}")
+})
+
+----
+
+The `link:groovydoc/io/vertx/groovy/ext/shell/io/Pty.html[Pty]` pseudo terminal is the main interface for interacting with the command
+when it's running:
+
+- uses standard input/output for writing or reading strings
+- resize the terminal
 
 == Terminal servers
 

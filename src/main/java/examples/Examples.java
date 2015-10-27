@@ -278,19 +278,19 @@ public class Examples {
     server.listen();
   }
 
-  public void abc(ShellService shellService) {
+  public void creatingShell(ShellService shellService) {
 
     // Create a shell ession
     Shell shell = shellService.createShell();
 
   }
 
-  public void testingCommand(ShellService shellService) {
+  public void runningShellCommand(ShellService shellService) {
 
-    // Create a shell ession
+    // Create a shell
     Shell shell = shellService.createShell();
 
-    // Create a job for our command
+    // Create a job fo the command
     Job job = shell.createJob("my-command 1234");
 
     // Create a pseudo terminal
@@ -304,7 +304,5 @@ public class Examples {
     job.run(status -> {
       System.out.println("Command terminated with status " + status);
     });
-
-
   }
 }

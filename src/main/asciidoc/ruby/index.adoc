@@ -482,12 +482,48 @@ Completion ends with a call to `link:yardoc/VertxShell/Completion.html#complete-
 
 == In process shell session
 
-An in process shell session can be created, this can be useful for testing commands.
+In process shell session can be created with `link:yardoc/VertxShell/ShellService.html#create_shell-instance_method[createShell]`:
 
-`link:yardoc/VertxShell/ShellService.html#create_shell-instance_method[createShell]` returns a `link:yardoc/VertxShell/Shell.html[shell session]`.
-This session can be used for running commands:
+[source,ruby]
+----
+
+# Create a shell ession
+shell = shellService.create_shell()
 
 
+----
+
+The main use case is running or testing a command:
+
+[source,ruby]
+----
+require 'vertx-shell/pty'
+
+# Create a shell
+shell = shellService.create_shell()
+
+# Create a job fo the command
+job = shell.create_job("my-command 1234")
+
+# Create a pseudo terminal
+pty = VertxShell::Pty.create()
+pty.set_stdout(lambda { |data|
+  puts "Command wrote #{data}"
+})
+
+# Run the command
+job.set_tty(pty.slave())
+job.run() { |status|
+  puts "Command terminated with status #{status}"
+}
+
+----
+
+The `link:yardoc/VertxShell/Pty.html[Pty]` pseudo terminal is the main interface for interacting with the command
+when it's running:
+
+- uses standard input/output for writing or reading strings
+- resize the terminal
 
 == Terminal servers
 
