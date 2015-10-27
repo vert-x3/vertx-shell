@@ -46,8 +46,8 @@ public interface Pty {
     return new PtyImpl(null);
   }
 
-  static Pty create(String term) {
-    return new PtyImpl(term);
+  static Pty create(String terminalType) {
+    return new PtyImpl(terminalType);
   }
 
   Stream stdin();
