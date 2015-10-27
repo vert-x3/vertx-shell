@@ -18,7 +18,7 @@ package io.vertx.groovy.ext.shell;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
-import io.vertx.groovy.ext.shell.system.ShellSession
+import io.vertx.groovy.ext.shell.system.Shell
 import io.vertx.ext.shell.ShellServiceOptions
 import io.vertx.groovy.core.Vertx
 import io.vertx.groovy.ext.shell.registry.CommandRegistry
@@ -66,8 +66,8 @@ public class ShellService {
   public void start(Handler<AsyncResult<Void>> startHandler) {
     this.delegate.start(startHandler);
   }
-  public ShellSession openSession() {
-    def ret= InternalHelper.safeCreate(this.delegate.openSession(), io.vertx.groovy.ext.shell.system.ShellSession.class);
+  public Shell createShell() {
+    def ret= InternalHelper.safeCreate(this.delegate.createShell(), io.vertx.groovy.ext.shell.system.Shell.class);
     return ret;
   }
   /**

@@ -356,7 +356,7 @@
  *
  * An in process shell session can be created, this can be useful for testing commands.
  *
- * {@link io.vertx.ext.shell.ShellService#openSession} returns a {@link io.vertx.ext.shell.system.ShellSession shell session}.
+ * {@link io.vertx.ext.shell.ShellService#createShell} returns a {@link io.vertx.ext.shell.system.Shell shell session}.
  * This session can be used for running commands:
  *
  *

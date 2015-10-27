@@ -19,7 +19,7 @@ package io.vertx.rxjava.ext.shell;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
-import io.vertx.rxjava.ext.shell.system.ShellSession;
+import io.vertx.rxjava.ext.shell.system.Shell;
 import io.vertx.ext.shell.ShellServiceOptions;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.rxjava.ext.shell.registry.CommandRegistry;
@@ -90,8 +90,8 @@ public class ShellService {
     return startHandler;
   }
 
-  public ShellSession openSession() { 
-    ShellSession ret= ShellSession.newInstance(this.delegate.openSession());
+  public Shell createShell() { 
+    Shell ret= Shell.newInstance(this.delegate.createShell());
     return ret;
   }
 

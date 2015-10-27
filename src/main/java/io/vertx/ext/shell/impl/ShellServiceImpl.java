@@ -45,8 +45,8 @@ import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.impl.SSHServer;
 import io.vertx.ext.shell.term.impl.TelnetServer;
 import io.vertx.ext.shell.registry.CommandRegistry;
-import io.vertx.ext.shell.system.ShellSession;
-import io.vertx.ext.shell.system.impl.ShellSessionImpl;
+import io.vertx.ext.shell.system.Shell;
+import io.vertx.ext.shell.system.impl.ShellImpl;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -77,7 +77,7 @@ public class ShellServiceImpl implements ShellService {
   public void start(Handler<AsyncResult<Void>> startHandler) {
 
     Consumer<TtyConnection> shellBoostrap = conn -> {
-      TtyAdapter shell = new TtyAdapter(vertx, conn, openSession(), registry);
+      TtyAdapter shell = new TtyAdapter(vertx, conn, createShell(), registry);
       conn.setCloseHandler(v -> {
         shell.close();
       });
@@ -123,8 +123,8 @@ public class ShellServiceImpl implements ShellService {
   }
 
   @Override
-  public ShellSession openSession() {
-    return new ShellSessionImpl(registry);
+  public Shell createShell() {
+    return new ShellImpl(registry);
   }
 
   @Override

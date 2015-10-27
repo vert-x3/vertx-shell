@@ -47,7 +47,7 @@ import io.vertx.ext.shell.system.JobStatus;
 public class JobImpl implements Job {
 
   final int id;
-  final ShellSessionImpl shell;
+  final ShellImpl shell;
   final io.vertx.ext.shell.process.Process process;
   final String line;
   private volatile JobStatus status;
@@ -57,7 +57,7 @@ public class JobImpl implements Job {
   volatile Handler<Void> interruptHandler;
   volatile Handler<Void> resumeHandler;
 
-  public JobImpl(int id, ShellSessionImpl shell, Process process, String line) {
+  public JobImpl(int id, ShellImpl shell, Process process, String line) {
     this.id = id;
     this.shell = shell;
     this.process = process;

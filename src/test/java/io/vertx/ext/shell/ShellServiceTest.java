@@ -40,7 +40,7 @@ import io.vertx.ext.shell.io.Pty;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.Job;
-import io.vertx.ext.shell.system.ShellSession;
+import io.vertx.ext.shell.system.Shell;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -83,7 +83,7 @@ public class ShellServiceTest {
       process.end(3);
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      ShellSession session = service.openSession();
+      Shell session = service.createShell();
       Job job = session.createJob(CliToken.tokenize("foo"));
       Async async = context.async();
       job.setTty(Pty.create().slave()).run(code -> {
@@ -100,7 +100,7 @@ public class ShellServiceTest {
       throw new RuntimeException();
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      ShellSession shell = service.openSession();
+      Shell shell = service.createShell();
       Job job = shell.createJob("foo");
       Async async = context.async();
       Pty pty = Pty.create();
@@ -123,7 +123,7 @@ public class ShellServiceTest {
       latch.countDown();
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      ShellSession session = service.openSession();
+      Shell session = service.createShell();
       Job job = session.createJob(CliToken.tokenize("foo"));
       Async async = context.async();
       Pty pty = Pty.create();
@@ -149,7 +149,7 @@ public class ShellServiceTest {
       process.end(0);
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      ShellSession session = service.openSession();
+      Shell session = service.createShell();
       Job job = session.createJob("foo");
       Async async = context.async();
       LinkedList<String> out = new LinkedList<>();
@@ -189,7 +189,7 @@ public class ShellServiceTest {
       registry.registerCommand(cmd.build(), testContext.asyncAssertSuccess(v2 -> {
         shellCtx.runOnContext(v3 -> {
           testContext.assertTrue(shellCtx == Vertx.currentContext());
-          ShellSession shell = service.openSession();
+          Shell shell = service.createShell();
           Job job = shell.createJob("foo");
           Pty pty = Pty.create();
           pty.setStdout(text -> {
@@ -223,7 +223,7 @@ public class ShellServiceTest {
       latch.countDown();
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      ShellSession shell = service.openSession();
+      Shell shell = service.createShell();
       Job job = shell.createJob("foo");
       Async async = context.async();
       Pty pty = Pty.create();
@@ -253,7 +253,7 @@ public class ShellServiceTest {
       process.stdout().write("ping");
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      ShellSession shell = service.openSession();
+      Shell shell = service.createShell();
       Job job = shell.createJob("foo");
       Pty pty = Pty.create();
       Async async = context.async();
@@ -278,7 +278,7 @@ public class ShellServiceTest {
       process.end();
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      ShellSession shell = service.openSession();
+      Shell shell = service.createShell();
       Job job = shell.createJob("foo");
       shell.session().put("the_key", "the_value");
       Pty pty = Pty.create();
@@ -301,7 +301,7 @@ public class ShellServiceTest {
       process.end();
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      ShellSession shell = service.openSession();
+      Shell shell = service.createShell();
       Job job = shell.createJob("foo");
       Pty pty = Pty.create();
       job.setTty(pty.slave()).run(status -> {
@@ -323,7 +323,7 @@ public class ShellServiceTest {
       process.end();
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      ShellSession shell = service.openSession();
+      Shell shell = service.createShell();
       Job job = shell.createJob("foo");
       Pty pty = Pty.create();
       shell.session().put("the_key", "the_value");

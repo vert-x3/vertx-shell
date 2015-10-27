@@ -45,10 +45,10 @@ import java.util.Set;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
-public interface ShellSession {
+public interface Shell {
 
   /**
-   * @return the user session
+   * @return the shell session
    */
   Session session();
 

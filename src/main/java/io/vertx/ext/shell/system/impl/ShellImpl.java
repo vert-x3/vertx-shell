@@ -37,7 +37,7 @@ import io.vertx.ext.shell.process.Process;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.Job;
-import io.vertx.ext.shell.system.ShellSession;
+import io.vertx.ext.shell.system.Shell;
 
 import java.util.HashSet;
 import java.util.List;
@@ -48,13 +48,13 @@ import java.util.TreeMap;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class ShellSessionImpl implements ShellSession {
+public class ShellImpl implements Shell {
 
   final CommandRegistry registry;
   final SessionImpl session = new SessionImpl();
   private final SortedMap<Integer, Job> jobs = new TreeMap<>();
 
-  public ShellSessionImpl(CommandRegistry registry) {
+  public ShellImpl(CommandRegistry registry) {
     this.registry = registry;
   }
 

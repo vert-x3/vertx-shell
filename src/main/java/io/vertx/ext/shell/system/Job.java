@@ -38,7 +38,7 @@ import io.vertx.core.Handler;
 import io.vertx.ext.shell.io.Tty;
 
 /**
- * A job executed in a {@link io.vertx.ext.shell.system.ShellSession}, grouping one or several process.<p/>
+ * A job executed in a {@link Shell}, grouping one or several process.<p/>
  *
  * The job life cycle can be controlled with the {@link #run}, {@link #resume} and {@link #suspend} and {@link #interrupt}
  * methods.

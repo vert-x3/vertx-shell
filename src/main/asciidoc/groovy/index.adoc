@@ -481,6 +481,15 @@ of the line to the cursor position, in raw format, i.e without any char escape p
 
 Completion ends with a call to `link:groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#complete(java.util.List)[complete]`.
 
+== In process shell session
+
+An in process shell session can be created, this can be useful for testing commands.
+
+`link:groovydoc/io/vertx/groovy/ext/shell/ShellService.html#createShell()[createShell]` returns a `link:groovydoc/io/vertx/groovy/ext/shell/system/Shell.html[shell session]`.
+This session can be used for running commands:
+
+
+
 == Terminal servers
 
 Vert.x Shell also provides bare terminal servers for those who need to write pure terminal applications.

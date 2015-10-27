@@ -480,6 +480,15 @@ of the line to the cursor position, in raw format, i.e without any char escape p
 
 Completion ends with a call to `link:jsdoc/completion-Completion.html#complete[complete]`.
 
+== In process shell session
+
+An in process shell session can be created, this can be useful for testing commands.
+
+`link:jsdoc/shell_service-ShellService.html#createShell[createShell]` returns a `link:jsdoc/shell-Shell.html[shell session]`.
+This session can be used for running commands:
+
+
+
 == Terminal servers
 
 Vert.x Shell also provides bare terminal servers for those who need to write pure terminal applications.

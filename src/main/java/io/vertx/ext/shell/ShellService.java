@@ -57,7 +57,7 @@ import io.vertx.ext.shell.command.metrics.MetricsInfo;
 import io.vertx.ext.shell.command.metrics.MetricsLs;
 import io.vertx.ext.shell.impl.ShellServiceImpl;
 import io.vertx.ext.shell.registry.CommandRegistry;
-import io.vertx.ext.shell.system.ShellSession;
+import io.vertx.ext.shell.system.Shell;
 
 /**
  * The shell service, provides a remotely accessible shell available via Telnet or SSH according to the
@@ -127,7 +127,7 @@ public interface ShellService {
    */
   void start(Handler<AsyncResult<Void>> startHandler);
 
-  ShellSession openSession();
+  Shell createShell();
 
   /**
    * Stop the shell service, this is an asynchronous stop.

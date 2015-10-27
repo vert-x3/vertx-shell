@@ -1,4 +1,4 @@
-require 'vertx-shell/shell_session'
+require 'vertx-shell/shell'
 require 'vertx/vertx'
 require 'vertx-shell/command_registry'
 require 'vertx/util/utils.rb'
@@ -47,12 +47,12 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling start()"
     end
-    # @return [::VertxShell::ShellSession]
-    def open_session
+    # @return [::VertxShell::Shell]
+    def create_shell
       if !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:openSession, []).call(),::VertxShell::ShellSession)
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:createShell, []).call(),::VertxShell::Shell)
       end
-      raise ArgumentError, "Invalid arguments when calling open_session()"
+      raise ArgumentError, "Invalid arguments when calling create_shell()"
     end
     #  Stop the shell service, this is an asynchronous start.
     # @yield handler for getting notified when service is stopped

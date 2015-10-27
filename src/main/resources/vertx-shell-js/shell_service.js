@@ -16,7 +16,7 @@
 
 /** @module vertx-shell-js/shell_service */
 var utils = require('vertx-js/util/utils');
-var ShellSession = require('vertx-shell-js/shell_session');
+var Shell = require('vertx-shell-js/shell');
 var Vertx = require('vertx-js/vertx');
 var CommandRegistry = require('vertx-shell-js/command_registry');
 
@@ -73,12 +73,12 @@ var ShellService = function(j_val) {
 
    @public
 
-   @return {ShellSession}
+   @return {Shell}
    */
-  this.openSession = function() {
+  this.createShell = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_shellService["openSession()"](), ShellSession);
+      return utils.convReturnVertxGen(j_shellService["createShell()"](), Shell);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

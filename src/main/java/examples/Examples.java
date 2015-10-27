@@ -41,11 +41,10 @@ import io.vertx.core.cli.Option;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
-import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.io.Pty;
 import io.vertx.ext.shell.io.Tty;
 import io.vertx.ext.shell.system.Job;
-import io.vertx.ext.shell.system.ShellSession;
+import io.vertx.ext.shell.system.Shell;
 import io.vertx.ext.shell.term.SSHOptions;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.ShellService;
@@ -54,7 +53,6 @@ import io.vertx.ext.shell.term.TelnetOptions;
 import io.vertx.ext.shell.auth.ShiroAuthOptions;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.registry.CommandRegistry;
-import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
 
 /**
@@ -283,14 +281,14 @@ public class Examples {
   public void abc(ShellService shellService) {
 
     // Create a shell ession
-    ShellSession shell = shellService.openSession();
+    Shell shell = shellService.createShell();
 
   }
 
   public void testingCommand(ShellService shellService) {
 
     // Create a shell ession
-    ShellSession shell = shellService.openSession();
+    Shell shell = shellService.createShell();
 
     // Create a job for our command
     Job job = shell.createJob("my-command 1234");

@@ -22,7 +22,7 @@ import io.vertx.groovy.ext.shell.io.Tty
 import io.vertx.ext.shell.system.JobStatus
 import io.vertx.core.Handler
 /**
- * A job executed in a {@link io.vertx.groovy.ext.shell.system.ShellSession}, grouping one or several process.<p/>
+ * A job executed in a {@link io.vertx.groovy.ext.shell.system.Shell}, grouping one or several process.<p/>
  *
  * The job life cycle can be controlled with the {@link io.vertx.groovy.ext.shell.system.Job#run}, {@link io.vertx.groovy.ext.shell.system.Job#resume} and {@link io.vertx.groovy.ext.shell.system.Job#suspend} and {@link io.vertx.groovy.ext.shell.system.Job#interrupt}
  * methods.

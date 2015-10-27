@@ -2,7 +2,7 @@ require 'vertx-shell/tty'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.system.Job
 module VertxShell
-  #  A job executed in a {::VertxShell::ShellSession}, grouping one or several process.<p/>
+  #  A job executed in a {::VertxShell::Shell}, grouping one or several process.<p/>
   # 
   #  The job life cycle can be controlled with the {::VertxShell::Job#run}, {::VertxShell::Job#resume} and {::VertxShell::Job#suspend} and {::VertxShell::Job#interrupt}
   #  methods.

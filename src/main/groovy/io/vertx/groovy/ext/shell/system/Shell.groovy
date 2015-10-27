@@ -16,24 +16,26 @@
 
 package io.vertx.groovy.ext.shell.system;
 import groovy.transform.CompileStatic
-import io.vertx.ext.shell.system.Shell
 import io.vertx.lang.groovy.InternalHelper
+import io.vertx.core.json.JsonObject
+import java.util.List
+import java.util.Set
 import io.vertx.groovy.ext.shell.cli.CliToken
 import io.vertx.groovy.ext.shell.session.Session
 /**
  * An interactive session between a consumer and a shell.<p/>
 */
 @CompileStatic
-public class ShellSession {
-  private final def Shell delegate;
-  public ShellSession(Object delegate) {
-    this.delegate = (Shell) delegate;
+public class Shell {
+  private final def io.vertx.ext.shell.system.Shell delegate;
+  public Shell(Object delegate) {
+    this.delegate = (io.vertx.ext.shell.system.Shell) delegate;
   }
   public Object getDelegate() {
     return delegate;
   }
   /**
-   * @return the user session
+   * @return the shell session
    * @return 
    */
   public Session session() {

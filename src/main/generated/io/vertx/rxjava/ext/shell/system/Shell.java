@@ -16,8 +16,9 @@
 
 package io.vertx.rxjava.ext.shell.system;
 
-import io.vertx.ext.shell.system.Shell;
-
+import java.util.Map;
+import io.vertx.lang.rxjava.InternalHelper;
+import rx.Observable;
 import java.util.List;
 import java.util.Set;
 import io.vertx.rxjava.ext.shell.cli.CliToken;
@@ -27,14 +28,14 @@ import io.vertx.rxjava.ext.shell.session.Session;
  * An interactive session between a consumer and a shell.<p/>
  *
  * <p/>
- * NOTE: This class has been automatically generated from the {@link Shell original} non RX-ified interface using Vert.x codegen.
+ * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.system.Shell original} non RX-ified interface using Vert.x codegen.
  */
 
-public class ShellSession {
+public class Shell {
 
-  final Shell delegate;
+  final io.vertx.ext.shell.system.Shell delegate;
 
-  public ShellSession(Shell delegate) {
+  public Shell(io.vertx.ext.shell.system.Shell delegate) {
     this.delegate = delegate;
   }
 
@@ -43,7 +44,7 @@ public class ShellSession {
   }
 
   /**
-   * @return the user session
+   * @return the shell session
    * @return 
    */
   public Session session() { 
@@ -91,7 +92,7 @@ public class ShellSession {
   }
 
 
-  public static ShellSession newInstance(Shell arg) {
-    return arg != null ? new ShellSession(arg) : null;
+  public static Shell newInstance(io.vertx.ext.shell.system.Shell arg) {
+    return arg != null ? new Shell(arg) : null;
   }
 }
