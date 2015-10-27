@@ -293,22 +293,22 @@ public class TtyAdapter {
         }
       }
 
-      session.createJob(tokens, ar -> {
-        if (ar.succeeded()) {
-          Job job = ar.result();
-          foregroundJob = job;
-          TtyImpl tty = new TtyImpl(job);
-          tty.stdout = conn::write;
-          job.setTty(tty);
-          job.run(status -> {
-            if (foregroundJob == job) {
-              foregroundJob = null;
-              ((TtyImpl)job.getTty()).stdout = null;
-              read(readline);
-            }
-          });
-        } else {
-          echo(Helper.toCodePoints(ar.cause().getMessage() + "\n"));
+      Job job;
+      try {
+        job = session.createJob(tokens);
+      } catch (Exception e) {
+        echo(Helper.toCodePoints(e.getMessage() + "\n"));
+        read(readline);
+        return;
+      }
+      foregroundJob = job;
+      TtyImpl tty = new TtyImpl(job);
+      tty.stdout = conn::write;
+      job.setTty(tty);
+      job.run(status -> {
+        if (foregroundJob == job) {
+          foregroundJob = null;
+          ((TtyImpl)job.getTty()).stdout = null;
           read(readline);
         }
       });

@@ -39,11 +39,10 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling get_job(id)"
     end
     # @param [Array<::VertxShell::CliToken>] args 
-    # @yield 
-    # @return [void]
+    # @return [::VertxShell::Job]
     def create_job(args=nil)
-      if args.class == Array && block_given?
-        return @j_del.java_method(:createJob, [Java::JavaUtil::List.java_class,Java::IoVertxCore::Handler.java_class]).call(args.map { |element| element.j_del },(Proc.new { |ar| yield(ar.failed ? ar.cause : nil, ar.succeeded ? ::Vertx::Util::Utils.safe_create(ar.result,::VertxShell::Job) : nil) }))
+      if args.class == Array && !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:createJob, [Java::JavaUtil::List.java_class]).call(args.map { |element| element.j_del }),::VertxShell::Job)
       end
       raise ArgumentError, "Invalid arguments when calling create_job(args)"
     end

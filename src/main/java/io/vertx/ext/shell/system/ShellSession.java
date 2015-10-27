@@ -33,13 +33,10 @@
 package io.vertx.ext.shell.system;
 
 import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.session.Session;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -54,6 +51,6 @@ public interface ShellSession {
 
   Job getJob(int id);
 
-  void createJob(List<CliToken> args, Handler<AsyncResult<Job>> handler);
+  Job createJob(List<CliToken> args);
 
 }

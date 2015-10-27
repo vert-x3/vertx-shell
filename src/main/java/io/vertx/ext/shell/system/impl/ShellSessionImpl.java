@@ -32,10 +32,8 @@
 
 package io.vertx.ext.shell.system.impl;
 
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.ext.shell.cli.CliToken;
+import io.vertx.ext.shell.process.Process;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.Job;
@@ -74,19 +72,13 @@ public class ShellSessionImpl implements ShellSession {
   }
 
   @Override
-  public void createJob(List<CliToken> args, Handler<AsyncResult<Job>> handler) {
+  public Job createJob(List<CliToken> args) {
     StringBuilder line = new StringBuilder();
     args.stream().map(CliToken::raw).forEach(line::append);
-    registry.createProcess(args, ar -> {
-      if (ar.succeeded()) {
-        int id = jobs.isEmpty() ? 1 : jobs.lastKey() + 1;
-        JobImpl job = new JobImpl(id, this, ar.result(), line.toString());
-        jobs.put(id, job);
-        handler.handle(Future.succeededFuture(job));
-      } else {
-        handler.handle(Future.failedFuture(line + ": command not found"));
-      }
-    });
+    Process process = registry.createProcess(args);
+    int id = jobs.isEmpty() ? 1 : jobs.lastKey() + 1;
+    JobImpl job = new JobImpl(id, this, process, line.toString());
+    jobs.put(id, job);
+    return job;
   }
-
 }

@@ -37,18 +37,16 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling registrations()"
     end
     #  Try to create a process from the command line tokens.
-    # @overload createProcess(line,handler)
+    # @overload createProcess(line)
     #   @param [String] line the command line to parse
-    #   @yield the handler to be notified about process creation
-    # @overload createProcess(line,handler)
+    # @overload createProcess(line)
     #   @param [Array<::VertxShell::CliToken>] line the command line tokens
-    #   @yield the handler to be notified about process creation
-    # @return [void]
+    # @return [::VertxShell::Process] the created process
     def create_process(param_1=nil)
-      if param_1.class == String && block_given?
-        return @j_del.java_method(:createProcess, [Java::java.lang.String.java_class,Java::IoVertxCore::Handler.java_class]).call(param_1,(Proc.new { |ar| yield(ar.failed ? ar.cause : nil, ar.succeeded ? ::Vertx::Util::Utils.safe_create(ar.result,::VertxShell::Process) : nil) }))
-      elsif param_1.class == Array && block_given?
-        return @j_del.java_method(:createProcess, [Java::JavaUtil::List.java_class,Java::IoVertxCore::Handler.java_class]).call(param_1.map { |element| element.j_del },(Proc.new { |ar| yield(ar.failed ? ar.cause : nil, ar.succeeded ? ::Vertx::Util::Utils.safe_create(ar.result,::VertxShell::Process) : nil) }))
+      if param_1.class == String && !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:createProcess, [Java::java.lang.String.java_class]).call(param_1),::VertxShell::Process)
+      elsif param_1.class == Array && !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:createProcess, [Java::JavaUtil::List.java_class]).call(param_1.map { |element| element.j_del }),::VertxShell::Process)
       end
       raise ArgumentError, "Invalid arguments when calling create_process(param_1)"
     end

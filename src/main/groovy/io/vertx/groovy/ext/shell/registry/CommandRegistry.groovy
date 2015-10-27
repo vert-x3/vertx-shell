@@ -23,8 +23,8 @@ import io.vertx.groovy.ext.shell.command.Command
 import io.vertx.groovy.ext.shell.cli.Completion
 import io.vertx.groovy.core.Vertx
 import io.vertx.core.AsyncResult
-import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.cli.CliToken
+import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.process.Process
 /**
  * A registry that contains the commands known by a shell.
@@ -58,38 +58,20 @@ public class CommandRegistry {
   /**
    * Parses a command line and try to create a process.
    * @param line the command line to parse
-   * @param handler the handler to be notified about process creation
+   * @return the created process
    */
-  public void createProcess(String line, Handler<AsyncResult<Process>> handler) {
-    this.delegate.createProcess(line, new Handler<AsyncResult<io.vertx.ext.shell.process.Process>>() {
-      public void handle(AsyncResult<io.vertx.ext.shell.process.Process> event) {
-        AsyncResult<Process> f
-        if (event.succeeded()) {
-          f = InternalHelper.<Process>result(new Process(event.result()))
-        } else {
-          f = InternalHelper.<Process>failure(event.cause())
-        }
-        handler.handle(f)
-      }
-    });
+  public Process createProcess(String line) {
+    def ret= InternalHelper.safeCreate(this.delegate.createProcess(line), io.vertx.groovy.ext.shell.process.Process.class);
+    return ret;
   }
   /**
    * Try to create a process from the command line tokens.
    * @param line the command line tokens
-   * @param handler the handler to be notified about process creation
+   * @return the created process
    */
-  public void createProcess(List<CliToken> line, Handler<AsyncResult<Process>> handler) {
-    this.delegate.createProcess((List<io.vertx.ext.shell.cli.CliToken>)(line.collect({underpants -> underpants.getDelegate()})), new Handler<AsyncResult<io.vertx.ext.shell.process.Process>>() {
-      public void handle(AsyncResult<io.vertx.ext.shell.process.Process> event) {
-        AsyncResult<Process> f
-        if (event.succeeded()) {
-          f = InternalHelper.<Process>result(new Process(event.result()))
-        } else {
-          f = InternalHelper.<Process>failure(event.cause())
-        }
-        handler.handle(f)
-      }
-    });
+  public Process createProcess(List<CliToken> line) {
+    def ret= InternalHelper.safeCreate(this.delegate.createProcess((List<io.vertx.ext.shell.cli.CliToken>)(line.collect({underpants -> underpants.getDelegate()}))), io.vertx.groovy.ext.shell.process.Process.class);
+    return ret;
   }
   /**
    * Perform completion, the completion argument will be notified of the completion progress.

@@ -20,9 +20,7 @@ import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import java.util.List
 import java.util.Set
-import io.vertx.core.AsyncResult
 import io.vertx.groovy.ext.shell.cli.CliToken
-import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.session.Session
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -48,17 +46,8 @@ public class ShellSession {
     def ret= InternalHelper.safeCreate(this.delegate.getJob(id), io.vertx.groovy.ext.shell.system.Job.class);
     return ret;
   }
-  public void createJob(List<CliToken> args, Handler<AsyncResult<Job>> handler) {
-    this.delegate.createJob((List<io.vertx.ext.shell.cli.CliToken>)(args.collect({underpants -> underpants.getDelegate()})), new Handler<AsyncResult<io.vertx.ext.shell.system.Job>>() {
-      public void handle(AsyncResult<io.vertx.ext.shell.system.Job> event) {
-        AsyncResult<Job> f
-        if (event.succeeded()) {
-          f = InternalHelper.<Job>result(new Job(event.result()))
-        } else {
-          f = InternalHelper.<Job>failure(event.cause())
-        }
-        handler.handle(f)
-      }
-    });
+  public Job createJob(List<CliToken> args) {
+    def ret= InternalHelper.safeCreate(this.delegate.createJob((List<io.vertx.ext.shell.cli.CliToken>)(args.collect({underpants -> underpants.getDelegate()}))), io.vertx.groovy.ext.shell.system.Job.class);
+    return ret;
   }
 }

@@ -76,18 +76,12 @@ var ShellSession = function(j_val) {
 
    @public
    @param args {Array.<CliToken>} 
-   @param handler {function} 
+   @return {Job}
    */
-  this.createJob = function(args, handler) {
+  this.createJob = function(args) {
     var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'object' && __args[0] instanceof Array && typeof __args[1] === 'function') {
-      j_shellSession["createJob(java.util.List,io.vertx.core.Handler)"](utils.convParamListVertxGen(args), function(ar) {
-      if (ar.succeeded()) {
-        handler(utils.convReturnVertxGen(ar.result(), Job), null);
-      } else {
-        handler(null, ar.cause());
-      }
-    });
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0] instanceof Array) {
+      return utils.convReturnVertxGen(j_shellSession["createJob(java.util.List)"](utils.convParamListVertxGen(args)), Job);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

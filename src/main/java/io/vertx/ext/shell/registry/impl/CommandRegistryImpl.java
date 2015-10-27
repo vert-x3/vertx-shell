@@ -38,6 +38,7 @@ import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.VertxException;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
@@ -63,9 +64,6 @@ public class CommandRegistryImpl extends AbstractVerticle implements CommandRegi
   private static Map<Vertx, CommandRegistryImpl> registries = new ConcurrentHashMap<>();
 
   public static CommandRegistry get(Vertx vertx) {
-
-
-
     return registries.computeIfAbsent(vertx, CommandRegistryImpl::new);
   }
 
@@ -172,20 +170,17 @@ public class CommandRegistryImpl extends AbstractVerticle implements CommandRegi
   }
 
   @Override
-  public void createProcess(String line, Handler<AsyncResult<io.vertx.ext.shell.process.Process>> handler) {
-    createProcess(CliToken.tokenize(line), handler);
+  public Process createProcess(String line) {
+    return createProcess(CliToken.tokenize(line));
   }
 
   @Override
-  public void createProcess(List<CliToken> line, Handler<AsyncResult<Process>> handler) {
-    Process process;
+  public Process createProcess(List<CliToken> line) {
     try {
-      process = makeRequest(line);
+      return makeRequest(line);
     } catch (Exception e) {
-      handler.handle(Future.failedFuture(e));
-      return;
+      throw new VertxException(e);
     }
-    handler.handle(Future.succeededFuture(process));
   }
 
   private Process makeRequest(List<CliToken> s) {

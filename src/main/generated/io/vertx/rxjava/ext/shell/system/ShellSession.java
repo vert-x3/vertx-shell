@@ -21,9 +21,7 @@ import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
 import java.util.Set;
-import io.vertx.core.AsyncResult;
 import io.vertx.rxjava.ext.shell.cli.CliToken;
-import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.session.Session;
 
 /**
@@ -60,24 +58,9 @@ public class ShellSession {
     return ret;
   }
 
-  public void createJob(List<CliToken> args, Handler<AsyncResult<Job>> handler) { 
-    this.delegate.createJob(args.stream().map(element -> (io.vertx.ext.shell.cli.CliToken)element.getDelegate()).collect(java.util.stream.Collectors.toList()), new Handler<AsyncResult<io.vertx.ext.shell.system.Job>>() {
-      public void handle(AsyncResult<io.vertx.ext.shell.system.Job> event) {
-        AsyncResult<Job> f;
-        if (event.succeeded()) {
-          f = InternalHelper.<Job>result(new Job(event.result()));
-        } else {
-          f = InternalHelper.<Job>failure(event.cause());
-        }
-        handler.handle(f);
-      }
-    });
-  }
-
-  public Observable<Job> createJobObservable(List<CliToken> args) { 
-    io.vertx.rx.java.ObservableFuture<Job> handler = io.vertx.rx.java.RxHelper.observableFuture();
-    createJob(args, handler.toHandler());
-    return handler;
+  public Job createJob(List<CliToken> args) { 
+    Job ret= Job.newInstance(this.delegate.createJob(args.stream().map(element -> (io.vertx.ext.shell.cli.CliToken)element.getDelegate()).collect(java.util.stream.Collectors.toList())));
+    return ret;
   }
 
 

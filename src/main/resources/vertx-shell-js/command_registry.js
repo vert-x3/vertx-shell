@@ -56,26 +56,14 @@ var CommandRegistry = function(j_val) {
 
    @public
    @param line {Array.<CliToken>} the command line tokens 
-   @param handler {function} the handler to be notified about process creation 
+   @return {Process} the created process
    */
   this.createProcess = function() {
     var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_commandRegistry["createProcess(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
-      if (ar.succeeded()) {
-        __args[1](utils.convReturnVertxGen(ar.result(), Process), null);
-      } else {
-        __args[1](null, ar.cause());
-      }
-    });
-    }  else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0] instanceof Array && typeof __args[1] === 'function') {
-      j_commandRegistry["createProcess(java.util.List,io.vertx.core.Handler)"](utils.convParamListVertxGen(__args[0]), function(ar) {
-      if (ar.succeeded()) {
-        __args[1](utils.convReturnVertxGen(ar.result(), Process), null);
-      } else {
-        __args[1](null, ar.cause());
-      }
-    });
+    if (__args.length === 1 && typeof __args[0] === 'string') {
+      return utils.convReturnVertxGen(j_commandRegistry["createProcess(java.lang.String)"](__args[0]), Process);
+    }  else if (__args.length === 1 && typeof __args[0] === 'object' && __args[0] instanceof Array) {
+      return utils.convReturnVertxGen(j_commandRegistry["createProcess(java.util.List)"](utils.convParamListVertxGen(__args[0])), Process);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

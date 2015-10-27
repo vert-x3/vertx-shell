@@ -24,8 +24,8 @@ import io.vertx.rxjava.ext.shell.command.Command;
 import io.vertx.rxjava.ext.shell.cli.Completion;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.cli.CliToken;
+import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.process.Process;
 
 /**
@@ -69,61 +69,21 @@ public class CommandRegistry {
   /**
    * Parses a command line and try to create a process.
    * @param line the command line to parse
-   * @param handler the handler to be notified about process creation
+   * @return the created process
    */
-  public void createProcess(String line, Handler<AsyncResult<Process>> handler) { 
-    this.delegate.createProcess(line, new Handler<AsyncResult<io.vertx.ext.shell.process.Process>>() {
-      public void handle(AsyncResult<io.vertx.ext.shell.process.Process> event) {
-        AsyncResult<Process> f;
-        if (event.succeeded()) {
-          f = InternalHelper.<Process>result(new Process(event.result()));
-        } else {
-          f = InternalHelper.<Process>failure(event.cause());
-        }
-        handler.handle(f);
-      }
-    });
-  }
-
-  /**
-   * Parses a command line and try to create a process.
-   * @param line the command line to parse
-   * @return 
-   */
-  public Observable<Process> createProcessObservable(String line) { 
-    io.vertx.rx.java.ObservableFuture<Process> handler = io.vertx.rx.java.RxHelper.observableFuture();
-    createProcess(line, handler.toHandler());
-    return handler;
+  public Process createProcess(String line) { 
+    Process ret= Process.newInstance(this.delegate.createProcess(line));
+    return ret;
   }
 
   /**
    * Try to create a process from the command line tokens.
    * @param line the command line tokens
-   * @param handler the handler to be notified about process creation
+   * @return the created process
    */
-  public void createProcess(List<CliToken> line, Handler<AsyncResult<Process>> handler) { 
-    this.delegate.createProcess(line.stream().map(element -> (io.vertx.ext.shell.cli.CliToken)element.getDelegate()).collect(java.util.stream.Collectors.toList()), new Handler<AsyncResult<io.vertx.ext.shell.process.Process>>() {
-      public void handle(AsyncResult<io.vertx.ext.shell.process.Process> event) {
-        AsyncResult<Process> f;
-        if (event.succeeded()) {
-          f = InternalHelper.<Process>result(new Process(event.result()));
-        } else {
-          f = InternalHelper.<Process>failure(event.cause());
-        }
-        handler.handle(f);
-      }
-    });
-  }
-
-  /**
-   * Try to create a process from the command line tokens.
-   * @param line the command line tokens
-   * @return 
-   */
-  public Observable<Process> createProcessObservable(List<CliToken> line) { 
-    io.vertx.rx.java.ObservableFuture<Process> handler = io.vertx.rx.java.RxHelper.observableFuture();
-    createProcess(line, handler.toHandler());
-    return handler;
+  public Process createProcess(List<CliToken> line) { 
+    Process ret= Process.newInstance(this.delegate.createProcess(line.stream().map(element -> (io.vertx.ext.shell.cli.CliToken)element.getDelegate()).collect(java.util.stream.Collectors.toList())));
+    return ret;
   }
 
   /**

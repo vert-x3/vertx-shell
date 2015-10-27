@@ -72,17 +72,17 @@ public interface CommandRegistry {
    * Parses a command line and try to create a process.
    *
    * @param line the command line to parse
-   * @param handler the handler to be notified about process creation
+   * @return the created process
    */
-  void createProcess(String line, Handler<AsyncResult<Process>> handler);
+  Process createProcess(String line);
 
   /**
    * Try to create a process from the command line tokens.
    *
    * @param line the command line tokens
-   * @param handler the handler to be notified about process creation
+   * @return the created process
    */
-  void createProcess(List<CliToken> line, Handler<AsyncResult<Process>> handler);
+  Process createProcess(List<CliToken> line);
 
   /**
    * Perform completion, the completion argument will be notified of the completion progress.

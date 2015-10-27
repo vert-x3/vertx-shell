@@ -35,6 +35,7 @@ package io.vertx.ext.shell.registry;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.process.Process;
 import io.vertx.ext.shell.support.TestProcessContext;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandBuilder;
@@ -47,7 +48,6 @@ import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -67,14 +67,13 @@ public class CommandRegistryTest {
       process.end(0);
     });
     registry.registerCommand(command.build(), context.asyncAssertSuccess(v -> {
-      registry.createProcess("hello world", context.asyncAssertSuccess(job -> {
-        Async async = context.async();
-        TestProcessContext ctx = new TestProcessContext();
-        ctx.endHandler(code -> {
-          async.complete();
-        });
-        job.execute(ctx);
-      }));
+      Process process = registry.createProcess("hello world");
+      Async async = context.async();
+      TestProcessContext ctx = new TestProcessContext();
+      ctx.endHandler(code -> {
+        async.complete();
+      });
+      process.execute(ctx);
     }));
   }
 
