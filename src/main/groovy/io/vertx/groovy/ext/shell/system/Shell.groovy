@@ -69,7 +69,7 @@ public class Shell {
     return ret;
   }
   /**
-   * @see #createJob(List)
+   * See {@link io.vertx.groovy.ext.shell.system.Shell#createJob}
    * @param line 
    * @return 
    */

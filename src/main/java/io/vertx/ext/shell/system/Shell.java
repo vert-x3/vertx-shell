@@ -74,7 +74,7 @@ public interface Shell {
   Job createJob(List<CliToken> line);
 
   /**
-   * @see #createJob(List)
+   * See {@link #createJob(List)}
    */
   Job createJob(String line);
 

@@ -77,7 +77,7 @@ var Shell = function(j_val) {
   };
 
   /**
-   @see #createJob(List)
+   See {@link Shell#createJob}
 
    @public
    @param line {string} 

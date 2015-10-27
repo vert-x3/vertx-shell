@@ -41,7 +41,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling get_job(id)"
     end
-    #  @see #createJob(List)
+    #  See {::VertxShell::Shell#create_job}
     # @overload createJob(line)
     #   @param [Array<::VertxShell::CliToken>] line the command line creating this job
     # @overload createJob(line)

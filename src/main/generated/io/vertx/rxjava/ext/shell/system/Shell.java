@@ -82,7 +82,7 @@ public class Shell {
   }
 
   /**
-   * @see #createJob(List)
+   * See {@link io.vertx.rxjava.ext.shell.system.Shell#createJob}
    * @param line 
    * @return 
    */
