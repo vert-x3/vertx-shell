@@ -151,17 +151,18 @@ public class ShellServiceTest {
       process.end(0);
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      Process process = registry.createProcess("foo");
+      ShellSession session = service.openSession();
+      Job job = session.createJob("foo");
       Async async = context.async();
       LinkedList<String> out = new LinkedList<>();
-      TestProcessContext ctx = new TestProcessContext();
-      ctx.setStdout(out::add);
-      ctx.endHandler(code -> {
+      Pty pty = Pty.create();
+      pty.setStdout(out::add);
+      job.setTty(pty.slave());
+      job.run(code -> {
         context.assertEquals(0, code);
         context.assertEquals(Arrays.asList("bye_world"), out);
         async.complete();
       });
-      process.execute(ctx);
     }));
   }
 

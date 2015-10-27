@@ -20,7 +20,7 @@ import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import io.vertx.core.Handler
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * A stream of text.
 */
 @CompileStatic
 public class Stream implements Handler<String> {

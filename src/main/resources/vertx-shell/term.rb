@@ -34,7 +34,8 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling set_stdin(stdin)"
     end
-    # @yield 
+    #  Set a handler that will be called when the terminal is closed.
+    # @yield the handler
     # @return [self]
     def close_handler
       if block_given?
@@ -43,6 +44,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling close_handler()"
     end
+    #  Close the remote terminal.
     # @return [void]
     def close
       if !block_given?

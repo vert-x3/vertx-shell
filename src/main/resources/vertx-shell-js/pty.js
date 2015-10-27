@@ -33,6 +33,7 @@ var Pty = function(j_val) {
   var that = this;
 
   /**
+   @return the standard input of the terminal
 
    @public
 
@@ -48,9 +49,23 @@ var Pty = function(j_val) {
   /**
 
    @public
+   @param stdout {Stream} 
+   @return {Pty}
+   */
+  this.setStdout = function(stdout) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      return utils.convReturnVertxGen(j_pty["setStdout(io.vertx.ext.shell.io.Stream)"](stdout._jdel), Pty);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Resize the terminal.
+
+   @public
    @param width {number} 
    @param height {number} 
-   @return {Pty}
+   @return {Pty} the new standard input of the terminal
    */
   this.setSize = function(width, height) {
     var __args = arguments;
@@ -61,6 +76,7 @@ var Pty = function(j_val) {
   };
 
   /**
+   @return the pseudo terminal slave
 
    @public
 
@@ -80,10 +96,11 @@ var Pty = function(j_val) {
 };
 
 /**
+ Create a new pseudo terminal.
 
  @memberof module:vertx-shell-js/pty
- @param term {string} 
- @return {Pty}
+ @param terminalType {string} the terminal type, for instance  
+ @return {Pty} the created pseudo terminal
  */
 Pty.create = function() {
   var __args = arguments;

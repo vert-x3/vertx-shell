@@ -101,6 +101,13 @@ public class PtyImpl implements Pty {
     return this;
   }
 
+  @Override
+  public Pty setStdout(Stream stdout) {
+    this.stdout = stdout;
+    return this;
+  }
+
+  @Override
   public Stream stdin() {
     return stdin;
   }

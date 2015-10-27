@@ -23,7 +23,7 @@ import java.util.Set
 import io.vertx.groovy.ext.shell.cli.CliToken
 import io.vertx.groovy.ext.shell.session.Session
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * An interactive session between a consumer and a shell.<p/>
 */
 @CompileStatic
 public class ShellSession {
@@ -34,20 +34,47 @@ public class ShellSession {
   public Object getDelegate() {
     return delegate;
   }
+  /**
+   * @return the user session
+   * @return 
+   */
   public Session session() {
     def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.groovy.ext.shell.session.Session.class);
     return ret;
   }
+  /**
+   * @return the jobs active in this session
+   * @return 
+   */
   public Set<Job> jobs() {
     def ret = this.delegate.jobs()?.collect({underpants -> new io.vertx.groovy.ext.shell.system.Job(underpants)}) as Set;
     return ret;
   }
+  /**
+   * Returns an active job in this session by its .
+   * @param id the job id
+   * @return the job of  when not found
+   */
   public Job getJob(int id) {
     def ret= InternalHelper.safeCreate(this.delegate.getJob(id), io.vertx.groovy.ext.shell.system.Job.class);
     return ret;
   }
-  public Job createJob(List<CliToken> args) {
-    def ret= InternalHelper.safeCreate(this.delegate.createJob((List<io.vertx.ext.shell.cli.CliToken>)(args.collect({underpants -> underpants.getDelegate()}))), io.vertx.groovy.ext.shell.system.Job.class);
+  /**
+   * Create a job, the created job should then be executed with the {@link io.vertx.groovy.ext.shell.system.Job#run} method.
+   * @param line the command line creating this job
+   * @return the created job
+   */
+  public Job createJob(List<CliToken> line) {
+    def ret= InternalHelper.safeCreate(this.delegate.createJob((List<io.vertx.ext.shell.cli.CliToken>)(line.collect({underpants -> underpants.getDelegate()}))), io.vertx.groovy.ext.shell.system.Job.class);
+    return ret;
+  }
+  /**
+   * @see #createJob(List)
+   * @param line 
+   * @return 
+   */
+  public Job createJob(String line) {
+    def ret= InternalHelper.safeCreate(this.delegate.createJob(line), io.vertx.groovy.ext.shell.system.Job.class);
     return ret;
   }
 }

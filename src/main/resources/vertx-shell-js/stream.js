@@ -22,6 +22,7 @@ var JsonObject = io.vertx.core.json.JsonObject;
 var JStream = io.vertx.ext.shell.io.Stream;
 
 /**
+ A stream of text.
 
  @class
 */

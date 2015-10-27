@@ -32,6 +32,7 @@ var Job = function(j_val) {
   var that = this;
 
   /**
+   @return the job id
 
    @public
 
@@ -45,6 +46,7 @@ var Job = function(j_val) {
   };
 
   /**
+   @return the job status
 
    @public
 
@@ -58,6 +60,7 @@ var Job = function(j_val) {
   };
 
   /**
+   @return when the job was last stopped
 
    @public
 
@@ -71,6 +74,7 @@ var Job = function(j_val) {
   };
 
   /**
+   @return the execution line of the job, i.e the shell command line that launched this job
 
    @public
 
@@ -84,6 +88,7 @@ var Job = function(j_val) {
   };
 
   /**
+   @return the current tty this job uses
 
    @public
 
@@ -97,9 +102,10 @@ var Job = function(j_val) {
   };
 
   /**
+   Set a tty on the job.
 
    @public
-   @param tty {Tty} 
+   @param tty {Tty} the tty to use 
    */
   this.setTty = function(tty) {
     var __args = arguments;
@@ -109,22 +115,10 @@ var Job = function(j_val) {
   };
 
   /**
+   Run the job, before running the job a {@link Tty} must be set.
 
    @public
-
-   @return {boolean}
-   */
-  this.interrupt = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      return j_job["interrupt()"]();
-    } else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-
-   @public
-   @param endHandler {function} 
+   @param endHandler {function} to be notified when the job terminates 
    */
   this.run = function(endHandler) {
     var __args = arguments;
@@ -136,6 +130,21 @@ var Job = function(j_val) {
   };
 
   /**
+   Attempt to interrupt the job.
+
+   @public
+
+   @return {boolean} true if the job is actually interrupted
+   */
+  this.interrupt = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return j_job["interrupt()"]();
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Suspend the job.
 
    @public
 
@@ -148,6 +157,7 @@ var Job = function(j_val) {
   };
 
   /**
+   Resume the job.
 
    @public
 

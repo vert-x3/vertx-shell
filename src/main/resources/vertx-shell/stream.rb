@@ -1,7 +1,7 @@
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.io.Stream
 module VertxShell
-  #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+  #  A stream of text.
   class Stream
     # @private
     # @param j_del [::VertxShell::Stream] the java delegate

@@ -22,7 +22,7 @@ import rx.Observable;
 import io.vertx.core.Handler;
 
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * A stream of text.
  *
  * <p/>
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.io.Stream original} non RX-ified interface using Vert.x codegen.

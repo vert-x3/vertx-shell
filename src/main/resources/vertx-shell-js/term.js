@@ -63,10 +63,11 @@ var Term = function(j_val) {
   };
 
   /**
+   Set a handler that will be called when the terminal is closed.
 
    @public
-   @param handler {function} 
-   @return {Term}
+   @param handler {function} the handler 
+   @return {Term} a reference to this, so the API can be used fluently
    */
   this.closeHandler = function(handler) {
     var __args = arguments;
@@ -77,6 +78,7 @@ var Term = function(j_val) {
   };
 
   /**
+   Close the remote terminal.
 
    @public
 

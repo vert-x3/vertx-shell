@@ -3,7 +3,8 @@ require 'vertx-shell/tty'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.io.Pty
 module VertxShell
-  #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+  #  A pseudo terminal used for controlling a {::VertxShell::Tty}. This interface acts as a pseudo
+  #  terminal master, {::VertxShell::Pty#slave} returns the assocated slave pseudo terminal.
   class Pty
     # @private
     # @param j_del [::VertxShell::Pty] the java delegate
@@ -15,16 +16,18 @@ module VertxShell
     def j_del
       @j_del
     end
-    # @param [String] term 
-    # @return [::VertxShell::Pty]
-    def self.create(term=nil)
-      if !block_given? && term == nil
+    #  Create a new pseudo terminal.
+    # @param [String] terminalType the terminal type, for instance 
+    # @return [::VertxShell::Pty] the created pseudo terminal
+    def self.create(terminalType=nil)
+      if !block_given? && terminalType == nil
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellIo::Pty.java_method(:create, []).call(),::VertxShell::Pty)
-      elsif term.class == String && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellIo::Pty.java_method(:create, [Java::java.lang.String.java_class]).call(term),::VertxShell::Pty)
+      elsif terminalType.class == String && !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellIo::Pty.java_method(:create, [Java::java.lang.String.java_class]).call(terminalType),::VertxShell::Pty)
       end
-      raise ArgumentError, "Invalid arguments when calling create(term)"
+      raise ArgumentError, "Invalid arguments when calling create(terminalType)"
     end
+    #  @return the standard input of the terminal
     # @return [::VertxShell::Stream]
     def stdin
       if !block_given?
@@ -32,6 +35,15 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling stdin()"
     end
+    # @param [::VertxShell::Stream] stdout 
+    # @return [::VertxShell::Pty]
+    def set_stdout(stdout=nil)
+      if stdout.class.method_defined?(:j_del) && !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:setStdout, [Java::IoVertxExtShellIo::Stream.java_class]).call(stdout.j_del),::VertxShell::Pty)
+      end
+      raise ArgumentError, "Invalid arguments when calling set_stdout(stdout)"
+    end
+    #  Resize the terminal.
     # @param [Fixnum] width 
     # @param [Fixnum] height 
     # @return [self]
@@ -42,6 +54,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling set_size(width,height)"
     end
+    #  @return the pseudo terminal slave
     # @return [::VertxShell::Tty]
     def slave
       if !block_given?

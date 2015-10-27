@@ -53,11 +53,19 @@ public class Term extends Tty {
     return this;
   }
 
+  /**
+   * Set a handler that will be called when the terminal is closed.
+   * @param handler the handler
+   * @return a reference to this, so the API can be used fluently
+   */
   public Term closeHandler(Handler<Void> handler) { 
     this.delegate.closeHandler(handler);
     return this;
   }
 
+  /**
+   * Close the remote terminal.
+   */
   public void close() { 
     this.delegate.close();
   }

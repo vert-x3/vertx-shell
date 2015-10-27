@@ -21,7 +21,8 @@ import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * A pseudo terminal used for controlling a {@link io.vertx.rxjava.ext.shell.io.Tty}. This interface acts as a pseudo
+ * terminal master, {@link io.vertx.rxjava.ext.shell.io.Pty#slave} returns the assocated slave pseudo terminal.
  *
  * <p/>
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.io.Pty original} non RX-ified interface using Vert.x codegen.
@@ -39,26 +40,54 @@ public class Pty {
     return delegate;
   }
 
+  /**
+   * Create a new pseudo terminal with no terminal type.
+   * @return 
+   */
   public static Pty create() { 
     Pty ret= Pty.newInstance(io.vertx.ext.shell.io.Pty.create());
     return ret;
   }
 
-  public static Pty create(String term) { 
-    Pty ret= Pty.newInstance(io.vertx.ext.shell.io.Pty.create(term));
+  /**
+   * Create a new pseudo terminal.
+   * @param terminalType the terminal type, for instance 
+   * @return the created pseudo terminal
+   */
+  public static Pty create(String terminalType) { 
+    Pty ret= Pty.newInstance(io.vertx.ext.shell.io.Pty.create(terminalType));
     return ret;
   }
 
+  /**
+   * @return the standard input of the terminal
+   * @return 
+   */
   public Stream stdin() { 
     Stream ret= Stream.newInstance(this.delegate.stdin());
     return ret;
   }
 
+  public Pty setStdout(Stream stdout) { 
+    Pty ret= Pty.newInstance(this.delegate.setStdout((io.vertx.ext.shell.io.Stream) stdout.getDelegate()));
+    return ret;
+  }
+
+  /**
+   * Resize the terminal.
+   * @param width 
+   * @param height 
+   * @return the new standard input of the terminal
+   */
   public Pty setSize(int width, int height) { 
     this.delegate.setSize(width, height);
     return this;
   }
 
+  /**
+   * @return the pseudo terminal slave
+   * @return 
+   */
   public Tty slave() { 
     Tty ret= Tty.newInstance(this.delegate.slave());
     return ret;

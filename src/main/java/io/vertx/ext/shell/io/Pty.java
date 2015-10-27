@@ -52,6 +52,13 @@ public interface Pty {
 
   Stream stdin();
 
+  Pty setStdout(Stream stdout);
+
+  /**
+   * Resize the terminal.
+   *
+   * @return the new standard input of the terminal
+   */
   @Fluent
   Pty setSize(int width, int height);
 

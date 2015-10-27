@@ -25,7 +25,7 @@ import io.vertx.rxjava.ext.shell.cli.CliToken;
 import io.vertx.rxjava.ext.shell.session.Session;
 
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * An interactive session between a consumer and a shell.<p/>
  *
  * <p/>
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.system.ShellSession original} non RX-ified interface using Vert.x codegen.
@@ -43,23 +43,51 @@ public class ShellSession {
     return delegate;
   }
 
+  /**
+   * @return the user session
+   * @return 
+   */
   public Session session() { 
     Session ret= Session.newInstance(this.delegate.session());
     return ret;
   }
 
+  /**
+   * @return the jobs active in this session
+   * @return 
+   */
   public Set<Job> jobs() { 
     Set<Job> ret = this.delegate.jobs().stream().map(Job::newInstance).collect(java.util.stream.Collectors.toSet());
     return ret;
   }
 
+  /**
+   * Returns an active job in this session by its .
+   * @param id the job id
+   * @return the job of  when not found
+   */
   public Job getJob(int id) { 
     Job ret= Job.newInstance(this.delegate.getJob(id));
     return ret;
   }
 
-  public Job createJob(List<CliToken> args) { 
-    Job ret= Job.newInstance(this.delegate.createJob(args.stream().map(element -> (io.vertx.ext.shell.cli.CliToken)element.getDelegate()).collect(java.util.stream.Collectors.toList())));
+  /**
+   * Create a job, the created job should then be executed with the {@link io.vertx.rxjava.ext.shell.system.Job#run} method.
+   * @param line the command line creating this job
+   * @return the created job
+   */
+  public Job createJob(List<CliToken> line) { 
+    Job ret= Job.newInstance(this.delegate.createJob(line.stream().map(element -> (io.vertx.ext.shell.cli.CliToken)element.getDelegate()).collect(java.util.stream.Collectors.toList())));
+    return ret;
+  }
+
+  /**
+   * @see #createJob(List)
+   * @param line 
+   * @return 
+   */
+  public Job createJob(String line) { 
+    Job ret= Job.newInstance(this.delegate.createJob(line));
     return ret;
   }
 

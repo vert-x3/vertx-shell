@@ -22,7 +22,10 @@ import io.vertx.groovy.ext.shell.io.Tty
 import io.vertx.ext.shell.system.JobStatus
 import io.vertx.core.Handler
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * A job executed in a {@link io.vertx.groovy.ext.shell.system.ShellSession}, grouping one or several process.<p/>
+ *
+ * The job life cycle can be controlled with the {@link io.vertx.groovy.ext.shell.system.Job#run}, {@link io.vertx.groovy.ext.shell.system.Job#resume} and {@link io.vertx.groovy.ext.shell.system.Job#suspend} and {@link io.vertx.groovy.ext.shell.system.Job#interrupt}
+ * methods.
 */
 @CompileStatic
 public class Job {
@@ -33,39 +36,77 @@ public class Job {
   public Object getDelegate() {
     return delegate;
   }
+  /**
+   * @return the job id
+   * @return 
+   */
   public int id() {
     def ret = this.delegate.id();
     return ret;
   }
+  /**
+   * @return the job status
+   * @return 
+   */
   public JobStatus status() {
     def ret = this.delegate.status();
     return ret;
   }
+  /**
+   * @return when the job was last stopped
+   * @return 
+   */
   public long lastStopped() {
     def ret = this.delegate.lastStopped();
     return ret;
   }
+  /**
+   * @return the execution line of the job, i.e the shell command line that launched this job
+   * @return 
+   */
   public String line() {
     def ret = this.delegate.line();
     return ret;
   }
+  /**
+   * @return the current tty this job uses
+   * @return 
+   */
   public Tty getTty() {
     def ret= InternalHelper.safeCreate(this.delegate.getTty(), io.vertx.groovy.ext.shell.io.Tty.class);
     return ret;
   }
+  /**
+   * Set a tty on the job.
+   * @param tty the tty to use
+   */
   public void setTty(Tty tty) {
     this.delegate.setTty((io.vertx.ext.shell.io.Tty)tty.getDelegate());
   }
+  /**
+   * Run the job, before running the job a {@link io.vertx.groovy.ext.shell.io.Tty} must be set.
+   * @param endHandler to be notified when the job terminates
+   */
+  public void run(Handler<Integer> endHandler) {
+    this.delegate.run(endHandler);
+  }
+  /**
+   * Attempt to interrupt the job.
+   * @return true if the job is actually interrupted
+   */
   public boolean interrupt() {
     def ret = this.delegate.interrupt();
     return ret;
   }
-  public void run(Handler<Integer> endHandler) {
-    this.delegate.run(endHandler);
-  }
+  /**
+   * Suspend the job.
+   */
   public void resume() {
     this.delegate.resume();
   }
+  /**
+   * Resume the job.
+   */
   public void suspend() {
     this.delegate.suspend();
   }

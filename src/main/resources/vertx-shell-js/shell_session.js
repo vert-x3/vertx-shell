@@ -25,6 +25,7 @@ var JsonObject = io.vertx.core.json.JsonObject;
 var JShellSession = io.vertx.ext.shell.system.ShellSession;
 
 /**
+ An interactive session between a consumer and a shell.<p/>
 
  @class
 */
@@ -34,6 +35,7 @@ var ShellSession = function(j_val) {
   var that = this;
 
   /**
+   @return the user session
 
    @public
 
@@ -47,6 +49,7 @@ var ShellSession = function(j_val) {
   };
 
   /**
+   @return the jobs active in this session
 
    @public
 
@@ -60,10 +63,11 @@ var ShellSession = function(j_val) {
   };
 
   /**
+   Returns an active job in this session by its .
 
    @public
-   @param id {number} 
-   @return {Job}
+   @param id {number} the job id 
+   @return {Job} the job of  when not found
    */
   this.getJob = function(id) {
     var __args = arguments;
@@ -73,15 +77,18 @@ var ShellSession = function(j_val) {
   };
 
   /**
+   @see #createJob(List)
 
    @public
-   @param args {Array.<CliToken>} 
+   @param line {string} 
    @return {Job}
    */
-  this.createJob = function(args) {
+  this.createJob = function() {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0] instanceof Array) {
-      return utils.convReturnVertxGen(j_shellSession["createJob(java.util.List)"](utils.convParamListVertxGen(args)), Job);
+      return utils.convReturnVertxGen(j_shellSession["createJob(java.util.List)"](utils.convParamListVertxGen(__args[0])), Job);
+    }  else if (__args.length === 1 && typeof __args[0] === 'string') {
+      return utils.convReturnVertxGen(j_shellSession["createJob(java.lang.String)"](__args[0]), Job);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
