@@ -53,4 +53,9 @@ public interface ShellSession {
 
   Job createJob(List<CliToken> args);
 
+  /**
+   * @see #createJob(List)
+   */
+  Job createJob(String line);
+
 }

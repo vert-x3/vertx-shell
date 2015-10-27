@@ -81,4 +81,9 @@ public class ShellSessionImpl implements ShellSession {
     jobs.put(id, job);
     return job;
   }
+
+  @Override
+  public Job createJob(String line) {
+    return createJob(CliToken.tokenize(line));
+  }
 }
