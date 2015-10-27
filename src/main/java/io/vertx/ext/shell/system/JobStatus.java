@@ -35,12 +35,27 @@ package io.vertx.ext.shell.system;
 import io.vertx.codegen.annotations.VertxGen;
 
 /**
+ * The status of a job.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
 public enum JobStatus {
 
-  RUNNING, STOPPED, TERMINATED
+  /**
+   * The job is running, it can be stopped or terminated.
+   */
+  RUNNING,
+
+  /**
+   * The job is stopped, it can be running or terminated.
+   */
+  STOPPED,
+
+  /**
+   * The job is terminated.
+   */
+  TERMINATED
 
 
 }

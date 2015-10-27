@@ -41,7 +41,11 @@ import io.vertx.core.cli.Option;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
+import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.io.Pty;
 import io.vertx.ext.shell.io.Tty;
+import io.vertx.ext.shell.system.Job;
+import io.vertx.ext.shell.system.ShellSession;
 import io.vertx.ext.shell.term.SSHOptions;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.ShellService;
@@ -274,5 +278,28 @@ public class Examples {
       });
     });
     server.listen();
+  }
+
+  public void testingCommand(Vertx vertx, Command myCommand) {
+
+    ShellService service = ShellService.create(vertx);
+    service.getCommandRegistry().registerCommand(myCommand);
+
+    service.start(ar -> {
+      if (ar.succeeded()) {
+        ShellSession shell = service.openSession();
+        Job job = shell.createJob("my-command 1234");
+
+        Pty pty = Pty.create();
+
+        job.setTty(pty.slave());
+        job.run(status -> {
+          System.out.println("Job terminated with status " + status);
+        });
+
+      }
+    });
+
+
   }
 }

@@ -106,8 +106,17 @@ public interface TermServer {
    */
   int actualPort();
 
+  /**
+   * Close the server. This will close any currently open connections. The close may not complete until after this
+   * method has returned.
+   */
   void close();
 
-  void close(Handler<AsyncResult<Void>> ar);
+  /**
+   * Like {@link #close} but supplying a handler that will be notified when close is complete.
+   *
+   * @param handler the handler
+   */
+  void close(Handler<AsyncResult<Void>> handler);
 
 }

@@ -40,18 +40,38 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * An interactive session between a consumer and a shell.<p/>
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
 public interface ShellSession {
 
+  /**
+   * @return the user session
+   */
   Session session();
 
+  /**
+   * @return the jobs active in this session
+   */
   Set<Job> jobs();
 
+  /**
+   * Returns an active job in this session by its {@literal id}.
+   *
+   * @param id the job id
+   * @return the job of {@literal null} when not found
+   */
   Job getJob(int id);
 
-  Job createJob(List<CliToken> args);
+  /**
+   * Create a job, the created job should then be executed with the {@link io.vertx.ext.shell.system.Job#run} method.
+   *
+   * @param line the command line creating this job
+   * @return the created job
+   */
+  Job createJob(List<CliToken> line);
 
   /**
    * @see #createJob(List)

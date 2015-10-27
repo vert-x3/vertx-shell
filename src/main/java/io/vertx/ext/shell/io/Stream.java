@@ -36,6 +36,8 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 
 /**
+ * A stream of text.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen

@@ -52,8 +52,17 @@ public interface Term extends Tty {
   @Override
   Term setStdin(Stream stdin);
 
+  /**
+   * Set a handler that will be called when the terminal is closed.
+   *
+   * @param handler the handler
+   * @return a reference to this, so the API can be used fluently
+   */
   @Fluent
   Term closeHandler(Handler<Void> handler);
 
+  /**
+   * Close the remote terminal.
+   */
   void close();
 }

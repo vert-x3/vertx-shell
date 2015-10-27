@@ -37,19 +37,36 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.ext.shell.io.impl.PtyImpl;
 
 /**
+ * A pseudo terminal used for controlling a {@link io.vertx.ext.shell.io.Tty}. This interface acts as a pseudo
+ * terminal master, {@link #slave()} returns the assocated slave pseudo terminal.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
 public interface Pty {
 
+  /**
+   * Create a new pseudo terminal with no terminal type.
+   *
+   * @see #create(String)
+   */
   static Pty create() {
     return new PtyImpl(null);
   }
 
+  /**
+   * Create a new pseudo terminal.
+   *
+   * @param terminalType the terminal type, for instance {@literal vt100}
+   * @return the created pseudo terminal
+   */
   static Pty create(String terminalType) {
     return new PtyImpl(terminalType);
   }
 
+  /**
+   * @return the standard input of the terminal
+   */
   Stream stdin();
 
   Pty setStdout(Stream stdout);
@@ -62,6 +79,9 @@ public interface Pty {
   @Fluent
   Pty setSize(int width, int height);
 
+  /**
+   * @return the pseudo terminal slave
+   */
   Tty slave();
 
 }
