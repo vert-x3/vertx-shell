@@ -32,12 +32,15 @@
 
 package io.vertx.ext.shell.system;
 
+import io.vertx.codegen.annotations.VertxGen;
+
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
+@VertxGen
 public enum JobStatus {
 
-  STARTING, RUNNING, STOPPED, TERMINATED
+  RUNNING, STOPPED, TERMINATED
 
 
 }
