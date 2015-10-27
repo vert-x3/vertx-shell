@@ -280,24 +280,31 @@ public class Examples {
     server.listen();
   }
 
-  public void testingCommand(Vertx vertx, Command myCommand) {
+  public void abc(ShellService shellService) {
 
-    ShellService service = ShellService.create(vertx);
-    service.getCommandRegistry().registerCommand(myCommand);
+    // Create a shell ession
+    ShellSession shell = shellService.openSession();
 
-    service.start(ar -> {
-      if (ar.succeeded()) {
-        ShellSession shell = service.openSession();
-        Job job = shell.createJob("my-command 1234");
+  }
 
-        Pty pty = Pty.create();
+  public void testingCommand(ShellService shellService) {
 
-        job.setTty(pty.slave());
-        job.run(status -> {
-          System.out.println("Job terminated with status " + status);
-        });
+    // Create a shell ession
+    ShellSession shell = shellService.openSession();
 
-      }
+    // Create a job for our command
+    Job job = shell.createJob("my-command 1234");
+
+    // Create a pseudo terminal
+    Pty pty = Pty.create();
+    pty.setStdout(data -> {
+      System.out.println("Command wrote " + data);
+    });
+
+    // Run the command
+    job.setTty(pty.slave());
+    job.run(status -> {
+      System.out.println("Command terminated with status " + status);
     });
 
 

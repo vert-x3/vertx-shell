@@ -352,6 +352,15 @@
  *
  * Completion ends with a call to {@link io.vertx.ext.shell.cli.Completion#complete(java.util.List)}.
  *
+ * == In process shell session
+ *
+ * An in process shell session can be created, this can be useful for testing commands.
+ *
+ * {@link io.vertx.ext.shell.ShellService#openSession} returns a {@link io.vertx.ext.shell.system.ShellSession shell session}.
+ * This session can be used for running commands:
+ *
+ *
+ *
  * == Terminal servers
  *
  * Vert.x Shell also provides bare terminal servers for those who need to write pure terminal applications.
