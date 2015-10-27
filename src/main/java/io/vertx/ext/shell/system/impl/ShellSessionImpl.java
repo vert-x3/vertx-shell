@@ -52,17 +52,17 @@ public class ShellSessionImpl implements ShellSession {
 
   final CommandRegistry registry;
   final SessionImpl session = new SessionImpl();
-  final SortedMap<Integer, Job> jobs = new TreeMap<>();
+  private final SortedMap<Integer, Job> jobs = new TreeMap<>();
 
   public ShellSessionImpl(CommandRegistry registry) {
     this.registry = registry;
   }
 
-  public Set<Job> jobs() {
+  public synchronized Set<Job> jobs() {
     return new HashSet<>(jobs.values());
   }
 
-  public Job getJob(int id) {
+  public synchronized Job getJob(int id) {
     return jobs.get(id);
   }
 
@@ -71,8 +71,12 @@ public class ShellSessionImpl implements ShellSession {
     return session;
   }
 
+  synchronized boolean removeJob(int id) {
+    return jobs.remove(id) != null;
+  }
+
   @Override
-  public Job createJob(List<CliToken> args) {
+  public synchronized Job createJob(List<CliToken> args) {
     StringBuilder line = new StringBuilder();
     args.stream().map(CliToken::raw).forEach(line::append);
     Process process = registry.createProcess(args);

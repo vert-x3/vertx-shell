@@ -37,6 +37,7 @@ import io.termd.core.tty.TtyEvent;
 import io.termd.core.util.Helper;
 import io.termd.core.util.Vector;
 
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -130,14 +131,16 @@ public class TestTtyConnection implements TtyConnection {
     closed = true;
   }
 
+  private final ConcurrentLinkedDeque<Runnable> tasks = new ConcurrentLinkedDeque<>();
   private boolean reading = false;
 
   @Override
   public void execute(Runnable task) {
     if (reading) {
-      throw new AssertionError();
+      tasks.add(task);
+    } else {
+      task.run();
     }
-    task.run();
   }
 
   @Override
@@ -167,6 +170,10 @@ public class TestTtyConnection implements TtyConnection {
     reading = true;
     stdinHandler.accept(Helper.toCodePoints(s));
     reading = false;
+    Runnable task;
+    while ((task = tasks.poll()) != null) {
+      task.run();
+    }
   }
 
   public synchronized String checkWritten(String s) {

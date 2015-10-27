@@ -111,8 +111,9 @@ public class JobImpl implements Job {
   }
 
   @Override
-  public void setTty(Tty tty) {
+  public Job setTty(Tty tty) {
     this.tty = tty;
+    return this;
   }
 
   @Override
@@ -148,7 +149,7 @@ public class JobImpl implements Job {
       @Override
       public void end(int status) {
         JobImpl.this.status = JobStatus.TERMINATED;
-        shell.jobs.remove(JobImpl.this.id);
+        shell.removeJob(JobImpl.this.id);
         endHandler.handle(status);
       }
     };

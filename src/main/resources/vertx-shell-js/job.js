@@ -106,11 +106,13 @@ var Job = function(j_val) {
 
    @public
    @param tty {Tty} the tty to use 
+   @return {Job}
    */
   this.setTty = function(tty) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
       j_job["setTty(io.vertx.ext.shell.io.Tty)"](tty._jdel);
+      return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

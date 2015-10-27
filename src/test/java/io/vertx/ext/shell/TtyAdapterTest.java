@@ -40,6 +40,7 @@ import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.JobStatus;
 import io.vertx.ext.shell.impl.TtyAdapter;
 import io.vertx.ext.shell.support.TestTtyConnection;
+import io.vertx.ext.shell.system.ShellSession;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -337,8 +338,9 @@ public class TtyAdapterTest {
   @Test
   public void testExecuteBufferedCommand(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, service.openSession(), registry);
-    shell.init();
+    ShellSession shell = service.openSession();
+    TtyAdapter adapter = new TtyAdapter(vertx, conn, shell, registry);
+    adapter.init();
     CountDownLatch latch = new CountDownLatch(1);
     Async async = context.async();
     registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
@@ -354,6 +356,10 @@ public class TtyAdapterTest {
     }).build());
     conn.read("foo\r");
     latch.await(10, TimeUnit.SECONDS);
+    long now = System.currentTimeMillis();
+    while (shell.jobs().size() > 0) {
+      context.assertTrue(System.currentTimeMillis() - now < 10000);
+    }
     conn.read("\r");
   }
 

@@ -32,6 +32,7 @@
 
 package io.vertx.ext.shell.system;
 
+import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.io.Tty;
@@ -77,7 +78,8 @@ public interface Job {
    *
    * @param tty the tty to use
    */
-  void setTty(Tty tty);
+  @Fluent
+  Job setTty(Tty tty);
 
   /**
    * Run the job, before running the job a {@link io.vertx.ext.shell.io.Tty} must be set.

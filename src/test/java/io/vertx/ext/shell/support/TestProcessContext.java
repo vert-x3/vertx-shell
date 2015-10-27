@@ -32,9 +32,7 @@
 
 package io.vertx.ext.shell.support;
 
-import io.vertx.core.Context;
 import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.system.impl.SessionImpl;
@@ -48,7 +46,6 @@ public class TestProcessContext implements ProcessContext, Tty {
 
   private final Session session = new SessionImpl();
   private Handler<Integer> endHandler;
-  final Context context = Vertx.currentContext();
   int width, height;
   private Stream stdin;
   private Stream stdout;
@@ -73,7 +70,7 @@ public class TestProcessContext implements ProcessContext, Tty {
   }
 
   public TestProcessContext endHandler(Handler<Integer> handler) {
-    endHandler = context != null ? status -> context.runOnContext(v -> handler.handle(status) ) : handler;
+    endHandler = handler;
     return this;
   }
 
@@ -113,7 +110,7 @@ public class TestProcessContext implements ProcessContext, Tty {
   }
 
   public TestProcessContext setStdout(Stream stream) {
-    stdout = context != null ? txt -> context.runOnContext(v -> stream.write(txt)) : stream;
+    stdout = stream;
     return this;
   }
 

@@ -93,13 +93,15 @@ public class Job {
   /**
    * Set a tty on the job.
    * @param tty the tty to use
+   * @return 
    */
-  public void setTty(Tty tty) { 
+  public Job setTty(Tty tty) { 
     this.delegate.setTty((io.vertx.ext.shell.io.Tty) tty.getDelegate());
+    return this;
   }
 
   /**
-   * Run the job, before running the job a {@link io.vertx.ext.shell.io.Tty} must be set.
+   * Run the job, before running the job a {@link io.vertx.rxjava.ext.shell.io.Tty} must be set.
    * @param endHandler to be notified when the job terminates
    */
   public void run(Handler<Integer> endHandler) { 

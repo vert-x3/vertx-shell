@@ -94,6 +94,8 @@ public class CommandRegistrationImpl implements CommandRegistration {
     return new Process() {
       public void execute(ProcessContext context) {
 
+        Context outerContext = registry.vertx.getOrCreateContext();
+
         CommandLine cl;
         final List<String> args2 = args.stream().filter(CliToken::isText).map(CliToken::value).collect(Collectors.toList());
         if (command.cli() != null) {
@@ -121,6 +123,9 @@ public class CommandRegistrationImpl implements CommandRegistration {
         }
 
         CommandProcess process = new CommandProcess() {
+
+          private Stream stdout;
+          private Stream wrappedStdout;
 
           @Override
           public Vertx vertx() {
@@ -176,12 +181,25 @@ public class CommandRegistrationImpl implements CommandRegistration {
 
           @Override
           public Stream stdout() {
-            return context.tty().stdout();
+            Stream contextStdout = context.tty().stdout();
+            if (contextStdout != stdout) {
+              if (contextStdout != null) {
+                wrappedStdout = line -> {
+                  outerContext.runOnContext(v -> {
+                    contextStdout.handle(line);
+                  });
+                };
+              } else {
+                wrappedStdout = null;
+              }
+              stdout = contextStdout;
+            }
+            return wrappedStdout;
           }
 
           @Override
           public CommandProcess write(String text) {
-            context.tty().stdout().handle(text);
+            stdout().handle(text);
             return this;
           }
 
@@ -239,12 +257,15 @@ public class CommandRegistrationImpl implements CommandRegistration {
 
           @Override
           public void end() {
-            context.end(0);
+            end(0);
           }
 
           @Override
           public void end(int status) {
-            context.end(status);
+            context.tty().setStdin(null);
+            outerContext.runOnContext(v -> {
+              context.end(status);
+            });
           }
         };
         CommandRegistrationImpl.this.context.runOnContext(v -> {
