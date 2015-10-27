@@ -342,24 +342,26 @@ public class TtyAdapterTest {
     TtyAdapter adapter = new TtyAdapter(vertx, conn, shell, registry);
     adapter.init();
     CountDownLatch latch = new CountDownLatch(1);
+    Async async1 = context.async();
     Async async = context.async();
     registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
       context.assertEquals(null, conn.checkWritten("% foo\n"));
       conn.read("bar");
-      context.assertNull(conn.checkWritten("bar"));
       process.end();
       latch.countDown();
-    }).build());
-    registry.registerCommand(CommandBuilder.command("bar").processHandler(process -> {
-      context.assertEquals(null, conn.checkWritten("% bar\n"));
-      async.complete();
-    }).build());
+    }).build(), context.asyncAssertSuccess(reg1 -> {
+      registry.registerCommand(CommandBuilder.command("bar").processHandler(process -> {
+        context.assertEquals(null, conn.checkWritten("\n"));
+        async.complete();
+      }).build(), reg2 -> {
+        async1.complete();
+      });
+    }));
+    async1.awaitSuccess(2000);
     conn.read("foo\r");
     latch.await(10, TimeUnit.SECONDS);
-    long now = System.currentTimeMillis();
-    while (shell.jobs().size() > 0) {
-      context.assertTrue(System.currentTimeMillis() - now < 10000);
-    }
+    context.assertNull(conn.checkWritten("bar"));
+    context.assertNull(conn.checkWritten("% bar"));
     conn.read("\r");
   }
 
