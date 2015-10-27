@@ -78,6 +78,7 @@ public interface Tty {
    * Set a resize handler, the handler is called when the tty size changes.
    *
    * @param handler the resize handler
+   * @return this object
    */
   @Fluent
   Tty resizehandler(Handler<Void> handler);
