@@ -75,11 +75,18 @@ public interface Process {
   Session getSession();
 
   /**
-   * Execute the process.
+   * Set an handler called when the process terminates.
    *
-   * @param endHandler the end handler
+   * @param handler the terminate handler
+   * @return this object
    */
-  void execute(Handler<Integer> endHandler);
+  @Fluent
+  Process terminateHandler(Handler<Integer> handler);
+
+  /**
+   * Run the process.
+   */
+  void run();
 
   /**
    * Attempt to interrupt the process.
@@ -97,5 +104,11 @@ public interface Process {
    * Resume the process.
    */
   void suspend();
+
+  /**
+   * Terminate the process.
+   */
+  void terminate();
+
 
 }

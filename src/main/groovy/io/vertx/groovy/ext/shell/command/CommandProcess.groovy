@@ -94,7 +94,7 @@ public class CommandProcess extends Tty {
     return this;
   }
   /**
-   * Set a suspend handler, this handler is called when the command is suspend, for instance user
+   * Set a suspend handler, this handler is called when the command is suspended, for instance user
    * press <code>Ctrl-Z</code>.
    * @param handler the interrupt handler
    * @return this command
@@ -111,6 +111,16 @@ public class CommandProcess extends Tty {
    */
   public CommandProcess resumeHandler(Handler<Void> handler) {
     this.delegate.resumeHandler(handler);
+    return this;
+  }
+  /**
+   * Set an end handler, this handler is called when the command is ended, for instance the command is running
+   * and the shell closes.
+   * @param handler the end handler
+   * @return this command
+   */
+  public CommandProcess endHandler(Handler<Void> handler) {
+    this.delegate.endHandler(handler);
     return this;
   }
   public CommandProcess write(String text) {

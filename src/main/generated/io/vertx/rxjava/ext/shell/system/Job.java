@@ -19,7 +19,7 @@ package io.vertx.rxjava.ext.shell.system;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
-import io.vertx.ext.shell.system.JobStatus;
+import io.vertx.ext.shell.system.ExecStatus;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.term.Tty;
 
@@ -58,8 +58,8 @@ public class Job {
    * @return the job status
    * @return 
    */
-  public JobStatus status() { 
-    JobStatus ret = this.delegate.status();
+  public ExecStatus status() { 
+    ExecStatus ret = this.delegate.status();
     return ret;
   }
 
@@ -129,6 +129,13 @@ public class Job {
    */
   public void suspend() { 
     this.delegate.suspend();
+  }
+
+  /**
+   * Terminate the job.
+   */
+  public void terminate() { 
+    this.delegate.terminate();
   }
 
 

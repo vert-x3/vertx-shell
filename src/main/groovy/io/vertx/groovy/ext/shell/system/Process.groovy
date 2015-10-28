@@ -68,11 +68,19 @@ public class Process {
     return ret;
   }
   /**
-   * Execute the process.
-   * @param endHandler the end handler
+   * Set an handler called when the process terminates.
+   * @param handler the terminate handler
+   * @return this object
    */
-  public void execute(Handler<Integer> endHandler) {
-    this.delegate.execute(endHandler);
+  public Process terminateHandler(Handler<Integer> handler) {
+    this.delegate.terminateHandler(handler);
+    return this;
+  }
+  /**
+   * Run the process.
+   */
+  public void run() {
+    this.delegate.run();
   }
   /**
    * Attempt to interrupt the process.
@@ -93,5 +101,11 @@ public class Process {
    */
   public void suspend() {
     this.delegate.suspend();
+  }
+  /**
+   * Terminate the process.
+   */
+  public void terminate() {
+    this.delegate.terminate();
   }
 }

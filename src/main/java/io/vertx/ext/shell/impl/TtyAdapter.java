@@ -46,7 +46,7 @@ import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.system.Job;
-import io.vertx.ext.shell.system.JobStatus;
+import io.vertx.ext.shell.system.ExecStatus;
 import io.vertx.ext.shell.system.Shell;
 
 import java.io.InputStream;
@@ -265,7 +265,7 @@ public class TtyAdapter {
             } else {
               foregroundJob = job;
               echo(Helper.toCodePoints(job.line() + "\n"));
-              if (job.status() == JobStatus.STOPPED) {
+              if (job.status() == ExecStatus.STOPPED) {
                 ((TtyImpl)job.getTty()).stdout = conn::write; // We set stdout whether or not it's background (maybe do something different)
                 job.resume();
               } else {
@@ -279,7 +279,7 @@ public class TtyAdapter {
             if (job == null) {
               conn.write("no such job\n");
             } else {
-              if (job.status() == JobStatus.STOPPED) {
+              if (job.status() == ExecStatus.STOPPED) {
                 ((TtyImpl)job.getTty()).stdout = conn::write; // We set stdout whether or not it's background (maybe do something different)
                 job.resume();
                 echo(Helper.toCodePoints(statusLine(job) + "\n"));

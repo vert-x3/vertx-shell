@@ -92,17 +92,32 @@ var Process = function(j_val) {
   };
 
   /**
-   Execute the process.
+   Set an handler called when the process terminates.
 
    @public
-   @param endHandler {function} the end handler 
+   @param handler {function} the terminate handler 
+   @return {Process} this object
    */
-  this.execute = function(endHandler) {
+  this.terminateHandler = function(handler) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_process["execute(io.vertx.core.Handler)"](function(jVal) {
-      endHandler(jVal);
+      j_process["terminateHandler(io.vertx.core.Handler)"](function(jVal) {
+      handler(jVal);
     });
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Run the process.
+
+   @public
+
+   */
+  this.run = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      j_process["run()"]();
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -143,6 +158,19 @@ var Process = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       j_process["suspend()"]();
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Terminate the process.
+
+   @public
+
+   */
+  this.terminate = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      j_process["terminate()"]();
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

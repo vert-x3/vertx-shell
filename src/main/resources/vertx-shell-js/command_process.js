@@ -139,7 +139,7 @@ var CommandProcess = function(j_val) {
   };
 
   /**
-   Set a suspend handler, this handler is called when the command is suspend, for instance user
+   Set a suspend handler, this handler is called when the command is suspended, for instance user
    press <code>Ctrl-Z</code>.
 
    @public
@@ -166,6 +166,22 @@ var CommandProcess = function(j_val) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'function') {
       j_commandProcess["resumeHandler(io.vertx.core.Handler)"](handler);
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Set an end handler, this handler is called when the command is ended, for instance the command is running
+   and the shell closes.
+
+   @public
+   @param handler {function} the end handler 
+   @return {CommandProcess} this command
+   */
+  this.endHandler = function(handler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_commandProcess["endHandler(io.vertx.core.Handler)"](handler);
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };

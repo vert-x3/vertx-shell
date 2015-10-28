@@ -171,6 +171,19 @@ var Job = function(j_val) {
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
+  /**
+   Terminate the job.
+
+   @public
+
+   */
+  this.terminate = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      j_job["terminate()"]();
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.

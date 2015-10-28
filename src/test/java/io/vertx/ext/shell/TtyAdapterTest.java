@@ -37,7 +37,7 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.system.Job;
-import io.vertx.ext.shell.system.JobStatus;
+import io.vertx.ext.shell.system.ExecStatus;
 import io.vertx.ext.shell.impl.TtyAdapter;
 import io.vertx.ext.shell.support.TestTtyConnection;
 import io.vertx.ext.shell.system.Shell;
@@ -46,7 +46,6 @@ import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -109,7 +108,7 @@ public class TtyAdapterTest {
       Job job = shell.getJob(1);
       context.assertEquals(job, shell.foregroundJob());
       context.assertEquals("foo", job.line());
-      context.assertEquals(JobStatus.RUNNING, job.status());
+      context.assertEquals(ExecStatus.RUNNING, job.status());
       async.complete();
     }).build(), reg -> {
       registrationLatch.complete();
@@ -176,7 +175,7 @@ public class TtyAdapterTest {
     registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
       Job job = shell.getJob(1);
       process.suspendHandler(v -> {
-        context.assertEquals(JobStatus.STOPPED, job.status());
+        context.assertEquals(ExecStatus.STOPPED, job.status());
         context.assertNull(shell.foregroundJob());
         done.complete();
       });
@@ -257,7 +256,7 @@ public class TtyAdapterTest {
       });
       process.resumeHandler(v -> {
         context.assertEquals(0L, latch2.getCount());
-        context.assertEquals(JobStatus.RUNNING, job.status());
+        context.assertEquals(ExecStatus.RUNNING, job.status());
         context.assertNotNull(process.stdout());
         context.assertEquals(job, shell.foregroundJob());
         conn.out().setLength(0);
@@ -303,7 +302,7 @@ public class TtyAdapterTest {
       });
       process.resumeHandler(v -> {
         context.assertEquals(0L, latch2.getCount());
-        context.assertEquals(JobStatus.RUNNING, job.status());
+        context.assertEquals(ExecStatus.RUNNING, job.status());
         context.assertNotNull(process.stdout());
         context.assertNull(shell.foregroundJob());
         try {

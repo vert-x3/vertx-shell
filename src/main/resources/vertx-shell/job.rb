@@ -26,7 +26,7 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling id()"
     end
     #  @return the job status
-    # @return [:RUNNING,:STOPPED,:TERMINATED]
+    # @return [:READY,:RUNNING,:STOPPED,:TERMINATED]
     def status
       if !block_given?
         return @j_del.java_method(:status, []).call().name.intern
@@ -99,6 +99,14 @@ module VertxShell
         return @j_del.java_method(:suspend, []).call()
       end
       raise ArgumentError, "Invalid arguments when calling suspend()"
+    end
+    #  Terminate the job.
+    # @return [void]
+    def terminate
+      if !block_given?
+        return @j_del.java_method(:terminate, []).call()
+      end
+      raise ArgumentError, "Invalid arguments when calling terminate()"
     end
   end
 end

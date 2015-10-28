@@ -18,7 +18,7 @@ package io.vertx.groovy.ext.shell.system;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
-import io.vertx.ext.shell.system.JobStatus
+import io.vertx.ext.shell.system.ExecStatus
 import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.term.Tty
 /**
@@ -48,7 +48,7 @@ public class Job {
    * @return the job status
    * @return 
    */
-  public JobStatus status() {
+  public ExecStatus status() {
     def ret = this.delegate.status();
     return ret;
   }
@@ -111,5 +111,11 @@ public class Job {
    */
   public void suspend() {
     this.delegate.suspend();
+  }
+  /**
+   * Terminate the job.
+   */
+  public void terminate() {
+    this.delegate.terminate();
   }
 }

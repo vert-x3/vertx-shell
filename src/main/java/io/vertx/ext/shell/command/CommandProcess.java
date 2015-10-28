@@ -91,7 +91,7 @@ public interface CommandProcess extends Tty {
   CommandProcess interruptHandler(Handler<Void> handler);
 
   /**
-   * Set a suspend handler, this handler is called when the command is suspend, for instance user
+   * Set a suspend handler, this handler is called when the command is suspended, for instance user
    * press <code>Ctrl-Z</code>.
    *
    * @param handler the interrupt handler
@@ -109,6 +109,16 @@ public interface CommandProcess extends Tty {
    */
   @Fluent
   CommandProcess resumeHandler(Handler<Void> handler);
+
+  /**
+   * Set an end handler, this handler is called when the command is ended, for instance the command is running
+   * and the shell closes.
+   *
+   * @param handler the end handler
+   * @return this command
+   */
+  @Fluent
+  CommandProcess endHandler(Handler<Void> handler);
 
   @Fluent
   CommandProcess write(String text);

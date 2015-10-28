@@ -80,7 +80,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling interrupt_handler()"
     end
-    #  Set a suspend handler, this handler is called when the command is suspend, for instance user
+    #  Set a suspend handler, this handler is called when the command is suspended, for instance user
     #  press <code>Ctrl-Z</code>.
     # @yield the interrupt handler
     # @return [self]
@@ -101,6 +101,17 @@ module VertxShell
         return self
       end
       raise ArgumentError, "Invalid arguments when calling resume_handler()"
+    end
+    #  Set an end handler, this handler is called when the command is ended, for instance the command is running
+    #  and the shell closes.
+    # @yield the end handler
+    # @return [self]
+    def end_handler
+      if block_given?
+        @j_del.java_method(:endHandler, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
+        return self
+      end
+      raise ArgumentError, "Invalid arguments when calling end_handler()"
     end
     # @param [String] text 
     # @return [self]

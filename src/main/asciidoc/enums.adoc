@@ -1,10 +1,10 @@
 = Enums
 
-[[JobStatus]]
-== JobStatus
+[[ExecStatus]]
+== ExecStatus
 
 ++++
- The status of a job.
+ The status of an execution.
 ++++
 '''
 
@@ -12,6 +12,10 @@
 [frame="topbot"]
 |===
 ^|Name | Description
+|[[READY]]`READY`|
++++
+The job is ready, it can be running or terminated.
++++
 |[[RUNNING]]`RUNNING`|
 +++
 The job is running, it can be stopped or terminated.

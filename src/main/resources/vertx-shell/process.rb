@@ -51,14 +51,23 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling get_session()"
     end
-    #  Execute the process.
-    # @yield the end handler
-    # @return [void]
-    def execute
+    #  Set an handler called when the process terminates.
+    # @yield the terminate handler
+    # @return [self]
+    def terminate_handler
       if block_given?
-        return @j_del.java_method(:execute, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
+        @j_del.java_method(:terminateHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
+        return self
       end
-      raise ArgumentError, "Invalid arguments when calling execute()"
+      raise ArgumentError, "Invalid arguments when calling terminate_handler()"
+    end
+    #  Run the process.
+    # @return [void]
+    def run
+      if !block_given?
+        return @j_del.java_method(:run, []).call()
+      end
+      raise ArgumentError, "Invalid arguments when calling run()"
     end
     #  Attempt to interrupt the process.
     # @return [true,false] true if the process caught the signal
@@ -83,6 +92,14 @@ module VertxShell
         return @j_del.java_method(:suspend, []).call()
       end
       raise ArgumentError, "Invalid arguments when calling suspend()"
+    end
+    #  Terminate the process.
+    # @return [void]
+    def terminate
+      if !block_given?
+        return @j_del.java_method(:terminate, []).call()
+      end
+      raise ArgumentError, "Invalid arguments when calling terminate()"
     end
   end
 end

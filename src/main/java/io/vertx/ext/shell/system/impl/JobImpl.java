@@ -37,7 +37,7 @@ import io.vertx.core.Handler;
 import io.vertx.ext.shell.system.Process;
 import io.vertx.ext.shell.term.Tty;
 import io.vertx.ext.shell.system.Job;
-import io.vertx.ext.shell.system.JobStatus;
+import io.vertx.ext.shell.system.ExecStatus;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -48,7 +48,7 @@ public class JobImpl implements Job {
   final ShellImpl shell;
   final Process process;
   final String line;
-  private volatile JobStatus status;
+  private volatile ExecStatus status;
   volatile long lastStopped; // When the job was last stopped
   volatile Tty tty;
 
@@ -66,21 +66,27 @@ public class JobImpl implements Job {
 
   @Override
   public void resume() {
-    status = JobStatus.RUNNING;
+    status = ExecStatus.RUNNING;
     process.resume();
   }
 
   @Override
   public void suspend() {
-    status = JobStatus.STOPPED;
+    status = ExecStatus.STOPPED;
     process.suspend();
+  }
+
+  @Override
+  public void terminate() {
+    status = ExecStatus.TERMINATED;
+    process.terminate();
   }
 
   public long lastStopped() {
     return lastStopped;
   }
 
-  public JobStatus status() {
+  public ExecStatus status() {
     return status;
   }
 
@@ -106,13 +112,14 @@ public class JobImpl implements Job {
 
   @Override
   public void run(Handler<Integer> endHandler) {
-    status = JobStatus.RUNNING;
+    status = ExecStatus.RUNNING;
     process.setTty(tty);
     process.setSession(shell.session);
-    process.execute(status -> {
-      JobImpl.this.status = JobStatus.TERMINATED;
+    process.terminateHandler(status -> {
+      JobImpl.this.status = ExecStatus.TERMINATED;
       shell.removeJob(JobImpl.this.id);
       endHandler.handle(status);
     });
+    process.run();
   }
 }

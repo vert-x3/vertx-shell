@@ -56,7 +56,7 @@ public interface Job {
   /**
    * @return the job status
    */
-  JobStatus status();
+  ExecStatus status();
 
   /**
    * @return when the job was last stopped
@@ -105,4 +105,8 @@ public interface Job {
    */
   void suspend();
 
+  /**
+   * Terminate the job.
+   */
+  void terminate();
 }
