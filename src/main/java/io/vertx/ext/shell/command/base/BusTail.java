@@ -61,8 +61,10 @@ public class BusTail implements Command {
       process.write("" + msg.body() + "\n");
     });
     process.interruptHandler(done -> {
-      consumer.unregister();
       process.end();
+    });
+    process.endHandler(done -> {
+      consumer.unregister();
     });
   }
 }

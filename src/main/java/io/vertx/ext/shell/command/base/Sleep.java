@@ -75,18 +75,18 @@ public class Sleep implements Command {
       long id = process.vertx().setTimer(millis, v -> {
         process.end();
       });
-      process.interruptHandler(v -> {
-        if (vertx.cancelTimer(id)) {
-          process.end();
-        }
-      });
       process.suspendHandler(v -> {
-        if (vertx.cancelTimer(id)) {
-          remaining.set(millis - (System.currentTimeMillis() - now));
-        }
+        vertx.cancelTimer(id);
+        remaining.set(millis - (System.currentTimeMillis() - now));
       });
       process.resumeHandler(v -> {
         scheduleSleep(process, remaining.get());
+      });
+      process.interruptHandler(v -> {
+        process.end();
+      });
+      process.endHandler(v -> {
+        vertx.cancelTimer(id);
       });
     } else {
       process.end();
