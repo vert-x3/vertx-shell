@@ -32,6 +32,7 @@
 
 package io.vertx.ext.shell.system;
 
+import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.term.Tty;
@@ -49,8 +50,10 @@ public interface Process {
    * Set the process tty.
    *
    * @param tty the process tty
+   * @return this object
    */
-  void setTty(Tty tty);
+  @Fluent
+  Process setTty(Tty tty);
 
   /**
    * @return the process tty
@@ -61,8 +64,10 @@ public interface Process {
    * Set the process session
    *
    * @param session the process session
+   * @return this object
    */
-  void setSession(Session session);
+  @Fluent
+  Process setSession(Session session);
 
   /**
    * @return the process session

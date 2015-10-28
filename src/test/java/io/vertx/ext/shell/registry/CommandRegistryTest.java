@@ -35,10 +35,12 @@ package io.vertx.ext.shell.registry;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.Process;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.registry.impl.CommandRegistryImpl;
+import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -68,7 +70,7 @@ public class CommandRegistryTest {
     registry.registerCommand(command.build(), context.asyncAssertSuccess(v -> {
       Process process = registry.createProcess("hello world");
       Async async = context.async();
-      process.execute(code -> {
+      process.setSession(Session.create()).setTty(Pty.create().slave()).execute(code -> {
         async.complete();
       });
     }));

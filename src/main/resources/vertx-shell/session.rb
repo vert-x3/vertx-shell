@@ -13,6 +13,14 @@ module VertxShell
     def j_del
       @j_del
     end
+    #  Create a new empty session.
+    # @return [::VertxShell::Session] the created session
+    def self.create
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellSession::Session.java_method(:create, []).call(),::VertxShell::Session)
+      end
+      raise ArgumentError, "Invalid arguments when calling create()"
+    end
     #  Put some data in a session
     # @param [String] key the key for the data
     # @param [Object] obj the data

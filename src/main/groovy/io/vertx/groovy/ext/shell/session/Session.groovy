@@ -31,6 +31,14 @@ public class Session {
     return delegate;
   }
   /**
+   * Create a new empty session.
+   * @return the created session
+   */
+  public static Session create() {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.session.Session.create(), io.vertx.groovy.ext.shell.session.Session.class);
+    return ret;
+  }
+  /**
    * Put some data in a session
    * @param key the key for the data
    * @param obj the data

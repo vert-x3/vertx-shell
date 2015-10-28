@@ -40,6 +40,15 @@ public class Session {
   }
 
   /**
+   * Create a new empty session.
+   * @return the created session
+   */
+  public static Session create() { 
+    Session ret= Session.newInstance(io.vertx.ext.shell.session.Session.create());
+    return ret;
+  }
+
+  /**
    * Put some data in a session
    * @param key the key for the data
    * @param obj the data

@@ -81,5 +81,19 @@ var Session = function(j_val) {
   this._jdel = j_session;
 };
 
+/**
+ Create a new empty session.
+
+ @memberof module:vertx-shell-js/session
+
+ @return {Session} the created session
+ */
+Session.create = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JSession["create()"](), Session);
+  } else throw new TypeError('function invoked with invalid arguments');
+};
+
 // We export the Constructor function
 module.exports = Session;

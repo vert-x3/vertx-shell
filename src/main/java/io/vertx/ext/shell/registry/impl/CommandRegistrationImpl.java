@@ -100,8 +100,9 @@ public class CommandRegistrationImpl implements CommandRegistration {
       private volatile Handler<Void> resumeHandler;
 
       @Override
-      public void setTty(Tty tty) {
+      public Process setTty(Tty tty) {
         this.tty = tty;
+        return this;
       }
 
       @Override
@@ -110,8 +111,9 @@ public class CommandRegistrationImpl implements CommandRegistration {
       }
 
       @Override
-      public void setSession(Session session) {
+      public Process setSession(Session session) {
         this.session = session;
+        return this;
       }
 
       @Override
@@ -146,6 +148,18 @@ public class CommandRegistrationImpl implements CommandRegistration {
 
       @Override
       public void execute(Handler<Integer> endHandler) {
+
+        // Make a local copy
+        Tty tty = this.tty;
+        if (tty == null) {
+          throw new IllegalStateException("Cannot execute process without a TTY set");
+        }
+
+        // Make a local copy
+        Session session = this.session;
+        if (session == null) {
+          throw new IllegalStateException("Cannot execute process without a Session set");
+        }
 
         Context outerContext = registry.vertx.getOrCreateContext();
 

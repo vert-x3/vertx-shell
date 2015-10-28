@@ -36,9 +36,11 @@ public class Process {
   /**
    * Set the process tty.
    * @param tty the process tty
+   * @return this object
    */
-  public void setTty(Tty tty) {
+  public Process setTty(Tty tty) {
     this.delegate.setTty((io.vertx.ext.shell.term.Tty)tty.getDelegate());
+    return this;
   }
   /**
    * @return the process tty
@@ -51,9 +53,11 @@ public class Process {
   /**
    * Set the process session
    * @param session the process session
+   * @return this object
    */
-  public void setSession(Session session) {
+  public Process setSession(Session session) {
     this.delegate.setSession((io.vertx.ext.shell.session.Session)session.getDelegate());
+    return this;
   }
   /**
    * @return the process session

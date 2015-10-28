@@ -34,6 +34,7 @@ package io.vertx.ext.shell.session;
 
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
+import io.vertx.ext.shell.system.impl.SessionImpl;
 
 /**
  * A shell session.
@@ -42,6 +43,15 @@ import io.vertx.codegen.annotations.VertxGen;
  */
 @VertxGen
 public interface Session {
+
+  /**
+   * Create a new empty session.
+   *
+   * @return the created session
+   */
+  static Session create() {
+    return new SessionImpl();
+  }
 
   /**
    * Put some data in a session
