@@ -82,11 +82,15 @@ public class TtyAdapterTest {
     TestTtyConnection conn = new TestTtyConnection();
     TtyAdapter shell = new TtyAdapter(vertx, conn, service.createShell(), registry);
     shell.init();
-    Async async = context.async();
+    Async async1 = context.async();
+    Async async2 = context.async();
     registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
       context.assertEquals(vertx, process.vertx());
-      async.complete();
-    }).build());
+      async2.complete();
+    }).build(), context.asyncAssertSuccess(reg -> {
+      async1.complete();
+    }));
+    async1.awaitSuccess(10000);
     conn.read("foo\r");
   }
 
