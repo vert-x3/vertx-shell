@@ -127,6 +127,11 @@ public interface ShellService {
    */
   void start(Handler<AsyncResult<Void>> startHandler);
 
+  /**
+   * Creates a new shell.
+   *
+   * @return the created shell
+   */
   Shell createShell();
 
   /**
