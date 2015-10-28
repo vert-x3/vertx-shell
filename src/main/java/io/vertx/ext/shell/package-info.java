@@ -302,11 +302,11 @@
  *
  * A command can subscribe to a few process events.
  *
- * ==== Interrupted event
+ * ==== Interrupt event
  *
- * The {@link io.vertx.ext.shell.command.CommandProcess#interruptHandler(io.vertx.core.Handler)} is called when the process is interrupted, this event is fired when the user press
- * _Ctrl+C_ during the execution of a command. This handler can be used for interrupting commands _blocking_ the CLI and
- * gracefully ending the command process:
+ * The {@link io.vertx.ext.shell.command.CommandProcess#interruptHandler(io.vertx.core.Handler)} is called when the process
+ * is interrupted, this event is fired when the user press _Ctrl+C_ during the execution of a command. This handler can
+ * be used for interrupting commands _blocking_ the CLI and gracefully ending the command process:
  *
  * [source,$lang]
  * ----
@@ -324,17 +324,33 @@
  * - the command can receive the suspend event when it has registered an handler for this event
  * - the command will not receive anymore data from the standard input
  * - the shell prompt the user for input
+ * - the command can receive interrupts event or end events
  *
  * The {@link io.vertx.ext.shell.command.CommandProcess#resumeHandler(io.vertx.core.Handler)} is called when the process
  * is resumed, usually when the user types _fg_:
  *
  * - the command can receive the resume event when it has registered an handler for this event
- * - the command will receive anymore data from the standard input when it has registered an stdin handler
+ * - the command will receive again data from the standard input when it has registered an stdin handler
  *
  * [source,$lang]
  * ----
  * {@link examples.Examples#suspendResumeHandler}
  * ----
+ *
+ * ==== End events
+ *
+ * The {@link io.vertx.ext.shell.command.CommandProcess#endHandler(io.vertx.core.Handler)} (io.vertx.core.Handler)} is
+ * called when the process is running or suspended and the command terminates, for instance the shell session is closed,
+ * the command is _terminated_.
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#endHandler}
+ * ----
+ *
+ * The end handler is called even when the command invokes {@link io.vertx.ext.shell.command.CommandProcess#end()}.
+ *
+ * This handler is useful for cleaning up resources upon command termination, for instance closing a client or a timer.
  *
  * === Command completion
  *
@@ -373,6 +389,9 @@
  *
  * - uses standard input/output for writing or reading strings
  * - resize the terminal
+ *
+ * The {@link io.vertx.ext.shell.system.Shell#close} closes the shell, it will terminate all jobs in the current shell
+ * session.
  *
  * == Terminal servers
  *

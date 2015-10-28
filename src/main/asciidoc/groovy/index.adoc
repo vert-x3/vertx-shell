@@ -405,11 +405,11 @@ command.processHandler({ process ->
 
 A command can subscribe to a few process events.
 
-==== Interrupted event
+==== Interrupt event
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#interruptHandler(io.vertx.core.Handler)[interruptHandler]` is called when the process is interrupted, this event is fired when the user press
-_Ctrl+C_ during the execution of a command. This handler can be used for interrupting commands _blocking_ the CLI and
-gracefully ending the command process:
+The `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#interruptHandler(io.vertx.core.Handler)[interruptHandler]` is called when the process
+is interrupted, this event is fired when the user press _Ctrl+C_ during the execution of a command. This handler can
+be used for interrupting commands _blocking_ the CLI and gracefully ending the command process:
 
 [source,groovy]
 ----
@@ -441,12 +441,13 @@ is running and the user press _Ctrl+Z_, the command is _suspended_:
 - the command can receive the suspend event when it has registered an handler for this event
 - the command will not receive anymore data from the standard input
 - the shell prompt the user for input
+- the command can receive interrupts event or end events
 
 The `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#resumeHandler(io.vertx.core.Handler)[resumeHandler]` is called when the process
 is resumed, usually when the user types _fg_:
 
 - the command can receive the resume event when it has registered an handler for this event
-- the command will receive anymore data from the standard input when it has registered an stdin handler
+- the command will receive again data from the standard input when it has registered an stdin handler 
 
 [source,groovy]
 ----
@@ -464,6 +465,28 @@ command.processHandler({ process ->
 })
 
 ----
+
+==== End events
+
+The `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#endHandler(io.vertx.core.Handler)[endHandler]` (io.vertx.core.Handler)} is
+called when the process is running or suspended and the command terminates, for instance the shell session is closed,
+the command is _terminated_.
+
+[source,groovy]
+----
+command.processHandler({ process ->
+
+  // Command terminates
+  process.endHandler({ v ->
+    println("Terminated")
+  })
+})
+
+----
+
+The end handler is called even when the command invokes `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#end()[end]`.
+
+This handler is useful for cleaning up resources upon command termination, for instance closing a client or a timer.
 
 === Command completion
 

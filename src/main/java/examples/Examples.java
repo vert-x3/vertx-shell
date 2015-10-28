@@ -258,6 +258,16 @@ public class Examples {
     });
   }
 
+  public void endHandler(CommandBuilder command) {
+    command.processHandler(process -> {
+
+      // Command terminates
+      process.endHandler(v -> {
+        System.out.println("Terminated");
+      });
+   });
+  }
+
   public void telnetEchoTerminal(Vertx vertx) {
     TermServer server = TermServer.createTelnetServer(vertx, new TelnetOptions().setPort(5000).setHost("localhost"));
     server.termHandler(term -> {
