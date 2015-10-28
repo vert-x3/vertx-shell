@@ -33,10 +33,8 @@
 package io.vertx.ext.shell.system.impl;
 
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.session.Session;
 
-import io.vertx.ext.shell.process.*;
-import io.vertx.ext.shell.process.Process;
+import io.vertx.ext.shell.system.Process;
 import io.vertx.ext.shell.io.Tty;
 import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.JobStatus;
@@ -48,14 +46,11 @@ public class JobImpl implements Job {
 
   final int id;
   final ShellImpl shell;
-  final io.vertx.ext.shell.process.Process process;
+  final Process process;
   final String line;
   private volatile JobStatus status;
   volatile long lastStopped; // When the job was last stopped
   volatile Tty tty;
-  volatile Handler<Void> suspendHandler;
-  volatile Handler<Void> interruptHandler;
-  volatile Handler<Void> resumeHandler;
 
   public JobImpl(int id, ShellImpl shell, Process process, String line) {
     this.id = id;
@@ -66,26 +61,19 @@ public class JobImpl implements Job {
 
   @Override
   public boolean interrupt() {
-    if (interruptHandler != null) {
-      interruptHandler.handle(null);
-    }
-    return interruptHandler != null;
+    return process.interrupt();
   }
 
   @Override
   public void resume() {
     status = JobStatus.RUNNING;
-    if (resumeHandler != null) {
-      resumeHandler.handle(null);
-    }
+    process.resume();
   }
 
   @Override
   public void suspend() {
     status = JobStatus.STOPPED;
-    if (suspendHandler != null) {
-      suspendHandler.handle(null);
-    }
+    process.suspend();
   }
 
   public long lastStopped() {
@@ -119,40 +107,12 @@ public class JobImpl implements Job {
   @Override
   public void run(Handler<Integer> endHandler) {
     status = JobStatus.RUNNING;
-    ProcessContext processContext = new ProcessContext() {
-
-      @Override
-      public Tty tty() {
-        return tty;
-      }
-
-      @Override
-      public void interruptHandler(Handler<Void> handler) {
-        interruptHandler = handler;
-      }
-
-      @Override
-      public void suspendHandler(Handler<Void> handler) {
-        suspendHandler = handler;
-      }
-
-      @Override
-      public void resumeHandler(Handler<Void> handler) {
-        resumeHandler = handler;
-      }
-
-      @Override
-      public Session session() {
-        return shell.session;
-      }
-
-      @Override
-      public void end(int status) {
-        JobImpl.this.status = JobStatus.TERMINATED;
-        shell.removeJob(JobImpl.this.id);
-        endHandler.handle(status);
-      }
-    };
-    process.execute(processContext);
+    process.setTty(tty);
+    process.setSession(shell.session);
+    process.execute(status -> {
+      JobImpl.this.status = JobStatus.TERMINATED;
+      shell.removeJob(JobImpl.this.id);
+      endHandler.handle(status);
+    });
   }
 }

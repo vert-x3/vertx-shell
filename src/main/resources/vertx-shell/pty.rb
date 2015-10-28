@@ -35,11 +35,13 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling stdin()"
     end
-    # @param [::VertxShell::Stream] stdout 
-    # @return [::VertxShell::Pty]
+    #  Set the standard out of the pseudo terminal.
+    # @param [::VertxShell::Stream] stdout the standard output
+    # @return [self]
     def set_stdout(stdout=nil)
       if stdout.class.method_defined?(:j_del) && !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:setStdout, [Java::IoVertxExtShellIo::Stream.java_class]).call(stdout.j_del),::VertxShell::Pty)
+        @j_del.java_method(:setStdout, [Java::IoVertxExtShellIo::Stream.java_class]).call(stdout.j_del)
+        return self
       end
       raise ArgumentError, "Invalid arguments when calling set_stdout(stdout)"
     end

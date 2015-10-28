@@ -26,7 +26,7 @@ import io.vertx.rxjava.core.Vertx;
 import io.vertx.core.AsyncResult;
 import io.vertx.rxjava.ext.shell.cli.CliToken;
 import io.vertx.core.Handler;
-import io.vertx.rxjava.ext.shell.process.Process;
+import io.vertx.rxjava.ext.shell.system.Process;
 
 /**
  * A registry that contains the commands known by a shell.

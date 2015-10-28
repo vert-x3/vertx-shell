@@ -68,16 +68,21 @@ public class Pty {
     return ret;
   }
 
+  /**
+   * Set the standard out of the pseudo terminal.
+   * @param stdout the standard output
+   * @return this current object
+   */
   public Pty setStdout(Stream stdout) { 
-    Pty ret= Pty.newInstance(this.delegate.setStdout((io.vertx.ext.shell.io.Stream) stdout.getDelegate()));
-    return ret;
+    this.delegate.setStdout((io.vertx.ext.shell.io.Stream) stdout.getDelegate());
+    return this;
   }
 
   /**
    * Resize the terminal.
    * @param width 
    * @param height 
-   * @return the new standard input of the terminal
+   * @return this current object
    */
   public Pty setSize(int width, int height) { 
     this.delegate.setSize(width, height);

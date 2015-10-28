@@ -25,7 +25,7 @@ import io.vertx.rxjava.ext.shell.cli.Completion;
 import io.vertx.core.AsyncResult;
 import io.vertx.rxjava.ext.shell.cli.CliToken;
 import io.vertx.core.Handler;
-import io.vertx.rxjava.ext.shell.process.Process;
+import io.vertx.rxjava.ext.shell.system.Process;
 
 /**
  * A registration of a command in the {@link io.vertx.rxjava.ext.shell.registry.CommandRegistry}

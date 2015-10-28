@@ -25,7 +25,7 @@ import io.vertx.groovy.core.Vertx
 import io.vertx.core.AsyncResult
 import io.vertx.groovy.ext.shell.cli.CliToken
 import io.vertx.core.Handler
-import io.vertx.groovy.ext.shell.process.Process
+import io.vertx.groovy.ext.shell.system.Process
 /**
  * A registry that contains the commands known by a shell.
 */
@@ -61,7 +61,7 @@ public class CommandRegistry {
    * @return the created process
    */
   public Process createProcess(String line) {
-    def ret= InternalHelper.safeCreate(this.delegate.createProcess(line), io.vertx.groovy.ext.shell.process.Process.class);
+    def ret= InternalHelper.safeCreate(this.delegate.createProcess(line), io.vertx.groovy.ext.shell.system.Process.class);
     return ret;
   }
   /**
@@ -70,7 +70,7 @@ public class CommandRegistry {
    * @return the created process
    */
   public Process createProcess(List<CliToken> line) {
-    def ret= InternalHelper.safeCreate(this.delegate.createProcess((List<io.vertx.ext.shell.cli.CliToken>)(line.collect({underpants -> underpants.getDelegate()}))), io.vertx.groovy.ext.shell.process.Process.class);
+    def ret= InternalHelper.safeCreate(this.delegate.createProcess((List<io.vertx.ext.shell.cli.CliToken>)(line.collect({underpants -> underpants.getDelegate()}))), io.vertx.groovy.ext.shell.system.Process.class);
     return ret;
   }
   /**

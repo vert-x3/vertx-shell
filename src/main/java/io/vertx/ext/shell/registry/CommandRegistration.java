@@ -38,7 +38,7 @@ import io.vertx.core.Handler;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.process.Process;
+import io.vertx.ext.shell.system.Process;
 
 import java.util.List;
 

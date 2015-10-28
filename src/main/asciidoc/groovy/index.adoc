@@ -364,7 +364,7 @@ println("terminal type : ${tty.type()}")
 === Shell session
 
 The shell is a connected service that naturally maintains a session with the client, this session can be
-used in commands to scope data. A command can get the session with `link:groovydoc/io/vertx/groovy/ext/shell/process/ProcessContext.html#session()[session]`:
+used in commands to scope data. A command can get the session with `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#session()[session]`:
 
 [source,groovy]
 ----

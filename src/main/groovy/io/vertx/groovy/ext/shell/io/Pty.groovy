@@ -56,15 +56,20 @@ public class Pty {
     def ret= InternalHelper.safeCreate(this.delegate.stdin(), io.vertx.groovy.ext.shell.io.Stream.class);
     return ret;
   }
+  /**
+   * Set the standard out of the pseudo terminal.
+   * @param stdout the standard output
+   * @return this current object
+   */
   public Pty setStdout(Stream stdout) {
-    def ret= InternalHelper.safeCreate(this.delegate.setStdout((io.vertx.ext.shell.io.Stream)stdout.getDelegate()), io.vertx.groovy.ext.shell.io.Pty.class);
-    return ret;
+    this.delegate.setStdout((io.vertx.ext.shell.io.Stream)stdout.getDelegate());
+    return this;
   }
   /**
    * Resize the terminal.
    * @param width 
    * @param height 
-   * @return the new standard input of the terminal
+   * @return this current object
    */
   public Pty setSize(int width, int height) {
     this.delegate.setSize(width, height);

@@ -45,7 +45,7 @@ import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.registry.CommandRegistration;
-import io.vertx.ext.shell.process.Process;
+import io.vertx.ext.shell.system.Process;
 
 import java.util.ArrayList;
 import java.util.Collections;

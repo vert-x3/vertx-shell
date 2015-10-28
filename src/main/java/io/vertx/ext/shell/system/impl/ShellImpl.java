@@ -33,7 +33,7 @@
 package io.vertx.ext.shell.system.impl;
 
 import io.vertx.ext.shell.cli.CliToken;
-import io.vertx.ext.shell.process.Process;
+import io.vertx.ext.shell.system.Process;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.Job;

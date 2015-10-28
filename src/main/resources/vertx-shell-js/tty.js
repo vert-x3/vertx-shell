@@ -109,7 +109,7 @@ var Tty = function(j_val) {
 
    @public
    @param handler {function} the resize handler 
-   @return {Tty}
+   @return {Tty} this object
    */
   this.resizehandler = function(handler) {
     var __args = arguments;

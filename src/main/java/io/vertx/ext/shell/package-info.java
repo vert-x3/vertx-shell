@@ -281,7 +281,7 @@
  * === Shell session
  *
  * The shell is a connected service that naturally maintains a session with the client, this session can be
- * used in commands to scope data. A command can get the session with {@link io.vertx.ext.shell.process.ProcessContext#session()}:
+ * used in commands to scope data. A command can get the session with {@link io.vertx.ext.shell.command.CommandProcess#session()}:
  *
  * [source,$lang]
  * ----

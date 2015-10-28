@@ -47,15 +47,17 @@ var Pty = function(j_val) {
   };
 
   /**
+   Set the standard out of the pseudo terminal.
 
    @public
-   @param stdout {Stream} 
-   @return {Pty}
+   @param stdout {Stream} the standard output 
+   @return {Pty} this current object
    */
   this.setStdout = function(stdout) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      return utils.convReturnVertxGen(j_pty["setStdout(io.vertx.ext.shell.io.Stream)"](stdout._jdel), Pty);
+      j_pty["setStdout(io.vertx.ext.shell.io.Stream)"](stdout._jdel);
+      return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -65,7 +67,7 @@ var Pty = function(j_val) {
    @public
    @param width {number} 
    @param height {number} 
-   @return {Pty} the new standard input of the terminal
+   @return {Pty} this current object
    */
   this.setSize = function(width, height) {
     var __args = arguments;

@@ -24,7 +24,7 @@ import io.vertx.groovy.ext.shell.cli.Completion
 import io.vertx.core.AsyncResult
 import io.vertx.groovy.ext.shell.cli.CliToken
 import io.vertx.core.Handler
-import io.vertx.groovy.ext.shell.process.Process
+import io.vertx.groovy.ext.shell.system.Process
 /**
  * A registration of a command in the {@link io.vertx.groovy.ext.shell.registry.CommandRegistry}
 */
@@ -58,7 +58,7 @@ public class CommandRegistration {
    * @return the process
    */
   public Process createProcess(List<CliToken> args) {
-    def ret= InternalHelper.safeCreate(this.delegate.createProcess((List<io.vertx.ext.shell.cli.CliToken>)(args.collect({underpants -> underpants.getDelegate()}))), io.vertx.groovy.ext.shell.process.Process.class);
+    def ret= InternalHelper.safeCreate(this.delegate.createProcess((List<io.vertx.ext.shell.cli.CliToken>)(args.collect({underpants -> underpants.getDelegate()}))), io.vertx.groovy.ext.shell.system.Process.class);
     return ret;
   }
   /**

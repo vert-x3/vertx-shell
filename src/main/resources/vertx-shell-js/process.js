@@ -16,11 +16,12 @@
 
 /** @module vertx-shell-js/process */
 var utils = require('vertx-js/util/utils');
-var ProcessContext = require('vertx-shell-js/process_context');
+var Tty = require('vertx-shell-js/tty');
+var Session = require('vertx-shell-js/session');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JProcess = io.vertx.ext.shell.process.Process;
+var JProcess = io.vertx.ext.shell.system.Process;
 
 /**
  A process managed by the shell.
@@ -33,15 +34,107 @@ var Process = function(j_val) {
   var that = this;
 
   /**
-   Execute the process in the given context.
 
    @public
-   @param context {ProcessContext} the context 
+   @param tty {Tty} 
    */
-  this.execute = function(context) {
+  this.setTty = function(tty) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_process["execute(io.vertx.ext.shell.process.ProcessContext)"](context._jdel);
+      j_process["setTty(io.vertx.ext.shell.io.Tty)"](tty._jdel);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+
+   @return {Tty}
+   */
+  this.getTty = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return utils.convReturnVertxGen(j_process["getTty()"](), Tty);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param session {Session} 
+   */
+  this.setSession = function(session) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      j_process["setSession(io.vertx.ext.shell.session.Session)"](session._jdel);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+
+   @return {Session}
+   */
+  this.getSession = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return utils.convReturnVertxGen(j_process["getSession()"](), Session);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Execute the process.
+
+   @public
+   @param endHandler {function} the end handler 
+   */
+  this.execute = function(endHandler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_process["execute(io.vertx.core.Handler)"](function(jVal) {
+      endHandler(jVal);
+    });
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Attempt to interrupt the process.
+
+   @public
+
+   @return {boolean} true if the process caught the signal
+   */
+  this.interrupt = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return j_process["interrupt()"]();
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Suspend the process.
+
+   @public
+
+   */
+  this.resume = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      j_process["resume()"]();
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Resume the process.
+
+   @public
+
+   */
+  this.suspend = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      j_process["suspend()"]();
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

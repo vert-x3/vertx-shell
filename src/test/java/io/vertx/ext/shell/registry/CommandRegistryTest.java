@@ -35,8 +35,7 @@ package io.vertx.ext.shell.registry;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.process.Process;
-import io.vertx.ext.shell.support.TestProcessContext;
+import io.vertx.ext.shell.system.Process;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.registry.impl.CommandRegistryImpl;
@@ -69,11 +68,9 @@ public class CommandRegistryTest {
     registry.registerCommand(command.build(), context.asyncAssertSuccess(v -> {
       Process process = registry.createProcess("hello world");
       Async async = context.async();
-      TestProcessContext ctx = new TestProcessContext();
-      ctx.endHandler(code -> {
+      process.execute(code -> {
         async.complete();
       });
-      process.execute(ctx);
     }));
   }
 

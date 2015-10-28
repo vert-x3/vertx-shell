@@ -90,7 +90,7 @@ public class Tty {
   /**
    * Set a resize handler, the handler is called when the tty size changes.
    * @param handler the resize handler
-   * @return 
+   * @return this object
    */
   public Tty resizehandler(Handler<Void> handler) { 
     this.delegate.resizehandler(handler);

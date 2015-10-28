@@ -38,6 +38,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.cli.CLIException;
 import io.vertx.core.cli.CommandLine;
+import io.vertx.ext.shell.io.Tty;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.Command;
@@ -45,8 +46,7 @@ import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandProcess;
 import io.vertx.ext.shell.registry.CommandRegistration;
-import io.vertx.ext.shell.process.Process;
-import io.vertx.ext.shell.process.ProcessContext;
+import io.vertx.ext.shell.system.Process;
 
 import java.util.Collections;
 import java.util.List;
@@ -92,7 +92,60 @@ public class CommandRegistrationImpl implements CommandRegistration {
 
   public Process createProcess(List<CliToken> args) {
     return new Process() {
-      public void execute(ProcessContext context) {
+
+      private volatile Tty tty;
+      private volatile Session session;
+      private volatile Handler<Void> interruptHandler;
+      private volatile Handler<Void> suspendHandler;
+      private volatile Handler<Void> resumeHandler;
+
+      @Override
+      public void setTty(Tty tty) {
+        this.tty = tty;
+      }
+
+      @Override
+      public Tty getTty() {
+        return tty;
+      }
+
+      @Override
+      public void setSession(Session session) {
+        this.session = session;
+      }
+
+      @Override
+      public Session getSession() {
+        return session;
+      }
+
+      @Override
+      public boolean interrupt() {
+        Handler<Void> handler = interruptHandler;
+        if (handler != null) {
+          CommandRegistrationImpl.this.context.runOnContext(handler::handle);
+        }
+        return handler != null;
+      }
+
+      @Override
+      public void resume() {
+        Handler<Void> handler = resumeHandler;
+        if (handler != null) {
+          CommandRegistrationImpl.this.context.runOnContext(handler::handle);
+        }
+      }
+
+      @Override
+      public void suspend() {
+        Handler<Void> handler = suspendHandler;
+        if (handler != null) {
+          CommandRegistrationImpl.this.context.runOnContext(handler::handle);
+        }
+      }
+
+      @Override
+      public void execute(Handler<Integer> endHandler) {
 
         Context outerContext = registry.vertx.getOrCreateContext();
 
@@ -105,8 +158,8 @@ public class CommandRegistrationImpl implements CommandRegistration {
             StringBuilder usage = new StringBuilder();
             command.cli().usage(usage);
             usage.append('\n');
-            context.tty().stdout().handle(usage.toString());
-            context.end(0);
+            tty.stdout().handle(usage.toString());
+            endHandler.handle(0);
             return;
           }
 
@@ -114,8 +167,8 @@ public class CommandRegistrationImpl implements CommandRegistration {
           try {
             cl = command.cli().parse(args2);
           } catch (CLIException e) {
-            context.tty().stdout().handle(e.getMessage() + "\n");
-            context.end(0);
+            tty.stdout().handle(e.getMessage() + "\n");
+            endHandler.handle(0);
             return;
           }
         } else {
@@ -134,7 +187,7 @@ public class CommandRegistrationImpl implements CommandRegistration {
 
           @Override
           public String type() {
-            return context.tty().type();
+            return tty.type();
           }
 
           @Override
@@ -154,17 +207,17 @@ public class CommandRegistrationImpl implements CommandRegistration {
 
           @Override
           public Session session() {
-            return context.session();
+            return session;
           }
 
           @Override
           public int width() {
-            return context.tty().width();
+            return tty.width();
           }
 
           @Override
           public int height() {
-            return context.tty().height();
+            return tty.height();
           }
 
           @Override
@@ -175,13 +228,13 @@ public class CommandRegistrationImpl implements CommandRegistration {
             } else {
               s = null;
             }
-            context.tty().setStdin(s);
+            tty.setStdin(s);
             return this;
           }
 
           @Override
           public Stream stdout() {
-            Stream contextStdout = context.tty().stdout();
+            Stream contextStdout = tty.stdout();
             if (contextStdout != stdout) {
               if (contextStdout != null) {
                 wrappedStdout = line -> {
@@ -206,52 +259,28 @@ public class CommandRegistrationImpl implements CommandRegistration {
           @Override
           public CommandProcess resizehandler(Handler<Void> handler) {
             if (handler != null) {
-              context.tty().resizehandler(v -> CommandRegistrationImpl.this.context.runOnContext(handler::handle));
+              tty.resizehandler(v -> CommandRegistrationImpl.this.context.runOnContext(handler::handle));
             } else {
-              context.tty().resizehandler(null);
+              tty.resizehandler(null);
             }
             return this;
           }
 
           @Override
           public CommandProcess interruptHandler(Handler<Void> handler) {
-            if (handler != null) {
-              context.interruptHandler(v -> {
-                CommandRegistrationImpl.this.context.runOnContext(v2 -> {
-                  handler.handle(null);
-                });
-              });
-            } else {
-              context.interruptHandler(null);
-            }
+            interruptHandler = handler;
             return this;
           }
 
           @Override
           public CommandProcess suspendHandler(Handler<Void> handler) {
-            if (handler != null) {
-              context.suspendHandler(v -> {
-                CommandRegistrationImpl.this.context.runOnContext(v2 -> {
-                  handler.handle(null);
-                });
-              });
-            } else {
-              context.suspendHandler(null);
-            }
+            suspendHandler = handler;
             return this;
           }
 
           @Override
           public CommandProcess resumeHandler(Handler<Void> handler) {
-            if (handler != null) {
-              context.resumeHandler(v -> {
-                CommandRegistrationImpl.this.context.runOnContext(v2 -> {
-                  handler.handle(null);
-                });
-              });
-            } else {
-              context.resumeHandler(null);
-            }
+            resumeHandler = handler;
             return this;
           }
 
@@ -262,9 +291,9 @@ public class CommandRegistrationImpl implements CommandRegistration {
 
           @Override
           public void end(int status) {
-            context.tty().setStdin(null);
+            tty.setStdin(null);
             outerContext.runOnContext(v -> {
-              context.end(status);
+              endHandler.handle(status);
             });
           }
         };
@@ -272,7 +301,7 @@ public class CommandRegistrationImpl implements CommandRegistration {
           try {
             command.process(process);
           } catch (Throwable e) {
-            context.end(1);
+            endHandler.handle(1);
             throw e;
           }
         });

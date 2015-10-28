@@ -363,7 +363,7 @@ puts "terminal type : #{tty.type()}"
 === Shell session
 
 The shell is a connected service that naturally maintains a session with the client, this session can be
-used in commands to scope data. A command can get the session with `link:yardoc/VertxShell/ProcessContext.html#session-instance_method[session]`:
+used in commands to scope data. A command can get the session with `link:yardoc/VertxShell/CommandProcess.html#session-instance_method[session]`:
 
 [source,ruby]
 ----

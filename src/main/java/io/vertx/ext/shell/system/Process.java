@@ -30,9 +30,12 @@
  *
  */
 
-package io.vertx.ext.shell.process;
+package io.vertx.ext.shell.system;
 
 import io.vertx.codegen.annotations.VertxGen;
+import io.vertx.core.Handler;
+import io.vertx.ext.shell.io.Tty;
+import io.vertx.ext.shell.session.Session;
 
 /**
  * A process managed by the shell.
@@ -43,10 +46,51 @@ import io.vertx.codegen.annotations.VertxGen;
 public interface Process {
 
   /**
-   * Execute the process in the given context.
+   * Set the process tty.
    *
-   * @param context the context
+   * @param tty the process tty
    */
-  void execute(ProcessContext context);
+  void setTty(Tty tty);
+
+  /**
+   * @return the process tty
+   */
+  Tty getTty();
+
+  /**
+   * Set the process session
+   *
+   * @param session the process session
+   */
+  void setSession(Session session);
+
+  /**
+   * @return the process session
+   */
+  Session getSession();
+
+  /**
+   * Execute the process.
+   *
+   * @param endHandler the end handler
+   */
+  void execute(Handler<Integer> endHandler);
+
+  /**
+   * Attempt to interrupt the process.
+   *
+   * @return true if the process caught the signal
+   */
+  boolean interrupt();
+
+  /**
+   * Suspend the process.
+   */
+  void resume();
+
+  /**
+   * Resume the process.
+   */
+  void suspend();
 
 }
