@@ -38,9 +38,12 @@ or with SSH
 - extensible
 - completion
 - basic job control
+- programmatic shell session
+- terminal server
 
 ## Roadmap
 
+- composite commands _bus send_ instead of _bus-send_
 - http client command
 - JDBC/Mongo auth
 - make telnet configurable with a remote hosts white list
