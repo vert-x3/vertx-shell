@@ -1,29 +1,5 @@
 = Cheatsheets
 
-[[ShiroAuthOptions]]
-== ShiroAuthOptions
-
-++++
- Shiro auth configuration options, see Vert.x Auth Shiro component and/or Apache Shiro project.
-
- note: this will be moved to vertx-auth project after 3.1
-++++
-'''
-
-[cols=">25%,^25%,50%"]
-[frame="topbot"]
-|===
-^|Name | Type ^| Description
-|[[config]]`config`|`Json object`|
-+++
-Set the Shiro auth config.
-+++
-|[[type]]`type`|`link:enums.html#ShiroAuthRealmType[ShiroAuthRealmType]`|
-+++
-Set the Shiro auth options type.
-+++
-|===
-
 [[ShellServiceOptions]]
 == ShellServiceOptions
 
@@ -49,22 +25,6 @@ Set the Telnet options, if the option is null, Telnet will not be started.
 +++
 Set the shell welcome message, i.e the message displayed in the user console when he connects to the shell.
 +++
-|===
-
-[[AuthOptions]]
-== AuthOptions
-
-++++
- A common base object for authentication options.
-
- note: this will be moved to vertx-auth project after 3.1
-++++
-'''
-
-[cols=">25%,^25%,50%"]
-[frame="topbot"]
-|===
-^|Name | Type ^| Description
 |===
 
 [[SSHOptions]]

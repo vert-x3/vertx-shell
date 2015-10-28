@@ -43,7 +43,7 @@ public class SSHOptionsConverter {
       obj.setPort(((Number)json.getValue("port")).intValue());
     }
     if (json.getValue("shiroAuthOptions") instanceof JsonObject) {
-      obj.setShiroAuthOptions(new io.vertx.ext.shell.auth.ShiroAuthOptions((JsonObject)json.getValue("shiroAuthOptions")));
+      obj.setShiroAuthOptions(new io.vertx.ext.auth.shiro.ShiroAuthOptions((JsonObject)json.getValue("shiroAuthOptions")));
     }
   }
 

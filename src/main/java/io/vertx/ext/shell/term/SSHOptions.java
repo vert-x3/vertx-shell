@@ -39,8 +39,8 @@ import io.vertx.core.net.KeyCertOptions;
 import io.vertx.core.net.NetServerOptions;
 import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.core.net.PfxOptions;
-import io.vertx.ext.shell.auth.AuthOptions;
-import io.vertx.ext.shell.auth.ShiroAuthOptions;
+import io.vertx.ext.auth.AuthOptions;
+import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 
 /**
  * The SSH shell configuration options.

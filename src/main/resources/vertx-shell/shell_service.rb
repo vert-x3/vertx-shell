@@ -47,7 +47,8 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling start()"
     end
-    # @return [::VertxShell::Shell]
+    #  Creates a new shell.
+    # @return [::VertxShell::Shell] the created shell
     def create_shell
       if !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:createShell, []).call(),::VertxShell::Shell)

@@ -90,6 +90,10 @@ public class ShellService {
     return startHandler;
   }
 
+  /**
+   * Creates a new shell.
+   * @return the created shell
+   */
   public Shell createShell() { 
     Shell ret= Shell.newInstance(this.delegate.createShell());
     return ret;

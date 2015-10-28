@@ -66,6 +66,10 @@ public class ShellService {
   public void start(Handler<AsyncResult<Void>> startHandler) {
     this.delegate.start(startHandler);
   }
+  /**
+   * Creates a new shell.
+   * @return the created shell
+   */
   public Shell createShell() {
     def ret= InternalHelper.safeCreate(this.delegate.createShell(), io.vertx.groovy.ext.shell.system.Shell.class);
     return ret;

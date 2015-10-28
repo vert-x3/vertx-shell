@@ -52,7 +52,7 @@ import io.vertx.core.net.PfxOptions;
 import io.vertx.core.net.impl.KeyStoreHelper;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.shiro.ShiroAuth;
-import io.vertx.ext.shell.auth.ShiroAuthOptions;
+import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.shell.term.SSHOptions;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.Term;
@@ -177,11 +177,7 @@ public class SSHServer implements TermServer {
         AuthProvider authProvider;
         if (options.getAuthOptions() instanceof ShiroAuthOptions) {
           ShiroAuthOptions authOptions = (ShiroAuthOptions) options.getAuthOptions();
-          authProvider = ShiroAuth.create(
-              vertx,
-              authOptions.getType(),
-              authOptions.getConfig()
-          );
+          authProvider = ShiroAuth.create(vertx, authOptions);
         } else {
           throw new VertxException("No authenticator");
         }

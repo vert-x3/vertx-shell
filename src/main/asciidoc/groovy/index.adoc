@@ -141,7 +141,7 @@ The SSH connector is configured by `link:../dataobjects.html#ShellServiceOptions
 Only username/password authentication is supported at the moment, it can be configured with property file
 or LDAP, see Vert.x Auth for more info:
 
-- `link:../dataobjects.html#SSHOptions#setShiroAuthOptions(io.vertx.ext.shell.auth.ShiroAuthOptions)[shiroAuthOptions]`: configures user authentication
+- `link:../dataobjects.html#SSHOptions#setShiroAuthOptions(io.vertx.ext.auth.shiro.ShiroAuthOptions)[shiroAuthOptions]`: configures user authentication
 
 The server key configuration reuses the key pair store configuration scheme provided by _Vert.x Core_:
 

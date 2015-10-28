@@ -70,10 +70,11 @@ var ShellService = function(j_val) {
   };
 
   /**
+   Creates a new shell.
 
    @public
 
-   @return {Shell}
+   @return {Shell} the created shell
    */
   this.createShell = function() {
     var __args = arguments;
