@@ -41,6 +41,7 @@ or with SSH
 
 ## Roadmap
 
+- http client command
 - JDBC/Mongo auth
 - make telnet configurable with a remote hosts white list
 - make builtin shell commands completable
