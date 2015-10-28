@@ -91,6 +91,13 @@ public class Shell {
     return ret;
   }
 
+  /**
+   * Close the shell session and terminate all the underlying jobs.
+   */
+  public void close() { 
+    this.delegate.close();
+  }
+
 
   public static Shell newInstance(io.vertx.ext.shell.system.Shell arg) {
     return arg != null ? new Shell(arg) : null;

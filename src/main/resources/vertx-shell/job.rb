@@ -67,12 +67,21 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling set_tty(tty)"
     end
+    #  Set an handler called when the job terminates.
+    # @yield the terminate handler
+    # @return [self]
+    def terminate_handler
+      if block_given?
+        @j_del.java_method(:terminateHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
+        return self
+      end
+      raise ArgumentError, "Invalid arguments when calling terminate_handler()"
+    end
     #  Run the job, before running the job a  must be set.
-    # @yield to be notified when the job terminates
     # @return [void]
     def run
-      if block_given?
-        return @j_del.java_method(:run, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
+      if !block_given?
+        return @j_del.java_method(:run, []).call()
       end
       raise ArgumentError, "Invalid arguments when calling run()"
     end

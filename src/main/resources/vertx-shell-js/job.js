@@ -117,17 +117,32 @@ var Job = function(j_val) {
   };
 
   /**
+   Set an handler called when the job terminates.
+
+   @public
+   @param handler {function} the terminate handler 
+   @return {Job} this object
+   */
+  this.terminateHandler = function(handler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_job["terminateHandler(io.vertx.core.Handler)"](function(jVal) {
+      handler(jVal);
+    });
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
    Run the job, before running the job a  must be set.
 
    @public
-   @param endHandler {function} to be notified when the job terminates 
+
    */
-  this.run = function(endHandler) {
+  this.run = function() {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_job["run(io.vertx.core.Handler)"](function(jVal) {
-      endHandler(jVal);
-    });
+    if (__args.length === 0) {
+      j_job["run()"]();
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

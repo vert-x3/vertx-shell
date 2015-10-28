@@ -78,4 +78,9 @@ public interface Shell {
    */
   Job createJob(String line);
 
+  /**
+   * Close the shell session and terminate all the underlying jobs.
+   */
+  void close();
+
 }

@@ -39,6 +39,7 @@ import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.Shell;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -89,5 +90,14 @@ public class ShellImpl implements Shell {
   @Override
   public Job createJob(String line) {
     return createJob(CliToken.tokenize(line));
+  }
+
+  @Override
+  public void close() {
+    ArrayList<Job> jobs;
+    synchronized (this) {
+      jobs = new ArrayList<>(this.jobs.values());
+    }
+    jobs.forEach(Job::terminate);
   }
 }

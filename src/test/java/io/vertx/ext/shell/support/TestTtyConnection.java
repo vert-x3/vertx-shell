@@ -129,6 +129,9 @@ public class TestTtyConnection implements TtyConnection {
   @Override
   public void close() {
     closed = true;
+    if (closeHandler != null) {
+      closeHandler.accept(null);
+    }
   }
 
   private final ConcurrentLinkedDeque<Runnable> tasks = new ConcurrentLinkedDeque<>();

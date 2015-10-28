@@ -437,10 +437,19 @@ public class TtyAdapterTest {
   public void testExit(TestContext context) throws Exception {
     for (String cmd : Arrays.asList("exit", "logout")) {
       TestTtyConnection conn = new TestTtyConnection();
-      TtyAdapter shell = new TtyAdapter(vertx, conn, service.createShell(), registry);
-      shell.init();
+      Shell shell = service.createShell();
+      TtyAdapter adapter = new TtyAdapter(vertx, conn, shell, registry);
+      adapter.init();
+      conn.read("sleep 10000\r");
+      conn.sendEvent(TtyEvent.SUSP);
+      conn.read("bg\r");
       conn.read(cmd + "\r");
       context.assertTrue(conn.isClosed());
+      long now = System.currentTimeMillis();
+      while (shell.jobs().size() > 0) {
+        context.assertTrue((System.currentTimeMillis() - now) < 10000);
+        Thread.sleep(10);
+      }
     }
   }
 

@@ -63,14 +63,14 @@ import java.util.stream.Collectors;
 public class TtyAdapter {
 
   final CommandRegistry registry;
-  final Shell session;
+  final Shell shell;
   final Vertx vertx;
   private final TtyConnection conn;
   final Readline readline;
   Job foregroundJob; // The currently running job
   String welcome;
 
-  public TtyAdapter(Vertx vertx, TtyConnection conn, Shell session, CommandRegistry registry) {
+  public TtyAdapter(Vertx vertx, TtyConnection conn, Shell shell, CommandRegistry registry) {
 
     InputStream inputrc = Keymap.class.getResourceAsStream("inputrc");
     Keymap keymap = new Keymap(inputrc);
@@ -78,7 +78,7 @@ public class TtyAdapter {
 
     this.vertx = vertx;
     this.conn = conn;
-    this.session = session;
+    this.shell = shell;
     this.readline = readline;
     this.registry = registry;
   }
@@ -152,6 +152,9 @@ public class TtyAdapter {
           break;
       }
     });
+    conn.setCloseHandler(v -> {
+      shell.close();
+    });
     if (welcome != null && welcome.length() > 0) {
       conn.write(welcome);
     }
@@ -195,15 +198,15 @@ public class TtyAdapter {
   }
 
   public Set<Job> jobs() {
-    return session.jobs();
+    return shell.jobs();
   }
 
   public Job getJob(int id) {
-    return session.getJob(id);
+    return shell.getJob(id);
   }
 
   private void jobs(Readline readline) {
-    session.jobs().forEach(job -> {
+    shell.jobs().forEach(job -> {
       String line = statusLine(job) + "\n";
       conn.write(line);
     });
@@ -295,7 +298,7 @@ public class TtyAdapter {
 
       Job job;
       try {
-        job = session.createJob(tokens);
+        job = shell.createJob(tokens);
       } catch (Exception e) {
         echo(Helper.toCodePoints(e.getMessage() + "\n"));
         read(readline);
@@ -305,13 +308,14 @@ public class TtyAdapter {
       TtyImpl tty = new TtyImpl(job);
       tty.stdout = conn::write;
       job.setTty(tty);
-      job.run(status -> {
+      job.terminateHandler(status -> {
         if (foregroundJob == job) {
           foregroundJob = null;
           ((TtyImpl)job.getTty()).stdout = null;
           read(readline);
         }
       });
+      job.run();
     }, completion -> {
       String line = Helper.fromCodePoints(completion.line());
       List<CliToken> tokens = Collections.unmodifiableList(CliToken.tokenize(line));
@@ -324,7 +328,7 @@ public class TtyAdapter {
 
         @Override
         public Session session() {
-          return session.session();
+          return shell.session();
         }
 
         @Override
@@ -402,8 +406,5 @@ public class TtyAdapter {
     public Stream stdout() {
       return stdout;
     }
-  }
-
-  public void close() {
   }
 }

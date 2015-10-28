@@ -82,11 +82,18 @@ public interface Job {
   Job setTty(Tty tty);
 
   /**
-   * Run the job, before running the job a {@link Tty} must be set.
+   * Set an handler called when the job terminates.
    *
-   * @param endHandler to be notified when the job terminates
+   * @param handler the terminate handler
+   * @return this object
    */
-  void run(Handler<Integer> endHandler);
+  @Fluent
+  Job terminateHandler(Handler<Integer> handler);
+
+  /**
+   * Run the job, before running the job a {@link Tty} must be set.
+   */
+  void run();
 
   /**
    * Attempt to interrupt the job.

@@ -77,4 +77,10 @@ public class Shell {
     def ret= InternalHelper.safeCreate(this.delegate.createJob(line), io.vertx.groovy.ext.shell.system.Job.class);
     return ret;
   }
+  /**
+   * Close the shell session and terminate all the underlying jobs.
+   */
+  public void close() {
+    this.delegate.close();
+  }
 }

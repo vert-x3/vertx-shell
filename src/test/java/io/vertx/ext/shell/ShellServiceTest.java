@@ -86,10 +86,10 @@ public class ShellServiceTest {
       Shell session = service.createShell();
       Job job = session.createJob(CliToken.tokenize("foo"));
       Async async = context.async();
-      job.setTty(Pty.create().slave()).run(code -> {
+      job.setTty(Pty.create().slave()).terminateHandler(code -> {
         context.assertEquals(3, code);
         async.complete();
-      });
+      }).run();
     }));
   }
 
@@ -104,10 +104,10 @@ public class ShellServiceTest {
       Job job = shell.createJob("foo");
       Async async = context.async();
       Pty pty = Pty.create();
-      job.setTty(pty.slave()).run(code -> {
+      job.setTty(pty.slave()).terminateHandler(code -> {
         context.assertEquals(1, code);
         async.complete();
-      });
+      }).run();
     }));
   }
 
@@ -128,10 +128,10 @@ public class ShellServiceTest {
       Async async = context.async();
       Pty pty = Pty.create();
       job.setTty(pty.slave());
-      job.run(code -> {
+      job.terminateHandler(code -> {
         context.assertEquals(0, code);
         async.complete();
-      });
+      }).run();
       try {
         latch.await(10, TimeUnit.SECONDS);
       } catch (InterruptedException e) {
@@ -156,11 +156,11 @@ public class ShellServiceTest {
       Pty pty = Pty.create();
       pty.setStdout(out::add);
       job.setTty(pty.slave());
-      job.run(code -> {
+      job.terminateHandler(code -> {
         context.assertEquals(0, code);
         context.assertEquals(Arrays.asList("bye_world"), out);
         async.complete();
-      });
+      }).run();
     }));
   }
 
@@ -197,10 +197,10 @@ public class ShellServiceTest {
             testContext.assertEquals("pong", text);
             job.suspend();
           });
-          job.setTty(pty.slave()).run(code -> {
+          job.setTty(pty.slave()).terminateHandler(code -> {
             testContext.assertTrue(shellCtx == Vertx.currentContext());
             async.complete();
-          });
+          }).run();
           try {
             latch.await(10, TimeUnit.SECONDS);
           } catch (InterruptedException e) {
@@ -227,9 +227,9 @@ public class ShellServiceTest {
       Job job = shell.createJob("foo");
       Async async = context.async();
       Pty pty = Pty.create();
-      job.setTty(pty.slave()).run(status -> {
+      job.setTty(pty.slave()).terminateHandler(status -> {
         async.complete();
-      });
+      }).run();
       try {
         latch.await(10, TimeUnit.SECONDS);
       } catch (InterruptedException e) {
@@ -261,9 +261,9 @@ public class ShellServiceTest {
       pty.setStdout(text -> {
         pty.setSize(25, 15);
       });
-      job.setTty(pty.slave()).run(status -> {
+      job.setTty(pty.slave()).terminateHandler(status -> {
         async.complete();
-      });
+      }).run();
     }));
   }
 
@@ -282,10 +282,10 @@ public class ShellServiceTest {
       Job job = shell.createJob("foo");
       shell.session().put("the_key", "the_value");
       Pty pty = Pty.create();
-      job.setTty(pty.slave()).run(status -> {
+      job.setTty(pty.slave()).terminateHandler(status -> {
         context.assertEquals(0, status);
         async.complete();
-      });
+      }).run();
     }));
   }
 
@@ -304,11 +304,11 @@ public class ShellServiceTest {
       Shell shell = service.createShell();
       Job job = shell.createJob("foo");
       Pty pty = Pty.create();
-      job.setTty(pty.slave()).run(status -> {
+      job.setTty(pty.slave()).terminateHandler(status -> {
         context.assertEquals(0, status);
         context.assertEquals("the_value", shell.session().get("the_key"));
         async.complete();
-      });
+      }).run();
     }));
   }
 
@@ -327,12 +327,36 @@ public class ShellServiceTest {
       Job job = shell.createJob("foo");
       Pty pty = Pty.create();
       shell.session().put("the_key", "the_value");
-      job.setTty(pty.slave()).run(status -> {
+      job.setTty(pty.slave()).terminateHandler(status -> {
         context.assertEquals(0, status);
         context.assertNull(shell.session().get("the_key"));
         async.complete();
-      });
+      }).run();
     }));
+  }
+
+  @Test
+  public void testClose(TestContext context) {
+    Async async = context.async(2);
+    Async registrationLatch = context.async();
+    Async runningLatch = context.async();
+    CommandBuilder cmd = CommandBuilder.command("foo");
+    cmd.processHandler(process -> {
+      process.endHandler(v -> async.complete());
+      runningLatch.complete();
+    });
+    registry.registerCommand(cmd.build(), ar -> registrationLatch.complete());
+    registrationLatch.awaitSuccess(10000);
+    Shell shell = service.createShell();
+    Job job = shell.createJob("foo");
+    Pty pty = Pty.create();
+    job.setTty(pty.slave()).terminateHandler(status -> {
+      async.complete();
+    }).run();
+    runningLatch.awaitSuccess(10000);
+    shell.close();
+    async.awaitSuccess(10000);
+    context.assertEquals(0, shell.jobs().size());
   }
 
   // Just some proof of concept, there are issues because we there is a timing

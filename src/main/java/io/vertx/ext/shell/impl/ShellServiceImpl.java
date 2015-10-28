@@ -77,12 +77,10 @@ public class ShellServiceImpl implements ShellService {
   public void start(Handler<AsyncResult<Void>> startHandler) {
 
     Consumer<TtyConnection> shellBoostrap = conn -> {
-      TtyAdapter shell = new TtyAdapter(vertx, conn, createShell(), registry);
-      conn.setCloseHandler(v -> {
-        shell.close();
-      });
-      shell.setWelcome(options.getWelcomeMessage());
-      shell.init();
+      Shell shell = createShell();
+      TtyAdapter adapter = new TtyAdapter(vertx, conn, shell, registry);
+      adapter.setWelcome(options.getWelcomeMessage());
+      adapter.init();
     };
 
     TelnetOptions telnetOptions = options.getTelnetOptions();

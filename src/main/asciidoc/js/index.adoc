@@ -513,7 +513,7 @@ pty.setStdout(function (data) {
 
 // Run the command
 job.setTty(pty.slave());
-job.run(function (status) {
+job.terminateHandler(function (status) {
   console.log("Command terminated with status " + status);
 });
 

@@ -101,11 +101,20 @@ public class Job {
   }
 
   /**
-   * Run the job, before running the job a  must be set.
-   * @param endHandler to be notified when the job terminates
+   * Set an handler called when the job terminates.
+   * @param handler the terminate handler
+   * @return this object
    */
-  public void run(Handler<Integer> endHandler) { 
-    this.delegate.run(endHandler);
+  public Job terminateHandler(Handler<Integer> handler) { 
+    this.delegate.terminateHandler(handler);
+    return this;
+  }
+
+  /**
+   * Run the job, before running the job a  must be set.
+   */
+  public void run() { 
+    this.delegate.run();
   }
 
   /**

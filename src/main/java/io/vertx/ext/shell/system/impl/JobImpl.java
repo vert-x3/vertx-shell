@@ -42,7 +42,7 @@ import io.vertx.ext.shell.system.ExecStatus;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class JobImpl implements Job {
+class JobImpl implements Job {
 
   final int id;
   final ShellImpl shell;
@@ -51,12 +51,27 @@ public class JobImpl implements Job {
   private volatile ExecStatus status;
   volatile long lastStopped; // When the job was last stopped
   volatile Tty tty;
+  volatile Handler<Integer> terminateHandler;
 
-  public JobImpl(int id, ShellImpl shell, Process process, String line) {
+  JobImpl(int id, ShellImpl shell, Process process, String line) {
     this.id = id;
     this.shell = shell;
     this.process = process;
     this.line = line;
+
+    process.terminateHandler(status -> {
+      JobImpl.this.status = ExecStatus.TERMINATED;
+      shell.removeJob(JobImpl.this.id);
+      if (terminateHandler != null) {
+        terminateHandler.handle(status);
+      }
+    });
+  }
+
+  @Override
+  public Job terminateHandler(Handler<Integer> handler) {
+    terminateHandler = handler;
+    return this;
   }
 
   @Override
@@ -66,14 +81,20 @@ public class JobImpl implements Job {
 
   @Override
   public void resume() {
-    status = ExecStatus.RUNNING;
-    process.resume();
+    try {
+      process.resume();
+      status = ExecStatus.RUNNING;
+    } catch (IllegalStateException ignore) {
+    }
   }
 
   @Override
   public void suspend() {
-    status = ExecStatus.STOPPED;
-    process.suspend();
+    try {
+      process.suspend();
+      status = ExecStatus.STOPPED;
+    } catch (IllegalStateException ignore) {
+    }
   }
 
   @Override
@@ -111,15 +132,10 @@ public class JobImpl implements Job {
   }
 
   @Override
-  public void run(Handler<Integer> endHandler) {
+  public void run() {
     status = ExecStatus.RUNNING;
     process.setTty(tty);
     process.setSession(shell.session);
-    process.terminateHandler(status -> {
-      JobImpl.this.status = ExecStatus.TERMINATED;
-      shell.removeJob(JobImpl.this.id);
-      endHandler.handle(status);
-    });
     process.run();
   }
 }
