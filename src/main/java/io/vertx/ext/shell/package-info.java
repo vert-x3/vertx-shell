@@ -225,14 +225,14 @@
  * ----
  *
  * When the command executes the {@link io.vertx.ext.shell.command.CommandProcess process} is provided for interacting
- * with the shell. A {@link io.vertx.ext.shell.command.CommandProcess} extends {@link io.vertx.ext.shell.io.Tty}
+ * with the shell. A {@link io.vertx.ext.shell.command.CommandProcess} extends {@link io.vertx.ext.shell.term.Tty}
  * which is used for interacting with the terminal.
  *
  * === Terminal usage
  *
  * ==== terminal I/O
  *
- * The {@link io.vertx.ext.shell.io.Tty#setStdin} handler is used to be notified when the terminal
+ * The {@link io.vertx.ext.shell.term.Tty#setStdin} handler is used to be notified when the terminal
  * receives data, e.g the user uses his keyboard:
  *
  * [source,$lang]
@@ -240,7 +240,7 @@
  * {@link examples.Examples#readStdin}
  * ----
  *
- * A command can use the {@link io.vertx.ext.shell.io.Tty#stdout()} to write to the standard output.
+ * A command can use the {@link io.vertx.ext.shell.term.Tty#stdout()} to write to the standard output.
  *
  * [source,$lang]
  * ----
@@ -249,8 +249,8 @@
  *
  * ==== Terminal size
  *
- * The current terminal size can be obtained using {@link io.vertx.ext.shell.io.Tty#width()} and
- * {@link io.vertx.ext.shell.io.Tty#height()}.
+ * The current terminal size can be obtained using {@link io.vertx.ext.shell.term.Tty#width()} and
+ * {@link io.vertx.ext.shell.term.Tty#height()}.
  *
  * [source,$lang]
  * ----
@@ -259,9 +259,9 @@
  *
  * ==== Resize event
  *
- * When the size of the terminal changes the {@link io.vertx.ext.shell.io.Tty#resizehandler(io.vertx.core.Handler)}
- * is called, the new terminal size can be obtained with {@link io.vertx.ext.shell.io.Tty#width()} and
- * {@link io.vertx.ext.shell.io.Tty#height()}.
+ * When the size of the terminal changes the {@link io.vertx.ext.shell.term.Tty#resizehandler(io.vertx.core.Handler)}
+ * is called, the new terminal size can be obtained with {@link io.vertx.ext.shell.term.Tty#width()} and
+ * {@link io.vertx.ext.shell.term.Tty#height()}.
  *
  * [source,$lang]
  * ----
@@ -270,7 +270,7 @@
  *
  * ==== Terminal type
  *
- * The terminal type is useful for sending escape codes to the remote terminal: {@link io.vertx.ext.shell.io.Tty#type()}
+ * The terminal type is useful for sending escape codes to the remote terminal: {@link io.vertx.ext.shell.term.Tty#type()}
  * returns the current terminal type, it can be null if the terminal has not advertised the value.
  *
  * [source,$lang]
@@ -368,7 +368,7 @@
  * {@link examples.Examples#runningShellCommand}
  * ----
  *
- * The {@link io.vertx.ext.shell.io.Pty} pseudo terminal is the main interface for interacting with the command
+ * The {@link io.vertx.ext.shell.term.Pty} pseudo terminal is the main interface for interacting with the command
  * when it's running:
  *
  * - uses standard input/output for writing or reading strings
@@ -394,7 +394,7 @@
  * {@link examples.Examples#telnetEchoTerminal(io.vertx.core.Vertx)}
  * ----
  *
- * The {@link io.vertx.ext.shell.term.Term} is also a {@link io.vertx.ext.shell.io.Tty}, this section explains
+ * The {@link io.vertx.ext.shell.term.Term} is also a {@link io.vertx.ext.shell.term.Tty}, this section explains
  * how to use the tty.
  */
 @ModuleGen(name = "vertx-shell", groupPackage = "io.vertx")

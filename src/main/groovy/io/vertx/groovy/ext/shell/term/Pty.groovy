@@ -14,19 +14,20 @@
  * under the License.
  */
 
-package io.vertx.groovy.ext.shell.io;
+package io.vertx.groovy.ext.shell.term;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
+import io.vertx.groovy.ext.shell.io.Stream
 /**
- * A pseudo terminal used for controlling a {@link io.vertx.groovy.ext.shell.io.Tty}. This interface acts as a pseudo
- * terminal master, {@link io.vertx.groovy.ext.shell.io.Pty#slave} returns the assocated slave pseudo terminal.
+ * A pseudo terminal used for controlling a {@link io.vertx.groovy.ext.shell.term.Tty}. This interface acts as a pseudo
+ * terminal master, {@link io.vertx.groovy.ext.shell.term.Pty#slave} returns the assocated slave pseudo terminal.
 */
 @CompileStatic
 public class Pty {
-  private final def io.vertx.ext.shell.io.Pty delegate;
+  private final def io.vertx.ext.shell.term.Pty delegate;
   public Pty(Object delegate) {
-    this.delegate = (io.vertx.ext.shell.io.Pty) delegate;
+    this.delegate = (io.vertx.ext.shell.term.Pty) delegate;
   }
   public Object getDelegate() {
     return delegate;
@@ -36,7 +37,7 @@ public class Pty {
    * @return 
    */
   public static Pty create() {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.io.Pty.create(), io.vertx.groovy.ext.shell.io.Pty.class);
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.Pty.create(), io.vertx.groovy.ext.shell.term.Pty.class);
     return ret;
   }
   /**
@@ -45,7 +46,7 @@ public class Pty {
    * @return the created pseudo terminal
    */
   public static Pty create(String terminalType) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.io.Pty.create(terminalType), io.vertx.groovy.ext.shell.io.Pty.class);
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.Pty.create(terminalType), io.vertx.groovy.ext.shell.term.Pty.class);
     return ret;
   }
   /**
@@ -80,7 +81,7 @@ public class Pty {
    * @return 
    */
   public Tty slave() {
-    def ret= InternalHelper.safeCreate(this.delegate.slave(), io.vertx.groovy.ext.shell.io.Tty.class);
+    def ret= InternalHelper.safeCreate(this.delegate.slave(), io.vertx.groovy.ext.shell.term.Tty.class);
     return ret;
   }
 }

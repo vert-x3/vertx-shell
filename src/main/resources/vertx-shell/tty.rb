@@ -1,6 +1,6 @@
 require 'vertx-shell/stream'
 require 'vertx/util/utils.rb'
-# Generated from io.vertx.ext.shell.io.Tty
+# Generated from io.vertx.ext.shell.term.Tty
 module VertxShell
   #  Provide interactions with the Shell TTY.
   class Tty

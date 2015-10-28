@@ -34,18 +34,20 @@ var Process = function(j_val) {
   var that = this;
 
   /**
+   Set the process tty.
 
    @public
-   @param tty {Tty} 
+   @param tty {Tty} the process tty 
    */
   this.setTty = function(tty) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_process["setTty(io.vertx.ext.shell.io.Tty)"](tty._jdel);
+      j_process["setTty(io.vertx.ext.shell.term.Tty)"](tty._jdel);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
+   @return the process tty
 
    @public
 
@@ -59,9 +61,10 @@ var Process = function(j_val) {
   };
 
   /**
+   Set the process session
 
    @public
-   @param session {Session} 
+   @param session {Session} the process session 
    */
   this.setSession = function(session) {
     var __args = arguments;
@@ -71,6 +74,7 @@ var Process = function(j_val) {
   };
 
   /**
+   @return the process session
 
    @public
 

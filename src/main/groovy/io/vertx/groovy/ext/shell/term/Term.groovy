@@ -19,7 +19,6 @@ import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.io.Stream
-import io.vertx.groovy.ext.shell.io.Tty
 import io.vertx.core.Handler
 /**
  * The remote terminal.
@@ -35,11 +34,11 @@ public class Term extends Tty {
     return delegate;
   }
   public Term resizehandler(Handler<Void> handler) {
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).resizehandler(handler);
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.term.Term) this.delegate).resizehandler(handler);
     return this;
   }
   public Term setStdin(Stream stdin) {
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).setStdin((io.vertx.ext.shell.io.Stream)stdin.getDelegate());
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.term.Term) this.delegate).setStdin((io.vertx.ext.shell.io.Stream)stdin.getDelegate());
     return this;
   }
   /**

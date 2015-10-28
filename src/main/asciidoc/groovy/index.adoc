@@ -299,14 +299,14 @@ command.processHandler({ process ->
 ----
 
 When the command executes the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html[process]` is provided for interacting
-with the shell. A `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html[CommandProcess]` extends `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html[Tty]`
+with the shell. A `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html[CommandProcess]` extends `link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html[Tty]`
 which is used for interacting with the terminal.
 
 === Terminal usage
 
 ==== terminal I/O
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#setStdin(io.vertx.ext.shell.io.Stream)[setStdin]` handler is used to be notified when the terminal
+The `link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#setStdin(io.vertx.ext.shell.io.Stream)[setStdin]` handler is used to be notified when the terminal
 receives data, e.g the user uses his keyboard:
 
 [source,groovy]
@@ -317,7 +317,7 @@ tty.setStdin({ data ->
 
 ----
 
-A command can use the `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#stdout()[stdout]` to write to the standard output.
+A command can use the `link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#stdout()[stdout]` to write to the standard output.
 
 [source,groovy]
 ----
@@ -327,8 +327,8 @@ tty.stdout().write("Hello World")
 
 ==== Terminal size
 
-The current terminal size can be obtained using `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#width()[width]` and
-`link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#height()[height]`.
+The current terminal size can be obtained using `link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#width()[width]` and
+`link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#height()[height]`.
 
 [source,groovy]
 ----
@@ -338,9 +338,9 @@ tty.stdout().write("Current terminal size: (${tty.width()}, ${tty.height()})")
 
 ==== Resize event
 
-When the size of the terminal changes the `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#resizehandler(io.vertx.core.Handler)[resizehandler]`
-is called, the new terminal size can be obtained with `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#width()[width]` and
-`link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#height()[height]`.
+When the size of the terminal changes the `link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#resizehandler(io.vertx.core.Handler)[resizehandler]`
+is called, the new terminal size can be obtained with `link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#width()[width]` and
+`link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#height()[height]`.
 
 [source,groovy]
 ----
@@ -352,7 +352,7 @@ tty.resizehandler({ v ->
 
 ==== Terminal type
 
-The terminal type is useful for sending escape codes to the remote terminal: `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html#type()[type]`
+The terminal type is useful for sending escape codes to the remote terminal: `link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#type()[type]`
 returns the current terminal type, it can be null if the terminal has not advertised the value.
 
 [source,groovy]
@@ -498,7 +498,7 @@ The main use case is running or testing a command:
 
 [source,groovy]
 ----
-import io.vertx.groovy.ext.shell.io.Pty
+import io.vertx.groovy.ext.shell.term.Pty
 
 // Create a shell
 def shell = shellService.createShell()
@@ -520,7 +520,7 @@ job.run({ status ->
 
 ----
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/io/Pty.html[Pty]` pseudo terminal is the main interface for interacting with the command
+The `link:groovydoc/io/vertx/groovy/ext/shell/term/Pty.html[Pty]` pseudo terminal is the main interface for interacting with the command
 when it's running:
 
 - uses standard input/output for writing or reading strings
@@ -566,5 +566,5 @@ server.listen()
 
 ----
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` is also a `link:groovydoc/io/vertx/groovy/ext/shell/io/Tty.html[Tty]`, this section explains
+The `link:groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` is also a `link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html[Tty]`, this section explains
 how to use the tty.

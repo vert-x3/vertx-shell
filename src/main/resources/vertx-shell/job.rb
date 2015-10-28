@@ -62,12 +62,12 @@ module VertxShell
     # @return [self]
     def set_tty(tty=nil)
       if tty.class.method_defined?(:j_del) && !block_given?
-        @j_del.java_method(:setTty, [Java::IoVertxExtShellIo::Tty.java_class]).call(tty.j_del)
+        @j_del.java_method(:setTty, [Java::IoVertxExtShellTerm::Tty.java_class]).call(tty.j_del)
         return self
       end
       raise ArgumentError, "Invalid arguments when calling set_tty(tty)"
     end
-    #  Run the job, before running the job a {::VertxShell::Tty} must be set.
+    #  Run the job, before running the job a  must be set.
     # @yield to be notified when the job terminates
     # @return [void]
     def run

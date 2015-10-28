@@ -34,7 +34,7 @@ package io.vertx.ext.shell.system;
 
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.io.Tty;
+import io.vertx.ext.shell.term.Tty;
 import io.vertx.ext.shell.session.Session;
 
 /**

@@ -14,25 +14,26 @@
  * under the License.
  */
 
-package io.vertx.rxjava.ext.shell.io;
+package io.vertx.rxjava.ext.shell.term;
 
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
+import io.vertx.rxjava.ext.shell.io.Stream;
 
 /**
- * A pseudo terminal used for controlling a {@link io.vertx.rxjava.ext.shell.io.Tty}. This interface acts as a pseudo
- * terminal master, {@link io.vertx.rxjava.ext.shell.io.Pty#slave} returns the assocated slave pseudo terminal.
+ * A pseudo terminal used for controlling a {@link io.vertx.rxjava.ext.shell.term.Tty}. This interface acts as a pseudo
+ * terminal master, {@link io.vertx.rxjava.ext.shell.term.Pty#slave} returns the assocated slave pseudo terminal.
  *
  * <p/>
- * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.io.Pty original} non RX-ified interface using Vert.x codegen.
+ * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.term.Pty original} non RX-ified interface using Vert.x codegen.
  */
 
 public class Pty {
 
-  final io.vertx.ext.shell.io.Pty delegate;
+  final io.vertx.ext.shell.term.Pty delegate;
 
-  public Pty(io.vertx.ext.shell.io.Pty delegate) {
+  public Pty(io.vertx.ext.shell.term.Pty delegate) {
     this.delegate = delegate;
   }
 
@@ -45,7 +46,7 @@ public class Pty {
    * @return 
    */
   public static Pty create() { 
-    Pty ret= Pty.newInstance(io.vertx.ext.shell.io.Pty.create());
+    Pty ret= Pty.newInstance(io.vertx.ext.shell.term.Pty.create());
     return ret;
   }
 
@@ -55,7 +56,7 @@ public class Pty {
    * @return the created pseudo terminal
    */
   public static Pty create(String terminalType) { 
-    Pty ret= Pty.newInstance(io.vertx.ext.shell.io.Pty.create(terminalType));
+    Pty ret= Pty.newInstance(io.vertx.ext.shell.term.Pty.create(terminalType));
     return ret;
   }
 
@@ -99,7 +100,7 @@ public class Pty {
   }
 
 
-  public static Pty newInstance(io.vertx.ext.shell.io.Pty arg) {
+  public static Pty newInstance(io.vertx.ext.shell.term.Pty arg) {
     return arg != null ? new Pty(arg) : null;
   }
 }

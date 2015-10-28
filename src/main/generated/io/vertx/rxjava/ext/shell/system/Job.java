@@ -19,9 +19,9 @@ package io.vertx.rxjava.ext.shell.system;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
-import io.vertx.rxjava.ext.shell.io.Tty;
 import io.vertx.ext.shell.system.JobStatus;
 import io.vertx.core.Handler;
+import io.vertx.rxjava.ext.shell.term.Tty;
 
 /**
  * A job executed in a {@link io.vertx.rxjava.ext.shell.system.Shell}, grouping one or several process.<p/>
@@ -96,12 +96,12 @@ public class Job {
    * @return 
    */
   public Job setTty(Tty tty) { 
-    this.delegate.setTty((io.vertx.ext.shell.io.Tty) tty.getDelegate());
+    this.delegate.setTty((io.vertx.ext.shell.term.Tty) tty.getDelegate());
     return this;
   }
 
   /**
-   * Run the job, before running the job a {@link io.vertx.rxjava.ext.shell.io.Tty} must be set.
+   * Run the job, before running the job a  must be set.
    * @param endHandler to be notified when the job terminates
    */
   public void run(Handler<Integer> endHandler) { 

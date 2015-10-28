@@ -35,7 +35,7 @@ package io.vertx.ext.shell.system;
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.io.Tty;
+import io.vertx.ext.shell.term.Tty;
 
 /**
  * A job executed in a {@link Shell}, grouping one or several process.<p/>
@@ -82,7 +82,7 @@ public interface Job {
   Job setTty(Tty tty);
 
   /**
-   * Run the job, before running the job a {@link io.vertx.ext.shell.io.Tty} must be set.
+   * Run the job, before running the job a {@link Tty} must be set.
    *
    * @param endHandler to be notified when the job terminates
    */

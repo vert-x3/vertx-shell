@@ -18,9 +18,9 @@ package io.vertx.groovy.ext.shell.system;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
-import io.vertx.groovy.ext.shell.io.Tty
 import io.vertx.ext.shell.system.JobStatus
 import io.vertx.core.Handler
+import io.vertx.groovy.ext.shell.term.Tty
 /**
  * A job executed in a {@link io.vertx.groovy.ext.shell.system.Shell}, grouping one or several process.<p/>
  *
@@ -73,7 +73,7 @@ public class Job {
    * @return 
    */
   public Tty getTty() {
-    def ret= InternalHelper.safeCreate(this.delegate.getTty(), io.vertx.groovy.ext.shell.io.Tty.class);
+    def ret= InternalHelper.safeCreate(this.delegate.getTty(), io.vertx.groovy.ext.shell.term.Tty.class);
     return ret;
   }
   /**
@@ -82,11 +82,11 @@ public class Job {
    * @return 
    */
   public Job setTty(Tty tty) {
-    this.delegate.setTty((io.vertx.ext.shell.io.Tty)tty.getDelegate());
+    this.delegate.setTty((io.vertx.ext.shell.term.Tty)tty.getDelegate());
     return this;
   }
   /**
-   * Run the job, before running the job a {@link io.vertx.groovy.ext.shell.io.Tty} must be set.
+   * Run the job, before running the job a  must be set.
    * @param endHandler to be notified when the job terminates
    */
   public void run(Handler<Integer> endHandler) {

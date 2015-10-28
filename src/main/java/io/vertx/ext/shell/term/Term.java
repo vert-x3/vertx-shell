@@ -36,7 +36,6 @@ import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.io.Stream;
-import io.vertx.ext.shell.io.Tty;
 
 /**
  * The remote terminal.

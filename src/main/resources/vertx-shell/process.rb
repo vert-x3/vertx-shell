@@ -15,14 +15,16 @@ module VertxShell
     def j_del
       @j_del
     end
-    # @param [::VertxShell::Tty] tty 
+    #  Set the process tty.
+    # @param [::VertxShell::Tty] tty the process tty
     # @return [void]
     def set_tty(tty=nil)
       if tty.class.method_defined?(:j_del) && !block_given?
-        return @j_del.java_method(:setTty, [Java::IoVertxExtShellIo::Tty.java_class]).call(tty.j_del)
+        return @j_del.java_method(:setTty, [Java::IoVertxExtShellTerm::Tty.java_class]).call(tty.j_del)
       end
       raise ArgumentError, "Invalid arguments when calling set_tty(tty)"
     end
+    #  @return the process tty
     # @return [::VertxShell::Tty]
     def get_tty
       if !block_given?
@@ -30,7 +32,8 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling get_tty()"
     end
-    # @param [::VertxShell::Session] session 
+    #  Set the process session
+    # @param [::VertxShell::Session] session the process session
     # @return [void]
     def set_session(session=nil)
       if session.class.method_defined?(:j_del) && !block_given?
@@ -38,6 +41,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling set_session(session)"
     end
+    #  @return the process session
     # @return [::VertxShell::Session]
     def get_session
       if !block_given?

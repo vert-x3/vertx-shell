@@ -111,13 +111,13 @@ var Job = function(j_val) {
   this.setTty = function(tty) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_job["setTty(io.vertx.ext.shell.io.Tty)"](tty._jdel);
+      j_job["setTty(io.vertx.ext.shell.term.Tty)"](tty._jdel);
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
-   Run the job, before running the job a {@link Tty} must be set.
+   Run the job, before running the job a  must be set.
 
    @public
    @param endHandler {function} to be notified when the job terminates 

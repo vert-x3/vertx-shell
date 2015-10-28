@@ -21,10 +21,10 @@ import io.vertx.core.json.JsonObject
 import java.util.List
 import io.vertx.groovy.core.cli.CommandLine
 import io.vertx.groovy.ext.shell.io.Stream
-import io.vertx.groovy.ext.shell.io.Tty
 import io.vertx.groovy.core.Vertx
 import io.vertx.groovy.ext.shell.cli.CliToken
 import io.vertx.core.Handler
+import io.vertx.groovy.ext.shell.term.Tty
 import io.vertx.groovy.ext.shell.session.Session
 /**
  * The command process provides interaction with the process of the command provided by Vert.x Shell.
@@ -80,7 +80,7 @@ public class CommandProcess extends Tty {
     return ret;
   }
   public CommandProcess setStdin(Stream stdin) {
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).setStdin((io.vertx.ext.shell.io.Stream)stdin.getDelegate());
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) this.delegate).setStdin((io.vertx.ext.shell.io.Stream)stdin.getDelegate());
     return this;
   }
   /**
@@ -118,7 +118,7 @@ public class CommandProcess extends Tty {
     return this;
   }
   public CommandProcess resizehandler(Handler<Void> handler) {
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) this.delegate).resizehandler(handler);
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) this.delegate).resizehandler(handler);
     return this;
   }
   /**

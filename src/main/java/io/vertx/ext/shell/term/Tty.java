@@ -30,11 +30,12 @@
  *
  */
 
-package io.vertx.ext.shell.io;
+package io.vertx.ext.shell.term;
 
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
+import io.vertx.ext.shell.io.Stream;
 
 /**
  * Provide interactions with the Shell TTY.

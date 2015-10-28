@@ -30,12 +30,12 @@
  *
  */
 
-package io.vertx.ext.shell.io.impl;
+package io.vertx.ext.shell.term.impl;
 
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.io.Pty;
+import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.shell.io.Stream;
-import io.vertx.ext.shell.io.Tty;
+import io.vertx.ext.shell.term.Tty;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>

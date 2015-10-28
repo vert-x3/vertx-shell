@@ -22,10 +22,10 @@ import rx.Observable;
 import java.util.List;
 import io.vertx.rxjava.core.cli.CommandLine;
 import io.vertx.rxjava.ext.shell.io.Stream;
-import io.vertx.rxjava.ext.shell.io.Tty;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.rxjava.ext.shell.cli.CliToken;
 import io.vertx.core.Handler;
+import io.vertx.rxjava.ext.shell.term.Tty;
 import io.vertx.rxjava.ext.shell.session.Session;
 
 /**
@@ -95,7 +95,7 @@ public class CommandProcess extends Tty {
   }
 
   public CommandProcess setStdin(Stream stdin) { 
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) delegate).setStdin((io.vertx.ext.shell.io.Stream) stdin.getDelegate());
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) delegate).setStdin((io.vertx.ext.shell.io.Stream) stdin.getDelegate());
     return this;
   }
 
@@ -138,7 +138,7 @@ public class CommandProcess extends Tty {
   }
 
   public CommandProcess resizehandler(Handler<Void> handler) { 
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) delegate).resizehandler(handler);
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) delegate).resizehandler(handler);
     return this;
   }
 

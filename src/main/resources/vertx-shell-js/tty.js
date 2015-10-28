@@ -20,7 +20,7 @@ var Stream = require('vertx-shell-js/stream');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JTty = io.vertx.ext.shell.io.Tty;
+var JTty = io.vertx.ext.shell.term.Tty;
 
 /**
  Provide interactions with the Shell TTY.

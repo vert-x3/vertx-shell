@@ -20,7 +20,6 @@ import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.rxjava.ext.shell.io.Stream;
-import io.vertx.rxjava.ext.shell.io.Tty;
 import io.vertx.core.Handler;
 
 /**
@@ -44,12 +43,12 @@ public class Term extends Tty {
   }
 
   public Term resizehandler(Handler<Void> handler) { 
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) delegate).resizehandler(handler);
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.term.Term) delegate).resizehandler(handler);
     return this;
   }
 
   public Term setStdin(Stream stdin) { 
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.io.Tty) delegate).setStdin((io.vertx.ext.shell.io.Stream) stdin.getDelegate());
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.term.Term) delegate).setStdin((io.vertx.ext.shell.io.Stream) stdin.getDelegate());
     return this;
   }
 

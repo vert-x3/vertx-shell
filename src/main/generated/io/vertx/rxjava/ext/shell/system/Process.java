@@ -19,8 +19,8 @@ package io.vertx.rxjava.ext.shell.system;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
-import io.vertx.rxjava.ext.shell.io.Tty;
 import io.vertx.core.Handler;
+import io.vertx.rxjava.ext.shell.term.Tty;
 import io.vertx.rxjava.ext.shell.session.Session;
 
 /**
@@ -42,19 +42,35 @@ public class Process {
     return delegate;
   }
 
+  /**
+   * Set the process tty.
+   * @param tty the process tty
+   */
   public void setTty(Tty tty) { 
-    this.delegate.setTty((io.vertx.ext.shell.io.Tty) tty.getDelegate());
+    this.delegate.setTty((io.vertx.ext.shell.term.Tty) tty.getDelegate());
   }
 
+  /**
+   * @return the process tty
+   * @return 
+   */
   public Tty getTty() { 
     Tty ret= Tty.newInstance(this.delegate.getTty());
     return ret;
   }
 
+  /**
+   * Set the process session
+   * @param session the process session
+   */
   public void setSession(Session session) { 
     this.delegate.setSession((io.vertx.ext.shell.session.Session) session.getDelegate());
   }
 
+  /**
+   * @return the process session
+   * @return 
+   */
   public Session getSession() { 
     Session ret= Session.newInstance(this.delegate.getSession());
     return ret;

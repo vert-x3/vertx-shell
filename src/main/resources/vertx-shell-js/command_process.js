@@ -18,9 +18,9 @@
 var utils = require('vertx-js/util/utils');
 var CommandLine = require('vertx-js/command_line');
 var Stream = require('vertx-shell-js/stream');
-var Tty = require('vertx-shell-js/tty');
 var Vertx = require('vertx-js/vertx');
 var CliToken = require('vertx-shell-js/cli_token');
+var Tty = require('vertx-shell-js/tty');
 var Session = require('vertx-shell-js/session');
 
 var io = Packages.io;

@@ -30,14 +30,15 @@
  *
  */
 
-package io.vertx.ext.shell.io;
+package io.vertx.ext.shell.term;
 
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.ext.shell.io.impl.PtyImpl;
+import io.vertx.ext.shell.io.Stream;
+import io.vertx.ext.shell.term.impl.PtyImpl;
 
 /**
- * A pseudo terminal used for controlling a {@link io.vertx.ext.shell.io.Tty}. This interface acts as a pseudo
+ * A pseudo terminal used for controlling a {@link Tty}. This interface acts as a pseudo
  * terminal master, {@link #slave()} returns the assocated slave pseudo terminal.
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>

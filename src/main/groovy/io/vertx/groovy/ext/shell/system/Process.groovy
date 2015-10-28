@@ -18,8 +18,8 @@ package io.vertx.groovy.ext.shell.system;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
-import io.vertx.groovy.ext.shell.io.Tty
 import io.vertx.core.Handler
+import io.vertx.groovy.ext.shell.term.Tty
 import io.vertx.groovy.ext.shell.session.Session
 /**
  * A process managed by the shell.
@@ -33,16 +33,32 @@ public class Process {
   public Object getDelegate() {
     return delegate;
   }
+  /**
+   * Set the process tty.
+   * @param tty the process tty
+   */
   public void setTty(Tty tty) {
-    this.delegate.setTty((io.vertx.ext.shell.io.Tty)tty.getDelegate());
+    this.delegate.setTty((io.vertx.ext.shell.term.Tty)tty.getDelegate());
   }
+  /**
+   * @return the process tty
+   * @return 
+   */
   public Tty getTty() {
-    def ret= InternalHelper.safeCreate(this.delegate.getTty(), io.vertx.groovy.ext.shell.io.Tty.class);
+    def ret= InternalHelper.safeCreate(this.delegate.getTty(), io.vertx.groovy.ext.shell.term.Tty.class);
     return ret;
   }
+  /**
+   * Set the process session
+   * @param session the process session
+   */
   public void setSession(Session session) {
     this.delegate.setSession((io.vertx.ext.shell.session.Session)session.getDelegate());
   }
+  /**
+   * @return the process session
+   * @return 
+   */
   public Session getSession() {
     def ret= InternalHelper.safeCreate(this.delegate.getSession(), io.vertx.groovy.ext.shell.session.Session.class);
     return ret;

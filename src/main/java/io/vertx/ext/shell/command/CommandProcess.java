@@ -39,7 +39,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.cli.CommandLine;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.io.Stream;
-import io.vertx.ext.shell.io.Tty;
+import io.vertx.ext.shell.term.Tty;
 import io.vertx.ext.shell.cli.CliToken;
 
 import java.util.List;

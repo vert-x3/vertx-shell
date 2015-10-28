@@ -274,14 +274,14 @@ command.processHandler(process -> {
 ----
 
 When the command executes the `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html[process]` is provided for interacting
-with the shell. A `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html[CommandProcess]` extends `link:../../apidocs/io/vertx/ext/shell/io/Tty.html[Tty]`
+with the shell. A `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html[CommandProcess]` extends `link:../../apidocs/io/vertx/ext/shell/term/Tty.html[Tty]`
 which is used for interacting with the terminal.
 
 === Terminal usage
 
 ==== terminal I/O
 
-The `link:../../apidocs/io/vertx/ext/shell/io/Tty.html#setStdin-io.vertx.ext.shell.io.Stream-[setStdin]` handler is used to be notified when the terminal
+The `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#setStdin-io.vertx.ext.shell.io.Stream-[setStdin]` handler is used to be notified when the terminal
 receives data, e.g the user uses his keyboard:
 
 [source,java]
@@ -291,7 +291,7 @@ tty.setStdin(data -> {
 });
 ----
 
-A command can use the `link:../../apidocs/io/vertx/ext/shell/io/Tty.html#stdout--[stdout]` to write to the standard output.
+A command can use the `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#stdout--[stdout]` to write to the standard output.
 
 [source,java]
 ----
@@ -300,8 +300,8 @@ tty.stdout().write("Hello World");
 
 ==== Terminal size
 
-The current terminal size can be obtained using `link:../../apidocs/io/vertx/ext/shell/io/Tty.html#width--[width]` and
-`link:../../apidocs/io/vertx/ext/shell/io/Tty.html#height--[height]`.
+The current terminal size can be obtained using `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#width--[width]` and
+`link:../../apidocs/io/vertx/ext/shell/term/Tty.html#height--[height]`.
 
 [source,java]
 ----
@@ -310,9 +310,9 @@ tty.stdout().write("Current terminal size: (" + tty.width() + ", " + tty.height(
 
 ==== Resize event
 
-When the size of the terminal changes the `link:../../apidocs/io/vertx/ext/shell/io/Tty.html#resizehandler-io.vertx.core.Handler-[resizehandler]`
-is called, the new terminal size can be obtained with `link:../../apidocs/io/vertx/ext/shell/io/Tty.html#width--[width]` and
-`link:../../apidocs/io/vertx/ext/shell/io/Tty.html#height--[height]`.
+When the size of the terminal changes the `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#resizehandler-io.vertx.core.Handler-[resizehandler]`
+is called, the new terminal size can be obtained with `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#width--[width]` and
+`link:../../apidocs/io/vertx/ext/shell/term/Tty.html#height--[height]`.
 
 [source,java]
 ----
@@ -323,7 +323,7 @@ tty.resizehandler(v -> {
 
 ==== Terminal type
 
-The terminal type is useful for sending escape codes to the remote terminal: `link:../../apidocs/io/vertx/ext/shell/io/Tty.html#type--[type]`
+The terminal type is useful for sending escape codes to the remote terminal: `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#type--[type]`
 returns the current terminal type, it can be null if the terminal has not advertised the value.
 
 [source,java]
@@ -478,7 +478,7 @@ job.run(status -> {
 });
 ----
 
-The `link:../../apidocs/io/vertx/ext/shell/io/Pty.html[Pty]` pseudo terminal is the main interface for interacting with the command
+The `link:../../apidocs/io/vertx/ext/shell/term/Pty.html[Pty]` pseudo terminal is the main interface for interacting with the command
 when it's running:
 
 - uses standard input/output for writing or reading strings
@@ -516,5 +516,5 @@ server.termHandler(term -> {
 server.listen();
 ----
 
-The `link:../../apidocs/io/vertx/ext/shell/term/Term.html[Term]` is also a `link:../../apidocs/io/vertx/ext/shell/io/Tty.html[Tty]`, this section explains
+The `link:../../apidocs/io/vertx/ext/shell/term/Term.html[Term]` is also a `link:../../apidocs/io/vertx/ext/shell/term/Tty.html[Tty]`, this section explains
 how to use the tty.

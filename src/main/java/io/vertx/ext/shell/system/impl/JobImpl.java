@@ -35,7 +35,7 @@ package io.vertx.ext.shell.system.impl;
 import io.vertx.core.Handler;
 
 import io.vertx.ext.shell.system.Process;
-import io.vertx.ext.shell.io.Tty;
+import io.vertx.ext.shell.term.Tty;
 import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.JobStatus;
 

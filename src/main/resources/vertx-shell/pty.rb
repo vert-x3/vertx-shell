@@ -1,7 +1,7 @@
 require 'vertx-shell/stream'
 require 'vertx-shell/tty'
 require 'vertx/util/utils.rb'
-# Generated from io.vertx.ext.shell.io.Pty
+# Generated from io.vertx.ext.shell.term.Pty
 module VertxShell
   #  A pseudo terminal used for controlling a {::VertxShell::Tty}. This interface acts as a pseudo
   #  terminal master, {::VertxShell::Pty#slave} returns the assocated slave pseudo terminal.
@@ -21,9 +21,9 @@ module VertxShell
     # @return [::VertxShell::Pty] the created pseudo terminal
     def self.create(terminalType=nil)
       if !block_given? && terminalType == nil
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellIo::Pty.java_method(:create, []).call(),::VertxShell::Pty)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::Pty.java_method(:create, []).call(),::VertxShell::Pty)
       elsif terminalType.class == String && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellIo::Pty.java_method(:create, [Java::java.lang.String.java_class]).call(terminalType),::VertxShell::Pty)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::Pty.java_method(:create, [Java::java.lang.String.java_class]).call(terminalType),::VertxShell::Pty)
       end
       raise ArgumentError, "Invalid arguments when calling create(terminalType)"
     end
