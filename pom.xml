@@ -58,6 +58,13 @@
       <artifactId>vertx-auth-common</artifactId>
     </dependency>
     <dependency>
+      <!-- declare this dependency to force shiro to use this one. It is the version used by vert.x -->
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.12</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-auth-shiro</artifactId>
     </dependency>
@@ -170,7 +177,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
+          <failIfNoTests>false</failIfNoTests>
           <systemPropertyVariables>
             <vertx.test.dir>${project.build.directory}</vertx.test.dir>
             <vertx.test.timeout>60</vertx.test.timeout>
