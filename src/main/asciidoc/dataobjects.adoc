@@ -13,17 +13,21 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
+|[[ssh]]`ssh`|`link:dataobjects.html#SSHOptions[SSHOptions]`|
++++
+@return the SSH options
++++
 |[[sshOptions]]`sshOptions`|`link:dataobjects.html#SSHOptions[SSHOptions]`|
 +++
 Set the SSH options, if the option is null, SSH will not be started.
 +++
 |[[telnetOptions]]`telnetOptions`|`link:dataobjects.html#TelnetOptions[TelnetOptions]`|
 +++
-Set the Telnet options, if the option is null, Telnet will not be started.
+@return the Telnet options
 +++
 |[[welcomeMessage]]`welcomeMessage`|`String`|
 +++
-Set the shell welcome message, i.e the message displayed in the user console when he connects to the shell.
+@return the shell welcome message
 +++
 |===
 
@@ -39,9 +43,13 @@ Set the shell welcome message, i.e the message displayed in the user console whe
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
+|[[authOptions]]`authOptions`|`link:dataobjects.html#AuthOptions[AuthOptions]`|
++++
+@return the auth options
++++
 |[[host]]`host`|`String`|
 +++
-Set the host
+@return the host
 +++
 |[[keyPairOptions]]`keyPairOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|
 +++
@@ -57,7 +65,7 @@ Set the key pair options in pfx format.
 +++
 |[[port]]`port`|`Number (int)`|
 +++
-Set the port
+@return the port
 +++
 |[[shiroAuthOptions]]`shiroAuthOptions`|`link:dataobjects.html#ShiroAuthOptions[ShiroAuthOptions]`|
 +++

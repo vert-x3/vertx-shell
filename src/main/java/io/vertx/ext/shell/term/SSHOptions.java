@@ -33,6 +33,7 @@
 package io.vertx.ext.shell.term;
 
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.core.net.KeyCertOptions;
@@ -112,6 +113,7 @@ public class SSHOptions {
   /**
    * @return the key pair options
    */
+  @GenIgnore
   public KeyCertOptions getKeyPairOptions() {
     return keyPairOptions;
   }

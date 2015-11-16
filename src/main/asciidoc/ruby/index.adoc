@@ -446,7 +446,7 @@ The `link:yardoc/VertxShell/CommandProcess.html#resume_handler-instance_method[r
 is resumed, usually when the user types _fg_:
 
 - the command can receive the resume event when it has registered an handler for this event
-- the command will receive again data from the standard input when it has registered an stdin handler 
+- the command will receive again data from the standard input when it has registered an stdin handler
 
 [source,ruby]
 ----
@@ -547,6 +547,9 @@ when it's running:
 
 - uses standard input/output for writing or reading strings
 - resize the terminal
+
+The `link:yardoc/VertxShell/Shell.html#close-instance_method[close]` closes the shell, it will terminate all jobs in the current shell
+session.
 
 == Terminal servers
 
