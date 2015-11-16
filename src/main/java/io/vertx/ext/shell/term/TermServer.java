@@ -38,6 +38,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.term.impl.SSHTermServer;
 import io.vertx.ext.shell.term.impl.TelnetTermServer;
+import io.vertx.ext.shell.term.impl.WebTermServer;
 
 /**
  * A server for terminal based applications.
@@ -66,6 +67,10 @@ public interface TermServer {
    */
   static TermServer createTelnetTermServer(Vertx vertx, TelnetTermOptions options) {
     return new TelnetTermServer(vertx, options);
+  }
+
+  static TermServer createWebTermServer(Vertx vertx, WebTermOptions options) {
+    return new WebTermServer(vertx, options);
   }
 
   /**

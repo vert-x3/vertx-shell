@@ -42,11 +42,13 @@ import io.vertx.ext.shell.ShellService;
 import io.vertx.ext.shell.ShellServiceOptions;
 import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.term.TermServer;
+import io.vertx.ext.shell.term.WebTermOptions;
 import io.vertx.ext.shell.term.impl.SSHTermServer;
 import io.vertx.ext.shell.term.impl.TelnetTermServer;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.system.Shell;
 import io.vertx.ext.shell.system.impl.ShellImpl;
+import io.vertx.ext.shell.term.impl.WebTermServer;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -61,6 +63,7 @@ public class ShellServiceImpl implements ShellService {
   private final CommandRegistry registry;
   private TelnetTermServer telnet;
   private SSHTermServer ssh;
+  private WebTermServer webServer;
 
   public ShellServiceImpl(Vertx vertx, ShellServiceOptions options, CommandRegistry registry) {
     this.vertx = vertx;
@@ -85,9 +88,11 @@ public class ShellServiceImpl implements ShellService {
 
     TelnetTermOptions telnetOptions = options.getTelnetOptions();
     SSHTermOptions sshOptions = options.getSSH();
+    WebTermOptions webOptions = options.getWebOptions();
     AtomicInteger count = new AtomicInteger();
     count.addAndGet(telnetOptions != null ? 1 : 0);
     count.addAndGet(sshOptions != null ? 1 : 0);
+    count.addAndGet(webOptions != null ? 1 : 0);
     if (count.get() == 0) {
       startHandler.handle(Future.succeededFuture());
       return;
@@ -111,6 +116,17 @@ public class ShellServiceImpl implements ShellService {
       ssh = new SSHTermServer(vertx, sshOptions);
       ssh.setHandler(shellBoostrap);
       ssh.listen(ar -> {
+        if (ar.succeeded()) {
+          listenHandler.handle(Future.succeededFuture());
+        } else {
+          listenHandler.handle(Future.failedFuture(ar.cause()));
+        }
+      });
+    }
+    if (webOptions != null) {
+      webServer = new WebTermServer(vertx, webOptions);
+      webServer.setHandler(shellBoostrap);
+      webServer.listen(ar -> {
         if (ar.succeeded()) {
           listenHandler.handle(Future.succeededFuture());
         } else {

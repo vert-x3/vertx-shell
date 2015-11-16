@@ -33,6 +33,9 @@ public class ShellServiceOptionsConverter {
     if (json.getValue("telnetOptions") instanceof JsonObject) {
       obj.setTelnetOptions(new io.vertx.ext.shell.term.TelnetTermOptions((JsonObject)json.getValue("telnetOptions")));
     }
+    if (json.getValue("webOptions") instanceof JsonObject) {
+      obj.setWebOptions(new io.vertx.ext.shell.term.WebTermOptions((JsonObject)json.getValue("webOptions")));
+    }
     if (json.getValue("welcomeMessage") instanceof String) {
       obj.setWelcomeMessage((String)json.getValue("welcomeMessage"));
     }

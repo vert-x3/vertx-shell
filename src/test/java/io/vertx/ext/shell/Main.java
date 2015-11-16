@@ -34,6 +34,7 @@ package io.vertx.ext.shell;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
+import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthOptions;
@@ -44,6 +45,7 @@ import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.registry.CommandRegistry;
+import io.vertx.ext.shell.term.WebTermOptions;
 
 /**
  * A simple class for testing from command line directly.
@@ -96,7 +98,8 @@ public class Main {
     );
     ShellService service = ShellService.create(vertx, new ShellServiceOptions().
         setTelnetOptions(new TelnetTermOptions().setPort(5000)).
-        setSSHOptions(options));
+        setSSHOptions(options).
+        setWebOptions(new WebTermOptions().setHttpServerOptions(new HttpServerOptions().setPort(8080))));
     service.start();
 
   }
