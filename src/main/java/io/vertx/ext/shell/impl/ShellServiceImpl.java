@@ -87,7 +87,7 @@ public class ShellServiceImpl implements ShellService {
     };
 
     TelnetTermOptions telnetOptions = options.getTelnetOptions();
-    SSHTermOptions sshOptions = options.getSSH();
+    SSHTermOptions sshOptions = options.getSSHOptions();
     WebTermOptions webOptions = options.getWebOptions();
     AtomicInteger count = new AtomicInteger();
     count.addAndGet(telnetOptions != null ? 1 : 0);

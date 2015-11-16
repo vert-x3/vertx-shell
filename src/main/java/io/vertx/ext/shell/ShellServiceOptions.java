@@ -134,7 +134,7 @@ public class ShellServiceOptions {
   /**
    * @return the SSH options
    */
-  public SSHTermOptions getSSH() {
+  public SSHTermOptions getSSHOptions() {
     return sshOptions;
   }
 
