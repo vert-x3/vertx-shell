@@ -33,12 +33,14 @@
 package io.vertx.ext.shell.command.base;
 
 import io.vertx.core.cli.CLI;
+import io.vertx.core.cli.annotations.Name;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandProcess;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
+@Name("echo")
 public class Echo implements Command {
 
   @Override
