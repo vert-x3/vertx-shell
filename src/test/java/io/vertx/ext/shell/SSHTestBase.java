@@ -45,7 +45,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
-import io.vertx.ext.shell.term.SSHOptions;
+import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.After;
 import org.junit.Before;
@@ -85,10 +85,10 @@ public abstract class SSHTestBase {
     assertTrue(latch.await(10, TimeUnit.SECONDS));
   }
 
-  protected abstract void startShell(SSHOptions options) throws ExecutionException, InterruptedException, TimeoutException;
+  protected abstract void startShell(SSHTermOptions options) throws ExecutionException, InterruptedException, TimeoutException;
 
   protected void startShell() throws Exception {
-    startShell(new SSHOptions().setPort(5000).setHost("localhost").setKeyPairOptions(
+    startShell(new SSHTermOptions().setPort(5000).setHost("localhost").setKeyPairOptions(
         new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
         setShiroAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
             new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
@@ -169,7 +169,7 @@ public abstract class SSHTestBase {
   @Test
   public void testNoAuthenticationConfigured() throws Exception {
     try {
-      startShell(new SSHOptions().setPort(5000).setHost("localhost").setKeyPairOptions(
+      startShell(new SSHTermOptions().setPort(5000).setHost("localhost").setKeyPairOptions(
               new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble"))
       );
       fail();
@@ -182,7 +182,7 @@ public abstract class SSHTestBase {
   @Test
   public void testNoKeyPairConfigured() throws Exception {
     try {
-      startShell(new SSHOptions().setPort(5000).setHost("localhost").
+      startShell(new SSHTermOptions().setPort(5000).setHost("localhost").
               setShiroAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
                   new JsonObject().put("properties_path", "classpath:test-auth.properties")))
       );

@@ -49,7 +49,7 @@ import io.vertx.ext.auth.shiro.ShiroAuthOptions;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @DataObject(generateConverter = true)
-public class SSHOptions {
+public class SSHTermOptions {
 
   private static final String DEFAULT_HOST = NetServerOptions.DEFAULT_HOST;
   private static final int DEFAULT_PORT = NetServerOptions.DEFAULT_PORT;
@@ -59,21 +59,21 @@ public class SSHOptions {
   private KeyCertOptions keyPairOptions;
   private AuthOptions authOptions;
 
-  public SSHOptions() {
+  public SSHTermOptions() {
     host = DEFAULT_HOST;
     port = DEFAULT_PORT;
   }
 
-  public SSHOptions(SSHOptions that) {
+  public SSHTermOptions(SSHTermOptions that) {
     this.host = that.host;
     this.port = that.port;
     this.keyPairOptions = that.keyPairOptions != null ? that.keyPairOptions.clone() : null;
     this.authOptions = that.authOptions != null ? that.authOptions.clone() : null;
   }
 
-  public SSHOptions(JsonObject json) {
+  public SSHTermOptions(JsonObject json) {
     this();
-    SSHOptionsConverter.fromJson(json, this);
+    SSHTermOptionsConverter.fromJson(json, this);
   }
 
   /**
@@ -88,7 +88,7 @@ public class SSHOptions {
    * @param host the host
    * @return a reference to this, so the API can be used fluently
    */
-  public SSHOptions setHost(String host) {
+  public SSHTermOptions setHost(String host) {
     this.host = host;
     return this;
   }
@@ -105,7 +105,7 @@ public class SSHOptions {
    * @param port the port
    * @return a reference to this, so the API can be used fluently
    */
-  public SSHOptions setPort(int port) {
+  public SSHTermOptions setPort(int port) {
     this.port = port;
     return this;
   }
@@ -123,7 +123,7 @@ public class SSHOptions {
    * @param options the key store in jks format
    * @return a reference to this, so the API can be used fluently
    */
-  public SSHOptions setKeyPairOptions(JksOptions options) {
+  public SSHTermOptions setKeyPairOptions(JksOptions options) {
     this.keyPairOptions = options;
     return this;
   }
@@ -133,7 +133,7 @@ public class SSHOptions {
    * @param options the key cert options in pfx format
    * @return a reference to this, so the API can be used fluently
    */
-  public SSHOptions setPfxKeyPairOptions(PfxOptions options) {
+  public SSHTermOptions setPfxKeyPairOptions(PfxOptions options) {
     this.keyPairOptions = options;
     return this;
   }
@@ -143,7 +143,7 @@ public class SSHOptions {
    * @param options the options in pem format
    * @return a reference to this, so the API can be used fluently
    */
-  public SSHOptions setPemKeyPairOptions(PemKeyCertOptions options) {
+  public SSHTermOptions setPemKeyPairOptions(PemKeyCertOptions options) {
     this.keyPairOptions = options;
     return this;
   }
@@ -161,7 +161,7 @@ public class SSHOptions {
    * @param shiroAuthOptions the Shiro auth options
    * @return a reference to this, so the API can be used fluently
    */
-  public SSHOptions setShiroAuthOptions(ShiroAuthOptions shiroAuthOptions) {
+  public SSHTermOptions setShiroAuthOptions(ShiroAuthOptions shiroAuthOptions) {
     this.authOptions = shiroAuthOptions;
     return this;
   }

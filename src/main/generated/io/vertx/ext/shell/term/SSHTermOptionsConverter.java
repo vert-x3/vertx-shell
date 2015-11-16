@@ -20,13 +20,13 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.JsonArray;
 
 /**
- * Converter for {@link io.vertx.ext.shell.term.SSHOptions}.
+ * Converter for {@link io.vertx.ext.shell.term.SSHTermOptions}.
  *
- * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.term.SSHOptions} original class using Vert.x codegen.
+ * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.term.SSHTermOptions} original class using Vert.x codegen.
  */
-public class SSHOptionsConverter {
+public class SSHTermOptionsConverter {
 
-  public static void fromJson(JsonObject json, SSHOptions obj) {
+  public static void fromJson(JsonObject json, SSHTermOptions obj) {
     if (json.getValue("host") instanceof String) {
       obj.setHost((String)json.getValue("host"));
     }
@@ -47,7 +47,7 @@ public class SSHOptionsConverter {
     }
   }
 
-  public static void toJson(SSHOptions obj, JsonObject json) {
+  public static void toJson(SSHTermOptions obj, JsonObject json) {
     if (obj.getHost() != null) {
       json.put("host", obj.getHost());
     }

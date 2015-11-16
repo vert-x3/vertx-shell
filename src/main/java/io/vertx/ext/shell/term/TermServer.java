@@ -36,8 +36,8 @@ import io.vertx.codegen.annotations.Fluent;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.term.impl.SSHServer;
-import io.vertx.ext.shell.term.impl.TelnetServer;
+import io.vertx.ext.shell.term.impl.SSHTermServer;
+import io.vertx.ext.shell.term.impl.TelnetTermServer;
 
 /**
  * A server for terminal based applications.
@@ -53,19 +53,19 @@ public interface TermServer {
    * @param options the ssh options
    * @return the term server
    */
-  static TermServer createSSHServer(Vertx vertx, SSHOptions options) {
-    return new SSHServer(vertx, options);
+  static TermServer createSSHTermServer(Vertx vertx, SSHTermOptions options) {
+    return new SSHTermServer(vertx, options);
   }
 
   /**
-   * Create a term server for the telnet protocol.
+   * Create a term server for the Telnet protocol.
    *
    * @param vertx the vertx instance
    * @param options the telnet options
    * @return the term server
    */
-  static TermServer createTelnetServer(Vertx vertx, TelnetOptions options) {
-    return new TelnetServer(vertx, options);
+  static TermServer createTelnetTermServer(Vertx vertx, TelnetTermOptions options) {
+    return new TelnetTermServer(vertx, options);
   }
 
   /**

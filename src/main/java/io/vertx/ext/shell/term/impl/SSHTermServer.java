@@ -53,7 +53,7 @@ import io.vertx.core.net.impl.KeyStoreHelper;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.shiro.ShiroAuth;
 import io.vertx.ext.auth.shiro.ShiroAuthOptions;
-import io.vertx.ext.shell.term.SSHOptions;
+import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.Term;
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
@@ -79,23 +79,23 @@ import java.util.function.Consumer;
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class SSHServer implements TermServer {
+public class SSHTermServer implements TermServer {
 
   private static final int STATUS_STOPPED = 0, STATUS_STARTING = 1, STATUS_STARTED = 2, STATUS_STOPPING = 3;
 
   private final Vertx vertx;
-  private final SSHOptions options;
+  private final SSHTermOptions options;
   private Consumer<TtyConnection> handler;
   private SshServer nativeServer;
   private final AtomicInteger status = new AtomicInteger(STATUS_STOPPED);
   private ContextInternal listenContext;
 
-  public SSHServer(Vertx vertx, SSHOptions options) {
+  public SSHTermServer(Vertx vertx, SSHTermOptions options) {
     this.vertx = vertx;
-    this.options = new SSHOptions(options);
+    this.options = new SSHTermOptions(options);
   }
 
-  public SSHOptions getOptions() {
+  public SSHTermOptions getOptions() {
     return options;
   }
 
@@ -103,7 +103,7 @@ public class SSHServer implements TermServer {
     return handler;
   }
 
-  public SSHServer setHandler(Consumer<TtyConnection> handler) {
+  public SSHTermServer setHandler(Consumer<TtyConnection> handler) {
     this.handler = handler;
     return this;
   }
@@ -125,7 +125,7 @@ public class SSHServer implements TermServer {
     return this;
   }
 
-  public SSHServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
+  public SSHTermServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
     if (!status.compareAndSet(STATUS_STOPPED, STATUS_STARTING)) {
       listenHandler.handle(Future.failedFuture("Invalid state:" + status.get()));
       return this;

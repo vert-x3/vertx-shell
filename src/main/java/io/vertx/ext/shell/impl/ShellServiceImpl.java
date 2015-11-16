@@ -37,13 +37,13 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.term.SSHOptions;
+import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.ShellService;
 import io.vertx.ext.shell.ShellServiceOptions;
-import io.vertx.ext.shell.term.TelnetOptions;
+import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.term.TermServer;
-import io.vertx.ext.shell.term.impl.SSHServer;
-import io.vertx.ext.shell.term.impl.TelnetServer;
+import io.vertx.ext.shell.term.impl.SSHTermServer;
+import io.vertx.ext.shell.term.impl.TelnetTermServer;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.system.Shell;
 import io.vertx.ext.shell.system.impl.ShellImpl;
@@ -59,8 +59,8 @@ public class ShellServiceImpl implements ShellService {
   private final Vertx vertx;
   private final ShellServiceOptions options;
   private final CommandRegistry registry;
-  private TelnetServer telnet;
-  private SSHServer ssh;
+  private TelnetTermServer telnet;
+  private SSHTermServer ssh;
 
   public ShellServiceImpl(Vertx vertx, ShellServiceOptions options, CommandRegistry registry) {
     this.vertx = vertx;
@@ -83,8 +83,8 @@ public class ShellServiceImpl implements ShellService {
       adapter.init();
     };
 
-    TelnetOptions telnetOptions = options.getTelnetOptions();
-    SSHOptions sshOptions = options.getSSH();
+    TelnetTermOptions telnetOptions = options.getTelnetOptions();
+    SSHTermOptions sshOptions = options.getSSH();
     AtomicInteger count = new AtomicInteger();
     count.addAndGet(telnetOptions != null ? 1 : 0);
     count.addAndGet(sshOptions != null ? 1 : 0);
@@ -103,12 +103,12 @@ public class ShellServiceImpl implements ShellService {
       }
     };
     if (telnetOptions != null) {
-      telnet = new TelnetServer(vertx, telnetOptions);
+      telnet = new TelnetTermServer(vertx, telnetOptions);
       telnet.setHandler(shellBoostrap);
       telnet.listen(listenHandler);
     }
     if (sshOptions != null) {
-      ssh = new SSHServer(vertx, sshOptions);
+      ssh = new SSHTermServer(vertx, sshOptions);
       ssh.setHandler(shellBoostrap);
       ssh.listen(ar -> {
         if (ar.succeeded()) {

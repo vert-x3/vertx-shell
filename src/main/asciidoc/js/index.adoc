@@ -119,7 +119,7 @@ service.start();
 
 ----
 
-The `link:../dataobjects.html#TelnetOptions[TelnetOptions]` extends the Vert.x Core `NetServerOptions` as the Telnet server
+The `link:../dataobjects.html#TelnetTermOptions[TelnetTermOptions]` extends the Vert.x Core `NetServerOptions` as the Telnet server
 implementation is based on a `NetServer`.
 
 CAUTION: Telnet does not provide any authentication nor encryption at all.
@@ -127,26 +127,26 @@ CAUTION: Telnet does not provide any authentication nor encryption at all.
 == Telnet configuration
 
 The telnet connector is configured by `link:../dataobjects.html#ShellServiceOptions#setTelnetOptions[telnetOptions]`,
-the `link:../dataobjects.html#TelnetOptions[TelnetOptions]` extends the `link:../../vertx-core/dataobjects.html#NetServerOptions[NetServerOptions]` so they
+the `link:../dataobjects.html#TelnetTermOptions[TelnetTermOptions]` extends the `link:../../vertx-core/dataobjects.html#NetServerOptions[NetServerOptions]` so they
 have the exact same configuration.
 
 == SSH configuration
 
 The SSH connector is configured by `link:../dataobjects.html#ShellServiceOptions#setSSHOptions[SSHOptions]`:
 
-- `link:../dataobjects.html#SSHOptions#setPort[port]`: port
-- `link:../dataobjects.html#SSHOptions#setHost[host]`: host
+- `link:../dataobjects.html#SSHTermOptions#setPort[port]`: port
+- `link:../dataobjects.html#SSHTermOptions#setHost[host]`: host
 
 Only username/password authentication is supported at the moment, it can be configured with property file
 or LDAP, see Vert.x Auth for more info:
 
-- `link:../dataobjects.html#SSHOptions#setShiroAuthOptions[shiroAuthOptions]`: configures user authentication
+- `link:../dataobjects.html#SSHTermOptions#setShiroAuthOptions[shiroAuthOptions]`: configures user authentication
 
 The server key configuration reuses the key pair store configuration scheme provided by _Vert.x Core_:
 
-- `link:../dataobjects.html#SSHOptions#setKeyPairOptions[keyPairOptions]`: set `.jks` key pair store
-- `link:../dataobjects.html#SSHOptions#setPfxKeyPairOptions[pfxKeyPairOptions]`: set `.pfx` key pair store
-- `link:../dataobjects.html#SSHOptions#setPemKeyPairOptions[pemKeyPairOptions]`: set `.pem` key pair store
+- `link:../dataobjects.html#SSHTermOptions#setKeyPairOptions[keyPairOptions]`: set `.jks` key pair store
+- `link:../dataobjects.html#SSHTermOptions#setPfxKeyPairOptions[pfxKeyPairOptions]`: set `.pfx` key pair store
+- `link:../dataobjects.html#SSHTermOptions#setPemKeyPairOptions[pemKeyPairOptions]`: set `.pem` key pair store
 
 == Base commands
 
@@ -561,7 +561,7 @@ terminal.
 
 [source,js]
 ----
-var server = Java.type("io.vertx.ext.shell.term.TermServer").createSSHServer(vertx, {
+var server = Java.type("io.vertx.ext.shell.term.TermServer").createSSHTermServer(vertx, {
   "port" : 5000,
   "host" : "localhost"
 });
@@ -578,7 +578,7 @@ The telnet protocol is also supported:
 
 [source,js]
 ----
-var server = Java.type("io.vertx.ext.shell.term.TermServer").createTelnetServer(vertx, {
+var server = Java.type("io.vertx.ext.shell.term.TermServer").createTelnetTermServer(vertx, {
   "port" : 5000,
   "host" : "localhost"
 });

@@ -34,15 +34,15 @@ package io.vertx.ext.shell;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.shell.term.SSHOptions;
-import io.vertx.ext.shell.term.TelnetOptions;
+import io.vertx.ext.shell.term.SSHTermOptions;
+import io.vertx.ext.shell.term.TelnetTermOptions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 /**
  * The configurations options for the shell service, the shell connectors can be configured
- * with {@link io.vertx.ext.shell.term.TelnetOptions} and {@link io.vertx.ext.shell.term.SSHOptions}.
+ * with {@link TelnetTermOptions} and {@link SSHTermOptions}.
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
@@ -74,15 +74,15 @@ public class ShellServiceOptions {
   }
 
   private String welcomeMessage;
-  private TelnetOptions telnetOptions;
-  private SSHOptions sshOptions;
+  private TelnetTermOptions telnetOptions;
+  private SSHTermOptions sshOptions;
 
   public ShellServiceOptions() {
     welcomeMessage = DEFAULT_WELCOME_MESSAGE;
   }
 
   public ShellServiceOptions(ShellServiceOptions that) {
-    this.telnetOptions = that.telnetOptions != null ? new TelnetOptions(that.telnetOptions) : null;
+    this.telnetOptions = that.telnetOptions != null ? new TelnetTermOptions(that.telnetOptions) : null;
     this.welcomeMessage = that.welcomeMessage;
   }
 
@@ -112,7 +112,7 @@ public class ShellServiceOptions {
   /**
    * @return the Telnet options
    */
-  public TelnetOptions getTelnetOptions() {
+  public TelnetTermOptions getTelnetOptions() {
     return telnetOptions;
   }
 
@@ -122,7 +122,7 @@ public class ShellServiceOptions {
    * @param telnetOptions the ssh options
    * @return a reference to this, so the API can be used fluently
    */
-  public ShellServiceOptions setTelnetOptions(TelnetOptions telnetOptions) {
+  public ShellServiceOptions setTelnetOptions(TelnetTermOptions telnetOptions) {
     this.telnetOptions = telnetOptions;
     return this;
   }
@@ -130,7 +130,7 @@ public class ShellServiceOptions {
   /**
    * @return the SSH options
    */
-  public SSHOptions getSSH() {
+  public SSHTermOptions getSSH() {
     return sshOptions;
   }
 
@@ -140,7 +140,7 @@ public class ShellServiceOptions {
    * @param sshOptions the ssh options
    * @return a reference to this, so the API can be used fluently
    */
-  public ShellServiceOptions setSSHOptions(SSHOptions sshOptions) {
+  public ShellServiceOptions setSSHOptions(SSHTermOptions sshOptions) {
     this.sshOptions = sshOptions;
     return this;
   }

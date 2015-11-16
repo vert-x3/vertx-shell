@@ -39,7 +39,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.net.NetServer;
-import io.vertx.ext.shell.term.TelnetOptions;
+import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.Term;
 
@@ -50,14 +50,14 @@ import java.util.function.Consumer;
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class TelnetServer implements TermServer {
+public class TelnetTermServer implements TermServer {
 
   private final Vertx vertx;
-  private final TelnetOptions options;
+  private final TelnetTermOptions options;
   private Consumer<TtyConnection> handler;
   private NetServer server;
 
-  public TelnetServer(Vertx vertx, TelnetOptions options) {
+  public TelnetTermServer(Vertx vertx, TelnetTermOptions options) {
     this.vertx = vertx;
     this.options = options;
   }
@@ -66,7 +66,7 @@ public class TelnetServer implements TermServer {
     return handler;
   }
 
-  public TelnetServer setHandler(Consumer<TtyConnection> handler) {
+  public TelnetTermServer setHandler(Consumer<TtyConnection> handler) {
     this.handler = handler;
     return this;
   }

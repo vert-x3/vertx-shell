@@ -103,7 +103,7 @@
  * {@link examples.Examples#runTelnetService}
  * ----
  *
- * The {@link io.vertx.ext.shell.term.TelnetOptions} extends the Vert.x Core `NetServerOptions` as the Telnet server
+ * The {@link io.vertx.ext.shell.term.TelnetTermOptions} extends the Vert.x Core `NetServerOptions` as the Telnet server
  * implementation is based on a `NetServer`.
  *
  * CAUTION: Telnet does not provide any authentication nor encryption at all.
@@ -111,26 +111,26 @@
  * == Telnet configuration
  *
  * The telnet connector is configured by {@link io.vertx.ext.shell.ShellServiceOptions#setTelnetOptions},
- * the {@link io.vertx.ext.shell.term.TelnetOptions} extends the {@link io.vertx.core.net.NetServerOptions} so they
+ * the {@link io.vertx.ext.shell.term.TelnetTermOptions} extends the {@link io.vertx.core.net.NetServerOptions} so they
  * have the exact same configuration.
  *
  * == SSH configuration
  *
  * The SSH connector is configured by {@link io.vertx.ext.shell.ShellServiceOptions#setSSHOptions}:
  *
- * - {@link io.vertx.ext.shell.term.SSHOptions#setPort}: port
- * - {@link io.vertx.ext.shell.term.SSHOptions#setHost}: host
+ * - {@link io.vertx.ext.shell.term.SSHTermOptions#setPort}: port
+ * - {@link io.vertx.ext.shell.term.SSHTermOptions#setHost}: host
  *
  * Only username/password authentication is supported at the moment, it can be configured with property file
  * or LDAP, see Vert.x Auth for more info:
  *
- * - {@link io.vertx.ext.shell.term.SSHOptions#setShiroAuthOptions}: configures user authentication
+ * - {@link io.vertx.ext.shell.term.SSHTermOptions#setShiroAuthOptions}: configures user authentication
  *
  * The server key configuration reuses the key pair store configuration scheme provided by _Vert.x Core_:
  *
- * - {@link io.vertx.ext.shell.term.SSHOptions#setKeyPairOptions}: set `.jks` key pair store
- * - {@link io.vertx.ext.shell.term.SSHOptions#setPfxKeyPairOptions}: set `.pfx` key pair store
- * - {@link io.vertx.ext.shell.term.SSHOptions#setPemKeyPairOptions}: set `.pem` key pair store
+ * - {@link io.vertx.ext.shell.term.SSHTermOptions#setKeyPairOptions}: set `.jks` key pair store
+ * - {@link io.vertx.ext.shell.term.SSHTermOptions#setPfxKeyPairOptions}: set `.pfx` key pair store
+ * - {@link io.vertx.ext.shell.term.SSHTermOptions#setPemKeyPairOptions}: set `.pem` key pair store
  *
  * == Base commands
  *

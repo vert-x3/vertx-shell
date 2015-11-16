@@ -46,11 +46,11 @@ import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.shell.term.Tty;
 import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.Shell;
-import io.vertx.ext.shell.term.SSHOptions;
+import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.ShellService;
 import io.vertx.ext.shell.ShellServiceOptions;
-import io.vertx.ext.shell.term.TelnetOptions;
+import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.term.TermServer;
@@ -91,7 +91,7 @@ public class Examples {
   public void runTelnetService(Vertx vertx) throws Exception {
     ShellService service = ShellService.create(vertx,
         new ShellServiceOptions().setTelnetOptions(
-            new TelnetOptions().
+            new TelnetTermOptions().
                 setHost("localhost").
                 setPort(4000)
         )
@@ -102,7 +102,7 @@ public class Examples {
   public void runSSHService(Vertx vertx) throws Exception {
     ShellService service = ShellService.create(vertx,
         new ShellServiceOptions().setSSHOptions(
-            new SSHOptions().
+            new SSHTermOptions().
                 setHost("localhost").
                 setPort(5000).
                 setKeyPairOptions(new JksOptions().
@@ -269,7 +269,7 @@ public class Examples {
   }
 
   public void telnetEchoTerminal(Vertx vertx) {
-    TermServer server = TermServer.createTelnetServer(vertx, new TelnetOptions().setPort(5000).setHost("localhost"));
+    TermServer server = TermServer.createTelnetTermServer(vertx, new TelnetTermOptions().setPort(5000).setHost("localhost"));
     server.termHandler(term -> {
       term.setStdin(line -> {
         term.stdout().write(line);
@@ -279,7 +279,7 @@ public class Examples {
   }
 
   public void sshEchoTerminal(Vertx vertx) {
-    TermServer server = TermServer.createSSHServer(vertx, new SSHOptions().setPort(5000).setHost("localhost"));
+    TermServer server = TermServer.createSSHTermServer(vertx, new SSHTermOptions().setPort(5000).setHost("localhost"));
     server.termHandler(term -> {
       term.setStdin(line -> {
         term.stdout().write(line);

@@ -34,9 +34,6 @@ package io.vertx.ext.shell.term;
 
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.term.TelnetOptions;
-import io.vertx.ext.shell.term.Term;
-import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -88,7 +85,7 @@ public class TelnetTermServerTest {
   }
 
   private void startTelnet(TestContext context, Handler<Term> termHandler) {
-    server = TermServer.createTelnetServer(vertx, new TelnetOptions().setPort(4000));
+    server = TermServer.createTelnetTermServer(vertx, new TelnetTermOptions().setPort(4000));
     server.termHandler(termHandler);
     Async async = context.async();
     server.listen(context.asyncAssertSuccess(v -> async.complete()));

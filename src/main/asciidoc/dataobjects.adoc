@@ -1,11 +1,10 @@
 = Cheatsheets
 
-[[ShellServiceOptions]]
-== ShellServiceOptions
+[[TelnetTermOptions]]
+== TelnetTermOptions
 
 ++++
- The configurations options for the shell service, the shell connectors can be configured
- with link and link.
+ Telnet options configuration, extends link.
 ++++
 '''
 
@@ -13,15 +12,54 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[ssh]]`ssh`|`link:dataobjects.html#SSHOptions[SSHOptions]`|
+|[[acceptBacklog]]`acceptBacklog`|`Number (int)`|-
+|[[clientAuth]]`clientAuth`|`link:enums.html#ClientAuth[ClientAuth]`|-
+|[[clientAuthRequired]]`clientAuthRequired`|`Boolean`|-
+|[[crlPaths]]`crlPaths`|`Array of String`|-
+|[[crlValues]]`crlValues`|`Array of Buffer`|-
+|[[enabledCipherSuites]]`enabledCipherSuites`|`Array of String`|-
+|[[host]]`host`|`String`|-
+|[[idleTimeout]]`idleTimeout`|`Number (int)`|-
+|[[keyStoreOptions]]`keyStoreOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|-
+|[[pemKeyCertOptions]]`pemKeyCertOptions`|`link:dataobjects.html#PemKeyCertOptions[PemKeyCertOptions]`|-
+|[[pemTrustOptions]]`pemTrustOptions`|`link:dataobjects.html#PemTrustOptions[PemTrustOptions]`|-
+|[[pfxKeyCertOptions]]`pfxKeyCertOptions`|`link:dataobjects.html#PfxOptions[PfxOptions]`|-
+|[[pfxTrustOptions]]`pfxTrustOptions`|`link:dataobjects.html#PfxOptions[PfxOptions]`|-
+|[[port]]`port`|`Number (int)`|-
+|[[receiveBufferSize]]`receiveBufferSize`|`Number (int)`|-
+|[[reuseAddress]]`reuseAddress`|`Boolean`|-
+|[[sendBufferSize]]`sendBufferSize`|`Number (int)`|-
+|[[soLinger]]`soLinger`|`Number (int)`|-
+|[[ssl]]`ssl`|`Boolean`|-
+|[[tcpKeepAlive]]`tcpKeepAlive`|`Boolean`|-
+|[[tcpNoDelay]]`tcpNoDelay`|`Boolean`|-
+|[[trafficClass]]`trafficClass`|`Number (int)`|-
+|[[trustStoreOptions]]`trustStoreOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|-
+|[[usePooledBuffers]]`usePooledBuffers`|`Boolean`|-
+|===
+
+[[ShellServiceOptions]]
+== ShellServiceOptions
+
+++++
+ The configurations options for the shell service, the shell connectors can be configured
+ with  and .
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[ssh]]`ssh`|`link:dataobjects.html#SSHTermOptions[SSHTermOptions]`|
 +++
 @return the SSH options
 +++
-|[[sshOptions]]`sshOptions`|`link:dataobjects.html#SSHOptions[SSHOptions]`|
+|[[sshOptions]]`sshOptions`|`link:dataobjects.html#SSHTermOptions[SSHTermOptions]`|
 +++
 Set the SSH options, if the option is null, SSH will not be started.
 +++
-|[[telnetOptions]]`telnetOptions`|`link:dataobjects.html#TelnetOptions[TelnetOptions]`|
+|[[telnetOptions]]`telnetOptions`|`link:dataobjects.html#TelnetTermOptions[TelnetTermOptions]`|
 +++
 @return the Telnet options
 +++
@@ -31,8 +69,8 @@ Set the SSH options, if the option is null, SSH will not be started.
 +++
 |===
 
-[[SSHOptions]]
-== SSHOptions
+[[SSHTermOptions]]
+== SSHTermOptions
 
 ++++
  The SSH shell configuration options.
@@ -71,43 +109,5 @@ Set the key pair options in pfx format.
 +++
 Set the auth options as a Shiro auth.
 +++
-|===
-
-[[TelnetOptions]]
-== TelnetOptions
-
-++++
- Telnet options configuration, extends link.
-++++
-'''
-
-[cols=">25%,^25%,50%"]
-[frame="topbot"]
-|===
-^|Name | Type ^| Description
-|[[acceptBacklog]]`acceptBacklog`|`Number (int)`|-
-|[[clientAuth]]`clientAuth`|`link:enums.html#ClientAuth[ClientAuth]`|-
-|[[clientAuthRequired]]`clientAuthRequired`|`Boolean`|-
-|[[crlPaths]]`crlPaths`|`Array of String`|-
-|[[crlValues]]`crlValues`|`Array of Buffer`|-
-|[[enabledCipherSuites]]`enabledCipherSuites`|`Array of String`|-
-|[[host]]`host`|`String`|-
-|[[idleTimeout]]`idleTimeout`|`Number (int)`|-
-|[[keyStoreOptions]]`keyStoreOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|-
-|[[pemKeyCertOptions]]`pemKeyCertOptions`|`link:dataobjects.html#PemKeyCertOptions[PemKeyCertOptions]`|-
-|[[pemTrustOptions]]`pemTrustOptions`|`link:dataobjects.html#PemTrustOptions[PemTrustOptions]`|-
-|[[pfxKeyCertOptions]]`pfxKeyCertOptions`|`link:dataobjects.html#PfxOptions[PfxOptions]`|-
-|[[pfxTrustOptions]]`pfxTrustOptions`|`link:dataobjects.html#PfxOptions[PfxOptions]`|-
-|[[port]]`port`|`Number (int)`|-
-|[[receiveBufferSize]]`receiveBufferSize`|`Number (int)`|-
-|[[reuseAddress]]`reuseAddress`|`Boolean`|-
-|[[sendBufferSize]]`sendBufferSize`|`Number (int)`|-
-|[[soLinger]]`soLinger`|`Number (int)`|-
-|[[ssl]]`ssl`|`Boolean`|-
-|[[tcpKeepAlive]]`tcpKeepAlive`|`Boolean`|-
-|[[tcpNoDelay]]`tcpNoDelay`|`Boolean`|-
-|[[trafficClass]]`trafficClass`|`Number (int)`|-
-|[[trustStoreOptions]]`trustStoreOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|-
-|[[usePooledBuffers]]`usePooledBuffers`|`Boolean`|-
 |===
 

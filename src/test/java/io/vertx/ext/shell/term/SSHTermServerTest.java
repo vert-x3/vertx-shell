@@ -37,9 +37,6 @@ import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.Session;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.SSHTestBase;
-import io.vertx.ext.shell.term.SSHOptions;
-import io.vertx.ext.shell.term.TermServer;
-import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import org.junit.After;
@@ -82,11 +79,11 @@ public class SSHTermServerTest extends SSHTestBase {
     super.after();
   }
 
-  protected void startShell(SSHOptions options) throws ExecutionException, InterruptedException, TimeoutException {
+  protected void startShell(SSHTermOptions options) throws ExecutionException, InterruptedException, TimeoutException {
     if (server != null) {
       throw new IllegalStateException();
     }
-    server = TermServer.createSSHServer(vertx, options);
+    server = TermServer.createSSHTermServer(vertx, options);
     CompletableFuture<Void> fut = new CompletableFuture<>();
     server.termHandler(termHandler);
     server.listen(ar -> {

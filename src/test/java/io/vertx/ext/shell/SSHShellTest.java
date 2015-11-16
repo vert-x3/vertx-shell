@@ -34,7 +34,7 @@ package io.vertx.ext.shell;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.term.SSHOptions;
+import io.vertx.ext.shell.term.SSHTermOptions;
 import org.junit.After;
 
 import static org.junit.Assert.*;
@@ -63,7 +63,7 @@ public class SSHShellTest extends SSHTestBase {
     super.after();
   }
 
-  protected void startShell(SSHOptions options) throws ExecutionException, InterruptedException, TimeoutException {
+  protected void startShell(SSHTermOptions options) throws ExecutionException, InterruptedException, TimeoutException {
 
     if (service != null) {
       throw new IllegalStateException();

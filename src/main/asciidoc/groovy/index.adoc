@@ -120,34 +120,34 @@ service.start()
 
 ----
 
-The `link:../dataobjects.html#TelnetOptions[TelnetOptions]` extends the Vert.x Core `NetServerOptions` as the Telnet server
+The `link:../dataobjects.html#TelnetTermOptions[TelnetTermOptions]` extends the Vert.x Core `NetServerOptions` as the Telnet server
 implementation is based on a `NetServer`.
 
 CAUTION: Telnet does not provide any authentication nor encryption at all.
 
 == Telnet configuration
 
-The telnet connector is configured by `link:../dataobjects.html#ShellServiceOptions#setTelnetOptions(io.vertx.ext.shell.term.TelnetOptions)[telnetOptions]`,
-the `link:../dataobjects.html#TelnetOptions[TelnetOptions]` extends the `link:../../vertx-core/dataobjects.html#NetServerOptions[NetServerOptions]` so they
+The telnet connector is configured by `link:../dataobjects.html#ShellServiceOptions#setTelnetOptions(io.vertx.ext.shell.term.TelnetTermOptions)[telnetOptions]`,
+the `link:../dataobjects.html#TelnetTermOptions[TelnetTermOptions]` extends the `link:../../vertx-core/dataobjects.html#NetServerOptions[NetServerOptions]` so they
 have the exact same configuration.
 
 == SSH configuration
 
-The SSH connector is configured by `link:../dataobjects.html#ShellServiceOptions#setSSHOptions(io.vertx.ext.shell.term.SSHOptions)[SSHOptions]`:
+The SSH connector is configured by `link:../dataobjects.html#ShellServiceOptions#setSSHOptions(io.vertx.ext.shell.term.SSHTermOptions)[SSHOptions]`:
 
-- `link:../dataobjects.html#SSHOptions#setPort(int)[port]`: port
-- `link:../dataobjects.html#SSHOptions#setHost(java.lang.String)[host]`: host
+- `link:../dataobjects.html#SSHTermOptions#setPort(int)[port]`: port
+- `link:../dataobjects.html#SSHTermOptions#setHost(java.lang.String)[host]`: host
 
 Only username/password authentication is supported at the moment, it can be configured with property file
 or LDAP, see Vert.x Auth for more info:
 
-- `link:../dataobjects.html#SSHOptions#setShiroAuthOptions(io.vertx.ext.auth.shiro.ShiroAuthOptions)[shiroAuthOptions]`: configures user authentication
+- `link:../dataobjects.html#SSHTermOptions#setShiroAuthOptions(io.vertx.ext.auth.shiro.ShiroAuthOptions)[shiroAuthOptions]`: configures user authentication
 
 The server key configuration reuses the key pair store configuration scheme provided by _Vert.x Core_:
 
-- `link:../dataobjects.html#SSHOptions#setKeyPairOptions(io.vertx.core.net.JksOptions)[keyPairOptions]`: set `.jks` key pair store
-- `link:../dataobjects.html#SSHOptions#setPfxKeyPairOptions(io.vertx.core.net.PfxOptions)[pfxKeyPairOptions]`: set `.pfx` key pair store
-- `link:../dataobjects.html#SSHOptions#setPemKeyPairOptions(io.vertx.core.net.PemKeyCertOptions)[pemKeyPairOptions]`: set `.pem` key pair store
+- `link:../dataobjects.html#SSHTermOptions#setKeyPairOptions(io.vertx.core.net.JksOptions)[keyPairOptions]`: set `.jks` key pair store
+- `link:../dataobjects.html#SSHTermOptions#setPfxKeyPairOptions(io.vertx.core.net.PfxOptions)[pfxKeyPairOptions]`: set `.pfx` key pair store
+- `link:../dataobjects.html#SSHTermOptions#setPemKeyPairOptions(io.vertx.core.net.PemKeyCertOptions)[pemKeyPairOptions]`: set `.pem` key pair store
 
 == Base commands
 
@@ -562,7 +562,7 @@ terminal.
 
 [source,groovy]
 ----
-def server = io.vertx.ext.shell.term.TermServer.createSSHServer(vertx, [
+def server = io.vertx.ext.shell.term.TermServer.createSSHTermServer(vertx, [
   port:5000,
   host:"localhost"
 ])
@@ -579,7 +579,7 @@ The telnet protocol is also supported:
 
 [source,groovy]
 ----
-def server = io.vertx.ext.shell.term.TermServer.createTelnetServer(vertx, [
+def server = io.vertx.ext.shell.term.TermServer.createTelnetTermServer(vertx, [
   port:5000,
   host:"localhost"
 ])

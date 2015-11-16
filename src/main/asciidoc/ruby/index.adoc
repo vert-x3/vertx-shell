@@ -119,7 +119,7 @@ service.start()
 
 ----
 
-The `link:../dataobjects.html#TelnetOptions[TelnetOptions]` extends the Vert.x Core `NetServerOptions` as the Telnet server
+The `link:../dataobjects.html#TelnetTermOptions[TelnetTermOptions]` extends the Vert.x Core `NetServerOptions` as the Telnet server
 implementation is based on a `NetServer`.
 
 CAUTION: Telnet does not provide any authentication nor encryption at all.
@@ -127,26 +127,26 @@ CAUTION: Telnet does not provide any authentication nor encryption at all.
 == Telnet configuration
 
 The telnet connector is configured by `link:../dataobjects.html#ShellServiceOptions#set_telnet_options-instance_method[telnetOptions]`,
-the `link:../dataobjects.html#TelnetOptions[TelnetOptions]` extends the `link:../../vertx-core/dataobjects.html#NetServerOptions[NetServerOptions]` so they
+the `link:../dataobjects.html#TelnetTermOptions[TelnetTermOptions]` extends the `link:../../vertx-core/dataobjects.html#NetServerOptions[NetServerOptions]` so they
 have the exact same configuration.
 
 == SSH configuration
 
 The SSH connector is configured by `link:../dataobjects.html#ShellServiceOptions#set_ssh_options-instance_method[SSHOptions]`:
 
-- `link:../dataobjects.html#SSHOptions#set_port-instance_method[port]`: port
-- `link:../dataobjects.html#SSHOptions#set_host-instance_method[host]`: host
+- `link:../dataobjects.html#SSHTermOptions#set_port-instance_method[port]`: port
+- `link:../dataobjects.html#SSHTermOptions#set_host-instance_method[host]`: host
 
 Only username/password authentication is supported at the moment, it can be configured with property file
 or LDAP, see Vert.x Auth for more info:
 
-- `link:../dataobjects.html#SSHOptions#set_shiro_auth_options-instance_method[shiroAuthOptions]`: configures user authentication
+- `link:../dataobjects.html#SSHTermOptions#set_shiro_auth_options-instance_method[shiroAuthOptions]`: configures user authentication
 
 The server key configuration reuses the key pair store configuration scheme provided by _Vert.x Core_:
 
-- `link:../dataobjects.html#SSHOptions#set_key_pair_options-instance_method[keyPairOptions]`: set `.jks` key pair store
-- `link:../dataobjects.html#SSHOptions#set_pfx_key_pair_options-instance_method[pfxKeyPairOptions]`: set `.pfx` key pair store
-- `link:../dataobjects.html#SSHOptions#set_pem_key_pair_options-instance_method[pemKeyPairOptions]`: set `.pem` key pair store
+- `link:../dataobjects.html#SSHTermOptions#set_key_pair_options-instance_method[keyPairOptions]`: set `.jks` key pair store
+- `link:../dataobjects.html#SSHTermOptions#set_pfx_key_pair_options-instance_method[pfxKeyPairOptions]`: set `.pfx` key pair store
+- `link:../dataobjects.html#SSHTermOptions#set_pem_key_pair_options-instance_method[pemKeyPairOptions]`: set `.pem` key pair store
 
 == Base commands
 
@@ -561,7 +561,7 @@ terminal.
 
 [source,ruby]
 ----
-server = Java::IoVertxExtShellTerm::TermServer.create_ssh_server(vertx, {
+server = Java::IoVertxExtShellTerm::TermServer.create_ssh_term_server(vertx, {
   'port' => 5000,
   'host' => "localhost"
 })
@@ -578,7 +578,7 @@ The telnet protocol is also supported:
 
 [source,ruby]
 ----
-server = Java::IoVertxExtShellTerm::TermServer.create_telnet_server(vertx, {
+server = Java::IoVertxExtShellTerm::TermServer.create_telnet_term_server(vertx, {
   'port' => 5000,
   'host' => "localhost"
 })

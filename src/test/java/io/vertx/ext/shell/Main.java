@@ -41,8 +41,8 @@ import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.dropwizard.DropwizardMetricsOptions;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.io.Stream;
-import io.vertx.ext.shell.term.SSHOptions;
-import io.vertx.ext.shell.term.TelnetOptions;
+import io.vertx.ext.shell.term.SSHTermOptions;
+import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.registry.CommandRegistry;
 
 /**
@@ -85,7 +85,7 @@ public class Main {
     // vertx.deployVerticle("command.js");
 
     // Expose the shell
-    SSHOptions options = new SSHOptions().setPort(5001);
+    SSHTermOptions options = new SSHTermOptions().setPort(5001);
     options.setKeyPairOptions(new JksOptions().
         setPath("src/test/resources/server-keystore.jks").
         setPassword("wibble")).
@@ -95,7 +95,7 @@ public class Main {
                 setConfig(new JsonObject().put("properties_path", "file:src/test/resources/test-auth.properties"))
     );
     ShellService service = ShellService.create(vertx, new ShellServiceOptions().
-        setTelnetOptions(new TelnetOptions().setPort(5000)).
+        setTelnetOptions(new TelnetTermOptions().setPort(5000)).
         setSSHOptions(options));
     service.start();
 

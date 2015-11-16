@@ -82,7 +82,7 @@ Starting a shell service available via SSH:
 ----
 ShellService service = ShellService.create(vertx,
     new ShellServiceOptions().setSSHOptions(
-        new SSHOptions().
+        new SSHTermOptions().
             setHost("localhost").
             setPort(5000).
             setKeyPairOptions(new JksOptions().
@@ -105,7 +105,7 @@ Starting a shell service available via Telnet:
 ----
 ShellService service = ShellService.create(vertx,
     new ShellServiceOptions().setTelnetOptions(
-        new TelnetOptions().
+        new TelnetTermOptions().
             setHost("localhost").
             setPort(4000)
     )
@@ -113,34 +113,34 @@ ShellService service = ShellService.create(vertx,
 service.start();
 ----
 
-The `link:../../apidocs/io/vertx/ext/shell/term/TelnetOptions.html[TelnetOptions]` extends the Vert.x Core `NetServerOptions` as the Telnet server
+The `link:../../apidocs/io/vertx/ext/shell/term/TelnetTermOptions.html[TelnetTermOptions]` extends the Vert.x Core `NetServerOptions` as the Telnet server
 implementation is based on a `NetServer`.
 
 CAUTION: Telnet does not provide any authentication nor encryption at all.
 
 == Telnet configuration
 
-The telnet connector is configured by `link:../../apidocs/io/vertx/ext/shell/ShellServiceOptions.html#setTelnetOptions-io.vertx.ext.shell.term.TelnetOptions-[setTelnetOptions]`,
-the `link:../../apidocs/io/vertx/ext/shell/term/TelnetOptions.html[TelnetOptions]` extends the `link:../../apidocs/io/vertx/core/net/NetServerOptions.html[NetServerOptions]` so they
+The telnet connector is configured by `link:../../apidocs/io/vertx/ext/shell/ShellServiceOptions.html#setTelnetOptions-io.vertx.ext.shell.term.TelnetTermOptions-[setTelnetOptions]`,
+the `link:../../apidocs/io/vertx/ext/shell/term/TelnetTermOptions.html[TelnetTermOptions]` extends the `link:../../apidocs/io/vertx/core/net/NetServerOptions.html[NetServerOptions]` so they
 have the exact same configuration.
 
 == SSH configuration
 
-The SSH connector is configured by `link:../../apidocs/io/vertx/ext/shell/ShellServiceOptions.html#setSSHOptions-io.vertx.ext.shell.term.SSHOptions-[setSSHOptions]`:
+The SSH connector is configured by `link:../../apidocs/io/vertx/ext/shell/ShellServiceOptions.html#setSSHOptions-io.vertx.ext.shell.term.SSHTermOptions-[setSSHOptions]`:
 
-- `link:../../apidocs/io/vertx/ext/shell/term/SSHOptions.html#setPort-int-[setPort]`: port
-- `link:../../apidocs/io/vertx/ext/shell/term/SSHOptions.html#setHost-java.lang.String-[setHost]`: host
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setPort-int-[setPort]`: port
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setHost-java.lang.String-[setHost]`: host
 
 Only username/password authentication is supported at the moment, it can be configured with property file
 or LDAP, see Vert.x Auth for more info:
 
-- `link:../../apidocs/io/vertx/ext/shell/term/SSHOptions.html#setShiroAuthOptions-io.vertx.ext.auth.shiro.ShiroAuthOptions-[setShiroAuthOptions]`: configures user authentication
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setShiroAuthOptions-io.vertx.ext.auth.shiro.ShiroAuthOptions-[setShiroAuthOptions]`: configures user authentication
 
 The server key configuration reuses the key pair store configuration scheme provided by _Vert.x Core_:
 
-- `link:../../apidocs/io/vertx/ext/shell/term/SSHOptions.html#setKeyPairOptions-io.vertx.core.net.JksOptions-[setKeyPairOptions]`: set `.jks` key pair store
-- `link:../../apidocs/io/vertx/ext/shell/term/SSHOptions.html#setPfxKeyPairOptions-io.vertx.core.net.PfxOptions-[setPfxKeyPairOptions]`: set `.pfx` key pair store
-- `link:../../apidocs/io/vertx/ext/shell/term/SSHOptions.html#setPemKeyPairOptions-io.vertx.core.net.PemKeyCertOptions-[setPemKeyPairOptions]`: set `.pem` key pair store
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setKeyPairOptions-io.vertx.core.net.JksOptions-[setKeyPairOptions]`: set `.jks` key pair store
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setPfxKeyPairOptions-io.vertx.core.net.PfxOptions-[setPfxKeyPairOptions]`: set `.pfx` key pair store
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setPemKeyPairOptions-io.vertx.core.net.PemKeyCertOptions-[setPemKeyPairOptions]`: set `.pem` key pair store
 
 == Base commands
 
@@ -519,7 +519,7 @@ terminal.
 
 [source,java]
 ----
-TermServer server = TermServer.createSSHServer(vertx, new SSHOptions().setPort(5000).setHost("localhost"));
+TermServer server = TermServer.createSSHTermServer(vertx, new SSHTermOptions().setPort(5000).setHost("localhost"));
 server.termHandler(term -> {
   term.setStdin(line -> {
     term.stdout().write(line);
@@ -532,7 +532,7 @@ The telnet protocol is also supported:
 
 [source,java]
 ----
-TermServer server = TermServer.createTelnetServer(vertx, new TelnetOptions().setPort(5000).setHost("localhost"));
+TermServer server = TermServer.createTelnetTermServer(vertx, new TelnetTermOptions().setPort(5000).setHost("localhost"));
 server.termHandler(term -> {
   term.setStdin(line -> {
     term.stdout().write(line);
