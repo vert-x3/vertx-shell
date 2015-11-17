@@ -31,7 +31,7 @@
 
 <script type="text/javascript">
   window.addEventListener('load', function () {
-    var socket = new SockJS('http://localhost:8080/term');
+    var socket = new SockJS(location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/term');
     socket.onopen = function () {
       var term = new Terminal({cols: 80, rows: 24, screenKeys: true});
       socket.onmessage = function (event) {

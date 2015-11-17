@@ -51,13 +51,9 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[ssh]]`ssh`|`link:dataobjects.html#SSHTermOptions[SSHTermOptions]`|
-+++
-@return the SSH options
-+++
 |[[sshOptions]]`sshOptions`|`link:dataobjects.html#SSHTermOptions[SSHTermOptions]`|
 +++
-Set the SSH options, if the option is null, SSH will not be started.
+@return the SSH options
 +++
 |[[telnetOptions]]`telnetOptions`|`link:dataobjects.html#TelnetTermOptions[TelnetTermOptions]`|
 +++
@@ -126,5 +122,7 @@ Set the auth options as a Shiro auth.
 ^|Name | Type ^| Description
 |[[httpServerOptions]]`httpServerOptions`|`link:dataobjects.html#HttpServerOptions[HttpServerOptions]`|-
 |[[sockJSHandlerOptions]]`sockJSHandlerOptions`|`link:dataobjects.html#SockJSHandlerOptions[SockJSHandlerOptions]`|-
+|[[sockJSPath]]`sockJSPath`|`String`|-
+|[[webroot]]`webroot`|`String`|-
 |===
 

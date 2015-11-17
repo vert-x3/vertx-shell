@@ -39,10 +39,12 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServer;
+import io.vertx.ext.shell.term.SockJSTermHandler;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.WebTermOptions;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 
 import java.io.IOException;
@@ -55,7 +57,7 @@ import java.util.function.Consumer;
  */
 public class WebTermServer implements TermServer {
 
-  private static Buffer loadResource(String path) {
+  public static Buffer loadResource(String path) {
     URL resource = WebTermServer.class.getResource(path);
     if (resource != null) {
       try {
@@ -86,8 +88,8 @@ public class WebTermServer implements TermServer {
   private HttpServer server;
 
   public WebTermServer(Vertx vertx, WebTermOptions options) {
-    this.termHtml = loadResource("/io/vertx/ext/shell/term.html");
-    this.termJs = loadResource("/io/vertx/ext/shell/term.js");
+    this.termHtml = SockJSTermHandler.defaultTermMarkupResource();
+    this.termJs = SockJSTermHandler.defaultTermScriptResource();
     this.vertx = vertx;
     this.options = options;
   }
@@ -118,11 +120,16 @@ public class WebTermServer implements TermServer {
     server.requestHandler(router::accept);
     server.listen(ar -> {
       if (ar.succeeded()) {
+        if (options.getWebroot() != null) {
+          StaticHandler staticHandler = StaticHandler.create(options.getWebroot());
+          router.route().handler(staticHandler);
+        } else {
+          router.get("/term.js").handler(ctx -> ctx.response().putHeader("Content-Type", "application/javascript").end(termJs));
+          router.get("/term.html").handler(ctx -> ctx.response().putHeader("Content-Type", "text/html").end(termHtml));
+        }
         SockJSHandler sockJSHandler = SockJSHandler.create(vertx, options.getSockJSHandlerOptions());
         sockJSHandler.socketHandler(new SockJSTermHandlerImpl(vertx).handler(handler));
-        router.get("/term.js").handler(ctx -> ctx.response().putHeader("Content-Type", "application/javascript").end(termJs));
-        router.get("/term.html").handler(ctx -> ctx.response().putHeader("Content-Type", "text/html").end(termHtml));
-        router.route("/term/*").handler(sockJSHandler);
+        router.route(options.getSockJSPath()).handler(sockJSHandler);
         listenHandler.handle(Future.succeededFuture(this));
       } else {
         listenHandler.handle(Future.failedFuture(ar.cause()));

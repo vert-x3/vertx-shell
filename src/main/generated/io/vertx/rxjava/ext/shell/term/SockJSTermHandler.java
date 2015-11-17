@@ -20,6 +20,7 @@ import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.rxjava.ext.web.handler.sockjs.SockJSSocket;
+import io.vertx.rxjava.core.buffer.Buffer;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.core.Handler;
 
@@ -44,6 +45,16 @@ public class SockJSTermHandler implements Handler<SockJSSocket> {
 
   public void handle(SockJSSocket arg0) { 
     this.delegate.handle((io.vertx.ext.web.handler.sockjs.SockJSSocket) arg0.getDelegate());
+  }
+
+  public static Buffer defaultTermScriptResource() { 
+    Buffer ret= Buffer.newInstance(io.vertx.ext.shell.term.SockJSTermHandler.defaultTermScriptResource());
+    return ret;
+  }
+
+  public static Buffer defaultTermMarkupResource() { 
+    Buffer ret= Buffer.newInstance(io.vertx.ext.shell.term.SockJSTermHandler.defaultTermMarkupResource());
+    return ret;
   }
 
   public static SockJSTermHandler create(Vertx vertx) { 

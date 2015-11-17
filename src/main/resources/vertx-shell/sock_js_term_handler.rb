@@ -1,4 +1,5 @@
 require 'vertx-web/sock_js_socket'
+require 'vertx/buffer'
 require 'vertx/vertx'
 require 'vertx-shell/term'
 require 'vertx/util/utils.rb'
@@ -23,6 +24,20 @@ module VertxShell
         return @j_del.java_method(:handle, [Java::IoVertxExtWebHandlerSockjs::SockJSSocket.java_class]).call(arg0.j_del)
       end
       raise ArgumentError, "Invalid arguments when calling handle(arg0)"
+    end
+    # @return [::Vertx::Buffer]
+    def self.default_term_script_resource
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::SockJSTermHandler.java_method(:defaultTermScriptResource, []).call(),::Vertx::Buffer)
+      end
+      raise ArgumentError, "Invalid arguments when calling default_term_script_resource()"
+    end
+    # @return [::Vertx::Buffer]
+    def self.default_term_markup_resource
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::SockJSTermHandler.java_method(:defaultTermMarkupResource, []).call(),::Vertx::Buffer)
+      end
+      raise ArgumentError, "Invalid arguments when calling default_term_markup_resource()"
     end
     # @param [::Vertx::Vertx] vertx 
     # @return [::VertxShell::SockJSTermHandler]

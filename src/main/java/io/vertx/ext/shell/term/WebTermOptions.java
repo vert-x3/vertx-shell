@@ -45,6 +45,8 @@ public class WebTermOptions {
 
   private SockJSHandlerOptions sockJSHandlerOptions = new SockJSHandlerOptions();
   private HttpServerOptions httpServerOptions = new HttpServerOptions();
+  private String webroot;
+  private String sockJSPath = "/term/*";
 
   public WebTermOptions() {
   }
@@ -71,5 +73,22 @@ public class WebTermOptions {
   public WebTermOptions setHttpServerOptions(HttpServerOptions httpServerOptions) {
     this.httpServerOptions = httpServerOptions;
     return this;
+  }
+
+  public String getWebroot() {
+    return webroot;
+  }
+
+  public WebTermOptions setWebroot(String webroot) {
+    this.webroot = webroot;
+    return this;
+  }
+
+  public String getSockJSPath() {
+    return sockJSPath;
+  }
+
+  public void setSockJSPath(String sockJSPath) {
+    this.sockJSPath = sockJSPath;
   }
 }

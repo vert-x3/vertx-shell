@@ -17,6 +17,7 @@
 /** @module vertx-shell-js/sock_js_term_handler */
 var utils = require('vertx-js/util/utils');
 var SockJSSocket = require('vertx-web-js/sock_js_socket');
+var Buffer = require('vertx-js/buffer');
 var Vertx = require('vertx-js/vertx');
 var Term = require('vertx-shell-js/term');
 
@@ -65,6 +66,32 @@ var SockJSTermHandler = function(j_val) {
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
   this._jdel = j_sockJSTermHandler;
+};
+
+/**
+
+ @memberof module:vertx-shell-js/sock_js_term_handler
+
+ @return {Buffer}
+ */
+SockJSTermHandler.defaultTermScriptResource = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JSockJSTermHandler["defaultTermScriptResource()"](), Buffer);
+  } else throw new TypeError('function invoked with invalid arguments');
+};
+
+/**
+
+ @memberof module:vertx-shell-js/sock_js_term_handler
+
+ @return {Buffer}
+ */
+SockJSTermHandler.defaultTermMarkupResource = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JSockJSTermHandler["defaultTermMarkupResource()"](), Buffer);
+  } else throw new TypeError('function invoked with invalid arguments');
 };
 
 /**
