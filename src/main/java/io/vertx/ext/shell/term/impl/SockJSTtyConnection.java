@@ -32,13 +32,17 @@
 
 package io.vertx.ext.shell.term.impl;
 
+import io.netty.handler.codec.http.QueryStringDecoder;
 import io.termd.core.http.HttpTtyConnection;
+import io.termd.core.util.Vector;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.web.handler.sockjs.SockJSSocket;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -51,6 +55,7 @@ public class SockJSTtyConnection extends HttpTtyConnection {
   private final SockJSSocket socket;
 
   public SockJSTtyConnection(Context context, SockJSSocket socket) {
+    super(getInitialSize(socket));
     this.context = context;
     this.socket = socket;
   }
@@ -77,5 +82,30 @@ public class SockJSTtyConnection extends HttpTtyConnection {
     context.owner().setTimer(timeUnit.toMillis(l), id -> {
       runnable.run();
     });
+  }
+
+  private static Vector getInitialSize(SockJSSocket socket) {
+    QueryStringDecoder decoder = new QueryStringDecoder(socket.uri());
+    Map<String, List<String>> params = decoder.parameters();
+    try {
+      int cols = getParamValue(params, "cols", 80);
+      int rows = getParamValue(params, "rows", 24);
+      return new Vector(cols, rows);
+    } catch (Exception e) {
+      return new Vector(80, 24);
+    }
+  }
+
+  private static int getParamValue(Map<String, List<String>> params, String paramName, int def) throws Exception {
+    List<String> param = params.get(paramName);
+    if (param != null && param.size() > 0 ) {
+      int val = Integer.parseInt(param.get(0));
+      if (val > 0) {
+        return val;
+      } else {
+        throw new Exception("Negative size");
+      }
+    }
+    return def;
   }
 }

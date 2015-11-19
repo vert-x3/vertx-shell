@@ -1,12 +1,10 @@
 ;(function() {
 
   var VertxTerm = function(url, options) {
-
     options = options || {};
-
     var cols = options.cols || 80;
     var rows = options.rows || 24;
-
+    url += (url.indexOf('?') > -1 ? '&' : '?') + "cols=" +  cols + "&rows=" + rows;
     var socket = new SockJS(url);
     socket.onopen = function () {
       var term = new Terminal({cols: cols, rows: rows, screenKeys: true});
