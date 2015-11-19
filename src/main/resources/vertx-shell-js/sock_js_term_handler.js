@@ -74,6 +74,19 @@ var SockJSTermHandler = function(j_val) {
 
  @return {Buffer}
  */
+SockJSTermHandler.defaultVertxTermScriptResource = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JSockJSTermHandler["defaultVertxTermScriptResource()"](), Buffer);
+  } else throw new TypeError('function invoked with invalid arguments');
+};
+
+/**
+
+ @memberof module:vertx-shell-js/sock_js_term_handler
+
+ @return {Buffer}
+ */
 SockJSTermHandler.defaultTermScriptResource = function() {
   var __args = arguments;
   if (__args.length === 0) {

@@ -26,6 +26,13 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling handle(arg0)"
     end
     # @return [::Vertx::Buffer]
+    def self.default_vertx_term_script_resource
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::SockJSTermHandler.java_method(:defaultVertxTermScriptResource, []).call(),::Vertx::Buffer)
+      end
+      raise ArgumentError, "Invalid arguments when calling default_vertx_term_script_resource()"
+    end
+    # @return [::Vertx::Buffer]
     def self.default_term_script_resource
       if !block_given?
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::SockJSTermHandler.java_method(:defaultTermScriptResource, []).call(),::Vertx::Buffer)

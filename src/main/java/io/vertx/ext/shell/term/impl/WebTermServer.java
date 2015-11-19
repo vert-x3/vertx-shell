@@ -81,6 +81,7 @@ public class WebTermServer implements TermServer {
   // Load resources
   private Buffer termHtml;
   private Buffer termJs;
+  private Buffer vertxTermJs;
 
   private final Vertx vertx;
   private final WebTermOptions options;
@@ -90,6 +91,7 @@ public class WebTermServer implements TermServer {
   public WebTermServer(Vertx vertx, WebTermOptions options) {
     this.termHtml = SockJSTermHandler.defaultTermMarkupResource();
     this.termJs = SockJSTermHandler.defaultTermScriptResource();
+    this.vertxTermJs = SockJSTermHandler.defaultVertxTermScriptResource();
     this.vertx = vertx;
     this.options = options;
   }
@@ -124,6 +126,7 @@ public class WebTermServer implements TermServer {
           StaticHandler staticHandler = StaticHandler.create(options.getWebroot());
           router.route().handler(staticHandler);
         } else {
+          router.get("/vertxterm.js").handler(ctx -> ctx.response().putHeader("Content-Type", "application/javascript").end(vertxTermJs));
           router.get("/term.js").handler(ctx -> ctx.response().putHeader("Content-Type", "application/javascript").end(termJs));
           router.get("/term.html").handler(ctx -> ctx.response().putHeader("Content-Type", "text/html").end(termHtml));
         }

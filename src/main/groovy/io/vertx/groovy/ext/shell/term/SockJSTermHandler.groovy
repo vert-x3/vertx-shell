@@ -37,6 +37,10 @@ public class SockJSTermHandler implements Handler<SockJSSocket> {
   public void handle(SockJSSocket arg0) {
     ((io.vertx.core.Handler) this.delegate).handle((io.vertx.ext.web.handler.sockjs.SockJSSocket)arg0.getDelegate());
   }
+  public static Buffer defaultVertxTermScriptResource() {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.SockJSTermHandler.defaultVertxTermScriptResource(), io.vertx.groovy.core.buffer.Buffer.class);
+    return ret;
+  }
   public static Buffer defaultTermScriptResource() {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.SockJSTermHandler.defaultTermScriptResource(), io.vertx.groovy.core.buffer.Buffer.class);
     return ret;

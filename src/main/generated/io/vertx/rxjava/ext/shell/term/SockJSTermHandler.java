@@ -47,6 +47,11 @@ public class SockJSTermHandler implements Handler<SockJSSocket> {
     this.delegate.handle((io.vertx.ext.web.handler.sockjs.SockJSSocket) arg0.getDelegate());
   }
 
+  public static Buffer defaultVertxTermScriptResource() { 
+    Buffer ret= Buffer.newInstance(io.vertx.ext.shell.term.SockJSTermHandler.defaultVertxTermScriptResource());
+    return ret;
+  }
+
   public static Buffer defaultTermScriptResource() { 
     Buffer ret= Buffer.newInstance(io.vertx.ext.shell.term.SockJSTermHandler.defaultTermScriptResource());
     return ret;

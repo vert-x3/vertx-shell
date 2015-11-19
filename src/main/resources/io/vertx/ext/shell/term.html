@@ -28,28 +28,14 @@
   }
 </style><script src="//cdn.jsdelivr.net/sockjs/0.3.4/sockjs.min.js"></script>
 <script src="term.js"></script>
+<script src="vertxterm.js"></script>
 
 <script type="text/javascript">
   window.addEventListener('load', function () {
-    var socket = new SockJS(location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/term');
-    socket.onopen = function () {
-      var term = new Terminal({cols: 80, rows: 24, screenKeys: true});
-      socket.onmessage = function (event) {
-        if (event.type === 'message') {
-          var data = event.data;
-          term.write(data);
-        }
-      };
-      socket.onclose = function () {
-        socket.onmessage = null;
-        socket.onclose = null;
-        term.destroy();
-      };
-      term.on('data', function (data) {
-        socket.send(JSON.stringify({action: 'read', data: data}));
-      });
-      term.open(document.body);
-    };
+    new VertxTerm(location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/term', {
+      cols: 160,
+      rows: 48
+    });
   });
 </script>
 

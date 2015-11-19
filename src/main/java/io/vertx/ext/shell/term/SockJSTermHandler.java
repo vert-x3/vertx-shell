@@ -47,6 +47,10 @@ import io.vertx.ext.web.handler.sockjs.SockJSSocket;
 @VertxGen
 public interface SockJSTermHandler extends Handler<SockJSSocket> {
 
+  static Buffer defaultVertxTermScriptResource() {
+    return WebTermServer.loadResource("/io/vertx/ext/shell/vertxterm.js");
+  }
+
   static Buffer defaultTermScriptResource() {
     return WebTermServer.loadResource("/io/vertx/ext/shell/term.js");
   }
