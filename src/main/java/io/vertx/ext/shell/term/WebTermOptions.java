@@ -35,6 +35,8 @@ package io.vertx.ext.shell.term;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.AuthOptions;
+import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
 
 /**
@@ -45,6 +47,7 @@ public class WebTermOptions {
 
   private SockJSHandlerOptions sockJSHandlerOptions = new SockJSHandlerOptions();
   private HttpServerOptions httpServerOptions = new HttpServerOptions();
+  private AuthOptions authOptions;
   private String webroot;
   private String sockJSPath = "/term/*";
 
@@ -90,5 +93,23 @@ public class WebTermOptions {
 
   public void setSockJSPath(String sockJSPath) {
     this.sockJSPath = sockJSPath;
+  }
+
+  /**
+   * @return the auth options
+   */
+  public AuthOptions getAuthOptions() {
+    return authOptions;
+  }
+
+  /**
+   * Set the auth options as a Shiro auth.
+   *
+   * @param shiroAuthOptions the Shiro auth options
+   * @return a reference to this, so the API can be used fluently
+   */
+  public WebTermOptions setShiroAuthOptions(ShiroAuthOptions shiroAuthOptions) {
+    this.authOptions = shiroAuthOptions;
+    return this;
   }
 }

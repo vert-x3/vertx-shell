@@ -39,13 +39,21 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServer;
+import io.vertx.ext.auth.AuthOptions;
+import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.shell.term.SockJSTermHandler;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.WebTermOptions;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.AuthHandler;
+import io.vertx.ext.web.handler.BasicAuthHandler;
+import io.vertx.ext.web.handler.CookieHandler;
+import io.vertx.ext.web.handler.SessionHandler;
 import io.vertx.ext.web.handler.StaticHandler;
+import io.vertx.ext.web.handler.UserSessionHandler;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
+import io.vertx.ext.web.sstore.LocalSessionStore;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -118,6 +126,11 @@ public class WebTermServer implements TermServer {
   @Override
   public TermServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
     Router router = Router.router(vertx);
+    AuthProvider authProvider = Helper.toAuthProvider(vertx, options.getAuthOptions());
+    if (authProvider != null) {
+      AuthHandler basicAuthHandler = BasicAuthHandler.create(authProvider);
+      router.route(options.getSockJSPath()).handler(basicAuthHandler);
+    }
     server = vertx.createHttpServer(options.getHttpServerOptions());
     server.requestHandler(router::accept);
     server.listen(ar -> {

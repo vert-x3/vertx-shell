@@ -32,10 +32,14 @@
 
 package io.vertx.ext.shell.term;
 
+import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.CaseInsensitiveHeaders;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.shiro.ShiroAuthOptions;
+import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -43,6 +47,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Base64;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -219,6 +225,37 @@ public class WebTermServerTest {
           async.complete();
         });
       }, context::fail);
+    }));
+  }
+
+  @Test
+  public void testSecure(TestContext context) {
+    Async async = context.async();
+    server = TermServer.createWebTermServer(
+        vertx,
+        new WebTermOptions().setShiroAuthOptions(
+            new ShiroAuthOptions().
+                setType(ShiroAuthRealmType.PROPERTIES).
+                setConfig(new JsonObject().put("properties_path", "classpath:test-auth.properties"))).setHttpServerOptions(
+            new HttpServerOptions().setPort(8080)));
+    server.termHandler(term -> {
+      term.stdout().write("hello");
+    });
+    server.listen(context.asyncAssertSuccess(server -> {
+      HttpClient client = vertx.createHttpClient();
+      client.websocket(8080, "localhost", "/term/websocket", ws -> {
+        context.fail();
+      }, err -> {
+        // Retry now with auth
+        client.websocket(8080, "localhost", "/term/websocket",
+            new CaseInsensitiveHeaders().add("Authorization", "Basic " + Base64.getEncoder().encodeToString("tim:sausages".getBytes())),
+            ws -> {
+              ws.handler(buf -> {
+                context.assertEquals("hello", buf.toString());
+                async.complete();
+              });
+            }, context::fail);
+      });
     }));
   }
 }

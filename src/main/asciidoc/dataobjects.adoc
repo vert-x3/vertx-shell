@@ -120,7 +120,15 @@ Set the auth options as a Shiro auth.
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
+|[[authOptions]]`authOptions`|`link:dataobjects.html#AuthOptions[AuthOptions]`|
++++
+@return the auth options
++++
 |[[httpServerOptions]]`httpServerOptions`|`link:dataobjects.html#HttpServerOptions[HttpServerOptions]`|-
+|[[shiroAuthOptions]]`shiroAuthOptions`|`link:dataobjects.html#ShiroAuthOptions[ShiroAuthOptions]`|
++++
+Set the auth options as a Shiro auth.
++++
 |[[sockJSHandlerOptions]]`sockJSHandlerOptions`|`link:dataobjects.html#SockJSHandlerOptions[SockJSHandlerOptions]`|-
 |[[sockJSPath]]`sockJSPath`|`String`|-
 |[[webroot]]`webroot`|`String`|-

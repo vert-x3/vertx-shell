@@ -51,8 +51,6 @@ import io.vertx.core.net.KeyCertOptions;
 import io.vertx.core.net.PfxOptions;
 import io.vertx.core.net.impl.KeyStoreHelper;
 import io.vertx.ext.auth.AuthProvider;
-import io.vertx.ext.auth.shiro.ShiroAuth;
-import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.Term;
@@ -174,11 +172,8 @@ public class SSHTermServer implements TermServer {
         nativeServer.setServiceFactories(Arrays.asList(ServerConnectionServiceFactory.INSTANCE, AsyncUserAuthServiceFactory.INSTANCE));
 
         //
-        AuthProvider authProvider;
-        if (options.getAuthOptions() instanceof ShiroAuthOptions) {
-          ShiroAuthOptions authOptions = (ShiroAuthOptions) options.getAuthOptions();
-          authProvider = ShiroAuth.create(vertx, authOptions);
-        } else {
+        AuthProvider authProvider = Helper.toAuthProvider(vertx, options.getAuthOptions());
+        if (authProvider == null) {
           throw new VertxException("No authenticator");
         }
 
