@@ -40,59 +40,89 @@ import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
 
 /**
+ * The web term configuration options.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@DataObject
+@DataObject(generateConverter = true)
 public class WebTermOptions {
 
-  private SockJSHandlerOptions sockJSHandlerOptions = new SockJSHandlerOptions();
-  private HttpServerOptions httpServerOptions = new HttpServerOptions();
+  private static final String DEFAULT_SOCKJSPATH = "/term/*";
+
+  private SockJSHandlerOptions sockJSHandlerOptions;
+  private HttpServerOptions httpServerOptions;
   private AuthOptions authOptions;
-  private String webroot;
-  private String sockJSPath = "/term/*";
+  private String sockJSPath;
 
   public WebTermOptions() {
+    sockJSHandlerOptions = new SockJSHandlerOptions();
+    httpServerOptions = new HttpServerOptions();
+    sockJSPath = DEFAULT_SOCKJSPATH;
   }
 
   public WebTermOptions(JsonObject json) {
+    this();
+    WebTermOptionsConverter.fromJson(json, this);
   }
 
   public WebTermOptions(WebTermOptions that) {
+    sockJSHandlerOptions = new SockJSHandlerOptions(that.sockJSHandlerOptions);
+    httpServerOptions = new HttpServerOptions(that.httpServerOptions);
+    sockJSPath = that.sockJSPath;
   }
 
-  public SockJSHandlerOptions getSockJSHandlerOptions() {
-    return sockJSHandlerOptions;
-  }
-
-  public WebTermOptions setSockJSHandlerOptions(SockJSHandlerOptions sockJSHandlerOptions) {
-    this.sockJSHandlerOptions = sockJSHandlerOptions;
-    return this;
-  }
-
+  /**
+   * @return the http server options
+   */
   public HttpServerOptions getHttpServerOptions() {
     return httpServerOptions;
   }
 
+  /**
+   * The http server options used when the web term bootstraps a web server.
+   *
+   * @param httpServerOptions the http server options
+   * @return a reference to this, so the API can be used fluently
+   */
   public WebTermOptions setHttpServerOptions(HttpServerOptions httpServerOptions) {
     this.httpServerOptions = httpServerOptions;
     return this;
   }
 
-  public String getWebroot() {
-    return webroot;
+  /**
+   * @return the SockJS handler options
+   */
+  public SockJSHandlerOptions getSockJSHandlerOptions() {
+    return sockJSHandlerOptions;
   }
 
-  public WebTermOptions setWebroot(String webroot) {
-    this.webroot = webroot;
+  /**
+   * The SockJS handler options.
+   *
+   * @param sockJSHandlerOptions the options to use
+   * @return a reference to this, so the API can be used fluently
+   */
+  public WebTermOptions setSockJSHandlerOptions(SockJSHandlerOptions sockJSHandlerOptions) {
+    this.sockJSHandlerOptions = sockJSHandlerOptions;
     return this;
   }
 
+  /**
+   * @return the SockJS path
+   */
   public String getSockJSPath() {
     return sockJSPath;
   }
 
-  public void setSockJSPath(String sockJSPath) {
+  /**
+   * Configure the SockJS path, the default value is {@code /term/*}.
+   *
+   * @param sockJSPath the new SockJS path
+   * @return a reference to this, so the API can be used fluently
+   */
+  public WebTermOptions setSockJSPath(String sockJSPath) {
     this.sockJSPath = sockJSPath;
+    return this;
   }
 
   /**

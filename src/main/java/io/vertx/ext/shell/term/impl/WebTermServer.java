@@ -149,14 +149,10 @@ public class WebTermServer implements TermServer {
       router.route(options.getSockJSPath()).handler(basicAuthHandler);
     }
 
-    if (options.getWebroot() != null) {
-      StaticHandler staticHandler = StaticHandler.create(options.getWebroot());
-      router.route().handler(staticHandler);
-    } else {
-      router.get("/vertxterm.js").handler(ctx -> ctx.response().putHeader("Content-Type", "application/javascript").end(vertxTermJs));
-      router.get("/term.js").handler(ctx -> ctx.response().putHeader("Content-Type", "application/javascript").end(termJs));
-      router.get("/term.html").handler(ctx -> ctx.response().putHeader("Content-Type", "text/html").end(termHtml));
-    }
+    router.get("/vertxterm.js").handler(ctx -> ctx.response().putHeader("Content-Type", "application/javascript").end(vertxTermJs));
+    router.get("/term.js").handler(ctx -> ctx.response().putHeader("Content-Type", "application/javascript").end(termJs));
+    router.get("/term.html").handler(ctx -> ctx.response().putHeader("Content-Type", "text/html").end(termHtml));
+
     SockJSHandler sockJSHandler = SockJSHandler.create(vertx, options.getSockJSHandlerOptions());
     sockJSHandler.socketHandler(new SockJSTermHandlerImpl(vertx).handler(handler));
     router.route(options.getSockJSPath()).handler(sockJSHandler);

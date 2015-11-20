@@ -44,7 +44,7 @@ import io.vertx.ext.auth.AuthOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 
 /**
- * The SSH shell configuration options.
+ * The SSH term configuration options.
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
