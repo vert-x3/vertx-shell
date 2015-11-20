@@ -79,7 +79,7 @@ public class ShellServiceImpl implements ShellService {
   @Override
   public void start(Handler<AsyncResult<Void>> startHandler) {
 
-    Consumer<TtyConnection> shellBoostrap = conn -> {
+    Handler<TtyConnection> shellBoostrap = conn -> {
       Shell shell = createShell();
       TtyAdapter adapter = new TtyAdapter(vertx, conn, shell, registry);
       adapter.setWelcome(options.getWelcomeMessage());
@@ -109,12 +109,12 @@ public class ShellServiceImpl implements ShellService {
     };
     if (telnetOptions != null) {
       telnet = new TelnetTermServer(vertx, telnetOptions);
-      telnet.setHandler(shellBoostrap);
+      telnet.connectionHandler(shellBoostrap);
       telnet.listen(listenHandler);
     }
     if (sshOptions != null) {
       ssh = new SSHTermServer(vertx, sshOptions);
-      ssh.setHandler(shellBoostrap);
+      ssh.connectionHandler(shellBoostrap);
       ssh.listen(ar -> {
         if (ar.succeeded()) {
           listenHandler.handle(Future.succeededFuture());
@@ -125,7 +125,7 @@ public class ShellServiceImpl implements ShellService {
     }
     if (webOptions != null) {
       webServer = new WebTermServer(vertx, webOptions);
-      webServer.setHandler(shellBoostrap);
+      webServer.connectionHandler(shellBoostrap);
       webServer.listen(ar -> {
         if (ar.succeeded()) {
           listenHandler.handle(Future.succeededFuture());

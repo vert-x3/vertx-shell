@@ -70,7 +70,6 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
 /**
  * Encapsulate the SSH server setup.
@@ -83,7 +82,7 @@ public class SSHTermServer implements TermServer {
 
   private final Vertx vertx;
   private final SSHTermOptions options;
-  private Consumer<TtyConnection> handler;
+  private Handler<TtyConnection> connectionHandler;
   private SshServer nativeServer;
   private final AtomicInteger status = new AtomicInteger(STATUS_STOPPED);
   private ContextInternal listenContext;
@@ -97,12 +96,8 @@ public class SSHTermServer implements TermServer {
     return options;
   }
 
-  public Consumer<TtyConnection> getHandler() {
-    return handler;
-  }
-
-  public SSHTermServer setHandler(Consumer<TtyConnection> handler) {
-    this.handler = handler;
+  public SSHTermServer connectionHandler(Handler<TtyConnection> handler) {
+    this.connectionHandler = handler;
     return this;
   }
 
@@ -116,9 +111,9 @@ public class SSHTermServer implements TermServer {
   @Override
   public TermServer termHandler(Handler<Term> handler) {
     if (handler != null) {
-      setHandler(new TermConnectionHandler(handler));
+      connectionHandler(new TermConnectionHandler(handler));
     } else {
-      setHandler(null);
+      connectionHandler(null);
     }
     return this;
   }
@@ -164,7 +159,7 @@ public class SSHTermServer implements TermServer {
         };
 
         nativeServer = SshServer.setUpDefaultServer();
-        nativeServer.setShellFactory(() -> new TtyCommand(handler));
+        nativeServer.setShellFactory(() -> new TtyCommand(connectionHandler::handle));
         nativeServer.setHost(options.getHost());
         nativeServer.setPort(options.getPort());
         nativeServer.setKeyPairProvider(provider);

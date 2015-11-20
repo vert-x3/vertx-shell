@@ -38,12 +38,10 @@ import io.vertx.core.Handler;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.term.Term;
 
-import java.util.function.Consumer;
-
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-class TermConnectionHandler implements Consumer<TtyConnection> {
+class TermConnectionHandler implements Handler<TtyConnection> {
 
   final Handler<Term> handler;
 
@@ -52,7 +50,7 @@ class TermConnectionHandler implements Consumer<TtyConnection> {
   }
 
   @Override
-  public void accept(TtyConnection conn) {
+  public void handle(TtyConnection conn) {
     handler.handle(new Term() {
 
       @Override

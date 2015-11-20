@@ -47,7 +47,7 @@ import java.util.function.Consumer;
 public class SockJSTermHandlerImpl implements SockJSTermHandler {
 
   final Vertx vertx;
-  private Consumer<TtyConnection> handler;
+  private Handler<TtyConnection> handler;
 
   public SockJSTermHandlerImpl(Vertx vertx) {
     this.vertx = vertx;
@@ -63,7 +63,7 @@ public class SockJSTermHandlerImpl implements SockJSTermHandler {
     return this;
   }
 
-  public SockJSTermHandler handler(Consumer<TtyConnection> handler) {
+  public SockJSTermHandler connectionHandler(Handler<TtyConnection> handler) {
     this.handler = handler;
     return this;
   }
@@ -79,7 +79,7 @@ public class SockJSTermHandlerImpl implements SockJSTermHandler {
           closeHandler.accept(null);
         }
       });
-      handler.accept(conn);
+      handler.handle(conn);
     } else {
       socket.close();
     }

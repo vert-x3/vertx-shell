@@ -32,7 +32,9 @@
 
 package io.vertx.ext.shell.term;
 
+import io.termd.core.tty.TtyConnection;
 import io.vertx.codegen.annotations.Fluent;
+import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
@@ -90,6 +92,17 @@ public interface TermServer {
    */
   @Fluent
   TermServer termHandler(Handler<Term> handler);
+
+  /**
+   * Set the connection handler that will receive incoming client connections. When aremote temrinal connects
+   * the {@code handler} will be called with the {@code TtyConnection} which can be used to interact with the
+   * remote terminal.
+   *
+   * @param handler the connection handler
+   * @return this object
+   */
+  @GenIgnore
+  TermServer connectionHandler(Handler<TtyConnection> handler);
 
   /**
    * Bind the term server, the {@link #termHandler(Handler)} must be set before.

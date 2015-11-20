@@ -39,7 +39,6 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServer;
-import io.vertx.ext.auth.AuthOptions;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.shell.term.SockJSTermHandler;
 import io.vertx.ext.shell.term.Term;
@@ -48,17 +47,11 @@ import io.vertx.ext.shell.term.WebTermOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.AuthHandler;
 import io.vertx.ext.web.handler.BasicAuthHandler;
-import io.vertx.ext.web.handler.CookieHandler;
-import io.vertx.ext.web.handler.SessionHandler;
-import io.vertx.ext.web.handler.StaticHandler;
-import io.vertx.ext.web.handler.UserSessionHandler;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
-import io.vertx.ext.web.sstore.LocalSessionStore;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.function.Consumer;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -93,7 +86,7 @@ public class WebTermServer implements TermServer {
 
   private final Vertx vertx;
   private final WebTermOptions options;
-  private Consumer<TtyConnection> handler;
+  private Handler<TtyConnection> handler;
   private HttpServer server;
   private Router router;
 
@@ -114,11 +107,8 @@ public class WebTermServer implements TermServer {
     this.router = router;
   }
 
-  public Consumer<TtyConnection> getHandler() {
-    return handler;
-  }
-
-  public WebTermServer setHandler(Consumer<TtyConnection> handler) {
+  @Override
+  public TermServer connectionHandler(Handler<TtyConnection> handler) {
     this.handler = handler;
     return this;
   }
@@ -126,9 +116,9 @@ public class WebTermServer implements TermServer {
   @Override
   public TermServer termHandler(Handler<Term> handler) {
     if (handler != null) {
-      setHandler(new TermConnectionHandler(handler));
+      connectionHandler(new TermConnectionHandler(handler));
     } else {
-      setHandler(null);
+      connectionHandler(null);
     }
     return this;
   }
@@ -154,7 +144,7 @@ public class WebTermServer implements TermServer {
     router.get("/term.html").handler(ctx -> ctx.response().putHeader("Content-Type", "text/html").end(termHtml));
 
     SockJSHandler sockJSHandler = SockJSHandler.create(vertx, options.getSockJSHandlerOptions());
-    sockJSHandler.socketHandler(new SockJSTermHandlerImpl(vertx).handler(handler));
+    sockJSHandler.socketHandler(new SockJSTermHandlerImpl(vertx).connectionHandler(handler::handle));
     router.route(options.getSockJSPath()).handler(sockJSHandler);
 
     //

@@ -43,8 +43,6 @@ import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.Term;
 
-import java.util.function.Consumer;
-
 /**
  * Encapsulate the Telnet server setup.
  *
@@ -54,7 +52,7 @@ public class TelnetTermServer implements TermServer {
 
   private final Vertx vertx;
   private final TelnetTermOptions options;
-  private Consumer<TtyConnection> handler;
+  private Handler<TtyConnection> handler;
   private NetServer server;
 
   public TelnetTermServer(Vertx vertx, TelnetTermOptions options) {
@@ -62,11 +60,8 @@ public class TelnetTermServer implements TermServer {
     this.options = options;
   }
 
-  public Consumer<TtyConnection> getHandler() {
-    return handler;
-  }
-
-  public TelnetTermServer setHandler(Consumer<TtyConnection> handler) {
+  @Override
+  public TermServer connectionHandler(Handler<TtyConnection> handler) {
     this.handler = handler;
     return this;
   }
@@ -74,9 +69,9 @@ public class TelnetTermServer implements TermServer {
   @Override
   public TermServer termHandler(Handler<Term> handler) {
     if (handler != null) {
-      setHandler(new TermConnectionHandler(handler));
+      connectionHandler(new TermConnectionHandler(handler));
     } else {
-      setHandler(null);
+      connectionHandler(null);
     }
     return this;
   }
@@ -86,7 +81,7 @@ public class TelnetTermServer implements TermServer {
     if (server == null) {
       server = vertx.createNetServer(options);
       server.connectHandler(new TelnetSocketHandler(vertx, () -> {
-        return new TelnetTtyConnection(true, true, handler);
+        return new TelnetTtyConnection(true, true, handler::handle);
       }));
       server.listen(ar -> {
         if (ar.succeeded()) {
