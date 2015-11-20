@@ -471,18 +471,18 @@ Completion ends with a call to `link:../../apidocs/io/vertx/ext/shell/cli/Comple
 
 == In process shell session
 
-In process shell session can be created with `link:../../apidocs/io/vertx/ext/shell/ShellService.html#createShell--[createShell]`:
+In process shell session can be created with `link:../../apidocs/io/vertx/ext/shell/ShellServer.html#createShell--[createShell]`:
 
 [source,java]
 ----
-Shell shell = shellService.createShell();
+Shell shell = shellServer.createShell();
 ----
 
 The main use case is running or testing a command:
 
 [source,java]
 ----
-Shell shell = shellService.createShell();
+Shell shell = shellServer.createShell();
 
 // Create a job fo the command
 Job job = shell.createJob("my-command 1234");

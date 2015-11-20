@@ -205,9 +205,9 @@ public class SSHTermServer implements TermServer {
     close(ar -> {});
   }
 
-  public void close(Handler<AsyncResult<Void>> closeHandler) {
+  public void close(Handler<AsyncResult<Void>> completionHandler) {
     if (!status.compareAndSet(STATUS_STARTED, STATUS_STOPPING)) {
-      closeHandler.handle(Future.failedFuture("Invalid state:" + status.get()));
+      completionHandler.handle(Future.failedFuture("Invalid state:" + status.get()));
       return;
     }
     vertx.executeBlocking(fut-> {
@@ -215,12 +215,12 @@ public class SSHTermServer implements TermServer {
         SshServer server = this.nativeServer;
         this.nativeServer = null;
         server.close();
-        closeHandler.handle(Future.succeededFuture());
+        completionHandler.handle(Future.succeededFuture());
       } catch (Exception t) {
-        closeHandler.handle(Future.failedFuture(t));
+        completionHandler.handle(Future.failedFuture(t));
       } finally {
         status.set(STATUS_STOPPED);
       }
-    }, closeHandler);
+    }, completionHandler);
   }
 }

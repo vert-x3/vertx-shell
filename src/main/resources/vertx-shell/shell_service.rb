@@ -1,6 +1,4 @@
-require 'vertx-shell/shell'
 require 'vertx/vertx'
-require 'vertx-shell/command_registry'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.ShellService
 module VertxShell
@@ -28,14 +26,6 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling create(vertx,options)"
     end
-    #  @return the command registry for this service
-    # @return [::VertxShell::CommandRegistry]
-    def get_command_registry
-      if !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:getCommandRegistry, []).call(),::VertxShell::CommandRegistry)
-      end
-      raise ArgumentError, "Invalid arguments when calling get_command_registry()"
-    end
     #  Start the shell service, this is an asynchronous start.
     # @yield handler for getting notified when service is started
     # @return [void]
@@ -46,14 +36,6 @@ module VertxShell
         return @j_del.java_method(:start, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |ar| yield(ar.failed ? ar.cause : nil) }))
       end
       raise ArgumentError, "Invalid arguments when calling start()"
-    end
-    #  Creates a new shell.
-    # @return [::VertxShell::Shell] the created shell
-    def create_shell
-      if !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:createShell, []).call(),::VertxShell::Shell)
-      end
-      raise ArgumentError, "Invalid arguments when calling create_shell()"
     end
     #  Stop the shell service, this is an asynchronous start.
     # @yield handler for getting notified when service is stopped

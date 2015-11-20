@@ -57,7 +57,6 @@ import io.vertx.ext.shell.command.metrics.MetricsInfo;
 import io.vertx.ext.shell.command.metrics.MetricsLs;
 import io.vertx.ext.shell.impl.ShellServiceImpl;
 import io.vertx.ext.shell.registry.CommandRegistry;
-import io.vertx.ext.shell.system.Shell;
 
 /**
  * The shell service, provides a remotely accessible shell available via Telnet or SSH according to the
@@ -73,7 +72,10 @@ public interface ShellService {
   }
 
   static ShellService create(Vertx vertx, ShellServiceOptions options) {
-    CommandRegistry registry = CommandRegistry.get(vertx);
+
+    ShellServer server = ShellServer.create(vertx);
+    ShellServiceImpl service = new ShellServiceImpl(vertx, server, options);
+    CommandRegistry registry = server.commandRegistry();
 
     // Base commands
     registry.registerCommand(Echo.class);
@@ -105,13 +107,8 @@ public interface ShellService {
     registry.registerCommand(CommandBuilder.command("bg").processHandler(process -> {
     }).build());
 
-    return new ShellServiceImpl(vertx, options, registry);
+    return service;
   }
-
-  /**
-   * @return the command registry for this service
-   */
-  CommandRegistry getCommandRegistry();
 
   /**
    * Start the shell service, this is an asynchronous start.
@@ -126,13 +123,6 @@ public interface ShellService {
    * @param startHandler handler for getting notified when service is started
    */
   void start(Handler<AsyncResult<Void>> startHandler);
-
-  /**
-   * Creates a new shell.
-   *
-   * @return the created shell
-   */
-  Shell createShell();
 
   /**
    * Stop the shell service, this is an asynchronous stop.

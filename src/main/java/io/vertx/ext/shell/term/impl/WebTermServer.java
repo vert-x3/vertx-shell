@@ -175,9 +175,9 @@ public class WebTermServer implements TermServer {
   }
 
   @Override
-  public void close(Handler<AsyncResult<Void>> handler) {
+  public void close(Handler<AsyncResult<Void>> completionHandler) {
     if (server != null) {
-      server.close(handler);
+      server.close(completionHandler);
     }
   }
 }

@@ -18,10 +18,8 @@ package io.vertx.groovy.ext.shell;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
-import io.vertx.groovy.ext.shell.system.Shell
 import io.vertx.ext.shell.ShellServiceOptions
 import io.vertx.groovy.core.Vertx
-import io.vertx.groovy.ext.shell.registry.CommandRegistry
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
 /**
@@ -46,14 +44,6 @@ public class ShellService {
     return ret;
   }
   /**
-   * @return the command registry for this service
-   * @return 
-   */
-  public CommandRegistry getCommandRegistry() {
-    def ret= InternalHelper.safeCreate(this.delegate.getCommandRegistry(), io.vertx.groovy.ext.shell.registry.CommandRegistry.class);
-    return ret;
-  }
-  /**
    * Start the shell service, this is an asynchronous start.
    */
   public void start() {
@@ -65,14 +55,6 @@ public class ShellService {
    */
   public void start(Handler<AsyncResult<Void>> startHandler) {
     this.delegate.start(startHandler);
-  }
-  /**
-   * Creates a new shell.
-   * @return the created shell
-   */
-  public Shell createShell() {
-    def ret= InternalHelper.safeCreate(this.delegate.createShell(), io.vertx.groovy.ext.shell.system.Shell.class);
-    return ret;
   }
   /**
    * Stop the shell service, this is an asynchronous stop.

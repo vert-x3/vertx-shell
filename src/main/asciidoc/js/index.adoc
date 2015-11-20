@@ -505,13 +505,13 @@ Completion ends with a call to `link:jsdoc/completion-Completion.html#complete[c
 
 == In process shell session
 
-In process shell session can be created with `link:jsdoc/shell_service-ShellService.html#createShell[createShell]`:
+In process shell session can be created with `link:jsdoc/shell_server-ShellServer.html#createShell[createShell]`:
 
 [source,js]
 ----
 
 // Create a shell ession
-var shell = shellService.createShell();
+var shell = shellServer.createShell();
 
 
 ----
@@ -523,7 +523,7 @@ The main use case is running or testing a command:
 var Pty = require("vertx-shell-js/pty");
 
 // Create a shell
-var shell = shellService.createShell();
+var shell = shellServer.createShell();
 
 // Create a job fo the command
 var job = shell.createJob("my-command 1234");

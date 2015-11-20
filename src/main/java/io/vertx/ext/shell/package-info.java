@@ -370,7 +370,7 @@
  *
  * == In process shell session
  *
- * In process shell session can be created with {@link io.vertx.ext.shell.ShellService#createShell}:
+ * In process shell session can be created with {@link io.vertx.ext.shell.ShellServer#createShell}:
  *
  * [source,$lang]
  * ----

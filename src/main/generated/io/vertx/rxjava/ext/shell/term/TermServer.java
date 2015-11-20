@@ -153,10 +153,10 @@ public class TermServer {
 
   /**
    * Like {@link io.vertx.ext.shell.term.TermServer} but supplying a handler that will be notified when close is complete.
-   * @param handler the handler
+   * @param completionHandler the handler to be notified when the term server is closed
    */
-  public void close(Handler<AsyncResult<Void>> handler) { 
-    this.delegate.close(handler);
+  public void close(Handler<AsyncResult<Void>> completionHandler) { 
+    this.delegate.close(completionHandler);
   }
 
   /**
@@ -164,9 +164,9 @@ public class TermServer {
    * @return 
    */
   public Observable<Void> closeObservable() { 
-    io.vertx.rx.java.ObservableFuture<Void> handler = io.vertx.rx.java.RxHelper.observableFuture();
-    close(handler.toHandler());
-    return handler;
+    io.vertx.rx.java.ObservableFuture<Void> completionHandler = io.vertx.rx.java.RxHelper.observableFuture();
+    close(completionHandler.toHandler());
+    return completionHandler;
   }
 
 

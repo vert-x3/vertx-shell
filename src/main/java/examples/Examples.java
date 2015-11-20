@@ -42,6 +42,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
+import io.vertx.ext.shell.ShellServer;
 import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.shell.term.Tty;
 import io.vertx.ext.shell.system.Job;
@@ -288,17 +289,17 @@ public class Examples {
     server.listen();
   }
 
-  public void creatingShell(ShellService shellService) {
+  public void creatingShell(ShellServer shellServer) {
 
     // Create a shell ession
-    Shell shell = shellService.createShell();
+    Shell shell = shellServer.createShell();
 
   }
 
-  public void runningShellCommand(ShellService shellService) {
+  public void runningShellCommand(ShellServer shellServer) {
 
     // Create a shell
-    Shell shell = shellService.createShell();
+    Shell shell = shellServer.createShell();
 
     // Create a job fo the command
     Job job = shell.createJob("my-command 1234");

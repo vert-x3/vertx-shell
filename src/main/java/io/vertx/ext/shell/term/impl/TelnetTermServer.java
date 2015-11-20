@@ -101,11 +101,11 @@ public class TelnetTermServer implements TermServer {
     close(null);
   }
 
-  public void close(Handler<AsyncResult<Void>> listenHandler) {
+  public void close(Handler<AsyncResult<Void>> completionHandler) {
     if (server != null) {
-      server.close(listenHandler);
+      server.close(completionHandler);
     } else {
-      listenHandler.handle(Future.failedFuture("No started"));
+      completionHandler.handle(Future.failedFuture("No started"));
     }
   }
 

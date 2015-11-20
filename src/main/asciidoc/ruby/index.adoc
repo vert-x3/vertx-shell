@@ -505,13 +505,13 @@ Completion ends with a call to `link:yardoc/VertxShell/Completion.html#complete-
 
 == In process shell session
 
-In process shell session can be created with `link:yardoc/VertxShell/ShellService.html#create_shell-instance_method[createShell]`:
+In process shell session can be created with `link:yardoc/VertxShell/ShellServer.html#create_shell-instance_method[createShell]`:
 
 [source,ruby]
 ----
 
 # Create a shell ession
-shell = shellService.create_shell()
+shell = shellServer.create_shell()
 
 
 ----
@@ -523,7 +523,7 @@ The main use case is running or testing a command:
 require 'vertx-shell/pty'
 
 # Create a shell
-shell = shellService.create_shell()
+shell = shellServer.create_shell()
 
 # Create a job fo the command
 job = shell.create_job("my-command 1234")

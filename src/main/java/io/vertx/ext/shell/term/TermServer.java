@@ -140,8 +140,8 @@ public interface TermServer {
   /**
    * Like {@link #close} but supplying a handler that will be notified when close is complete.
    *
-   * @param handler the handler
+   * @param completionHandler the handler to be notified when the term server is closed
    */
-  void close(Handler<AsyncResult<Void>> handler);
+  void close(Handler<AsyncResult<Void>> completionHandler);
 
 }

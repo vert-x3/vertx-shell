@@ -99,7 +99,7 @@ var TermServer = function(j_val) {
    Like {@link TermServer#close} but supplying a handler that will be notified when close is complete.
 
    @public
-   @param handler {function} the handler 
+   @param completionHandler {function} the handler to be notified when the term server is closed 
    */
   this.close = function() {
     var __args = arguments;

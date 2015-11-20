@@ -19,10 +19,8 @@ package io.vertx.rxjava.ext.shell;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
-import io.vertx.rxjava.ext.shell.system.Shell;
 import io.vertx.ext.shell.ShellServiceOptions;
 import io.vertx.rxjava.core.Vertx;
-import io.vertx.rxjava.ext.shell.registry.CommandRegistry;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 
@@ -57,15 +55,6 @@ public class ShellService {
   }
 
   /**
-   * @return the command registry for this service
-   * @return 
-   */
-  public CommandRegistry getCommandRegistry() { 
-    CommandRegistry ret= CommandRegistry.newInstance(this.delegate.getCommandRegistry());
-    return ret;
-  }
-
-  /**
    * Start the shell service, this is an asynchronous start.
    */
   public void start() { 
@@ -88,15 +77,6 @@ public class ShellService {
     io.vertx.rx.java.ObservableFuture<Void> startHandler = io.vertx.rx.java.RxHelper.observableFuture();
     start(startHandler.toHandler());
     return startHandler;
-  }
-
-  /**
-   * Creates a new shell.
-   * @return the created shell
-   */
-  public Shell createShell() { 
-    Shell ret= Shell.newInstance(this.delegate.createShell());
-    return ret;
   }
 
   /**

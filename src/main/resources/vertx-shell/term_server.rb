@@ -87,7 +87,7 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling actual_port()"
     end
     #  Like {::VertxShell::TermServer#close} but supplying a handler that will be notified when close is complete.
-    # @yield the handler
+    # @yield the handler to be notified when the term server is closed
     # @return [void]
     def close
       if !block_given?

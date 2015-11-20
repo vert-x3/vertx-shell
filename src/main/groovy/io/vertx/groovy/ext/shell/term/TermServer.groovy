@@ -125,9 +125,9 @@ public class TermServer {
   }
   /**
    * Like {@link io.vertx.groovy.ext.shell.term.TermServer#close} but supplying a handler that will be notified when close is complete.
-   * @param handler the handler
+   * @param completionHandler the handler to be notified when the term server is closed
    */
-  public void close(Handler<AsyncResult<Void>> handler) {
-    this.delegate.close(handler);
+  public void close(Handler<AsyncResult<Void>> completionHandler) {
+    this.delegate.close(completionHandler);
   }
 }
