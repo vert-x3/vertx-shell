@@ -33,6 +33,7 @@
 package io.vertx.ext.shell.term;
 
 import io.vertx.codegen.annotations.Fluent;
+import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -46,6 +47,7 @@ import io.vertx.ext.web.Router;
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
+@VertxGen
 public interface TermServer {
 
   /**

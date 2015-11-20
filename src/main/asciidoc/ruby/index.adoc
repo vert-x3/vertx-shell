@@ -561,7 +561,8 @@ terminal.
 
 [source,ruby]
 ----
-server = Java::IoVertxExtShellTerm::TermServer.create_ssh_term_server(vertx, {
+require 'vertx-shell/term_server'
+server = VertxShell::TermServer.create_ssh_term_server(vertx, {
   'port' => 5000,
   'host' => "localhost"
 })
@@ -578,7 +579,8 @@ The telnet protocol is also supported:
 
 [source,ruby]
 ----
-server = Java::IoVertxExtShellTerm::TermServer.create_telnet_term_server(vertx, {
+require 'vertx-shell/term_server'
+server = VertxShell::TermServer.create_telnet_term_server(vertx, {
   'port' => 5000,
   'host' => "localhost"
 })

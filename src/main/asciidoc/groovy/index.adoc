@@ -562,7 +562,8 @@ terminal.
 
 [source,groovy]
 ----
-def server = io.vertx.ext.shell.term.TermServer.createSSHTermServer(vertx, [
+import io.vertx.groovy.ext.shell.term.TermServer
+def server = TermServer.createSSHTermServer(vertx, [
   port:5000,
   host:"localhost"
 ])
@@ -579,7 +580,8 @@ The telnet protocol is also supported:
 
 [source,groovy]
 ----
-def server = io.vertx.ext.shell.term.TermServer.createTelnetTermServer(vertx, [
+import io.vertx.groovy.ext.shell.term.TermServer
+def server = TermServer.createTelnetTermServer(vertx, [
   port:5000,
   host:"localhost"
 ])

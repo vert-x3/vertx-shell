@@ -561,7 +561,8 @@ terminal.
 
 [source,js]
 ----
-var server = Java.type("io.vertx.ext.shell.term.TermServer").createSSHTermServer(vertx, {
+var TermServer = require("vertx-shell-js/term_server");
+var server = TermServer.createSSHTermServer(vertx, {
   "port" : 5000,
   "host" : "localhost"
 });
@@ -578,7 +579,8 @@ The telnet protocol is also supported:
 
 [source,js]
 ----
-var server = Java.type("io.vertx.ext.shell.term.TermServer").createTelnetTermServer(vertx, {
+var TermServer = require("vertx-shell-js/term_server");
+var server = TermServer.createTelnetTermServer(vertx, {
   "port" : 5000,
   "host" : "localhost"
 });
