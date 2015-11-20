@@ -95,6 +95,7 @@ public class WebTermServer implements TermServer {
   private final WebTermOptions options;
   private Consumer<TtyConnection> handler;
   private HttpServer server;
+  private Router router;
 
   public WebTermServer(Vertx vertx, WebTermOptions options) {
     this.termHtml = SockJSTermHandler.defaultTermMarkupResource();
@@ -102,6 +103,15 @@ public class WebTermServer implements TermServer {
     this.vertxTermJs = SockJSTermHandler.defaultVertxTermScriptResource();
     this.vertx = vertx;
     this.options = options;
+  }
+
+  public WebTermServer(Vertx vertx, Router router, WebTermOptions options) {
+    this.termHtml = SockJSTermHandler.defaultTermMarkupResource();
+    this.termJs = SockJSTermHandler.defaultTermScriptResource();
+    this.vertxTermJs = SockJSTermHandler.defaultVertxTermScriptResource();
+    this.vertx = vertx;
+    this.options = options;
+    this.router = router;
   }
 
   public Consumer<TtyConnection> getHandler() {
@@ -125,32 +135,46 @@ public class WebTermServer implements TermServer {
 
   @Override
   public TermServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
-    Router router = Router.router(vertx);
+
+    boolean createServer = false;
+    if (router == null) {
+      createServer = true;
+      router = Router.router(vertx);
+    }
+
+    //
     AuthProvider authProvider = Helper.toAuthProvider(vertx, options.getAuthOptions());
     if (authProvider != null) {
       AuthHandler basicAuthHandler = BasicAuthHandler.create(authProvider);
       router.route(options.getSockJSPath()).handler(basicAuthHandler);
     }
-    server = vertx.createHttpServer(options.getHttpServerOptions());
-    server.requestHandler(router::accept);
-    server.listen(ar -> {
-      if (ar.succeeded()) {
-        if (options.getWebroot() != null) {
-          StaticHandler staticHandler = StaticHandler.create(options.getWebroot());
-          router.route().handler(staticHandler);
+
+    if (options.getWebroot() != null) {
+      StaticHandler staticHandler = StaticHandler.create(options.getWebroot());
+      router.route().handler(staticHandler);
+    } else {
+      router.get("/vertxterm.js").handler(ctx -> ctx.response().putHeader("Content-Type", "application/javascript").end(vertxTermJs));
+      router.get("/term.js").handler(ctx -> ctx.response().putHeader("Content-Type", "application/javascript").end(termJs));
+      router.get("/term.html").handler(ctx -> ctx.response().putHeader("Content-Type", "text/html").end(termHtml));
+    }
+    SockJSHandler sockJSHandler = SockJSHandler.create(vertx, options.getSockJSHandlerOptions());
+    sockJSHandler.socketHandler(new SockJSTermHandlerImpl(vertx).handler(handler));
+    router.route(options.getSockJSPath()).handler(sockJSHandler);
+
+    //
+    if (createServer) {
+      server = vertx.createHttpServer(options.getHttpServerOptions());
+      server.requestHandler(router::accept);
+      server.listen(ar -> {
+        if (ar.succeeded()) {
+          listenHandler.handle(Future.succeededFuture(this));
         } else {
-          router.get("/vertxterm.js").handler(ctx -> ctx.response().putHeader("Content-Type", "application/javascript").end(vertxTermJs));
-          router.get("/term.js").handler(ctx -> ctx.response().putHeader("Content-Type", "application/javascript").end(termJs));
-          router.get("/term.html").handler(ctx -> ctx.response().putHeader("Content-Type", "text/html").end(termHtml));
+          listenHandler.handle(Future.failedFuture(ar.cause()));
         }
-        SockJSHandler sockJSHandler = SockJSHandler.create(vertx, options.getSockJSHandlerOptions());
-        sockJSHandler.socketHandler(new SockJSTermHandlerImpl(vertx).handler(handler));
-        router.route(options.getSockJSPath()).handler(sockJSHandler);
-        listenHandler.handle(Future.succeededFuture(this));
-      } else {
-        listenHandler.handle(Future.failedFuture(ar.cause()));
-      }
-    });
+      });
+    } else {
+      listenHandler.handle(Future.succeededFuture(this));
+    }
     return this;
   }
 

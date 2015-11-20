@@ -32,19 +32,32 @@
 
 package io.vertx.ext.shell.term;
 
+import io.vertx.core.http.HttpServer;
+import io.vertx.core.http.HttpServerOptions;
+import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
+import io.vertx.ext.web.Router;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class WebTermServerTest extends WebTermServerBase {
+public class SubRouterWebTermServerTest extends WebTermServerBase {
 
-  public WebTermServerTest() {
-    super("");
+  public SubRouterWebTermServerTest() {
+    super("/sub");
   }
 
   @Override
   protected TermServer createServer(TestContext context, WebTermOptions options) {
-    return TermServer.createWebTermServer(vertx, options);
+    HttpServer httpServer = vertx.createHttpServer(new HttpServerOptions().setPort(8080));
+    Router router = Router.router(vertx);
+    Router subRouter = Router.router(vertx);
+    router.mountSubRouter("/sub", subRouter);
+    httpServer.requestHandler(router::accept);
+    Async async = context.async();
+    httpServer.listen(8080, context.asyncAssertSuccess(s -> {
+      async.complete();
+    }));
+    return TermServer.createWebTermServer(vertx, subRouter, options);
   }
 }
