@@ -12,7 +12,7 @@ Vert.x Shell can be extended with custom commands in any language supported by V
 Vert.x Shell is a Vert.x Service and can be started programmatically via the `link:yardoc/VertxShell/ShellService.html[ShellService]`
 or deployed as a service.
 
-=== Deployed service
+=== Shell service
 
 The shell can be started as a service directly either from the command line or as a the Vert.x deployment:
 
@@ -159,15 +159,30 @@ implementation is based on a `NetServer`.
 
 CAUTION: Telnet does not provide any authentication nor encryption at all.
 
-== Telnet configuration
+Starting a shell service available via HTTP:
 
-The telnet connector is configured by `link:../dataobjects.html#ShellServiceOptions#set_telnet_options-instance_method[telnetOptions]`,
+[source,ruby]
+----
+require 'vertx-shell/shell_service'
+service = VertxShell::ShellService.create(vertx, {
+  'httpOptions' => {
+    'host' => "localhost",
+    'port' => 8080
+  }
+})
+service.start()
+
+----
+
+== Telnet term configuration
+
+Telnet terms are configured by `link:../dataobjects.html#ShellServiceOptions#set_telnet_options-instance_method[telnetOptions]`,
 the `link:../dataobjects.html#TelnetTermOptions[TelnetTermOptions]` extends the `link:../../vertx-core/dataobjects.html#NetServerOptions[NetServerOptions]` so they
 have the exact same configuration.
 
-== SSH configuration
+== SSH term configuration
 
-The SSH connector is configured by `link:../dataobjects.html#ShellServiceOptions#set_ssh_options-instance_method[SSHOptions]`:
+SSH terms are configured by `link:../dataobjects.html#ShellServiceOptions#set_ssh_options-instance_method[SSHOptions]`:
 
 - `link:../dataobjects.html#SSHTermOptions#set_port-instance_method[port]`: port
 - `link:../dataobjects.html#SSHTermOptions#set_host-instance_method[host]`: host
@@ -182,6 +197,17 @@ The server key configuration reuses the key pair store configuration scheme prov
 - `link:../dataobjects.html#SSHTermOptions#set_key_pair_options-instance_method[keyPairOptions]`: set `.jks` key pair store
 - `link:../dataobjects.html#SSHTermOptions#set_pfx_key_pair_options-instance_method[pfxKeyPairOptions]`: set `.pfx` key pair store
 - `link:../dataobjects.html#SSHTermOptions#set_pem_key_pair_options-instance_method[pemKeyPairOptions]`: set `.pem` key pair store
+
+== HTTP term configuration
+
+HTTP terms are configured by `link:../dataobjects.html#ShellServiceOptions#set_http_options-instance_method[httpOptions]`, the http options
+extends the `link:../../vertx-core/dataobjects.html#HttpServerOptions[HttpServerOptions]` so they expose the exact same configuration.
+
+In addition there are extra options for configuring an HTTP term:
+
+- `link:../dataobjects.html#HttpTermOptions#set_shiro_auth_options-instance_method[shiroAuthOptions]`: configures user authentication
+- `link:../dataobjects.html#HttpTermOptions#set_sock_js_handler_options-instance_method[sockJSHandlerOptions]`: configures SockJS
+- `link:../dataobjects.html#HttpTermOptions#set_sock_js_path-instance_method[sockJSPath]`: the SockJS path in the router
 
 == Base commands
 
@@ -538,7 +564,47 @@ of the line to the cursor position, in raw format, i.e without any char escape p
 
 Completion ends with a call to `link:yardoc/VertxShell/Completion.html#complete-instance_method[complete]`.
 
-== In process shell session
+== Shell server
+
+The Shell service is a convenient facade for starting a preconfigured shell either programmatically or as a Vert.x service.
+When more flexibility is needed, a `link:yardoc/VertxShell/ShellServer.html[ShellServer]` can be used instead of the service.
+
+For instance the shell http term can be configured to use an existing router instead of starting its own http server.
+
+Using a shell server requires explicit configuration but provides full flexiblity, a shell server is setup in a few
+steps:
+
+[source,ruby]
+----
+require 'vertx-shell/shell_server'
+require 'vertx-web/router'
+require 'vertx-shell/term_server'
+require 'vertx-shell/command'
+
+server = VertxShell::ShellServer.create(vertx)
+
+shellRouter = VertxWeb::Router.router(vertx)
+router.mount_sub_router("/shell", shellRouter)
+httpTermServer = VertxShell::TermServer.create_http_term_server(vertx, router)
+
+sshTermServer = VertxShell::TermServer.create_ssh_term_server(vertx)
+
+server.register_term_server(httpTermServer)
+server.register_term_server(sshTermServer)
+
+server.command_registry().register_commands(VertxShell::Command.base_commands())
+
+server.listen()
+
+----
+<1> create a the shell server
+<2> create an HTTP term server mounted on an existing router
+<3> create an SSH term server
+<4> register term servers
+<5> register all base commands
+<6> finally start the shell server
+
+Besides, the shell server can also be used for creating in process shell session: it provides a programmatic interactive shell.
 
 In process shell session can be created with `link:yardoc/VertxShell/ShellServer.html#create_shell-instance_method[createShell]`:
 
@@ -610,7 +676,10 @@ server.listen()
 
 ----
 
-The telnet protocol is also supported:
+The `link:yardoc/VertxShell/Term.html[Term]` is also a `link:yardoc/VertxShell/Tty.html[Tty]`, this section explains
+how to use the tty.
+
+The *telnet* protocol is supported:
 
 [source,ruby]
 ----
@@ -628,5 +697,40 @@ server.listen()
 
 ----
 
-The `link:yardoc/VertxShell/Term.html[Term]` is also a `link:yardoc/VertxShell/Tty.html[Tty]`, this section explains
-how to use the tty.
+The *http* protocol is supported:
+
+[source,ruby]
+----
+require 'vertx-shell/term_server'
+server = VertxShell::TermServer.create_http_term_server(vertx, {
+  'port' => 5000,
+  'host' => "localhost"
+})
+server.term_handler() { |term|
+  term.set_stdin(lambda { |line|
+    term.stdout().write(line)
+  })
+}
+server.listen()
+
+----
+
+An HTTP term can start its own HTTP server, or it can reuse an existing `link:../../vertx-web/ruby/yardoc/VertxWeb/Router.html[Router]`.
+
+[source,ruby]
+----
+require 'vertx-shell/term_server'
+server = VertxShell::TermServer.create_http_term_server(vertx, router, {
+  'port' => 5000,
+  'host' => "localhost"
+})
+server.term_handler() { |term|
+  term.set_stdin(lambda { |line|
+    term.stdout().write(line)
+  })
+}
+server.listen()
+
+----
+
+The later option is convenient when the HTTP shell is integrated in an existing HTTP server.

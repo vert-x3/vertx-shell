@@ -40,6 +40,15 @@ public class TermServer {
   /**
    * Create a term server for the SSH protocol.
    * @param vertx the vertx instance
+   * @return the term server
+   */
+  public static TermServer createSSHTermServer(Vertx vertx) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createSSHTermServer((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.term.TermServer.class);
+    return ret;
+  }
+  /**
+   * Create a term server for the SSH protocol.
+   * @param vertx the vertx instance
    * @param options the ssh options (see <a href="../../../../../../../../cheatsheet/SSHTermOptions.html">SSHTermOptions</a>)
    * @return the term server
    */
@@ -50,7 +59,16 @@ public class TermServer {
   /**
    * Create a term server for the Telnet protocol.
    * @param vertx the vertx instance
-   * @param options the telnet options (see <a href="../../../../../../../../cheatsheet/TelnetTermOptions.html">TelnetTermOptions</a>)
+   * @return the term server
+   */
+  public static TermServer createTelnetTermServer(Vertx vertx) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createTelnetTermServer((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.term.TermServer.class);
+    return ret;
+  }
+  /**
+   * Create a term server for the Telnet protocol.
+   * @param vertx the vertx instance
+   * @param options the term options (see <a href="../../../../../../../../cheatsheet/TelnetTermOptions.html">TelnetTermOptions</a>)
    * @return the term server
    */
   public static TermServer createTelnetTermServer(Vertx vertx, Map<String, Object> options) {
@@ -60,7 +78,16 @@ public class TermServer {
   /**
    * Create a term server for the HTTP protocol.
    * @param vertx the vertx instance
-   * @param options the http options (see <a href="../../../../../../../../cheatsheet/HttpTermOptions.html">HttpTermOptions</a>)
+   * @return the term server
+   */
+  public static TermServer createHttpTermServer(Vertx vertx) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.term.TermServer.class);
+    return ret;
+  }
+  /**
+   * Create a term server for the HTTP protocol.
+   * @param vertx the vertx instance
+   * @param options the term options (see <a href="../../../../../../../../cheatsheet/HttpTermOptions.html">HttpTermOptions</a>)
    * @return the term server
    */
   public static TermServer createHttpTermServer(Vertx vertx, Map<String, Object> options) {
@@ -71,7 +98,17 @@ public class TermServer {
    * Create a term server for the HTTP protocol, using an existing router.
    * @param vertx the vertx instance
    * @param router the router
-   * @param options the ssh options (see <a href="../../../../../../../../cheatsheet/HttpTermOptions.html">HttpTermOptions</a>)
+   * @return the term server
+   */
+  public static TermServer createHttpTermServer(Vertx vertx, Router router) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx)vertx.getDelegate(), (io.vertx.ext.web.Router)router.getDelegate()), io.vertx.groovy.ext.shell.term.TermServer.class);
+    return ret;
+  }
+  /**
+   * Create a term server for the HTTP protocol, using an existing router.
+   * @param vertx the vertx instance
+   * @param router the router
+   * @param options the term options (see <a href="../../../../../../../../cheatsheet/HttpTermOptions.html">HttpTermOptions</a>)
    * @return the term server
    */
   public static TermServer createHttpTermServer(Vertx vertx, Router router, Map<String, Object> options) {

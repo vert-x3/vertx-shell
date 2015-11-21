@@ -83,7 +83,7 @@ public class CommandRegistry {
   /**
    * Register a command
    * @param command the command to register
-   * @return 
+   * @return a reference to this, so the API can be used fluently
    */
   public CommandRegistry registerCommand(Command command) {
     this.delegate.registerCommand((io.vertx.ext.shell.command.Command)command.getDelegate());
@@ -104,9 +104,9 @@ public class CommandRegistry {
     return this;
   }
   /**
-   * Register a lit of commands.
+   * Register a list of commands.
    * @param commands the commands to register
-   * @return 
+   * @return a reference to this, so the API can be used fluently
    */
   public CommandRegistry registerCommands(List<Command> commands) {
     this.delegate.registerCommands((List<io.vertx.ext.shell.command.Command>)(commands.collect({underpants -> underpants.getDelegate()})));
@@ -129,7 +129,7 @@ public class CommandRegistry {
   /**
    * Unregister a command.
    * @param commandName the command name
-   * @return 
+   * @return a reference to this, so the API can be used fluently
    */
   public CommandRegistry unregisterCommand(String commandName) {
     this.delegate.unregisterCommand(commandName);

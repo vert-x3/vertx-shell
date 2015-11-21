@@ -49,6 +49,16 @@ public class TermServer {
   /**
    * Create a term server for the SSH protocol.
    * @param vertx the vertx instance
+   * @return the term server
+   */
+  public static TermServer createSSHTermServer(Vertx vertx) { 
+    TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createSSHTermServer((io.vertx.core.Vertx) vertx.getDelegate()));
+    return ret;
+  }
+
+  /**
+   * Create a term server for the SSH protocol.
+   * @param vertx the vertx instance
    * @param options the ssh options
    * @return the term server
    */
@@ -60,7 +70,17 @@ public class TermServer {
   /**
    * Create a term server for the Telnet protocol.
    * @param vertx the vertx instance
-   * @param options the telnet options
+   * @return the term server
+   */
+  public static TermServer createTelnetTermServer(Vertx vertx) { 
+    TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createTelnetTermServer((io.vertx.core.Vertx) vertx.getDelegate()));
+    return ret;
+  }
+
+  /**
+   * Create a term server for the Telnet protocol.
+   * @param vertx the vertx instance
+   * @param options the term options
    * @return the term server
    */
   public static TermServer createTelnetTermServer(Vertx vertx, TelnetTermOptions options) { 
@@ -71,7 +91,17 @@ public class TermServer {
   /**
    * Create a term server for the HTTP protocol.
    * @param vertx the vertx instance
-   * @param options the http options
+   * @return the term server
+   */
+  public static TermServer createHttpTermServer(Vertx vertx) { 
+    TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx) vertx.getDelegate()));
+    return ret;
+  }
+
+  /**
+   * Create a term server for the HTTP protocol.
+   * @param vertx the vertx instance
+   * @param options the term options
    * @return the term server
    */
   public static TermServer createHttpTermServer(Vertx vertx, HttpTermOptions options) { 
@@ -83,7 +113,18 @@ public class TermServer {
    * Create a term server for the HTTP protocol, using an existing router.
    * @param vertx the vertx instance
    * @param router the router
-   * @param options the ssh options
+   * @return the term server
+   */
+  public static TermServer createHttpTermServer(Vertx vertx, Router router) { 
+    TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx) vertx.getDelegate(), (io.vertx.ext.web.Router) router.getDelegate()));
+    return ret;
+  }
+
+  /**
+   * Create a term server for the HTTP protocol, using an existing router.
+   * @param vertx the vertx instance
+   * @param router the router
+   * @param options the term options
    * @return the term server
    */
   public static TermServer createHttpTermServer(Vertx vertx, Router router, HttpTermOptions options) { 

@@ -38,11 +38,14 @@ import io.vertx.core.cli.Argument;
 import io.vertx.core.cli.CLI;
 import io.vertx.core.cli.CommandLine;
 import io.vertx.core.cli.Option;
+import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.shell.ShellServer;
+import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.term.HttpTermOptions;
 import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.shell.term.Tty;
 import io.vertx.ext.shell.system.Job;
@@ -55,6 +58,7 @@ import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.term.TermServer;
+import io.vertx.ext.web.Router;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -136,6 +140,35 @@ public class Examples {
         )
     );
     service.start();
+  }
+
+  public void runHttpService(Vertx vertx) throws Exception {
+    ShellService service = ShellService.create(vertx,
+        new ShellServiceOptions().setHttpOptions(
+            new HttpTermOptions().
+                setHost("localhost").
+                setPort(8080)
+        )
+    );
+    service.start();
+  }
+
+  public void shellServer(Vertx vertx, Router router) {
+
+    ShellServer server = ShellServer.create(vertx); // <1>
+
+    Router shellRouter = Router.router(vertx); // <2>
+    router.mountSubRouter("/shell", shellRouter);
+    TermServer httpTermServer = TermServer.createHttpTermServer(vertx, router);
+
+    TermServer sshTermServer = TermServer.createSSHTermServer(vertx); // <3>
+
+    server.registerTermServer(httpTermServer); // <4>
+    server.registerTermServer(sshTermServer);
+
+    server.commandRegistry().registerCommands(Command.baseCommands()); // <5>
+
+    server.listen(); // <6>
   }
 
   public void helloWorld(Vertx vertx) {
@@ -299,6 +332,26 @@ public class Examples {
 
   public void sshEchoTerminal(Vertx vertx) {
     TermServer server = TermServer.createSSHTermServer(vertx, new SSHTermOptions().setPort(5000).setHost("localhost"));
+    server.termHandler(term -> {
+      term.setStdin(line -> {
+        term.stdout().write(line);
+      });
+    });
+    server.listen();
+  }
+
+  public void httpEchoTerminal(Vertx vertx) {
+    TermServer server = TermServer.createHttpTermServer(vertx, new HttpTermOptions().setPort(5000).setHost("localhost"));
+    server.termHandler(term -> {
+      term.setStdin(line -> {
+        term.stdout().write(line);
+      });
+    });
+    server.listen();
+  }
+
+  public void httpEchoTerminalUsingRouter(Vertx vertx, Router router) {
+    TermServer server = TermServer.createHttpTermServer(vertx, router, new HttpTermOptions().setPort(5000).setHost("localhost"));
     server.termHandler(term -> {
       term.setStdin(line -> {
         term.stdout().write(line);
