@@ -56,6 +56,16 @@ public interface TermServer {
    * Create a term server for the SSH protocol.
    *
    * @param vertx the vertx instance
+   * @return the term server
+   */
+  static TermServer createSSHTermServer(Vertx vertx) {
+    return createSSHTermServer(vertx, new SSHTermOptions());
+  }
+
+  /**
+   * Create a term server for the SSH protocol.
+   *
+   * @param vertx the vertx instance
    * @param options the ssh options
    * @return the term server
    */
@@ -67,7 +77,17 @@ public interface TermServer {
    * Create a term server for the Telnet protocol.
    *
    * @param vertx the vertx instance
-   * @param options the telnet options
+   * @return the term server
+   */
+  static TermServer createTelnetTermServer(Vertx vertx) {
+    return createTelnetTermServer(vertx, new TelnetTermOptions());
+  }
+
+  /**
+   * Create a term server for the Telnet protocol.
+   *
+   * @param vertx the vertx instance
+   * @param options the term options
    * @return the term server
    */
   static TermServer createTelnetTermServer(Vertx vertx, TelnetTermOptions options) {
@@ -78,7 +98,17 @@ public interface TermServer {
    * Create a term server for the HTTP protocol.
    *
    * @param vertx the vertx instance
-   * @param options the http options
+   * @return the term server
+   */
+  static TermServer createHttpTermServer(Vertx vertx) {
+    return createHttpTermServer(vertx, new HttpTermOptions());
+  }
+
+  /**
+   * Create a term server for the HTTP protocol.
+   *
+   * @param vertx the vertx instance
+   * @param options the term options
    * @return the term server
    */
   static TermServer createHttpTermServer(Vertx vertx, HttpTermOptions options) {
@@ -90,7 +120,18 @@ public interface TermServer {
    *
    * @param vertx the vertx instance
    * @param router the router
-   * @param options the ssh options
+   * @return the term server
+   */
+  static TermServer createHttpTermServer(Vertx vertx, Router router) {
+    return createHttpTermServer(vertx, router, new HttpTermOptions());
+  }
+
+  /**
+   * Create a term server for the HTTP protocol, using an existing router.
+   *
+   * @param vertx the vertx instance
+   * @param router the router
+   * @param options the term options
    * @return the term server
    */
   static TermServer createHttpTermServer(Vertx vertx, Router router, HttpTermOptions options) {
