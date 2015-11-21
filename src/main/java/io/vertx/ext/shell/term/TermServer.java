@@ -74,11 +74,26 @@ public interface TermServer {
     return new TelnetTermServer(vertx, options);
   }
 
-  static TermServer createWebTermServer(Vertx vertx, HttpTermOptions options) {
+  /**
+   * Create a term server for the HTTP protocol.
+   *
+   * @param vertx the vertx instance
+   * @param options the http options
+   * @return the term server
+   */
+  static TermServer createHttpTermServer(Vertx vertx, HttpTermOptions options) {
     return new HttpTermServer(vertx, options);
   }
 
-  static TermServer createWebTermServer(Vertx vertx, Router router, HttpTermOptions options) {
+  /**
+   * Create a term server for the HTTP protocol, using an existing router.
+   *
+   * @param vertx the vertx instance
+   * @param router the router
+   * @param options the ssh options
+   * @return the term server
+   */
+  static TermServer createHttpTermServer(Vertx vertx, Router router, HttpTermOptions options) {
     return new HttpTermServer(vertx, router, options);
   }
 

@@ -36,21 +36,22 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling create_telnet_term_server(vertx,options)"
     end
-    # @overload createWebTermServer(vertx,options)
-    #   @param [::Vertx::Vertx] vertx 
-    #   @param [Hash] options 
-    # @overload createWebTermServer(vertx,router,options)
-    #   @param [::Vertx::Vertx] vertx 
-    #   @param [::VertxWeb::Router] router 
-    #   @param [Hash] options 
-    # @return [::VertxShell::TermServer]
-    def self.create_web_term_server(param_1=nil,param_2=nil,param_3=nil)
+    #  Create a term server for the HTTP protocol, using an existing router.
+    # @overload createHttpTermServer(vertx,options)
+    #   @param [::Vertx::Vertx] vertx the vertx instance
+    #   @param [Hash] options the http options
+    # @overload createHttpTermServer(vertx,router,options)
+    #   @param [::Vertx::Vertx] vertx the vertx instance
+    #   @param [::VertxWeb::Router] router the router
+    #   @param [Hash] options the ssh options
+    # @return [::VertxShell::TermServer] the term server
+    def self.create_http_term_server(param_1=nil,param_2=nil,param_3=nil)
       if param_1.class.method_defined?(:j_del) && param_2.class == Hash && !block_given? && param_3 == nil
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::TermServer.java_method(:createWebTermServer, [Java::IoVertxCore::Vertx.java_class,Java::IoVertxExtShellTerm::HttpTermOptions.java_class]).call(param_1.j_del,Java::IoVertxExtShellTerm::HttpTermOptions.new(::Vertx::Util::Utils.to_json_object(param_2))),::VertxShell::TermServer)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::TermServer.java_method(:createHttpTermServer, [Java::IoVertxCore::Vertx.java_class,Java::IoVertxExtShellTerm::HttpTermOptions.java_class]).call(param_1.j_del,Java::IoVertxExtShellTerm::HttpTermOptions.new(::Vertx::Util::Utils.to_json_object(param_2))),::VertxShell::TermServer)
       elsif param_1.class.method_defined?(:j_del) && param_2.class.method_defined?(:j_del) && param_3.class == Hash && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::TermServer.java_method(:createWebTermServer, [Java::IoVertxCore::Vertx.java_class,Java::IoVertxExtWeb::Router.java_class,Java::IoVertxExtShellTerm::HttpTermOptions.java_class]).call(param_1.j_del,param_2.j_del,Java::IoVertxExtShellTerm::HttpTermOptions.new(::Vertx::Util::Utils.to_json_object(param_3))),::VertxShell::TermServer)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::TermServer.java_method(:createHttpTermServer, [Java::IoVertxCore::Vertx.java_class,Java::IoVertxExtWeb::Router.java_class,Java::IoVertxExtShellTerm::HttpTermOptions.java_class]).call(param_1.j_del,param_2.j_del,Java::IoVertxExtShellTerm::HttpTermOptions.new(::Vertx::Util::Utils.to_json_object(param_3))),::VertxShell::TermServer)
       end
-      raise ArgumentError, "Invalid arguments when calling create_web_term_server(param_1,param_2,param_3)"
+      raise ArgumentError, "Invalid arguments when calling create_http_term_server(param_1,param_2,param_3)"
     end
     #  Set the term handler that will receive incoming client connections. When a remote terminal connects
     #  the <code>handler</code> will be called with the {::VertxShell::Term} which can be used to interact with the remote

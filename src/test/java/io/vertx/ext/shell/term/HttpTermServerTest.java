@@ -45,6 +45,6 @@ public class HttpTermServerTest extends HttpTermServerBase {
 
   @Override
   protected TermServer createServer(TestContext context, HttpTermOptions options) {
-    return TermServer.createWebTermServer(vertx, options);
+    return TermServer.createHttpTermServer(vertx, options);
   }
 }

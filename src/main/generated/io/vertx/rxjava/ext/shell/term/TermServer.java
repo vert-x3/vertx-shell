@@ -68,13 +68,26 @@ public class TermServer {
     return ret;
   }
 
-  public static TermServer createWebTermServer(Vertx vertx, HttpTermOptions options) { 
-    TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createWebTermServer((io.vertx.core.Vertx) vertx.getDelegate(), options));
+  /**
+   * Create a term server for the HTTP protocol.
+   * @param vertx the vertx instance
+   * @param options the http options
+   * @return the term server
+   */
+  public static TermServer createHttpTermServer(Vertx vertx, HttpTermOptions options) { 
+    TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx) vertx.getDelegate(), options));
     return ret;
   }
 
-  public static TermServer createWebTermServer(Vertx vertx, Router router, HttpTermOptions options) { 
-    TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createWebTermServer((io.vertx.core.Vertx) vertx.getDelegate(), (io.vertx.ext.web.Router) router.getDelegate(), options));
+  /**
+   * Create a term server for the HTTP protocol, using an existing router.
+   * @param vertx the vertx instance
+   * @param router the router
+   * @param options the ssh options
+   * @return the term server
+   */
+  public static TermServer createHttpTermServer(Vertx vertx, Router router, HttpTermOptions options) { 
+    TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx) vertx.getDelegate(), (io.vertx.ext.web.Router) router.getDelegate(), options));
     return ret;
   }
 

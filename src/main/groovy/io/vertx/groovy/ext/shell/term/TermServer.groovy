@@ -57,12 +57,25 @@ public class TermServer {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createTelnetTermServer((io.vertx.core.Vertx)vertx.getDelegate(), options != null ? new io.vertx.ext.shell.term.TelnetTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
     return ret;
   }
-  public static TermServer createWebTermServer(Vertx vertx, Map<String, Object> options) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createWebTermServer((io.vertx.core.Vertx)vertx.getDelegate(), options != null ? new io.vertx.ext.shell.term.HttpTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
+  /**
+   * Create a term server for the HTTP protocol.
+   * @param vertx the vertx instance
+   * @param options the http options (see <a href="../../../../../../../../cheatsheet/HttpTermOptions.html">HttpTermOptions</a>)
+   * @return the term server
+   */
+  public static TermServer createHttpTermServer(Vertx vertx, Map<String, Object> options) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx)vertx.getDelegate(), options != null ? new io.vertx.ext.shell.term.HttpTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
     return ret;
   }
-  public static TermServer createWebTermServer(Vertx vertx, Router router, Map<String, Object> options) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createWebTermServer((io.vertx.core.Vertx)vertx.getDelegate(), (io.vertx.ext.web.Router)router.getDelegate(), options != null ? new io.vertx.ext.shell.term.HttpTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
+  /**
+   * Create a term server for the HTTP protocol, using an existing router.
+   * @param vertx the vertx instance
+   * @param router the router
+   * @param options the ssh options (see <a href="../../../../../../../../cheatsheet/HttpTermOptions.html">HttpTermOptions</a>)
+   * @return the term server
+   */
+  public static TermServer createHttpTermServer(Vertx vertx, Router router, Map<String, Object> options) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx)vertx.getDelegate(), (io.vertx.ext.web.Router)router.getDelegate(), options != null ? new io.vertx.ext.shell.term.HttpTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
     return ret;
   }
   /**
