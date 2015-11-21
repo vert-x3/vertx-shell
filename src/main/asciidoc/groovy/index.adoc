@@ -35,6 +35,18 @@ echo user.admin=password > auth.properties
 vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.2.0-SNAPSHOT
 ----
 
+or
+
+.Starting a shell service available via HTTP
+[source,subs="+attributes"]
+----
+# create a key pair for the SSH server
+keytool -genkey -keyalg RSA -keystore keystore.jks -keysize 2048 -validity 1095 -dname CN=localhost -keypass secret -storepass secret
+# create the auth config
+echo user.admin=password > auth.properties
+vertx run -conf '{"httpOptions":{"port":4000,"ssl":true,"keyStoreOptions":{"path":"keystore.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.2.0-SNAPSHOT
+----
+
 You can also deploy this service inside your own verticle:
 
 [source,groovy,subs="+attributes"]
@@ -60,7 +72,30 @@ vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
       host:"localhost",
       port:5000,
       keyPairOptions:[
-        path:"server-keystore.jks",
+        path:"ssh.jks",
+        password:"wibble"
+      ],
+      config:[
+        properties_path:"file:/path/to/my/auth.properties"
+      ]
+    ]
+  ]
+])
+
+----
+
+or
+
+[source,groovy,subs="+attributes"]
+----
+vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", [
+  config:[
+    httpOptions:[
+      host:"localhost",
+      port:8080,
+      ssl:true,
+      keyStoreOptions:[
+        path:"keystore.jks",
         password:"wibble"
       ],
       config:[

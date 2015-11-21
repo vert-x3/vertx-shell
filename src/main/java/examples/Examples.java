@@ -81,7 +81,25 @@ public class Examples {
                     put("port", 5000).
                     put("keyPairOptions",
                         new JsonObject().
-                            put("path", "server-keystore.jks").
+                            put("path", "ssh.jks").
+                            put("password", "wibble")).
+                    put("config", new JsonObject().
+                        put("properties_path", "file:/path/to/my/auth.properties")))
+        )
+    );
+  }
+
+  public void deployHttpService(Vertx vertx) throws Exception {
+    vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
+        new DeploymentOptions().setConfig(
+            new JsonObject().put("httpOptions",
+                new JsonObject().
+                    put("host", "localhost").
+                    put("port", 8080).
+                    put("ssl", true).
+                    put("keyStoreOptions",
+                        new JsonObject().
+                            put("path", "keystore.jks").
                             put("password", "wibble")).
                     put("config", new JsonObject().
                         put("properties_path", "file:/path/to/my/auth.properties")))

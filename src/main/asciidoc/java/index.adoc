@@ -35,6 +35,18 @@ echo user.admin=password > auth.properties
 vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.2.0-SNAPSHOT
 ----
 
+or
+
+.Starting a shell service available via HTTP
+[source,subs="+attributes"]
+----
+# create a key pair for the SSH server
+keytool -genkey -keyalg RSA -keystore keystore.jks -keysize 2048 -validity 1095 -dname CN=localhost -keypass secret -storepass secret
+# create the auth config
+echo user.admin=password > auth.properties
+vertx run -conf '{"httpOptions":{"port":4000,"ssl":true,"keyStoreOptions":{"path":"keystore.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.2.0-SNAPSHOT
+----
+
 You can also deploy this service inside your own verticle:
 
 [source,java,subs="+attributes"]
@@ -61,7 +73,28 @@ vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
                 put("port", 5000).
                 put("keyPairOptions",
                     new JsonObject().
-                        put("path", "server-keystore.jks").
+                        put("path", "ssh.jks").
+                        put("password", "wibble")).
+                put("config", new JsonObject().
+                    put("properties_path", "file:/path/to/my/auth.properties")))
+    )
+);
+----
+
+or
+
+[source,java,subs="+attributes"]
+----
+vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
+    new DeploymentOptions().setConfig(
+        new JsonObject().put("httpOptions",
+            new JsonObject().
+                put("host", "localhost").
+                put("port", 8080).
+                put("ssl", true).
+                put("keyStoreOptions",
+                    new JsonObject().
+                        put("path", "keystore.jks").
                         put("password", "wibble")).
                 put("config", new JsonObject().
                     put("properties_path", "file:/path/to/my/auth.properties")))

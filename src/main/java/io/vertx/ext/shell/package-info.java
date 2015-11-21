@@ -68,6 +68,18 @@
  * vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:${maven.groupId}:${maven.artifactId}:${maven.version}
  * ----
  *
+ * or
+ *
+ * .Starting a shell service available via HTTP
+ * [source,subs="+attributes"]
+ * ----
+ * # create a key pair for the SSH server
+ * keytool -genkey -keyalg RSA -keystore keystore.jks -keysize 2048 -validity 1095 -dname CN=localhost -keypass secret -storepass secret
+ * # create the auth config
+ * echo user.admin=password > auth.properties
+ * vertx run -conf '{"httpOptions":{"port":4000,"ssl":true,"keyStoreOptions":{"path":"keystore.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:${maven.groupId}:${maven.artifactId}:${maven.version}
+ * ----
+ *
  * You can also deploy this service inside your own verticle:
  *
  * [source,$lang,subs="+attributes"]
@@ -80,6 +92,13 @@
  * [source,$lang,subs="+attributes"]
  * ----
  * {@link examples.Examples#deploySSHService(io.vertx.core.Vertx)}
+ * ----
+ *
+ * or
+ *
+ * [source,$lang,subs="+attributes"]
+ * ----
+ * {@link examples.Examples#deployHttpService(io.vertx.core.Vertx)}
  * ----
  *
  * NOTE: when Vert.x Shell is already on your classpath you can use `service:io.vertx.ext.shell` instead
