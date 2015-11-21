@@ -18,6 +18,7 @@ package io.vertx.groovy.ext.shell.command;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
+import java.util.List
 import io.vertx.groovy.ext.shell.cli.Completion
 import io.vertx.groovy.core.cli.CLI
 /**
@@ -32,6 +33,14 @@ public class Command {
   }
   public Object getDelegate() {
     return delegate;
+  }
+  /**
+   * @return the list of base commands
+   * @return 
+   */
+  public static List<Command> baseCommands() {
+    def ret = io.vertx.ext.shell.command.Command.baseCommands()?.collect({underpants -> new io.vertx.groovy.ext.shell.command.Command(underpants)});
+      return ret;
   }
   /**
    * @return the command name

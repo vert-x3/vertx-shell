@@ -83,11 +83,13 @@ public class CommandRegistry {
   /**
    * Register a command
    * @param command the command to register
+   * @return 
    */
-  public void registerCommand(Command command) {
+  public CommandRegistry registerCommand(Command command) {
     this.delegate.registerCommand((io.vertx.ext.shell.command.Command)command.getDelegate());
+    return this;
   }
-  public void registerCommand(Command command, Handler<AsyncResult<CommandRegistration>> doneHandler) {
+  public CommandRegistry registerCommand(Command command, Handler<AsyncResult<CommandRegistration>> doneHandler) {
     this.delegate.registerCommand((io.vertx.ext.shell.command.Command)command.getDelegate(), new Handler<AsyncResult<io.vertx.ext.shell.registry.CommandRegistration>>() {
       public void handle(AsyncResult<io.vertx.ext.shell.registry.CommandRegistration> event) {
         AsyncResult<CommandRegistration> f
@@ -99,15 +101,42 @@ public class CommandRegistry {
         doneHandler.handle(f)
       }
     });
+    return this;
+  }
+  /**
+   * Register a lit of commands.
+   * @param commands the commands to register
+   * @return 
+   */
+  public CommandRegistry registerCommands(List<Command> commands) {
+    this.delegate.registerCommands((List<io.vertx.ext.shell.command.Command>)(commands.collect({underpants -> underpants.getDelegate()})));
+    return this;
+  }
+  public CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<CommandRegistration>> doneHandler) {
+    this.delegate.registerCommands((List<io.vertx.ext.shell.command.Command>)(commands.collect({underpants -> underpants.getDelegate()})), new Handler<AsyncResult<io.vertx.ext.shell.registry.CommandRegistration>>() {
+      public void handle(AsyncResult<io.vertx.ext.shell.registry.CommandRegistration> event) {
+        AsyncResult<CommandRegistration> f
+        if (event.succeeded()) {
+          f = InternalHelper.<CommandRegistration>result(new CommandRegistration(event.result()))
+        } else {
+          f = InternalHelper.<CommandRegistration>failure(event.cause())
+        }
+        doneHandler.handle(f)
+      }
+    });
+    return this;
   }
   /**
    * Unregister a command.
    * @param commandName the command name
+   * @return 
    */
-  public void unregisterCommand(String commandName) {
+  public CommandRegistry unregisterCommand(String commandName) {
     this.delegate.unregisterCommand(commandName);
+    return this;
   }
-  public void unregisterCommand(String commandName, Handler<AsyncResult<Void>> doneHandler) {
+  public CommandRegistry unregisterCommand(String commandName, Handler<AsyncResult<Void>> doneHandler) {
     this.delegate.unregisterCommand(commandName, doneHandler);
+    return this;
   }
 }

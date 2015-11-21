@@ -36,23 +36,7 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.command.CommandBuilder;
-import io.vertx.ext.shell.command.base.BusSend;
-import io.vertx.ext.shell.command.base.BusTail;
-import io.vertx.ext.shell.command.base.Echo;
-import io.vertx.ext.shell.command.base.FileSystemCd;
-import io.vertx.ext.shell.command.base.FileSystemLs;
-import io.vertx.ext.shell.command.base.FileSystemPwd;
-import io.vertx.ext.shell.command.base.Help;
-import io.vertx.ext.shell.command.base.LocalMapGet;
-import io.vertx.ext.shell.command.base.LocalMapPut;
-import io.vertx.ext.shell.command.base.LocalMapRm;
-import io.vertx.ext.shell.command.base.NetCommandLs;
-import io.vertx.ext.shell.command.base.Sleep;
-import io.vertx.ext.shell.command.base.VerticleDeploy;
-import io.vertx.ext.shell.command.base.VerticleFactories;
-import io.vertx.ext.shell.command.base.VerticleLs;
-import io.vertx.ext.shell.command.base.VerticleUndeploy;
+import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.metrics.MetricsInfo;
 import io.vertx.ext.shell.command.metrics.MetricsLs;
 import io.vertx.ext.shell.impl.ShellServiceImpl;
@@ -72,40 +56,16 @@ public interface ShellService {
   }
 
   static ShellService create(Vertx vertx, ShellServiceOptions options) {
-
     ShellServer server = ShellServer.create(vertx);
     ShellServiceImpl service = new ShellServiceImpl(vertx, server, options);
     CommandRegistry registry = server.commandRegistry();
 
     // Base commands
-    registry.registerCommand(Echo.class);
-    registry.registerCommand(Sleep.class);
-    registry.registerCommand(Help.class);
-    registry.registerCommand(FileSystemCd.class);
-    registry.registerCommand(FileSystemPwd.class);
-    registry.registerCommand(FileSystemLs.class);
-    registry.registerCommand(NetCommandLs.class);
-    registry.registerCommand(LocalMapGet.class);
-    registry.registerCommand(LocalMapPut.class);
-    registry.registerCommand(LocalMapRm.class);
-    registry.registerCommand(BusSend.class);
-    registry.registerCommand(BusTail.class);
-    registry.registerCommand(VerticleLs.class);
-    registry.registerCommand(VerticleDeploy.class);
-    registry.registerCommand(VerticleUndeploy.class);
-    registry.registerCommand(VerticleFactories.class);
+    registry.registerCommands(Command.baseCommands());
 
     // Metrics commands
     registry.registerCommand(MetricsLs.class);
     registry.registerCommand(MetricsInfo.class);
-
-    // Register builtin commands so they are listed in help
-    registry.registerCommand(CommandBuilder.command("exit").processHandler(process -> {}).build());
-    registry.registerCommand(CommandBuilder.command("logout").processHandler(process -> {}).build());
-    registry.registerCommand(CommandBuilder.command("jobs").processHandler(process -> {}).build());
-    registry.registerCommand(CommandBuilder.command("fg").processHandler(process -> {}).build());
-    registry.registerCommand(CommandBuilder.command("bg").processHandler(process -> {
-    }).build());
 
     return service;
   }

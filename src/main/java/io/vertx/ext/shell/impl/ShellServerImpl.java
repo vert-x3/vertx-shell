@@ -38,6 +38,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.ShellServer;
+import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.system.Shell;
 import io.vertx.ext.shell.system.impl.ShellImpl;
@@ -61,6 +62,13 @@ public class ShellServerImpl implements ShellServer {
     this.vertx = vertx;
     this.registry = CommandRegistry.get(vertx);
     this.termServers = new ArrayList<>();
+
+    // Register builtin commands so they are listed in help
+    registry.registerCommand(CommandBuilder.command("exit").processHandler(process -> {}).build());
+    registry.registerCommand(CommandBuilder.command("logout").processHandler(process -> {}).build());
+    registry.registerCommand(CommandBuilder.command("jobs").processHandler(process -> {}).build());
+    registry.registerCommand(CommandBuilder.command("fg").processHandler(process -> {}).build());
+    registry.registerCommand(CommandBuilder.command("bg").processHandler(process -> {}).build());
   }
 
   @Override

@@ -61,23 +61,40 @@ module VertxShell
     end
     # @param [::VertxShell::Command] command 
     # @yield 
-    # @return [void]
+    # @return [self]
     def register_command(command=nil)
       if command.class.method_defined?(:j_del) && !block_given?
-        return @j_del.java_method(:registerCommand, [Java::IoVertxExtShellCommand::Command.java_class]).call(command.j_del)
+        @j_del.java_method(:registerCommand, [Java::IoVertxExtShellCommand::Command.java_class]).call(command.j_del)
+        return self
       elsif command.class.method_defined?(:j_del) && block_given?
-        return @j_del.java_method(:registerCommand, [Java::IoVertxExtShellCommand::Command.java_class,Java::IoVertxCore::Handler.java_class]).call(command.j_del,(Proc.new { |ar| yield(ar.failed ? ar.cause : nil, ar.succeeded ? ::Vertx::Util::Utils.safe_create(ar.result,::VertxShell::CommandRegistration) : nil) }))
+        @j_del.java_method(:registerCommand, [Java::IoVertxExtShellCommand::Command.java_class,Java::IoVertxCore::Handler.java_class]).call(command.j_del,(Proc.new { |ar| yield(ar.failed ? ar.cause : nil, ar.succeeded ? ::Vertx::Util::Utils.safe_create(ar.result,::VertxShell::CommandRegistration) : nil) }))
+        return self
       end
       raise ArgumentError, "Invalid arguments when calling register_command(command)"
     end
+    # @param [Array<::VertxShell::Command>] commands 
+    # @yield 
+    # @return [self]
+    def register_commands(commands=nil)
+      if commands.class == Array && !block_given?
+        @j_del.java_method(:registerCommands, [Java::JavaUtil::List.java_class]).call(commands.map { |element| element.j_del })
+        return self
+      elsif commands.class == Array && block_given?
+        @j_del.java_method(:registerCommands, [Java::JavaUtil::List.java_class,Java::IoVertxCore::Handler.java_class]).call(commands.map { |element| element.j_del },(Proc.new { |ar| yield(ar.failed ? ar.cause : nil, ar.succeeded ? ::Vertx::Util::Utils.safe_create(ar.result,::VertxShell::CommandRegistration) : nil) }))
+        return self
+      end
+      raise ArgumentError, "Invalid arguments when calling register_commands(commands)"
+    end
     # @param [String] commandName 
     # @yield 
-    # @return [void]
+    # @return [self]
     def unregister_command(commandName=nil)
       if commandName.class == String && !block_given?
-        return @j_del.java_method(:unregisterCommand, [Java::java.lang.String.java_class]).call(commandName)
+        @j_del.java_method(:unregisterCommand, [Java::java.lang.String.java_class]).call(commandName)
+        return self
       elsif commandName.class == String && block_given?
-        return @j_del.java_method(:unregisterCommand, [Java::java.lang.String.java_class,Java::IoVertxCore::Handler.java_class]).call(commandName,(Proc.new { |ar| yield(ar.failed ? ar.cause : nil) }))
+        @j_del.java_method(:unregisterCommand, [Java::java.lang.String.java_class,Java::IoVertxCore::Handler.java_class]).call(commandName,(Proc.new { |ar| yield(ar.failed ? ar.cause : nil) }))
+        return self
       end
       raise ArgumentError, "Invalid arguments when calling unregister_command(commandName)"
     end

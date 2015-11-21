@@ -97,12 +97,14 @@ public class CommandRegistry {
   /**
    * Register a command
    * @param command the command to register
+   * @return 
    */
-  public void registerCommand(Command command) { 
+  public CommandRegistry registerCommand(Command command) { 
     this.delegate.registerCommand((io.vertx.ext.shell.command.Command) command.getDelegate());
+    return this;
   }
 
-  public void registerCommand(Command command, Handler<AsyncResult<CommandRegistration>> doneHandler) { 
+  public CommandRegistry registerCommand(Command command, Handler<AsyncResult<CommandRegistration>> doneHandler) { 
     this.delegate.registerCommand((io.vertx.ext.shell.command.Command) command.getDelegate(), new Handler<AsyncResult<io.vertx.ext.shell.registry.CommandRegistration>>() {
       public void handle(AsyncResult<io.vertx.ext.shell.registry.CommandRegistration> event) {
         AsyncResult<CommandRegistration> f;
@@ -114,6 +116,7 @@ public class CommandRegistry {
         doneHandler.handle(f);
       }
     });
+    return this;
   }
 
   public Observable<CommandRegistration> registerCommandObservable(Command command) { 
@@ -123,15 +126,49 @@ public class CommandRegistry {
   }
 
   /**
-   * Unregister a command.
-   * @param commandName the command name
+   * Register a lit of commands.
+   * @param commands the commands to register
+   * @return 
    */
-  public void unregisterCommand(String commandName) { 
-    this.delegate.unregisterCommand(commandName);
+  public CommandRegistry registerCommands(List<Command> commands) { 
+    this.delegate.registerCommands(commands.stream().map(element -> (io.vertx.ext.shell.command.Command)element.getDelegate()).collect(java.util.stream.Collectors.toList()));
+    return this;
   }
 
-  public void unregisterCommand(String commandName, Handler<AsyncResult<Void>> doneHandler) { 
+  public CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<CommandRegistration>> doneHandler) { 
+    this.delegate.registerCommands(commands.stream().map(element -> (io.vertx.ext.shell.command.Command)element.getDelegate()).collect(java.util.stream.Collectors.toList()), new Handler<AsyncResult<io.vertx.ext.shell.registry.CommandRegistration>>() {
+      public void handle(AsyncResult<io.vertx.ext.shell.registry.CommandRegistration> event) {
+        AsyncResult<CommandRegistration> f;
+        if (event.succeeded()) {
+          f = InternalHelper.<CommandRegistration>result(new CommandRegistration(event.result()));
+        } else {
+          f = InternalHelper.<CommandRegistration>failure(event.cause());
+        }
+        doneHandler.handle(f);
+      }
+    });
+    return this;
+  }
+
+  public Observable<CommandRegistration> registerCommandsObservable(List<Command> commands) { 
+    io.vertx.rx.java.ObservableFuture<CommandRegistration> doneHandler = io.vertx.rx.java.RxHelper.observableFuture();
+    registerCommands(commands, doneHandler.toHandler());
+    return doneHandler;
+  }
+
+  /**
+   * Unregister a command.
+   * @param commandName the command name
+   * @return 
+   */
+  public CommandRegistry unregisterCommand(String commandName) { 
+    this.delegate.unregisterCommand(commandName);
+    return this;
+  }
+
+  public CommandRegistry unregisterCommand(String commandName, Handler<AsyncResult<Void>> doneHandler) { 
     this.delegate.unregisterCommand(commandName, doneHandler);
+    return this;
   }
 
   public Observable<Void> unregisterCommandObservable(String commandName) { 

@@ -35,6 +35,7 @@ package io.vertx.ext.shell;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.CliToken;
+import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.shell.registry.CommandRegistry;
@@ -68,7 +69,7 @@ public class ShellServerTest {
   public void before() {
     vertx = Vertx.vertx();
     server = ShellServer.create(vertx);
-    registry = server.commandRegistry();
+    registry = server.commandRegistry().registerCommands(Command.baseCommands());
   }
 
   @After
