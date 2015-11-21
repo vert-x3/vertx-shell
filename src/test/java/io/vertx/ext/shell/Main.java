@@ -45,7 +45,7 @@ import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.registry.CommandRegistry;
-import io.vertx.ext.shell.term.WebTermOptions;
+import io.vertx.ext.shell.term.HttpTermOptions;
 
 /**
  * A simple class for testing from command line directly.
@@ -100,10 +100,10 @@ public class Main {
     ShellService service = ShellService.create(vertx, new ShellServiceOptions().
         setTelnetOptions(new TelnetTermOptions().setPort(5000)).
         setSSHOptions(options).
-        setWebOptions(new WebTermOptions().
-            setHttpServerOptions(new HttpServerOptions().setPort(8080)).
-            setShiroAuthOptions(authOptions)
-        )
+            setHttpOptions(new HttpTermOptions().
+                    setPort(8080).
+                    setShiroAuthOptions(authOptions)
+            )
     );
     service.start();
 

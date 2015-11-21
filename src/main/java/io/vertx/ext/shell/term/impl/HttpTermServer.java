@@ -43,7 +43,7 @@ import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.shell.term.SockJSTermHandler;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
-import io.vertx.ext.shell.term.WebTermOptions;
+import io.vertx.ext.shell.term.HttpTermOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.AuthHandler;
 import io.vertx.ext.web.handler.BasicAuthHandler;
@@ -56,10 +56,10 @@ import java.net.URL;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class WebTermServer implements TermServer {
+public class HttpTermServer implements TermServer {
 
   public static Buffer loadResource(String path) {
-    URL resource = WebTermServer.class.getResource(path);
+    URL resource = HttpTermServer.class.getResource(path);
     if (resource != null) {
       try {
         byte[] tmp = new byte[512];
@@ -85,12 +85,12 @@ public class WebTermServer implements TermServer {
   private Buffer vertxTermJs;
 
   private final Vertx vertx;
-  private final WebTermOptions options;
+  private final HttpTermOptions options;
   private Handler<TtyConnection> handler;
   private HttpServer server;
   private Router router;
 
-  public WebTermServer(Vertx vertx, WebTermOptions options) {
+  public HttpTermServer(Vertx vertx, HttpTermOptions options) {
     this.termHtml = SockJSTermHandler.defaultTermMarkupResource();
     this.termJs = SockJSTermHandler.defaultTermScriptResource();
     this.vertxTermJs = SockJSTermHandler.defaultVertxTermScriptResource();
@@ -98,7 +98,7 @@ public class WebTermServer implements TermServer {
     this.options = options;
   }
 
-  public WebTermServer(Vertx vertx, Router router, WebTermOptions options) {
+  public HttpTermServer(Vertx vertx, Router router, HttpTermOptions options) {
     this.termHtml = SockJSTermHandler.defaultTermMarkupResource();
     this.termJs = SockJSTermHandler.defaultTermScriptResource();
     this.vertxTermJs = SockJSTermHandler.defaultVertxTermScriptResource();
@@ -149,7 +149,7 @@ public class WebTermServer implements TermServer {
 
     //
     if (createServer) {
-      server = vertx.createHttpServer(options.getHttpServerOptions());
+      server = vertx.createHttpServer(options);
       server.requestHandler(router::accept);
       server.listen(ar -> {
         if (ar.succeeded()) {

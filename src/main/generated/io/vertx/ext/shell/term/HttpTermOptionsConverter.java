@@ -20,16 +20,13 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.JsonArray;
 
 /**
- * Converter for {@link io.vertx.ext.shell.term.WebTermOptions}.
+ * Converter for {@link io.vertx.ext.shell.term.HttpTermOptions}.
  *
- * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.term.WebTermOptions} original class using Vert.x codegen.
+ * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.term.HttpTermOptions} original class using Vert.x codegen.
  */
-public class WebTermOptionsConverter {
+public class HttpTermOptionsConverter {
 
-  public static void fromJson(JsonObject json, WebTermOptions obj) {
-    if (json.getValue("httpServerOptions") instanceof JsonObject) {
-      obj.setHttpServerOptions(new io.vertx.core.http.HttpServerOptions((JsonObject)json.getValue("httpServerOptions")));
-    }
+  public static void fromJson(JsonObject json, HttpTermOptions obj) {
     if (json.getValue("shiroAuthOptions") instanceof JsonObject) {
       obj.setShiroAuthOptions(new io.vertx.ext.auth.shiro.ShiroAuthOptions((JsonObject)json.getValue("shiroAuthOptions")));
     }
@@ -41,7 +38,7 @@ public class WebTermOptionsConverter {
     }
   }
 
-  public static void toJson(WebTermOptions obj, JsonObject json) {
+  public static void toJson(HttpTermOptions obj, JsonObject json) {
     if (obj.getSockJSPath() != null) {
       json.put("sockJSPath", obj.getSockJSPath());
     }

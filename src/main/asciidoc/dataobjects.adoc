@@ -1,5 +1,63 @@
 = Cheatsheets
 
+[[HttpTermOptions]]
+== HttpTermOptions
+
+++++
+ The web term configuration options.
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[acceptBacklog]]`acceptBacklog`|`Number (int)`|-
+|[[authOptions]]`authOptions`|`link:dataobjects.html#AuthOptions[AuthOptions]`|
++++
+@return the auth options
++++
+|[[clientAuth]]`clientAuth`|`link:enums.html#ClientAuth[ClientAuth]`|-
+|[[clientAuthRequired]]`clientAuthRequired`|`Boolean`|-
+|[[compressionSupported]]`compressionSupported`|`Boolean`|-
+|[[crlPaths]]`crlPaths`|`Array of String`|-
+|[[crlValues]]`crlValues`|`Array of Buffer`|-
+|[[enabledCipherSuites]]`enabledCipherSuites`|`Array of String`|-
+|[[handle100ContinueAutomatically]]`handle100ContinueAutomatically`|`Boolean`|-
+|[[host]]`host`|`String`|-
+|[[idleTimeout]]`idleTimeout`|`Number (int)`|-
+|[[keyStoreOptions]]`keyStoreOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|-
+|[[maxWebsocketFrameSize]]`maxWebsocketFrameSize`|`Number (int)`|-
+|[[pemKeyCertOptions]]`pemKeyCertOptions`|`link:dataobjects.html#PemKeyCertOptions[PemKeyCertOptions]`|-
+|[[pemTrustOptions]]`pemTrustOptions`|`link:dataobjects.html#PemTrustOptions[PemTrustOptions]`|-
+|[[pfxKeyCertOptions]]`pfxKeyCertOptions`|`link:dataobjects.html#PfxOptions[PfxOptions]`|-
+|[[pfxTrustOptions]]`pfxTrustOptions`|`link:dataobjects.html#PfxOptions[PfxOptions]`|-
+|[[port]]`port`|`Number (int)`|-
+|[[receiveBufferSize]]`receiveBufferSize`|`Number (int)`|-
+|[[reuseAddress]]`reuseAddress`|`Boolean`|-
+|[[sendBufferSize]]`sendBufferSize`|`Number (int)`|-
+|[[shiroAuthOptions]]`shiroAuthOptions`|`link:dataobjects.html#ShiroAuthOptions[ShiroAuthOptions]`|
++++
+Set the auth options as a Shiro auth.
++++
+|[[soLinger]]`soLinger`|`Number (int)`|-
+|[[sockJSHandlerOptions]]`sockJSHandlerOptions`|`link:dataobjects.html#SockJSHandlerOptions[SockJSHandlerOptions]`|
++++
+@return the SockJS handler options
++++
+|[[sockJSPath]]`sockJSPath`|`String`|
++++
+@return the SockJS path
++++
+|[[ssl]]`ssl`|`Boolean`|-
+|[[tcpKeepAlive]]`tcpKeepAlive`|`Boolean`|-
+|[[tcpNoDelay]]`tcpNoDelay`|`Boolean`|-
+|[[trafficClass]]`trafficClass`|`Number (int)`|-
+|[[trustStoreOptions]]`trustStoreOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|-
+|[[usePooledBuffers]]`usePooledBuffers`|`Boolean`|-
+|[[websocketSubProtocols]]`websocketSubProtocols`|`String`|-
+|===
+
 [[TelnetTermOptions]]
 == TelnetTermOptions
 
@@ -51,6 +109,7 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
+|[[httpOptions]]`httpOptions`|`link:dataobjects.html#HttpTermOptions[HttpTermOptions]`|-
 |[[sshOptions]]`sshOptions`|`link:dataobjects.html#SSHTermOptions[SSHTermOptions]`|
 +++
 @return the SSH options
@@ -59,7 +118,6 @@
 +++
 @return the Telnet options
 +++
-|[[webOptions]]`webOptions`|`link:dataobjects.html#WebTermOptions[WebTermOptions]`|-
 |[[welcomeMessage]]`welcomeMessage`|`String`|
 +++
 @return the shell welcome message
@@ -105,40 +163,6 @@ Set the key pair options in pfx format.
 |[[shiroAuthOptions]]`shiroAuthOptions`|`link:dataobjects.html#ShiroAuthOptions[ShiroAuthOptions]`|
 +++
 Set the auth options as a Shiro auth.
-+++
-|===
-
-[[WebTermOptions]]
-== WebTermOptions
-
-++++
- The web term configuration options.
-++++
-'''
-
-[cols=">25%,^25%,50%"]
-[frame="topbot"]
-|===
-^|Name | Type ^| Description
-|[[authOptions]]`authOptions`|`link:dataobjects.html#AuthOptions[AuthOptions]`|
-+++
-@return the auth options
-+++
-|[[httpServerOptions]]`httpServerOptions`|`link:dataobjects.html#HttpServerOptions[HttpServerOptions]`|
-+++
-@return the http server options
-+++
-|[[shiroAuthOptions]]`shiroAuthOptions`|`link:dataobjects.html#ShiroAuthOptions[ShiroAuthOptions]`|
-+++
-Set the auth options as a Shiro auth.
-+++
-|[[sockJSHandlerOptions]]`sockJSHandlerOptions`|`link:dataobjects.html#SockJSHandlerOptions[SockJSHandlerOptions]`|
-+++
-@return the SockJS handler options
-+++
-|[[sockJSPath]]`sockJSPath`|`String`|
-+++
-@return the SockJS path
 +++
 |===
 

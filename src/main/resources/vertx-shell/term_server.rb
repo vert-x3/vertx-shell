@@ -46,9 +46,9 @@ module VertxShell
     # @return [::VertxShell::TermServer]
     def self.create_web_term_server(param_1=nil,param_2=nil,param_3=nil)
       if param_1.class.method_defined?(:j_del) && param_2.class == Hash && !block_given? && param_3 == nil
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::TermServer.java_method(:createWebTermServer, [Java::IoVertxCore::Vertx.java_class,Java::IoVertxExtShellTerm::WebTermOptions.java_class]).call(param_1.j_del,Java::IoVertxExtShellTerm::WebTermOptions.new(::Vertx::Util::Utils.to_json_object(param_2))),::VertxShell::TermServer)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::TermServer.java_method(:createWebTermServer, [Java::IoVertxCore::Vertx.java_class,Java::IoVertxExtShellTerm::HttpTermOptions.java_class]).call(param_1.j_del,Java::IoVertxExtShellTerm::HttpTermOptions.new(::Vertx::Util::Utils.to_json_object(param_2))),::VertxShell::TermServer)
       elsif param_1.class.method_defined?(:j_del) && param_2.class.method_defined?(:j_del) && param_3.class == Hash && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::TermServer.java_method(:createWebTermServer, [Java::IoVertxCore::Vertx.java_class,Java::IoVertxExtWeb::Router.java_class,Java::IoVertxExtShellTerm::WebTermOptions.java_class]).call(param_1.j_del,param_2.j_del,Java::IoVertxExtShellTerm::WebTermOptions.new(::Vertx::Util::Utils.to_json_object(param_3))),::VertxShell::TermServer)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::TermServer.java_method(:createWebTermServer, [Java::IoVertxCore::Vertx.java_class,Java::IoVertxExtWeb::Router.java_class,Java::IoVertxExtShellTerm::HttpTermOptions.java_class]).call(param_1.j_del,param_2.j_del,Java::IoVertxExtShellTerm::HttpTermOptions.new(::Vertx::Util::Utils.to_json_object(param_3))),::VertxShell::TermServer)
       end
       raise ArgumentError, "Invalid arguments when calling create_web_term_server(param_1,param_2,param_3)"
     end

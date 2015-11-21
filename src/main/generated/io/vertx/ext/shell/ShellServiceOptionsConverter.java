@@ -27,14 +27,14 @@ import io.vertx.core.json.JsonArray;
 public class ShellServiceOptionsConverter {
 
   public static void fromJson(JsonObject json, ShellServiceOptions obj) {
+    if (json.getValue("httpOptions") instanceof JsonObject) {
+      obj.setHttpOptions(new io.vertx.ext.shell.term.HttpTermOptions((JsonObject)json.getValue("httpOptions")));
+    }
     if (json.getValue("sshOptions") instanceof JsonObject) {
       obj.setSSHOptions(new io.vertx.ext.shell.term.SSHTermOptions((JsonObject)json.getValue("sshOptions")));
     }
     if (json.getValue("telnetOptions") instanceof JsonObject) {
       obj.setTelnetOptions(new io.vertx.ext.shell.term.TelnetTermOptions((JsonObject)json.getValue("telnetOptions")));
-    }
-    if (json.getValue("webOptions") instanceof JsonObject) {
-      obj.setWebOptions(new io.vertx.ext.shell.term.WebTermOptions((JsonObject)json.getValue("webOptions")));
     }
     if (json.getValue("welcomeMessage") instanceof String) {
       obj.setWelcomeMessage((String)json.getValue("welcomeMessage"));

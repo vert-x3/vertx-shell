@@ -40,10 +40,10 @@ import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.ShellService;
 import io.vertx.ext.shell.ShellServiceOptions;
 import io.vertx.ext.shell.term.TelnetTermOptions;
-import io.vertx.ext.shell.term.WebTermOptions;
+import io.vertx.ext.shell.term.HttpTermOptions;
 import io.vertx.ext.shell.term.impl.SSHTermServer;
 import io.vertx.ext.shell.term.impl.TelnetTermServer;
-import io.vertx.ext.shell.term.impl.WebTermServer;
+import io.vertx.ext.shell.term.impl.HttpTermServer;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -64,7 +64,7 @@ public class ShellServiceImpl implements ShellService {
   public void start(Handler<AsyncResult<Void>> startHandler) {
     TelnetTermOptions telnetOptions = options.getTelnetOptions();
     SSHTermOptions sshOptions = options.getSSHOptions();
-    WebTermOptions webOptions = options.getWebOptions();
+    HttpTermOptions webOptions = options.getHttpOptions();
     if (telnetOptions != null) {
       server.registerTermServer(new TelnetTermServer(vertx, telnetOptions));
     }
@@ -72,7 +72,7 @@ public class ShellServiceImpl implements ShellService {
       server.registerTermServer(new SSHTermServer(vertx, sshOptions));
     }
     if (webOptions != null) {
-      server.registerTermServer(new WebTermServer(vertx, webOptions));
+      server.registerTermServer(new HttpTermServer(vertx, webOptions));
     }
     server.listen(startHandler);
   }

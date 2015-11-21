@@ -35,7 +35,6 @@ package io.vertx.ext.shell.term;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.CaseInsensitiveHeaders;
 import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
@@ -53,13 +52,13 @@ import java.util.Base64;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @RunWith(VertxUnitRunner.class)
-public abstract class WebTermServerBase {
+public abstract class HttpTermServerBase {
 
   protected Vertx vertx;
   private TermServer server;
   private final String basePath;
 
-  public WebTermServerBase(String basePath) {
+  public HttpTermServerBase(String basePath) {
     this.basePath = basePath;
   }
 
@@ -73,12 +72,12 @@ public abstract class WebTermServerBase {
     vertx.close(context.asyncAssertSuccess());
   }
 
-  protected abstract TermServer createServer(TestContext context, WebTermOptions options);
+  protected abstract TermServer createServer(TestContext context, HttpTermOptions options);
 
   @Test
   public void testServerWrite(TestContext context) {
     Async async = context.async();
-    server = createServer(context, new WebTermOptions().setHttpServerOptions(new HttpServerOptions().setPort(8080)));
+    server = createServer(context, new HttpTermOptions().setPort(8080));
     server.termHandler(term -> {
       term.stdout().write("hello_from_server");
     });
@@ -96,7 +95,7 @@ public abstract class WebTermServerBase {
   @Test
   public void testServerRead(TestContext context) {
     Async async = context.async();
-    server = createServer(context, new WebTermOptions().setHttpServerOptions(new HttpServerOptions().setPort(8080)));
+    server = createServer(context, new HttpTermOptions().setPort(8080));
     server.termHandler(term -> {
       term.setStdin(buf -> {
         context.assertEquals("hello_from_client", buf);
@@ -168,7 +167,7 @@ public abstract class WebTermServerBase {
 
   private void testSize(TestContext context, String uri, int expectedCols, int expectedRows) {
     Async async = context.async();
-    server = createServer(context, new WebTermOptions().setHttpServerOptions(new HttpServerOptions().setPort(8080)));;
+    server = createServer(context, new HttpTermOptions().setPort(8080));;
     server.termHandler(term -> {
       context.assertEquals(expectedCols, term.width());
       context.assertEquals(expectedRows, term.height());
@@ -198,7 +197,7 @@ public abstract class WebTermServerBase {
 
   private void testResize(TestContext context, JsonObject event, int expectedCols, int expectedRows) {
     Async async = context.async();
-    server = createServer(context, new WebTermOptions().setHttpServerOptions(new HttpServerOptions().setPort(8080)));;
+    server = createServer(context, new HttpTermOptions().setPort(8080));;
     server.termHandler(term -> {
       term.resizehandler(v -> {
         context.assertEquals(expectedCols, term.width());
@@ -217,7 +216,7 @@ public abstract class WebTermServerBase {
   @Test
   public void testResizeInvalid(TestContext context) {
     Async async = context.async();
-    server = createServer(context, new WebTermOptions().setHttpServerOptions(new HttpServerOptions().setPort(8080)));;
+    server = createServer(context, new HttpTermOptions().setPort(8080));;
     server.termHandler(term -> {
       term.resizehandler(v -> {
         context.fail();
@@ -237,11 +236,10 @@ public abstract class WebTermServerBase {
   @Test
   public void testSecure(TestContext context) {
     Async async = context.async();
-    server = createServer(context, new WebTermOptions().setShiroAuthOptions(
+    server = createServer(context, new HttpTermOptions().setShiroAuthOptions(
         new ShiroAuthOptions().
             setType(ShiroAuthRealmType.PROPERTIES).
-            setConfig(new JsonObject().put("properties_path", "classpath:test-auth.properties"))).setHttpServerOptions(
-        new HttpServerOptions().setPort(8080)));
+            setConfig(new JsonObject().put("properties_path", "classpath:test-auth.properties"))).setPort(8080));
     server.termHandler(term -> {
       term.stdout().write("hello");
     });

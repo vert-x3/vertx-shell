@@ -24,8 +24,8 @@ var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
 var JTermServer = io.vertx.ext.shell.term.TermServer;
 var TelnetTermOptions = io.vertx.ext.shell.term.TelnetTermOptions;
+var HttpTermOptions = io.vertx.ext.shell.term.HttpTermOptions;
 var SSHTermOptions = io.vertx.ext.shell.term.SSHTermOptions;
-var WebTermOptions = io.vertx.ext.shell.term.WebTermOptions;
 
 /**
  A server for terminal based applications.
@@ -163,9 +163,9 @@ TermServer.createTelnetTermServer = function(vertx, options) {
 TermServer.createWebTermServer = function() {
   var __args = arguments;
   if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && (typeof __args[1] === 'object' && __args[1] != null)) {
-    return utils.convReturnVertxGen(JTermServer["createWebTermServer(io.vertx.core.Vertx,io.vertx.ext.shell.term.WebTermOptions)"](__args[0]._jdel, __args[1] != null ? new WebTermOptions(new JsonObject(JSON.stringify(__args[1]))) : null), TermServer);
+    return utils.convReturnVertxGen(JTermServer["createWebTermServer(io.vertx.core.Vertx,io.vertx.ext.shell.term.HttpTermOptions)"](__args[0]._jdel, __args[1] != null ? new HttpTermOptions(new JsonObject(JSON.stringify(__args[1]))) : null), TermServer);
   }else if (__args.length === 3 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'object' && __args[1]._jdel && (typeof __args[2] === 'object' && __args[2] != null)) {
-    return utils.convReturnVertxGen(JTermServer["createWebTermServer(io.vertx.core.Vertx,io.vertx.ext.web.Router,io.vertx.ext.shell.term.WebTermOptions)"](__args[0]._jdel, __args[1]._jdel, __args[2] != null ? new WebTermOptions(new JsonObject(JSON.stringify(__args[2]))) : null), TermServer);
+    return utils.convReturnVertxGen(JTermServer["createWebTermServer(io.vertx.core.Vertx,io.vertx.ext.web.Router,io.vertx.ext.shell.term.HttpTermOptions)"](__args[0]._jdel, __args[1]._jdel, __args[2] != null ? new HttpTermOptions(new JsonObject(JSON.stringify(__args[2]))) : null), TermServer);
   } else throw new TypeError('function invoked with invalid arguments');
 };
 

@@ -19,10 +19,10 @@ import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.shell.term.TelnetTermOptions
+import io.vertx.ext.shell.term.HttpTermOptions
 import io.vertx.ext.shell.term.SSHTermOptions
 import io.vertx.groovy.core.Vertx
 import io.vertx.groovy.ext.web.Router
-import io.vertx.ext.shell.term.WebTermOptions
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
 /**
@@ -58,11 +58,11 @@ public class TermServer {
     return ret;
   }
   public static TermServer createWebTermServer(Vertx vertx, Map<String, Object> options) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createWebTermServer((io.vertx.core.Vertx)vertx.getDelegate(), options != null ? new io.vertx.ext.shell.term.WebTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createWebTermServer((io.vertx.core.Vertx)vertx.getDelegate(), options != null ? new io.vertx.ext.shell.term.HttpTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
     return ret;
   }
   public static TermServer createWebTermServer(Vertx vertx, Router router, Map<String, Object> options) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createWebTermServer((io.vertx.core.Vertx)vertx.getDelegate(), (io.vertx.ext.web.Router)router.getDelegate(), options != null ? new io.vertx.ext.shell.term.WebTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createWebTermServer((io.vertx.core.Vertx)vertx.getDelegate(), (io.vertx.ext.web.Router)router.getDelegate(), options != null ? new io.vertx.ext.shell.term.HttpTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
     return ret;
   }
   /**

@@ -20,10 +20,10 @@ import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.ext.shell.term.TelnetTermOptions;
+import io.vertx.ext.shell.term.HttpTermOptions;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.rxjava.ext.web.Router;
-import io.vertx.ext.shell.term.WebTermOptions;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 
@@ -68,12 +68,12 @@ public class TermServer {
     return ret;
   }
 
-  public static TermServer createWebTermServer(Vertx vertx, WebTermOptions options) { 
+  public static TermServer createWebTermServer(Vertx vertx, HttpTermOptions options) { 
     TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createWebTermServer((io.vertx.core.Vertx) vertx.getDelegate(), options));
     return ret;
   }
 
-  public static TermServer createWebTermServer(Vertx vertx, Router router, WebTermOptions options) { 
+  public static TermServer createWebTermServer(Vertx vertx, Router router, HttpTermOptions options) { 
     TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createWebTermServer((io.vertx.core.Vertx) vertx.getDelegate(), (io.vertx.ext.web.Router) router.getDelegate(), options));
     return ret;
   }
