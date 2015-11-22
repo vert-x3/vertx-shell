@@ -5,9 +5,12 @@
     var cols = options.cols || 80;
     var rows = options.rows || 24;
     url += (url.indexOf('?') > -1 ? '&' : '?') + "cols=" +  cols + "&rows=" + rows;
+    var termOptions = options.termOptions || { screenKeys: true };
+    termOptions.cols = cols;
+    termOptions.rows = rows;
     var socket = new SockJS(url);
     socket.onopen = function () {
-      var term = new Terminal({cols: cols, rows: rows, screenKeys: true});
+      var term = new Terminal(termOptions);
       socket.onmessage = function (event) {
         if (event.type === 'message') {
           term.write(event.data);
