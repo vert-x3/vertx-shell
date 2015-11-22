@@ -36,6 +36,7 @@
 |[[receiveBufferSize]]`receiveBufferSize`|`Number (int)`|-
 |[[reuseAddress]]`reuseAddress`|`Boolean`|-
 |[[sendBufferSize]]`sendBufferSize`|`Number (int)`|-
+|[[shellHtmlResource]]`shellHtmlResource`|`Buffer`|-
 |[[shiroAuthOptions]]`shiroAuthOptions`|`link:dataobjects.html#ShiroAuthOptions[ShiroAuthOptions]`|
 +++
 Set the auth options as a Shiro auth.
@@ -52,9 +53,11 @@ Set the auth options as a Shiro auth.
 |[[ssl]]`ssl`|`Boolean`|-
 |[[tcpKeepAlive]]`tcpKeepAlive`|`Boolean`|-
 |[[tcpNoDelay]]`tcpNoDelay`|`Boolean`|-
+|[[termJsResource]]`termJsResource`|`Buffer`|-
 |[[trafficClass]]`trafficClass`|`Number (int)`|-
 |[[trustStoreOptions]]`trustStoreOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|-
 |[[usePooledBuffers]]`usePooledBuffers`|`Boolean`|-
+|[[vertsShellJsResource]]`vertsShellJsResource`|`Buffer`|-
 |[[websocketSubProtocols]]`websocketSubProtocols`|`String`|-
 |===
 

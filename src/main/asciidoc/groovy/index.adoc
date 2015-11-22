@@ -657,6 +657,8 @@ session.
 
 Vert.x Shell also provides bare terminal servers for those who need to write pure terminal applications.
 
+=== SSH term
+
 The terminal server `link:groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` handler accepts incoming terminal connections.
 When a remote terminal connects, the `link:groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` can be used to interact with connected
 terminal.
@@ -680,7 +682,7 @@ server.listen()
 The `link:groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` is also a `link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html[Tty]`, this section explains
 how to use the tty.
 
-The *telnet* protocol is supported:
+=== Telnet term
 
 [source,groovy]
 ----
@@ -698,7 +700,10 @@ server.listen()
 
 ----
 
-The *http* protocol is supported:
+=== HTTP term
+
+The `link:groovydoc/io/vertx/groovy/ext/shell/term/TermServer.html#createHttpTermServer(io.vertx.core.Vertx)[TermServer.createHttpTermServer]` method creates an HTTP term server, built
+on top of Vert.x Web using the SockJS protocol.
 
 [source,groovy]
 ----
@@ -716,7 +721,9 @@ server.listen()
 
 ----
 
-An HTTP term can start its own HTTP server, or it can reuse an existing `link:../../vertx-web/groovy/groovydoc/io/vertx/groovy/ext/web/Router.html[Router]`.
+An HTTP term can start its own HTTP server, or it can reuse an existing Vert.x Web `link:../../vertx-web/groovy/groovydoc/io/vertx/groovy/ext/web/Router.html[Router]`.
+
+The shell can be found at `/shell.html`.
 
 [source,groovy]
 ----
@@ -735,3 +742,40 @@ server.listen()
 ----
 
 The later option is convenient when the HTTP shell is integrated in an existing HTTP server.
+
+The HTTP term server by default is configured for serving:
+
+- the `shell.html` page
+- the `https://github.com/chjj/term.js/[term.js]` client library
+- the `vertxshell.js` client library
+
+The `vertxshell.js` integrates `term.js` is the client side part of the HTTP term.
+
+It integrates `term.js` with SockJS and needs the URL of the HTTP term server endpoint:
+
+[source,javascript]
+----
+window.addEventListener('load', function () {
+  var url = 'http://localhost/shell';
+  new VertxTerm(url, {
+    cols: 80,
+    rows: 24
+   });
+ });
+----
+
+Straight websockets can also be used, if so, the remote term URL should be suffixed with `/websocket`:
+
+[source,javascript]
+----
+window.addEventListener('load', function () {
+  var url = 'ws://localhost/shell/websocket';
+  new VertxTerm(url, {
+    cols: 80,
+    rows: 24
+   });
+ });
+----
+
+For customization purpose these resources should be copied and customized, they are available in the Vert.x Shell
+jar under the `io.vertx.ext.shell` packages.

@@ -73,11 +73,11 @@
  * .Starting a shell service available via HTTP
  * [source,subs="+attributes"]
  * ----
- * # create a key pair for the SSH server
+ * # create a certificate for the HTTP server
  * keytool -genkey -keyalg RSA -keystore keystore.jks -keysize 2048 -validity 1095 -dname CN=localhost -keypass secret -storepass secret
  * # create the auth config
  * echo user.admin=password > auth.properties
- * vertx run -conf '{"httpOptions":{"port":4000,"ssl":true,"keyStoreOptions":{"path":"keystore.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:${maven.groupId}:${maven.artifactId}:${maven.version}
+ * vertx run -conf '{"httpOptions":{"port":8080,"ssl":true,"keyStoreOptions":{"path":"keystore.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:${maven.groupId}:${maven.artifactId}:${maven.version}
  * ----
  *
  * You can also deploy this service inside your own verticle:
@@ -455,6 +455,8 @@
  *
  * Vert.x Shell also provides bare terminal servers for those who need to write pure terminal applications.
  *
+ * === SSH term
+ *
  * The terminal server {@link io.vertx.ext.shell.term.Term} handler accepts incoming terminal connections.
  * When a remote terminal connects, the {@link io.vertx.ext.shell.term.Term} can be used to interact with connected
  * terminal.
@@ -467,21 +469,26 @@
  * The {@link io.vertx.ext.shell.term.Term} is also a {@link io.vertx.ext.shell.term.Tty}, this section explains
  * how to use the tty.
  *
- * The *telnet* protocol is supported:
+ * === Telnet term
  *
  * [source,$lang]
  * ----
  * {@link examples.Examples#telnetEchoTerminal}
  * ----
  *
- * The *http* protocol is supported:
+ * === HTTP term
+ *
+ * The {@link io.vertx.ext.shell.term.TermServer#createHttpTermServer} method creates an HTTP term server, built
+ * on top of Vert.x Web using the SockJS protocol.
  *
  * [source,$lang]
  * ----
  * {@link examples.Examples#httpEchoTerminal}
  * ----
  *
- * An http term can start its own HTTP server, or it can reuse an existing {@link io.vertx.ext.web.Router}.
+ * An HTTP term can start its own HTTP server, or it can reuse an existing Vert.x Web {@link io.vertx.ext.web.Router}.
+ *
+ * The shell can be found at `/shell.html`.
  *
  * [source,$lang]
  * ----
@@ -490,6 +497,42 @@
  *
  * The later option is convenient when the HTTP shell is integrated in an existing HTTP server.
  *
+ * The HTTP term server by default is configured for serving:
+ *
+ * - the `shell.html` page
+ * - the `https://github.com/chjj/term.js/[term.js]` client library
+ * - the `vertxshell.js` client library
+ *
+ * The `vertxshell.js` integrates `term.js` is the client side part of the HTTP term.
+ *
+ * It integrates `term.js` with SockJS and needs the URL of the HTTP term server endpoint:
+ *
+ * [source,javascript]
+ * ----
+ * window.addEventListener('load', function () {
+ *   var url = 'http://localhost/shell';
+ *   new VertxTerm(url, {
+ *     cols: 80,
+ *     rows: 24
+ *    });
+ *  });
+ * ----
+ *
+ * Straight websockets can also be used, if so, the remote term URL should be suffixed with `/websocket`:
+ *
+ * [source,javascript]
+ * ----
+ * window.addEventListener('load', function () {
+ *   var url = 'ws://localhost/shell/websocket';
+ *   new VertxTerm(url, {
+ *     cols: 80,
+ *     rows: 24
+ *    });
+ *  });
+ * ----
+ *
+ * For customization purpose these resources can be copied and customized, they are available in the Vert.x Shell
+ * jar under the `io.vertx.ext.shell` packages.
  */
 @ModuleGen(name = "vertx-shell", groupPackage = "io.vertx")
 @Document(fileName = "index.adoc")

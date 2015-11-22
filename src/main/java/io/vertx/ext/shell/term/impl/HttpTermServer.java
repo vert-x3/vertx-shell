@@ -40,7 +40,6 @@ import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServer;
 import io.vertx.ext.auth.AuthProvider;
-import io.vertx.ext.shell.term.SockJSTermHandler;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.HttpTermOptions;
@@ -79,30 +78,19 @@ public class HttpTermServer implements TermServer {
     return null;
   }
 
-  // Load resources
-  private Buffer termHtml;
-  private Buffer termJs;
-  private Buffer vertxTermJs;
-
   private final Vertx vertx;
-  private final HttpTermOptions options;
+  private HttpTermOptions options;
   private Handler<TtyConnection> handler;
   private HttpServer server;
   private Router router;
 
   public HttpTermServer(Vertx vertx, HttpTermOptions options) {
-    this.termHtml = SockJSTermHandler.defaultTermMarkupResource();
-    this.termJs = SockJSTermHandler.defaultTermScriptResource();
-    this.vertxTermJs = SockJSTermHandler.defaultVertxTermScriptResource();
-    this.vertx = vertx;
-    this.options = options;
+    this(vertx, null, options);
   }
 
   public HttpTermServer(Vertx vertx, Router router, HttpTermOptions options) {
-    this.termHtml = SockJSTermHandler.defaultTermMarkupResource();
-    this.termJs = SockJSTermHandler.defaultTermScriptResource();
-    this.vertxTermJs = SockJSTermHandler.defaultVertxTermScriptResource();
     this.vertx = vertx;
+    // this.options = new HttpTermOptions(options); <-- can't use that because SockJSHandlerOptions is not copiable yet
     this.options = options;
     this.router = router;
   }
@@ -132,20 +120,26 @@ public class HttpTermServer implements TermServer {
       router = Router.router(vertx);
     }
 
-    //
-    AuthProvider authProvider = Helper.toAuthProvider(vertx, options.getAuthOptions());
-    if (authProvider != null) {
-      AuthHandler basicAuthHandler = BasicAuthHandler.create(authProvider);
-      router.route(options.getSockJSPath()).handler(basicAuthHandler);
+    if (options.getSockJSPath() != null && options.getSockJSHandlerOptions() != null) {
+      AuthProvider authProvider = Helper.toAuthProvider(vertx, options.getAuthOptions());
+      if (authProvider != null) {
+        AuthHandler basicAuthHandler = BasicAuthHandler.create(authProvider);
+        router.route(options.getSockJSPath()).handler(basicAuthHandler);
+      }
+      SockJSHandler sockJSHandler = SockJSHandler.create(vertx, options.getSockJSHandlerOptions());
+      sockJSHandler.socketHandler(new SockJSTermHandlerImpl(vertx).connectionHandler(handler::handle));
+      router.route(options.getSockJSPath()).handler(sockJSHandler);
     }
 
-    router.get("/vertxterm.js").handler(ctx -> ctx.response().putHeader("Content-Type", "application/javascript").end(vertxTermJs));
-    router.get("/term.js").handler(ctx -> ctx.response().putHeader("Content-Type", "application/javascript").end(termJs));
-    router.get("/term.html").handler(ctx -> ctx.response().putHeader("Content-Type", "text/html").end(termHtml));
-
-    SockJSHandler sockJSHandler = SockJSHandler.create(vertx, options.getSockJSHandlerOptions());
-    sockJSHandler.socketHandler(new SockJSTermHandlerImpl(vertx).connectionHandler(handler::handle));
-    router.route(options.getSockJSPath()).handler(sockJSHandler);
+    if (options.getVertsShellJsResource() != null) {
+      router.get("/vertxshell.js").handler(ctx -> ctx.response().putHeader("Content-Type", "application/javascript").end(options.getVertsShellJsResource()));
+    }
+    if (options.getTermJsResource() != null) {
+      router.get("/term.js").handler(ctx -> ctx.response().putHeader("Content-Type", "application/javascript").end(options.getTermJsResource()));
+    }
+    if (options.getShellHtmlResource() != null) {
+      router.get("/shell.html").handler(ctx -> ctx.response().putHeader("Content-Type", "text/html").end(options.getShellHtmlResource()));
+    }
 
     //
     if (createServer) {

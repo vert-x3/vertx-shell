@@ -133,13 +133,20 @@
   span[style*="background-color:#eeeeec;"] {
     background-color: #d8e2f0 !important;
   }
-</style><script src="//cdn.jsdelivr.net/sockjs/1.0.0/sockjs.min.js"></script>
+</style>
+<script src="//cdn.jsdelivr.net/sockjs/1.0.0/sockjs.min.js"></script>
 <script src="term.js"></script>
-<script src="vertxterm.js"></script>
+<script src="vertxshell.js"></script>
 
 <script type="text/javascript">
   window.addEventListener('load', function () {
-    new VertxTerm(location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/term', {
+    var url;
+    if (typeof SockJS !== 'undefined') {
+      url = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/shell';
+    } else {
+      url = location.protocol.replace('http', 'ws') + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/shell/websocket';
+    }
+    new VertxTerm(url, {
       cols: 120,
       rows: 36
     });

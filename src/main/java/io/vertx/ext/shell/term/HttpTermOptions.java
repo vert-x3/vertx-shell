@@ -43,6 +43,7 @@ import io.vertx.core.net.PemTrustOptions;
 import io.vertx.core.net.PfxOptions;
 import io.vertx.ext.auth.AuthOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthOptions;
+import io.vertx.ext.shell.term.impl.HttpTermServer;
 import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
 
 /**
@@ -53,11 +54,26 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
 @DataObject(generateConverter = true)
 public class HttpTermOptions extends HttpServerOptions {
 
-  private static final String DEFAULT_SOCKJSPATH = "/term/*";
+  public static Buffer defaultVertxShellJsResource() {
+    return HttpTermServer.loadResource("/io/vertx/ext/shell/vertxshell.js");
+  }
+
+  public static Buffer defaultTermJsResource() {
+    return HttpTermServer.loadResource("/io/vertx/ext/shell/term.js");
+  }
+
+  public static Buffer defaultShellHtmlResource() {
+    return HttpTermServer.loadResource("/io/vertx/ext/shell/shell.html");
+  }
+
+  private static final String DEFAULT_SOCKJSPATH = "/shell/*";
 
   private SockJSHandlerOptions sockJSHandlerOptions;
   private AuthOptions authOptions;
   private String sockJSPath;
+  private Buffer vertsShellJsResource;
+  private Buffer termJsResource;
+  private Buffer shellHtmlResource;
 
   public HttpTermOptions() {
     init();
@@ -71,11 +87,17 @@ public class HttpTermOptions extends HttpServerOptions {
   public HttpTermOptions(HttpTermOptions that) {
     sockJSHandlerOptions = new SockJSHandlerOptions(that.sockJSHandlerOptions);
     sockJSPath = that.sockJSPath;
+    vertsShellJsResource = that.vertsShellJsResource != null ? that.vertsShellJsResource.copy() : null;
+    termJsResource = that.termJsResource != null ? that.termJsResource.copy() : null;
+    shellHtmlResource = that.shellHtmlResource != null ? that.shellHtmlResource.copy() : null;
   }
 
   private void init() {
     sockJSHandlerOptions = new SockJSHandlerOptions();
     sockJSPath = DEFAULT_SOCKJSPATH;
+    vertsShellJsResource = defaultVertxShellJsResource();
+    termJsResource = defaultTermJsResource();
+    shellHtmlResource = defaultShellHtmlResource();
   }
 
   /**
@@ -255,5 +277,32 @@ public class HttpTermOptions extends HttpServerOptions {
   @Override
   public HttpTermOptions setHandle100ContinueAutomatically(boolean handle100ContinueAutomatically) {
     return (HttpTermOptions) super.setHandle100ContinueAutomatically(handle100ContinueAutomatically);
+  }
+
+  public Buffer getVertsShellJsResource() {
+    return vertsShellJsResource;
+  }
+
+  public HttpTermOptions setVertsShellJsResource(Buffer vertsShellJsResource) {
+    this.vertsShellJsResource = vertsShellJsResource;
+    return this;
+  }
+
+  public Buffer getTermJsResource() {
+    return termJsResource;
+  }
+
+  public HttpTermOptions setTermJsResource(Buffer termJsResource) {
+    this.termJsResource = termJsResource;
+    return this;
+  }
+
+  public Buffer getShellHtmlResource() {
+    return shellHtmlResource;
+  }
+
+  public HttpTermOptions setShellHtmlResource(Buffer shellHtmlResource) {
+    this.shellHtmlResource = shellHtmlResource;
+    return this;
   }
 }

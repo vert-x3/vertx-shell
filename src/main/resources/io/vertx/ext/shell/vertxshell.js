@@ -8,12 +8,27 @@
     var termOptions = options.termOptions || { screenKeys: true };
     termOptions.cols = cols;
     termOptions.rows = rows;
-    var socket = new SockJS(url);
+    var socket;
+    if (url.substring(0, 2) == 'ws') {
+      socket = new WebSocket(url);
+      socket.binaryType = 'blob';
+    } else {
+      socket = new SockJS(url);
+    }
     socket.onopen = function () {
       var term = new Terminal(termOptions);
       socket.onmessage = function (event) {
         if (event.type === 'message') {
-          term.write(event.data);
+          console.log(typeof event.data);
+          if (typeof event.data !== 'string') {
+            var reader = new FileReader();
+            reader.onloadend = function() {
+              term.write(reader.result);
+            };
+            reader.readAsText(event.data);
+          } else {
+            term.write(event.data);
+          }
         }
       };
       socket.onclose = function () {

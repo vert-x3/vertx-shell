@@ -27,6 +27,9 @@ import io.vertx.core.json.JsonArray;
 public class HttpTermOptionsConverter {
 
   public static void fromJson(JsonObject json, HttpTermOptions obj) {
+    if (json.getValue("shellHtmlResource") instanceof String) {
+      obj.setShellHtmlResource(io.vertx.core.buffer.Buffer.buffer(java.util.Base64.getDecoder().decode((String)json.getValue("shellHtmlResource"))));
+    }
     if (json.getValue("shiroAuthOptions") instanceof JsonObject) {
       obj.setShiroAuthOptions(new io.vertx.ext.auth.shiro.ShiroAuthOptions((JsonObject)json.getValue("shiroAuthOptions")));
     }
@@ -36,11 +39,26 @@ public class HttpTermOptionsConverter {
     if (json.getValue("sockJSPath") instanceof String) {
       obj.setSockJSPath((String)json.getValue("sockJSPath"));
     }
+    if (json.getValue("termJsResource") instanceof String) {
+      obj.setTermJsResource(io.vertx.core.buffer.Buffer.buffer(java.util.Base64.getDecoder().decode((String)json.getValue("termJsResource"))));
+    }
+    if (json.getValue("vertsShellJsResource") instanceof String) {
+      obj.setVertsShellJsResource(io.vertx.core.buffer.Buffer.buffer(java.util.Base64.getDecoder().decode((String)json.getValue("vertsShellJsResource"))));
+    }
   }
 
   public static void toJson(HttpTermOptions obj, JsonObject json) {
+    if (obj.getShellHtmlResource() != null) {
+      json.put("shellHtmlResource", obj.getShellHtmlResource().getBytes());
+    }
     if (obj.getSockJSPath() != null) {
       json.put("sockJSPath", obj.getSockJSPath());
+    }
+    if (obj.getTermJsResource() != null) {
+      json.put("termJsResource", obj.getTermJsResource().getBytes());
+    }
+    if (obj.getVertsShellJsResource() != null) {
+      json.put("vertsShellJsResource", obj.getVertsShellJsResource().getBytes());
     }
   }
 }
