@@ -66,8 +66,8 @@ public class ShellServer {
    * @param msg the welcome message
    * @return a reference to this, so the API can be used fluently
    */
-  public ShellServer welcomeMessage(String msg) {
-    this.delegate.welcomeMessage(msg);
+  public ShellServer setWelcomeMessage(String msg) {
+    this.delegate.setWelcomeMessage(msg);
     return this;
   }
   /**

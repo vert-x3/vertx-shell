@@ -74,6 +74,7 @@ public class ShellServiceImpl implements ShellService {
     if (webOptions != null) {
       server.registerTermServer(new HttpTermServer(vertx, webOptions));
     }
+    server.setWelcomeMessage(options.getWelcomeMessage());
     server.listen(startHandler);
   }
 

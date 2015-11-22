@@ -45,12 +45,12 @@ module VertxShell
     #  Set the shell welcome message.
     # @param [String] msg the welcome message
     # @return [self]
-    def welcome_message(msg=nil)
+    def set_welcome_message(msg=nil)
       if msg.class == String && !block_given?
-        @j_del.java_method(:welcomeMessage, [Java::java.lang.String.java_class]).call(msg)
+        @j_del.java_method(:setWelcomeMessage, [Java::java.lang.String.java_class]).call(msg)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling welcome_message(msg)"
+      raise ArgumentError, "Invalid arguments when calling set_welcome_message(msg)"
     end
     #  Register a term server to this shell server, the term server lifecycle methods are managed by this shell server.
     # @param [::VertxShell::TermServer] termServer the term server to add

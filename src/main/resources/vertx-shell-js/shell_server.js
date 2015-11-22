@@ -56,10 +56,10 @@ var ShellServer = function(j_val) {
    @param msg {string} the welcome message 
    @return {ShellServer} a reference to this, so the API can be used fluently
    */
-  this.welcomeMessage = function(msg) {
+  this.setWelcomeMessage = function(msg) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'string') {
-      j_shellServer["welcomeMessage(java.lang.String)"](msg);
+      j_shellServer["setWelcomeMessage(java.lang.String)"](msg);
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };

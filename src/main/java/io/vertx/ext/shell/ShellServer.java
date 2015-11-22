@@ -80,7 +80,7 @@ public interface ShellServer {
    * @return a reference to this, so the API can be used fluently
    */
   @Fluent
-  ShellServer welcomeMessage(String msg);
+  ShellServer setWelcomeMessage(String msg);
 
   /**
    * Register a term server to this shell server, the term server lifecycle methods are managed by this shell server.

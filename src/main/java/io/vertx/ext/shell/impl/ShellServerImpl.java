@@ -83,7 +83,7 @@ public class ShellServerImpl implements ShellServer {
   }
 
   @Override
-  public ShellServer welcomeMessage(String msg) {
+  public ShellServer setWelcomeMessage(String msg) {
     welcomeMessage = msg;
     return this;
   }
