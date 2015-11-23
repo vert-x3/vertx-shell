@@ -27,7 +27,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 
 /**
- * The shell server.
+ * The shell server.<p/>
  *
  * A shell server is associated with a collection of : the {@link io.vertx.rxjava.ext.shell.ShellServer#registerTermServer}
  * method registers a term server. Term servers life cycle are managed by this server.<p/>

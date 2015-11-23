@@ -54,14 +54,23 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
 @DataObject(generateConverter = true)
 public class HttpTermOptions extends HttpServerOptions {
 
+  /**
+   * @return the {@code vertxshell.js} default resource as a buffer
+   */
   public static Buffer defaultVertxShellJsResource() {
     return HttpTermServer.loadResource("/io/vertx/ext/shell/vertxshell.js");
   }
 
+  /**
+   * @return the {@code term.js} default resource as a buffer
+   */
   public static Buffer defaultTermJsResource() {
     return HttpTermServer.loadResource("/io/vertx/ext/shell/term.js");
   }
 
+  /**
+   * @return the {@code shell.html} default resource as a buffer
+   */
   public static Buffer defaultShellHtmlResource() {
     return HttpTermServer.loadResource("/io/vertx/ext/shell/shell.html");
   }
@@ -279,28 +288,55 @@ public class HttpTermOptions extends HttpServerOptions {
     return (HttpTermOptions) super.setHandle100ContinueAutomatically(handle100ContinueAutomatically);
   }
 
+  /**
+   * @return the {@code vertxshell.js} resource for this server
+   */
   public Buffer getVertsShellJsResource() {
     return vertsShellJsResource;
   }
 
+  /**
+   * Set {@code vertxshell.js} resource to use.
+   *
+   * @param vertsShellJsResource the resource
+   * @return a reference to this, so the API can be used fluently
+   */
   public HttpTermOptions setVertsShellJsResource(Buffer vertsShellJsResource) {
     this.vertsShellJsResource = vertsShellJsResource;
     return this;
   }
 
+  /**
+   * @return the {@code term.js} resource for this server
+   */
   public Buffer getTermJsResource() {
     return termJsResource;
   }
 
+  /**
+   * Set {@code term.js} resource to use.
+   *
+   * @param termJsResource the resource
+   * @return a reference to this, so the API can be used fluently
+   */
   public HttpTermOptions setTermJsResource(Buffer termJsResource) {
     this.termJsResource = termJsResource;
     return this;
   }
 
+  /**
+   * @return the {@code shell.html} resource for this server
+   */
   public Buffer getShellHtmlResource() {
     return shellHtmlResource;
   }
 
+  /**
+   * Set {@code shell.html} resource to use.
+   *
+   * @param shellHtmlResource the resource
+   * @return a reference to this, so the API can be used fluently
+   */
   public HttpTermOptions setShellHtmlResource(Buffer shellHtmlResource) {
     this.shellHtmlResource = shellHtmlResource;
     return this;

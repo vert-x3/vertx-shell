@@ -40,11 +40,11 @@ or
 .Starting a shell service available via HTTP
 [source,subs="+attributes"]
 ----
-# create a key pair for the SSH server
+# create a certificate for the HTTP server
 keytool -genkey -keyalg RSA -keystore keystore.jks -keysize 2048 -validity 1095 -dname CN=localhost -keypass secret -storepass secret
 # create the auth config
 echo user.admin=password > auth.properties
-vertx run -conf '{"httpOptions":{"port":4000,"ssl":true,"keyStoreOptions":{"path":"keystore.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.2.0-SNAPSHOT
+vertx run -conf '{"httpOptions":{"port":8080,"ssl":true,"keyStoreOptions":{"path":"keystore.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.2.0-SNAPSHOT
 ----
 
 You can also deploy this service inside your own verticle:
@@ -776,5 +776,5 @@ window.addEventListener('load', function () {
  });
 ----
 
-For customization purpose these resources should be copied and customized, they are available in the Vert.x Shell
+For customization purpose these resources can be copied and customized, they are available in the Vert.x Shell
 jar under the `io.vertx.ext.shell` packages.

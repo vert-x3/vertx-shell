@@ -26,7 +26,7 @@ var JsonObject = io.vertx.core.json.JsonObject;
 var JShellServer = io.vertx.ext.shell.ShellServer;
 
 /**
- The shell server.
+ The shell server.<p/>
 
  @class
 */

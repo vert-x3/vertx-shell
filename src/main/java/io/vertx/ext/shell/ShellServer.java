@@ -43,7 +43,7 @@ import io.vertx.ext.shell.system.Shell;
 import io.vertx.ext.shell.term.TermServer;
 
 /**
- * The shell server.
+ * The shell server.<p/>
  *
  * A shell server is associated with a collection of {@link TermServer term servers}: the {@link #registerTermServer(TermServer)}
  * method registers a term server. Term servers life cycle are managed by this server.<p/>

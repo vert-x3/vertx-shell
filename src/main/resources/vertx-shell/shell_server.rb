@@ -5,7 +5,7 @@ require 'vertx-shell/command_registry'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.ShellServer
 module VertxShell
-  #  The shell server.
+  #  The shell server.<p/>
   # 
   #  A shell server is associated with a collection of : the {::VertxShell::ShellServer#register_term_server}
   #  method registers a term server. Term servers life cycle are managed by this server.<p/>
