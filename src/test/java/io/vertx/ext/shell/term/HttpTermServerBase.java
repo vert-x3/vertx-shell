@@ -83,7 +83,7 @@ public abstract class HttpTermServerBase {
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
-      client.websocket(8080, "localhost", basePath + "/term/websocket", ws -> {
+      client.websocket(8080, "localhost", basePath + "/shell/websocket", ws -> {
         ws.handler(buf -> {
           context.assertEquals("hello_from_server", buf.toString());
           async.complete();
@@ -104,7 +104,7 @@ public abstract class HttpTermServerBase {
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
-      client.websocket(8080, "localhost", basePath + "/term/websocket", ws -> {
+      client.websocket(8080, "localhost", basePath + "/shell/websocket", ws -> {
         ws.writeFinalTextFrame(new JsonObject().put("action", "read").put("data", "hello_from_client").encode());
       }, context::fail);
     }));
@@ -112,57 +112,57 @@ public abstract class HttpTermServerBase {
 
   @Test
   public void testInitialSize(TestContext context) {
-    testSize(context, basePath + "/term/websocket?cols=100&rows=50", 100, 50);
+    testSize(context, basePath + "/shell/websocket?cols=100&rows=50", 100, 50);
   }
 
   @Test
   public void testInitialSizeCols(TestContext context) {
-    testSize(context, basePath + "/term/websocket?cols=100", 100, 24);
+    testSize(context, basePath + "/shell/websocket?cols=100", 100, 24);
   }
 
   @Test
   public void testInitialSizeRows(TestContext context) {
-    testSize(context, basePath + "/term/websocket?rows=50", 80, 50);
+    testSize(context, basePath + "/shell/websocket?rows=50", 80, 50);
   }
 
   @Test
   public void testInitialSizeNegative1(TestContext context) {
-    testSize(context, basePath + "/term/websocket?cols=100&rows=-50", 80, 24);
+    testSize(context, basePath + "/shell/websocket?cols=100&rows=-50", 80, 24);
   }
 
   @Test
   public void testInitialSizeNegative2(TestContext context) {
-    testSize(context, basePath + "/term/websocket?cols=-100&rows=50", 80, 24);
+    testSize(context, basePath + "/shell/websocket?cols=-100&rows=50", 80, 24);
   }
 
   @Test
   public void testInitialSizeNegative3(TestContext context) {
-    testSize(context, basePath + "/term/websocket?rows=-50", 80, 24);
+    testSize(context, basePath + "/shell/websocket?rows=-50", 80, 24);
   }
 
   @Test
   public void testInitialSizeNegative4(TestContext context) {
-    testSize(context, basePath + "/term/websocket?cols=-100", 80, 24);
+    testSize(context, basePath + "/shell/websocket?cols=-100", 80, 24);
   }
 
   @Test
   public void testInitialSizeInvalid1(TestContext context) {
-    testSize(context, basePath + "/term/websocket?cols=100&rows=abc", 80, 24);
+    testSize(context, basePath + "/shell/websocket?cols=100&rows=abc", 80, 24);
   }
 
   @Test
   public void testInitialSizeInvalid2(TestContext context) {
-    testSize(context, basePath + "/term/websocket?cols=abc&rows=50", 80, 24);
+    testSize(context, basePath + "/shell/websocket?cols=abc&rows=50", 80, 24);
   }
 
   @Test
   public void testInitialSizeInvalid3(TestContext context) {
-    testSize(context, basePath + "/term/websocket?rows=abc", 80, 24);
+    testSize(context, basePath + "/shell/websocket?rows=abc", 80, 24);
   }
 
   @Test
   public void testInitialSizeInvalid4(TestContext context) {
-    testSize(context, basePath + "/term/websocket?cols=abc", 80, 24);
+    testSize(context, basePath + "/shell/websocket?cols=abc", 80, 24);
   }
 
   private void testSize(TestContext context, String uri, int expectedCols, int expectedRows) {
@@ -207,7 +207,7 @@ public abstract class HttpTermServerBase {
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
-      client.websocket(8080, "localhost", basePath + "/term/websocket", ws -> {
+      client.websocket(8080, "localhost", basePath + "/shell/websocket", ws -> {
         ws.writeFinalTextFrame(event.encode());
       }, context::fail);
     }));
@@ -224,7 +224,7 @@ public abstract class HttpTermServerBase {
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
-      client.websocket(8080, "localhost", basePath + "/term/websocket", ws -> {
+      client.websocket(8080, "localhost", basePath + "/shell/websocket", ws -> {
         ws.writeFinalTextFrame(new JsonObject().put("action", "resize").put("cols", -50).encode());
         vertx.setTimer(1000, id -> {
           async.complete();
@@ -245,11 +245,11 @@ public abstract class HttpTermServerBase {
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
-      client.websocket(8080, "localhost", basePath + "/term/websocket", ws -> {
+      client.websocket(8080, "localhost", basePath + "/shell/websocket", ws -> {
         context.fail();
       }, err -> {
         // Retry now with auth
-        client.websocket(8080, "localhost", basePath + "/term/websocket",
+        client.websocket(8080, "localhost", basePath + "/shell/websocket",
             new CaseInsensitiveHeaders().add("Authorization", "Basic " + Base64.getEncoder().encodeToString("tim:sausages".getBytes())),
             ws -> {
               ws.handler(buf -> {
