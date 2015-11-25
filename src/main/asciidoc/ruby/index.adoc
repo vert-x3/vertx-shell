@@ -804,5 +804,15 @@ public class CustomCommandPack implements CommandPack {
 }
 ----
 
-NOTE: this is only valid for the `link:../../yardoc/VertxShell/ShellService.html[ShellService]`. `link:../../yardoc/VertxShell/ShellServer.html[ShellServer]`
+The shell service discovery packs using the service loader mechanism:
+
+.The service provider file `META-INF/services/io.vertx.ext.shell.command.CommandPack`
+[source]
+----
+my.CustomCommandPack
+----
+
+This is only valid for the `link:../../yardoc/VertxShell/ShellService.html[ShellService]`. `link:../../yardoc/VertxShell/ShellServer.html[ShellServer]`
 don't use this mechanism.
+
+For shell servers, the command pack can be an argument of `link:../../yardoc/VertxShell/CommandRegistry.html#register_commands-instance_method[registerCommands]`.

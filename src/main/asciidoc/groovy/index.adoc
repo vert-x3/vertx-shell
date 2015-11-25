@@ -805,5 +805,15 @@ public class CustomCommandPack implements CommandPack {
 }
 ----
 
-NOTE: this is only valid for the `link:../../groovydoc/io/vertx/groovy/ext/shell/ShellService.html[ShellService]`. `link:../../groovydoc/io/vertx/groovy/ext/shell/ShellServer.html[ShellServer]`
+The shell service discovery packs using the service loader mechanism:
+
+.The service provider file `META-INF/services/io.vertx.ext.shell.command.CommandPack`
+[source]
+----
+my.CustomCommandPack
+----
+
+This is only valid for the `link:../../groovydoc/io/vertx/groovy/ext/shell/ShellService.html[ShellService]`. `link:../../groovydoc/io/vertx/groovy/ext/shell/ShellServer.html[ShellServer]`
 don't use this mechanism.
+
+For shell servers, the command pack can be an argument of `link:../../groovydoc/io/vertx/groovy/ext/shell/registry/CommandRegistry.html#registerCommands(io.vertx.ext.shell.command.CommandPack)[registerCommands]`.

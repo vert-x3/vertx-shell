@@ -559,8 +559,18 @@
  * }
  * ----
  *
- * NOTE: this is only valid for the {@link io.vertx.ext.shell.ShellService}. {@link io.vertx.ext.shell.ShellServer}
+ * The shell service discovery packs using the service loader mechanism:
+ *
+ * .The service provider file `META-INF/services/io.vertx.ext.shell.command.CommandPack`
+ * [source]
+ * ----
+ * my.CustomCommandPack
+ * ----
+ *
+ * This is only valid for the {@link io.vertx.ext.shell.ShellService}. {@link io.vertx.ext.shell.ShellServer}
  * don't use this mechanism.
+ *
+ * For shell servers, the command pack can be an argument of {@link io.vertx.ext.shell.registry.CommandRegistry#registerCommands}.
  */
 @ModuleGen(name = "vertx-shell", groupPackage = "io.vertx")
 @Document(fileName = "index.adoc")
