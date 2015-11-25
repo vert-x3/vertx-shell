@@ -86,6 +86,7 @@ public class SSHTermServer implements TermServer {
   private SshServer nativeServer;
   private final AtomicInteger status = new AtomicInteger(STATUS_STOPPED);
   private ContextInternal listenContext;
+  private AuthProvider authProvider;
 
   public SSHTermServer(Vertx vertx, SSHTermOptions options) {
     this.vertx = vertx;
@@ -118,10 +119,19 @@ public class SSHTermServer implements TermServer {
     return this;
   }
 
+  @Override
+  public TermServer authProvider(AuthProvider provider) {
+    authProvider = provider;
+    return this;
+  }
+
   public SSHTermServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
     if (!status.compareAndSet(STATUS_STOPPED, STATUS_STARTING)) {
       listenHandler.handle(Future.failedFuture("Invalid state:" + status.get()));
       return this;
+    }
+    if (options.getAuthOptions() != null) {
+      authProvider = Helper.toAuthProvider(vertx, options.getAuthOptions());
     }
     listenContext = (ContextInternal) vertx.getOrCreateContext();
     vertx.executeBlocking(fut -> {
@@ -167,7 +177,6 @@ public class SSHTermServer implements TermServer {
         nativeServer.setServiceFactories(Arrays.asList(ServerConnectionServiceFactory.INSTANCE, AsyncUserAuthServiceFactory.INSTANCE));
 
         //
-        AuthProvider authProvider = Helper.toAuthProvider(vertx, options.getAuthOptions());
         if (authProvider == null) {
           throw new VertxException("No authenticator");
         }

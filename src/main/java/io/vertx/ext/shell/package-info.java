@@ -455,6 +455,13 @@
  *
  * Vert.x Shell also provides bare terminal servers for those who need to write pure terminal applications.
  *
+ * A {@link io.vertx.ext.shell.term.Term} handler must be set on a term server before starting it. This handler will
+ * handle each term when the user connects.
+ *
+ * An {@link io.vertx.ext.auth.AuthOptions} can be set on {@link io.vertx.ext.shell.term.SSHTermOptions} and {@link io.vertx.ext.shell.term.HttpTermOptions}.
+ * Alternatively, an {@link io.vertx.ext.auth.AuthProvider} can be {@link io.vertx.ext.shell.term.TermServer#authProvider(io.vertx.ext.auth.AuthProvider) set}
+ * directly on the term server before starting it.
+ *
  * === SSH term
  *
  * The terminal server {@link io.vertx.ext.shell.term.Term} handler accepts incoming terminal connections.

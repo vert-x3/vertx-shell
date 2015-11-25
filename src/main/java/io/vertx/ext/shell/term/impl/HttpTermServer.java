@@ -83,6 +83,7 @@ public class HttpTermServer implements TermServer {
   private Handler<TtyConnection> handler;
   private HttpServer server;
   private Router router;
+  private AuthProvider authProvider;
 
   public HttpTermServer(Vertx vertx, HttpTermOptions options) {
     this(vertx, null, options);
@@ -112,6 +113,12 @@ public class HttpTermServer implements TermServer {
   }
 
   @Override
+  public TermServer authProvider(AuthProvider provider) {
+    authProvider = provider;
+    return this;
+  }
+
+  @Override
   public TermServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
 
     boolean createServer = false;
@@ -120,8 +127,11 @@ public class HttpTermServer implements TermServer {
       router = Router.router(vertx);
     }
 
+    if (options.getAuthOptions() != null) {
+      authProvider = Helper.toAuthProvider(vertx, options.getAuthOptions());
+    }
+
     if (options.getSockJSPath() != null && options.getSockJSHandlerOptions() != null) {
-      AuthProvider authProvider = Helper.toAuthProvider(vertx, options.getAuthOptions());
       if (authProvider != null) {
         AuthHandler basicAuthHandler = BasicAuthHandler.create(authProvider);
         router.route(options.getSockJSPath()).handler(basicAuthHandler);

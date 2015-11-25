@@ -25,6 +25,7 @@ import io.vertx.groovy.core.Vertx
 import io.vertx.groovy.ext.web.Router
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
+import io.vertx.groovy.ext.auth.AuthProvider
 /**
  * A server for terminal based applications.
 */
@@ -128,6 +129,16 @@ public class TermServer {
         handler.handle(new io.vertx.groovy.ext.shell.term.Term(event));
       }
     });
+    return this;
+  }
+  /**
+   * Set an auth provider to use, any provider configured in options will override this provider. This should be used
+   * when a custom auth provider should be used.
+   * @param provider the auth to use
+   * @return this object
+   */
+  public TermServer authProvider(AuthProvider provider) {
+    this.delegate.authProvider((io.vertx.ext.auth.AuthProvider)provider.getDelegate());
     return this;
   }
   /**

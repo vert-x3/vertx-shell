@@ -1,6 +1,7 @@
 require 'vertx/vertx'
 require 'vertx-web/router'
 require 'vertx-shell/term'
+require 'vertx-auth-common/auth_provider'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.term.TermServer
 module VertxShell
@@ -77,6 +78,17 @@ module VertxShell
         return self
       end
       raise ArgumentError, "Invalid arguments when calling term_handler()"
+    end
+    #  Set an auth provider to use, any provider configured in options will override this provider. This should be used
+    #  when a custom auth provider should be used.
+    # @param [::VertxAuthCommon::AuthProvider] provider the auth to use
+    # @return [self]
+    def auth_provider(provider=nil)
+      if provider.class.method_defined?(:j_del) && !block_given?
+        @j_del.java_method(:authProvider, [Java::IoVertxExtAuth::AuthProvider.java_class]).call(provider.j_del)
+        return self
+      end
+      raise ArgumentError, "Invalid arguments when calling auth_provider(provider)"
     end
     #  Bind the term server, the {::VertxShell::TermServer#term_handler} must be set before.
     # @yield the listen handler

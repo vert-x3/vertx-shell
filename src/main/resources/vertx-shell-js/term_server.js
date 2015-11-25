@@ -19,6 +19,7 @@ var utils = require('vertx-js/util/utils');
 var Vertx = require('vertx-js/vertx');
 var Router = require('vertx-web-js/router');
 var Term = require('vertx-shell-js/term');
+var AuthProvider = require('vertx-auth-common-js/auth_provider');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
@@ -52,6 +53,22 @@ var TermServer = function(j_val) {
       j_termServer["termHandler(io.vertx.core.Handler)"](function(jVal) {
       handler(utils.convReturnVertxGen(jVal, Term));
     });
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Set an auth provider to use, any provider configured in options will override this provider. This should be used
+   when a custom auth provider should be used.
+
+   @public
+   @param provider {AuthProvider} the auth to use 
+   @return {TermServer} this object
+   */
+  this.authProvider = function(provider) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      j_termServer["authProvider(io.vertx.ext.auth.AuthProvider)"](provider._jdel);
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };

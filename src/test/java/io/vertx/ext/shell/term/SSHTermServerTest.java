@@ -34,8 +34,18 @@ package io.vertx.ext.shell.term;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelShell;
+import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonObject;
+import io.vertx.core.net.JksOptions;
+import io.vertx.ext.auth.AbstractUser;
+import io.vertx.ext.auth.AuthProvider;
+import io.vertx.ext.auth.User;
+import io.vertx.ext.auth.shiro.ShiroAuthOptions;
+import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.shell.SSHTestBase;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
@@ -50,6 +60,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static org.junit.Assert.assertEquals;
@@ -62,6 +74,7 @@ public class SSHTermServerTest extends SSHTestBase {
 
   TermServer server;
   Handler<Term> termHandler;
+  AuthProvider authProvider;
 
   @Override
   public void before() {
@@ -86,6 +99,7 @@ public class SSHTermServerTest extends SSHTestBase {
     server = TermServer.createSSHTermServer(vertx, options);
     CompletableFuture<Void> fut = new CompletableFuture<>();
     server.termHandler(termHandler);
+    server.authProvider(authProvider);
     server.listen(ar -> {
       if (ar.succeeded()) {
         fut.complete(null);
@@ -228,4 +242,65 @@ public class SSHTermServerTest extends SSHTestBase {
     Channel channel = session.openChannel("shell");
     channel.connect();
   }
+
+  @Test
+  public void testExternalAuthProvider(TestContext context) throws Exception {
+    AtomicInteger count = new AtomicInteger();
+    authProvider = (authInfo, resultHandler) -> {
+      count.incrementAndGet();
+      String username = authInfo.getString("username");
+      String password = authInfo.getString("password");
+      if (username.equals("paulo") && password.equals("anothersecret")) {
+        resultHandler.handle(Future.succeededFuture(new AbstractUser() {
+          @Override
+          protected void doIsPermitted(String permission, Handler<AsyncResult<Boolean>> resultHandler) {
+            resultHandler.handle(Future.succeededFuture(true));
+          }
+          @Override
+          public JsonObject principal() {
+            return new JsonObject().put("username", username);
+          }
+          @Override
+          public void setAuthProvider(AuthProvider authProvider) {
+          }
+        }));
+      } else {
+        resultHandler.handle(Future.failedFuture("not authenticated"));
+      }
+    };
+    Async async = context.async();
+    termHandler = term -> {
+      context.assertEquals(1, count.get());
+      async.complete();
+    };
+    startShell(new SSHTermOptions().setPort(5000).setHost("localhost").setKeyPairOptions(
+        new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")));
+    Session session = createSession("paulo", "anothersecret", false);
+    session.connect();
+    Channel channel = session.openChannel("shell");
+    channel.connect();
+  }
+
+  @Test
+  public void testExternalAuthProviderFails(TestContext context) throws Exception {
+    AtomicInteger count = new AtomicInteger();
+    authProvider = (authInfo, resultHandler) -> {
+      count.incrementAndGet();
+      resultHandler.handle(Future.failedFuture("not authenticated"));
+    };
+    termHandler = term -> {
+      context.fail();
+    };
+    startShell(new SSHTermOptions().setPort(5000).setHost("localhost").setKeyPairOptions(
+        new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")));
+    Session session = createSession("paulo", "anothersecret", false);
+    try {
+      session.connect();
+      context.fail("Was not expected to login");
+    } catch (JSchException e) {
+      assertEquals("Auth cancel", e.getMessage());
+    }
+    context.assertEquals(1, count.get());
+  }
+
 }

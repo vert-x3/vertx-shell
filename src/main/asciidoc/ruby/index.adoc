@@ -9,7 +9,7 @@ Vert.x Shell can be extended with custom commands in any language supported by V
 
 == Using Vert.x Shell
 
-Vert.x Shell is a Vert.x Service and can be started programmatically via the `link:yardoc/VertxShell/ShellService.html[ShellService]`
+Vert.x Shell is a Vert.x Service and can be started programmatically via the `link:../../yardoc/VertxShell/ShellService.html[ShellService]`
 or deployed as a service.
 
 === Shell service
@@ -112,7 +112,7 @@ or `maven:io.vertx:vertx-shell:3.2.0-SNAPSHOT`
 
 === Programmatic service
 
-The `link:yardoc/VertxShell/ShellService.html[ShellService]` takes care of starting an instance of Vert.x Shell.
+The `link:../../yardoc/VertxShell/ShellService.html[ShellService]` takes care of starting an instance of Vert.x Shell.
 
 Starting a shell service available via SSH:
 
@@ -251,8 +251,8 @@ NOTE: this command list should evolve in next releases of Vert.x Shell
 
 Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
 
-A command is created by the `link:yardoc/VertxShell/CommandBuilder.html#command-class_method[CommandBuilder.command]` method: the command process handler is called
-by the shell when the command is executed, this handler can be set with the `link:yardoc/VertxShell/CommandBuilder.html#process_handler-instance_method[processHandler]`
+A command is created by the `link:../../yardoc/VertxShell/CommandBuilder.html#command-class_method[CommandBuilder.command]` method: the command process handler is called
+by the shell when the command is executed, this handler can be set with the `link:../../yardoc/VertxShell/CommandBuilder.html#process_handler-instance_method[processHandler]`
 method:
 
 [source,ruby]
@@ -276,21 +276,21 @@ registry.register_command(builder.build())
 
 ----
 
-After a command is created, it needs to be registed to a `link:yardoc/VertxShell/CommandRegistry.html[CommandRegistry]`. The
+After a command is created, it needs to be registed to a `link:../../yardoc/VertxShell/CommandRegistry.html[CommandRegistry]`. The
 command registry holds all the commands for a Vert.x instance.
 
-A command is registered until it is unregistered with the `link:yardoc/VertxShell/CommandRegistration.html#unregister-instance_method[unregister]`
-method or the `link:yardoc/VertxShell/CommandRegistry.html#unregister_command-instance_method[unregisterCommand]`. When a command is
+A command is registered until it is unregistered with the `link:../../yardoc/VertxShell/CommandRegistration.html#unregister-instance_method[unregister]`
+method or the `link:../../yardoc/VertxShell/CommandRegistry.html#unregister_command-instance_method[unregisterCommand]`. When a command is
 registered from a Verticle, this command is unregistered when this verticle is undeployed.
 
 NOTE: Command callbacks are invoked in the `io.vertx.core.Context` when the command is registered in the
 registry. Keep this in mind if you maintain state in a command.
 
-The `link:yardoc/VertxShell/CommandProcess.html[CommandProcess]` object can be used for interacting with the shell.
+The `link:../../yardoc/VertxShell/CommandProcess.html[CommandProcess]` object can be used for interacting with the shell.
 
 === Command arguments
 
-The `link:yardoc/VertxShell/CommandProcess.html#args-instance_method[args]` returns the command arguments:
+The `link:../../yardoc/VertxShell/CommandProcess.html#args-instance_method[args]` returns the command arguments:
 
 [source,ruby]
 ----
@@ -306,7 +306,7 @@ command.process_handler() { |process|
 
 ----
 
-Besides it is also possible to create commands using `link:../../vertx-core/ruby/yardoc/Vertx/CLI.html[Vert.x CLI]`: it makes easier to
+Besides it is also possible to create commands using `link:../../yardoc/Vertx/CLI.html[Vert.x CLI]`: it makes easier to
 write command line argument parsing:
 
 - _option_ and _argument_ parsing
@@ -358,15 +358,15 @@ command.process_handler() { |process|
 
 ----
 
-When the command executes the `link:yardoc/VertxShell/CommandProcess.html[process]` is provided for interacting
-with the shell. A `link:yardoc/VertxShell/CommandProcess.html[CommandProcess]` extends `link:yardoc/VertxShell/Tty.html[Tty]`
+When the command executes the `link:../../yardoc/VertxShell/CommandProcess.html[process]` is provided for interacting
+with the shell. A `link:../../yardoc/VertxShell/CommandProcess.html[CommandProcess]` extends `link:../../yardoc/VertxShell/Tty.html[Tty]`
 which is used for interacting with the terminal.
 
 === Terminal usage
 
 ==== terminal I/O
 
-The `link:yardoc/VertxShell/Tty.html#set_stdin-instance_method[setStdin]` handler is used to be notified when the terminal
+The `link:../../yardoc/VertxShell/Tty.html#set_stdin-instance_method[setStdin]` handler is used to be notified when the terminal
 receives data, e.g the user uses his keyboard:
 
 [source,ruby]
@@ -377,7 +377,7 @@ tty.set_stdin(lambda { |data|
 
 ----
 
-A command can use the `link:yardoc/VertxShell/Tty.html#stdout-instance_method[stdout]` to write to the standard output.
+A command can use the `link:../../yardoc/VertxShell/Tty.html#stdout-instance_method[stdout]` to write to the standard output.
 
 [source,ruby]
 ----
@@ -387,8 +387,8 @@ tty.stdout().write("Hello World")
 
 ==== Terminal size
 
-The current terminal size can be obtained using `link:yardoc/VertxShell/Tty.html#width-instance_method[width]` and
-`link:yardoc/VertxShell/Tty.html#height-instance_method[height]`.
+The current terminal size can be obtained using `link:../../yardoc/VertxShell/Tty.html#width-instance_method[width]` and
+`link:../../yardoc/VertxShell/Tty.html#height-instance_method[height]`.
 
 [source,ruby]
 ----
@@ -398,9 +398,9 @@ tty.stdout().write("Current terminal size: (#{tty.width()}, #{tty.height()})")
 
 ==== Resize event
 
-When the size of the terminal changes the `link:yardoc/VertxShell/Tty.html#resizehandler-instance_method[resizehandler]`
-is called, the new terminal size can be obtained with `link:yardoc/VertxShell/Tty.html#width-instance_method[width]` and
-`link:yardoc/VertxShell/Tty.html#height-instance_method[height]`.
+When the size of the terminal changes the `link:../../yardoc/VertxShell/Tty.html#resizehandler-instance_method[resizehandler]`
+is called, the new terminal size can be obtained with `link:../../yardoc/VertxShell/Tty.html#width-instance_method[width]` and
+`link:../../yardoc/VertxShell/Tty.html#height-instance_method[height]`.
 
 [source,ruby]
 ----
@@ -412,7 +412,7 @@ tty.resizehandler() { |v|
 
 ==== Terminal type
 
-The terminal type is useful for sending escape codes to the remote terminal: `link:yardoc/VertxShell/Tty.html#type-instance_method[type]`
+The terminal type is useful for sending escape codes to the remote terminal: `link:../../yardoc/VertxShell/Tty.html#type-instance_method[type]`
 returns the current terminal type, it can be null if the terminal has not advertised the value.
 
 [source,ruby]
@@ -424,7 +424,7 @@ puts "terminal type : #{tty.type()}"
 === Shell session
 
 The shell is a connected service that naturally maintains a session with the client, this session can be
-used in commands to scope data. A command can get the session with `link:yardoc/VertxShell/CommandProcess.html#session-instance_method[session]`:
+used in commands to scope data. A command can get the session with `link:../../yardoc/VertxShell/CommandProcess.html#session-instance_method[session]`:
 
 [source,ruby]
 ----
@@ -443,7 +443,7 @@ command.process_handler() { |process|
 
 === Process termination
 
-Calling `link:yardoc/VertxShell/CommandProcess.html#end-instance_method[end]` ends the current process. It can be called directly
+Calling `link:../../yardoc/VertxShell/CommandProcess.html#end-instance_method[end]` ends the current process. It can be called directly
 in the invocation of the command handler or any time later:
 
 [source,ruby]
@@ -467,7 +467,7 @@ A command can subscribe to a few process events.
 
 ==== Interrupt event
 
-The `link:yardoc/VertxShell/CommandProcess.html#interrupt_handler-instance_method[interruptHandler]` is called when the process
+The `link:../../yardoc/VertxShell/CommandProcess.html#interrupt_handler-instance_method[interruptHandler]` is called when the process
 is interrupted, this event is fired when the user press _Ctrl+C_ during the execution of a command. This handler can
 be used for interrupting commands _blocking_ the CLI and gracefully ending the command process:
 
@@ -495,7 +495,7 @@ will be delayed and will likely be handled by the shell, like printing a new lin
 
 ==== Suspend/resume events
 
-The `link:yardoc/VertxShell/CommandProcess.html#suspend_handler-instance_method[suspendHandler]` is called when the process
+The `link:../../yardoc/VertxShell/CommandProcess.html#suspend_handler-instance_method[suspendHandler]` is called when the process
 is running and the user press _Ctrl+Z_, the command is _suspended_:
 
 - the command can receive the suspend event when it has registered an handler for this event
@@ -503,7 +503,7 @@ is running and the user press _Ctrl+Z_, the command is _suspended_:
 - the shell prompt the user for input
 - the command can receive interrupts event or end events
 
-The `link:yardoc/VertxShell/CommandProcess.html#resume_handler-instance_method[resumeHandler]` is called when the process
+The `link:../../yardoc/VertxShell/CommandProcess.html#resume_handler-instance_method[resumeHandler]` is called when the process
 is resumed, usually when the user types _fg_:
 
 - the command can receive the resume event when it has registered an handler for this event
@@ -528,7 +528,7 @@ command.process_handler() { |process|
 
 ==== End events
 
-The `link:yardoc/VertxShell/CommandProcess.html#end_handler-instance_method[endHandler]` (io.vertx.core.Handler)} is
+The `link:../../yardoc/VertxShell/CommandProcess.html#end_handler-instance_method[endHandler]` (io.vertx.core.Handler)} is
 called when the process is running or suspended and the command terminates, for instance the shell session is closed,
 the command is _terminated_.
 
@@ -544,7 +544,7 @@ command.process_handler() { |process|
 
 ----
 
-The end handler is called even when the command invokes `link:yardoc/VertxShell/CommandProcess.html#end-instance_method[end]`.
+The end handler is called even when the command invokes `link:../../yardoc/VertxShell/CommandProcess.html#end-instance_method[end]`.
 
 This handler is useful for cleaning up resources upon command termination, for instance closing a client or a timer.
 
@@ -552,22 +552,22 @@ This handler is useful for cleaning up resources upon command termination, for i
 
 A command can provide a completion handler when it wants to provide contextual command line interface completion.
 
-Like the process handler, the `link:yardoc/VertxShell/CommandBuilder.html#completion_handler-instance_method[completion
+Like the process handler, the `link:../../yardoc/VertxShell/CommandBuilder.html#completion_handler-instance_method[completion
 handler]` is non blocking because the implementation may use Vert.x services, e.g the file system.
 
-The `link:yardoc/VertxShell/Completion.html#line_tokens-instance_method[lineTokens]` returns a list of `link:yardoc/VertxShell/CliToken.html[tokens]`
+The `link:../../yardoc/VertxShell/Completion.html#line_tokens-instance_method[lineTokens]` returns a list of `link:../../yardoc/VertxShell/CliToken.html[tokens]`
 from the beginning of the line to the cursor position. The list can be empty if the cursor when the cursor is at the
 beginning of the line.
 
-The `link:yardoc/VertxShell/Completion.html#raw_line-instance_method[rawLine]` returns the current completed from the beginning
+The `link:../../yardoc/VertxShell/Completion.html#raw_line-instance_method[rawLine]` returns the current completed from the beginning
 of the line to the cursor position, in raw format, i.e without any char escape performed.
 
-Completion ends with a call to `link:yardoc/VertxShell/Completion.html#complete-instance_method[complete]`.
+Completion ends with a call to `link:../../yardoc/VertxShell/Completion.html#complete-instance_method[complete]`.
 
 == Shell server
 
 The Shell service is a convenient facade for starting a preconfigured shell either programmatically or as a Vert.x service.
-When more flexibility is needed, a `link:yardoc/VertxShell/ShellServer.html[ShellServer]` can be used instead of the service.
+When more flexibility is needed, a `link:../../yardoc/VertxShell/ShellServer.html[ShellServer]` can be used instead of the service.
 
 For instance the shell http term can be configured to use an existing router instead of starting its own http server.
 
@@ -606,7 +606,7 @@ server.listen()
 
 Besides, the shell server can also be used for creating in process shell session: it provides a programmatic interactive shell.
 
-In process shell session can be created with `link:yardoc/VertxShell/ShellServer.html#create_shell-instance_method[createShell]`:
+In process shell session can be created with `link:../../yardoc/VertxShell/ShellServer.html#create_shell-instance_method[createShell]`:
 
 [source,ruby]
 ----
@@ -643,23 +643,30 @@ job.terminate_handler() { |status|
 
 ----
 
-The `link:yardoc/VertxShell/Pty.html[Pty]` pseudo terminal is the main interface for interacting with the command
+The `link:../../yardoc/VertxShell/Pty.html[Pty]` pseudo terminal is the main interface for interacting with the command
 when it's running:
 
 - uses standard input/output for writing or reading strings
 - resize the terminal
 
-The `link:yardoc/VertxShell/Shell.html#close-instance_method[close]` closes the shell, it will terminate all jobs in the current shell
+The `link:../../yardoc/VertxShell/Shell.html#close-instance_method[close]` closes the shell, it will terminate all jobs in the current shell
 session.
 
 == Terminal servers
 
 Vert.x Shell also provides bare terminal servers for those who need to write pure terminal applications.
 
+A `link:../../yardoc/VertxShell/Term.html[Term]` handler must be set on a term server before starting it. This handler will
+handle each term when the user connects.
+
+An `link:../../vertx-auth-common/dataobjects.html#AuthOptions[AuthOptions]` can be set on `link:../dataobjects.html#SSHTermOptions[SSHTermOptions]` and `link:../dataobjects.html#HttpTermOptions[HttpTermOptions]`.
+Alternatively, an `link:../../yardoc/VertxAuthCommon/AuthProvider.html[AuthProvider]` can be `link:../../yardoc/VertxShell/TermServer.html#auth_provider-instance_method[set]`
+directly on the term server before starting it.
+
 === SSH term
 
-The terminal server `link:yardoc/VertxShell/Term.html[Term]` handler accepts incoming terminal connections.
-When a remote terminal connects, the `link:yardoc/VertxShell/Term.html[Term]` can be used to interact with connected
+The terminal server `link:../../yardoc/VertxShell/Term.html[Term]` handler accepts incoming terminal connections.
+When a remote terminal connects, the `link:../../yardoc/VertxShell/Term.html[Term]` can be used to interact with connected
 terminal.
 
 [source,ruby]
@@ -678,7 +685,7 @@ server.listen()
 
 ----
 
-The `link:yardoc/VertxShell/Term.html[Term]` is also a `link:yardoc/VertxShell/Tty.html[Tty]`, this section explains
+The `link:../../yardoc/VertxShell/Term.html[Term]` is also a `link:../../yardoc/VertxShell/Tty.html[Tty]`, this section explains
 how to use the tty.
 
 === Telnet term
@@ -701,7 +708,7 @@ server.listen()
 
 === HTTP term
 
-The `link:yardoc/VertxShell/TermServer.html#create_http_term_server-class_method[TermServer.createHttpTermServer]` method creates an HTTP term server, built
+The `link:../../yardoc/VertxShell/TermServer.html#create_http_term_server-class_method[TermServer.createHttpTermServer]` method creates an HTTP term server, built
 on top of Vert.x Web using the SockJS protocol.
 
 [source,ruby]
@@ -720,7 +727,7 @@ server.listen()
 
 ----
 
-An HTTP term can start its own HTTP server, or it can reuse an existing Vert.x Web `link:../../vertx-web/ruby/yardoc/VertxWeb/Router.html[Router]`.
+An HTTP term can start its own HTTP server, or it can reuse an existing Vert.x Web `link:../../yardoc/VertxWeb/Router.html[Router]`.
 
 The shell can be found at `/shell.html`.
 

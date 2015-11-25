@@ -9,7 +9,7 @@ Vert.x Shell can be extended with custom commands in any language supported by V
 
 == Using Vert.x Shell
 
-Vert.x Shell is a Vert.x Service and can be started programmatically via the `link:groovydoc/io/vertx/groovy/ext/shell/ShellService.html[ShellService]`
+Vert.x Shell is a Vert.x Service and can be started programmatically via the `link:../../groovydoc/io/vertx/groovy/ext/shell/ShellService.html[ShellService]`
 or deployed as a service.
 
 === Shell service
@@ -112,7 +112,7 @@ or `maven:io.vertx:vertx-shell:3.2.0-SNAPSHOT`
 
 === Programmatic service
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/ShellService.html[ShellService]` takes care of starting an instance of Vert.x Shell.
+The `link:../../groovydoc/io/vertx/groovy/ext/shell/ShellService.html[ShellService]` takes care of starting an instance of Vert.x Shell.
 
 Starting a shell service available via SSH:
 
@@ -252,8 +252,8 @@ NOTE: this command list should evolve in next releases of Vert.x Shell
 
 Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
 
-A command is created by the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandBuilder.html#command(java.lang.String)[CommandBuilder.command]` method: the command process handler is called
-by the shell when the command is executed, this handler can be set with the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandBuilder.html#processHandler(io.vertx.core.Handler)[processHandler]`
+A command is created by the `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandBuilder.html#command(java.lang.String)[CommandBuilder.command]` method: the command process handler is called
+by the shell when the command is executed, this handler can be set with the `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandBuilder.html#processHandler(io.vertx.core.Handler)[processHandler]`
 method:
 
 [source,groovy]
@@ -277,21 +277,21 @@ registry.registerCommand(builder.build())
 
 ----
 
-After a command is created, it needs to be registed to a `link:groovydoc/io/vertx/groovy/ext/shell/registry/CommandRegistry.html[CommandRegistry]`. The
+After a command is created, it needs to be registed to a `link:../../groovydoc/io/vertx/groovy/ext/shell/registry/CommandRegistry.html[CommandRegistry]`. The
 command registry holds all the commands for a Vert.x instance.
 
-A command is registered until it is unregistered with the `link:groovydoc/io/vertx/groovy/ext/shell/registry/CommandRegistration.html#unregister()[unregister]`
-method or the `link:groovydoc/io/vertx/groovy/ext/shell/registry/CommandRegistry.html#unregisterCommand(java.lang.String)[unregisterCommand]`. When a command is
+A command is registered until it is unregistered with the `link:../../groovydoc/io/vertx/groovy/ext/shell/registry/CommandRegistration.html#unregister()[unregister]`
+method or the `link:../../groovydoc/io/vertx/groovy/ext/shell/registry/CommandRegistry.html#unregisterCommand(java.lang.String)[unregisterCommand]`. When a command is
 registered from a Verticle, this command is unregistered when this verticle is undeployed.
 
 NOTE: Command callbacks are invoked in the `io.vertx.core.Context` when the command is registered in the
 registry. Keep this in mind if you maintain state in a command.
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html[CommandProcess]` object can be used for interacting with the shell.
+The `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html[CommandProcess]` object can be used for interacting with the shell.
 
 === Command arguments
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#args()[args]` returns the command arguments:
+The `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#args()[args]` returns the command arguments:
 
 [source,groovy]
 ----
@@ -307,7 +307,7 @@ command.processHandler({ process ->
 
 ----
 
-Besides it is also possible to create commands using `link:../../vertx-core/groovy/groovydoc/io/vertx/groovy/core/cli/CLI.html[Vert.x CLI]`: it makes easier to
+Besides it is also possible to create commands using `link:../../groovydoc/io/vertx/groovy/core/cli/CLI.html[Vert.x CLI]`: it makes easier to
 write command line argument parsing:
 
 - _option_ and _argument_ parsing
@@ -359,15 +359,15 @@ command.processHandler({ process ->
 
 ----
 
-When the command executes the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html[process]` is provided for interacting
-with the shell. A `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html[CommandProcess]` extends `link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html[Tty]`
+When the command executes the `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html[process]` is provided for interacting
+with the shell. A `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html[CommandProcess]` extends `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html[Tty]`
 which is used for interacting with the terminal.
 
 === Terminal usage
 
 ==== terminal I/O
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#setStdin(io.vertx.ext.shell.io.Stream)[setStdin]` handler is used to be notified when the terminal
+The `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#setStdin(io.vertx.ext.shell.io.Stream)[setStdin]` handler is used to be notified when the terminal
 receives data, e.g the user uses his keyboard:
 
 [source,groovy]
@@ -378,7 +378,7 @@ tty.setStdin({ data ->
 
 ----
 
-A command can use the `link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#stdout()[stdout]` to write to the standard output.
+A command can use the `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#stdout()[stdout]` to write to the standard output.
 
 [source,groovy]
 ----
@@ -388,8 +388,8 @@ tty.stdout().write("Hello World")
 
 ==== Terminal size
 
-The current terminal size can be obtained using `link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#width()[width]` and
-`link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#height()[height]`.
+The current terminal size can be obtained using `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#width()[width]` and
+`link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#height()[height]`.
 
 [source,groovy]
 ----
@@ -399,9 +399,9 @@ tty.stdout().write("Current terminal size: (${tty.width()}, ${tty.height()})")
 
 ==== Resize event
 
-When the size of the terminal changes the `link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#resizehandler(io.vertx.core.Handler)[resizehandler]`
-is called, the new terminal size can be obtained with `link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#width()[width]` and
-`link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#height()[height]`.
+When the size of the terminal changes the `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#resizehandler(io.vertx.core.Handler)[resizehandler]`
+is called, the new terminal size can be obtained with `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#width()[width]` and
+`link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#height()[height]`.
 
 [source,groovy]
 ----
@@ -413,7 +413,7 @@ tty.resizehandler({ v ->
 
 ==== Terminal type
 
-The terminal type is useful for sending escape codes to the remote terminal: `link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#type()[type]`
+The terminal type is useful for sending escape codes to the remote terminal: `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#type()[type]`
 returns the current terminal type, it can be null if the terminal has not advertised the value.
 
 [source,groovy]
@@ -425,7 +425,7 @@ println("terminal type : ${tty.type()}")
 === Shell session
 
 The shell is a connected service that naturally maintains a session with the client, this session can be
-used in commands to scope data. A command can get the session with `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#session()[session]`:
+used in commands to scope data. A command can get the session with `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#session()[session]`:
 
 [source,groovy]
 ----
@@ -444,7 +444,7 @@ command.processHandler({ process ->
 
 === Process termination
 
-Calling `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#end()[end]` ends the current process. It can be called directly
+Calling `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#end()[end]` ends the current process. It can be called directly
 in the invocation of the command handler or any time later:
 
 [source,groovy]
@@ -468,7 +468,7 @@ A command can subscribe to a few process events.
 
 ==== Interrupt event
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#interruptHandler(io.vertx.core.Handler)[interruptHandler]` is called when the process
+The `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#interruptHandler(io.vertx.core.Handler)[interruptHandler]` is called when the process
 is interrupted, this event is fired when the user press _Ctrl+C_ during the execution of a command. This handler can
 be used for interrupting commands _blocking_ the CLI and gracefully ending the command process:
 
@@ -496,7 +496,7 @@ will be delayed and will likely be handled by the shell, like printing a new lin
 
 ==== Suspend/resume events
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#suspendHandler(io.vertx.core.Handler)[suspendHandler]` is called when the process
+The `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#suspendHandler(io.vertx.core.Handler)[suspendHandler]` is called when the process
 is running and the user press _Ctrl+Z_, the command is _suspended_:
 
 - the command can receive the suspend event when it has registered an handler for this event
@@ -504,7 +504,7 @@ is running and the user press _Ctrl+Z_, the command is _suspended_:
 - the shell prompt the user for input
 - the command can receive interrupts event or end events
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#resumeHandler(io.vertx.core.Handler)[resumeHandler]` is called when the process
+The `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#resumeHandler(io.vertx.core.Handler)[resumeHandler]` is called when the process
 is resumed, usually when the user types _fg_:
 
 - the command can receive the resume event when it has registered an handler for this event
@@ -529,7 +529,7 @@ command.processHandler({ process ->
 
 ==== End events
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#endHandler(io.vertx.core.Handler)[endHandler]` (io.vertx.core.Handler)} is
+The `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#endHandler(io.vertx.core.Handler)[endHandler]` (io.vertx.core.Handler)} is
 called when the process is running or suspended and the command terminates, for instance the shell session is closed,
 the command is _terminated_.
 
@@ -545,7 +545,7 @@ command.processHandler({ process ->
 
 ----
 
-The end handler is called even when the command invokes `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#end()[end]`.
+The end handler is called even when the command invokes `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#end()[end]`.
 
 This handler is useful for cleaning up resources upon command termination, for instance closing a client or a timer.
 
@@ -553,22 +553,22 @@ This handler is useful for cleaning up resources upon command termination, for i
 
 A command can provide a completion handler when it wants to provide contextual command line interface completion.
 
-Like the process handler, the `link:groovydoc/io/vertx/groovy/ext/shell/command/CommandBuilder.html#completionHandler(io.vertx.core.Handler)[completion
+Like the process handler, the `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandBuilder.html#completionHandler(io.vertx.core.Handler)[completion
 handler]` is non blocking because the implementation may use Vert.x services, e.g the file system.
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#lineTokens()[lineTokens]` returns a list of `link:groovydoc/io/vertx/groovy/ext/shell/cli/CliToken.html[tokens]`
+The `link:../../groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#lineTokens()[lineTokens]` returns a list of `link:../../groovydoc/io/vertx/groovy/ext/shell/cli/CliToken.html[tokens]`
 from the beginning of the line to the cursor position. The list can be empty if the cursor when the cursor is at the
 beginning of the line.
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#rawLine()[rawLine]` returns the current completed from the beginning
+The `link:../../groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#rawLine()[rawLine]` returns the current completed from the beginning
 of the line to the cursor position, in raw format, i.e without any char escape performed.
 
-Completion ends with a call to `link:groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#complete(java.util.List)[complete]`.
+Completion ends with a call to `link:../../groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#complete(java.util.List)[complete]`.
 
 == Shell server
 
 The Shell service is a convenient facade for starting a preconfigured shell either programmatically or as a Vert.x service.
-When more flexibility is needed, a `link:groovydoc/io/vertx/groovy/ext/shell/ShellServer.html[ShellServer]` can be used instead of the service.
+When more flexibility is needed, a `link:../../groovydoc/io/vertx/groovy/ext/shell/ShellServer.html[ShellServer]` can be used instead of the service.
 
 For instance the shell http term can be configured to use an existing router instead of starting its own http server.
 
@@ -607,7 +607,7 @@ server.listen()
 
 Besides, the shell server can also be used for creating in process shell session: it provides a programmatic interactive shell.
 
-In process shell session can be created with `link:groovydoc/io/vertx/groovy/ext/shell/ShellServer.html#createShell()[createShell]`:
+In process shell session can be created with `link:../../groovydoc/io/vertx/groovy/ext/shell/ShellServer.html#createShell()[createShell]`:
 
 [source,groovy]
 ----
@@ -644,23 +644,30 @@ job.terminateHandler({ status ->
 
 ----
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/term/Pty.html[Pty]` pseudo terminal is the main interface for interacting with the command
+The `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Pty.html[Pty]` pseudo terminal is the main interface for interacting with the command
 when it's running:
 
 - uses standard input/output for writing or reading strings
 - resize the terminal
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/system/Shell.html#close()[close]` closes the shell, it will terminate all jobs in the current shell
+The `link:../../groovydoc/io/vertx/groovy/ext/shell/system/Shell.html#close()[close]` closes the shell, it will terminate all jobs in the current shell
 session.
 
 == Terminal servers
 
 Vert.x Shell also provides bare terminal servers for those who need to write pure terminal applications.
 
+A `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` handler must be set on a term server before starting it. This handler will
+handle each term when the user connects.
+
+An `link:../../vertx-auth-common/dataobjects.html#AuthOptions[AuthOptions]` can be set on `link:../dataobjects.html#SSHTermOptions[SSHTermOptions]` and `link:../dataobjects.html#HttpTermOptions[HttpTermOptions]`.
+Alternatively, an `link:../../groovydoc/io/vertx/groovy/ext/auth/AuthProvider.html[AuthProvider]` can be `link:../../groovydoc/io/vertx/groovy/ext/shell/term/TermServer.html#authProvider(io.vertx.ext.auth.AuthProvider)[set]`
+directly on the term server before starting it.
+
 === SSH term
 
-The terminal server `link:groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` handler accepts incoming terminal connections.
-When a remote terminal connects, the `link:groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` can be used to interact with connected
+The terminal server `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` handler accepts incoming terminal connections.
+When a remote terminal connects, the `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` can be used to interact with connected
 terminal.
 
 [source,groovy]
@@ -679,7 +686,7 @@ server.listen()
 
 ----
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` is also a `link:groovydoc/io/vertx/groovy/ext/shell/term/Tty.html[Tty]`, this section explains
+The `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` is also a `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html[Tty]`, this section explains
 how to use the tty.
 
 === Telnet term
@@ -702,7 +709,7 @@ server.listen()
 
 === HTTP term
 
-The `link:groovydoc/io/vertx/groovy/ext/shell/term/TermServer.html#createHttpTermServer(io.vertx.core.Vertx)[TermServer.createHttpTermServer]` method creates an HTTP term server, built
+The `link:../../groovydoc/io/vertx/groovy/ext/shell/term/TermServer.html#createHttpTermServer(io.vertx.core.Vertx)[TermServer.createHttpTermServer]` method creates an HTTP term server, built
 on top of Vert.x Web using the SockJS protocol.
 
 [source,groovy]
@@ -721,7 +728,7 @@ server.listen()
 
 ----
 
-An HTTP term can start its own HTTP server, or it can reuse an existing Vert.x Web `link:../../vertx-web/groovy/groovydoc/io/vertx/groovy/ext/web/Router.html[Router]`.
+An HTTP term can start its own HTTP server, or it can reuse an existing Vert.x Web `link:../../groovydoc/io/vertx/groovy/ext/web/Router.html[Router]`.
 
 The shell can be found at `/shell.html`.
 

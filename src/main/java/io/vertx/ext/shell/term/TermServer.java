@@ -39,6 +39,7 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.shell.term.impl.SSHTermServer;
 import io.vertx.ext.shell.term.impl.TelnetTermServer;
 import io.vertx.ext.shell.term.impl.HttpTermServer;
@@ -159,6 +160,16 @@ public interface TermServer {
    */
   @GenIgnore
   TermServer connectionHandler(Handler<TtyConnection> handler);
+
+  /**
+   * Set an auth provider to use, any provider configured in options will override this provider. This should be used
+   * when a custom auth provider should be used.
+   *
+   * @param provider the auth to use
+   * @return this object
+   */
+  @Fluent
+  TermServer authProvider(AuthProvider provider);
 
   /**
    * Bind the term server, the {@link #termHandler(Handler)} must be set before.

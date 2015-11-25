@@ -38,7 +38,7 @@
 |[[sendBufferSize]]`sendBufferSize`|`Number (int)`|-
 |[[shellHtmlResource]]`shellHtmlResource`|`Buffer`|
 +++
-@return the <code>shell.html</code> resource for this server
+Set <code>shell.html</code> resource to use.
 +++
 |[[shiroAuthOptions]]`shiroAuthOptions`|`link:dataobjects.html#ShiroAuthOptions[ShiroAuthOptions]`|
 +++
@@ -47,25 +47,25 @@ Set the auth options as a Shiro auth.
 |[[soLinger]]`soLinger`|`Number (int)`|-
 |[[sockJSHandlerOptions]]`sockJSHandlerOptions`|`link:dataobjects.html#SockJSHandlerOptions[SockJSHandlerOptions]`|
 +++
-@return the SockJS handler options
+The SockJS handler options.
 +++
 |[[sockJSPath]]`sockJSPath`|`String`|
 +++
-@return the SockJS path
+Configure the SockJS path, the default value is <code>/term/*</code>.
 +++
 |[[ssl]]`ssl`|`Boolean`|-
 |[[tcpKeepAlive]]`tcpKeepAlive`|`Boolean`|-
 |[[tcpNoDelay]]`tcpNoDelay`|`Boolean`|-
 |[[termJsResource]]`termJsResource`|`Buffer`|
 +++
-@return the <code>term.js</code> resource for this server
+Set <code>term.js</code> resource to use.
 +++
 |[[trafficClass]]`trafficClass`|`Number (int)`|-
 |[[trustStoreOptions]]`trustStoreOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|-
 |[[usePooledBuffers]]`usePooledBuffers`|`Boolean`|-
 |[[vertsShellJsResource]]`vertsShellJsResource`|`Buffer`|
 +++
-@return the <code>vertxshell.js</code> resource for this server
+Set <code>vertxshell.js</code> resource to use.
 +++
 |[[websocketSubProtocols]]`websocketSubProtocols`|`String`|-
 |===
@@ -124,15 +124,15 @@ Set the auth options as a Shiro auth.
 |[[httpOptions]]`httpOptions`|`link:dataobjects.html#HttpTermOptions[HttpTermOptions]`|-
 |[[sshOptions]]`sshOptions`|`link:dataobjects.html#SSHTermOptions[SSHTermOptions]`|
 +++
-@return the SSH options
+Set the SSH options, if the option is null, SSH will not be started.
 +++
 |[[telnetOptions]]`telnetOptions`|`link:dataobjects.html#TelnetTermOptions[TelnetTermOptions]`|
 +++
-@return the Telnet options
+Set the Telnet options, if the option is null, Telnet will not be started.
 +++
 |[[welcomeMessage]]`welcomeMessage`|`String`|
 +++
-@return the shell welcome message
+Set the shell welcome message, i.e the message displayed in the user console when he connects to the shell.
 +++
 |===
 
@@ -154,7 +154,7 @@ Set the auth options as a Shiro auth.
 +++
 |[[host]]`host`|`String`|
 +++
-@return the host
+Set the host
 +++
 |[[keyPairOptions]]`keyPairOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|
 +++
@@ -170,7 +170,7 @@ Set the key pair options in pfx format.
 +++
 |[[port]]`port`|`Number (int)`|
 +++
-@return the port
+Set the port
 +++
 |[[shiroAuthOptions]]`shiroAuthOptions`|`link:dataobjects.html#ShiroAuthOptions[ShiroAuthOptions]`|
 +++

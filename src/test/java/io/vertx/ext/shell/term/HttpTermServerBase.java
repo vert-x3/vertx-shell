@@ -32,10 +32,19 @@
 
 package io.vertx.ext.shell.term;
 
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.CaseInsensitiveHeaders;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.net.JksOptions;
+import io.vertx.ext.auth.AbstractUser;
+import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.unit.Async;
@@ -47,6 +56,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Base64;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -257,6 +269,72 @@ public abstract class HttpTermServerBase {
                 async.complete();
               });
             }, context::fail);
+      });
+    }));
+  }
+
+  @Test
+  public void testExternalAuthProvider(TestContext context) throws Exception {
+    AtomicInteger count = new AtomicInteger();
+    AuthProvider authProvider = (authInfo, resultHandler) -> {
+      count.incrementAndGet();
+      String username = authInfo.getString("username");
+      String password = authInfo.getString("password");
+      if (username.equals("paulo") && password.equals("anothersecret")) {
+        resultHandler.handle(Future.succeededFuture(new AbstractUser() {
+          @Override
+          protected void doIsPermitted(String permission, Handler<AsyncResult<Boolean>> resultHandler) {
+            resultHandler.handle(Future.succeededFuture(true));
+          }
+          @Override
+          public JsonObject principal() {
+            return new JsonObject().put("username", username);
+          }
+          @Override
+          public void setAuthProvider(AuthProvider authProvider) {
+          }
+        }));
+      } else {
+        resultHandler.handle(Future.failedFuture("not authenticated"));
+      }
+    };
+    Async async = context.async(2);
+    server = createServer(context, new HttpTermOptions().setPort(8080));
+    server.authProvider(authProvider);
+    server.termHandler(term -> {
+      context.assertEquals(1, count.get());
+      async.complete();
+    });
+    server.listen(context.asyncAssertSuccess(server -> {
+      HttpClient client = vertx.createHttpClient();
+      client.websocket(8080, "localhost", basePath + "/shell/websocket", new CaseInsensitiveHeaders().add("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes())), ws -> {
+        async.complete();
+      }, err -> {
+        context.fail();
+      });
+    }));
+  }
+
+  @Test
+  public void testExternalAuthProviderFails(TestContext context) throws Exception {
+    AtomicInteger count = new AtomicInteger();
+    AuthProvider authProvider = (authInfo, resultHandler) -> {
+      count.incrementAndGet();
+      resultHandler.handle(Future.failedFuture("not authenticated"));
+    };
+    Async async = context.async();
+    server = createServer(context, new HttpTermOptions().setPort(8080));
+    server.authProvider(authProvider);
+    server.termHandler(term -> {
+      context.fail();
+    });
+    server.listen(context.asyncAssertSuccess(server -> {
+      HttpClient client = vertx.createHttpClient();
+      client.websocket(8080, "localhost", basePath + "/shell/websocket", new CaseInsensitiveHeaders().add("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes())), ws -> {
+        context.fail();
+      }, err -> {
+        assertEquals(1, count.get());
+        async.complete();
       });
     }));
   }
