@@ -150,7 +150,7 @@ public interface TermServer {
   TermServer termHandler(Handler<Term> handler);
 
   /**
-   * Set the connection handler that will receive incoming client connections. When aremote temrinal connects
+   * Set the connection handler that will receive incoming client connections. When a remote terminal connects
    * the {@code handler} will be called with the {@code TtyConnection} which can be used to interact with the
    * remote terminal.
    *

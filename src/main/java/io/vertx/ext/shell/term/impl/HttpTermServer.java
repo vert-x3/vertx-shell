@@ -141,7 +141,6 @@ public class HttpTermServer implements TermServer {
       router.get("/shell.html").handler(ctx -> ctx.response().putHeader("Content-Type", "text/html").end(options.getShellHtmlResource()));
     }
 
-    //
     if (createServer) {
       server = vertx.createHttpServer(options);
       server.requestHandler(router::accept);
