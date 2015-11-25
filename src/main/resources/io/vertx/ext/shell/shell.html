@@ -1,0 +1,155 @@
+<!doctype html>
+<title>Vert.x Shell</title>
+
+<h1>Vert.x Shell</h1>
+
+<style>
+
+  @import url(http://fonts.googleapis.com/css?family=Ubuntu:400,500,700,400italic);
+
+
+  body {
+    background: #fff;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 500;
+    font-size: 46px;
+    background: #782b90;
+    color: #fff;
+    padding-left: 70px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+  }
+
+  .terminal {
+    float: left;
+    border-width: 0;
+    border-style: none;
+    border-radius: 4px;
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+    font-size: 14px;
+    color: #f0f0f0;
+    background: #000;
+    margin-left: 70px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  /* TERM.JS STYLES */
+  .fg {color: #b0b8c1;}
+  div[style*=";color: rgb(240, 240, 240);"] {
+    color: #b0b8c1 !important;
+  }
+  .bg {background-color: #363838;}
+  div[style*="background-color: rgb(0, 0, 0);"] {
+    background-color: #363838 !important;
+  }
+  .terminal-cursor {
+    color: #363838;
+    background-color: #b0b8c1;
+  }
+  ::-moz-selection {
+    color: #363838;
+    background: #b4d5ff;
+  }
+  ::selection {
+    color: #363838;
+    background: #b4d5ff;
+  }
+
+  /* FG COLORS */
+  span[style*=";color:#2e3436;"] {color: #363737 !important;}
+  span[style*=";color:#cc0000;"] {color: #bb0000 !important;}
+  span[style*=";color:#4e9a06;"] {color: #00bb00 !important;}
+  span[style*=";color:#c4a000;"] {color: #bbbb00 !important;}
+  span[style*=";color:#3465a4;"] {color: #0000bb !important;}
+  span[style*=";color:#75507b;"] {color: #bb00bb !important;}
+  span[style*=";color:#06989a;"] {color: #00bbbb !important;}
+  span[style*=";color:#d3d7cf;"] {color: #bac2cc !important;}
+
+  /* FG BRIGHT COLORS */
+  span[style*=";color:#555753;"] {color: #636666 !important;}
+  span[style*=";color:#ef2929;"] {color: #ff5555 !important;}
+  span[style*=";color:#8ae234;"] {color: #55ff55 !important;}
+  span[style*=";color:#fce94f;"] {color: #ffff55 !important;}
+  span[style*=";color:#729fcf;"] {color: #5555ff !important;}
+  span[style*=";color:#ad7fa8;"] {color: #ff55ff !important;}
+  span[style*=";color:#34e2e2;"] {color: #55ffff !important;}
+  span[style*=";color:#eeeeec;"] {color: #d8e2f0 !important;}
+
+  /* BG COLORS */
+  span[style*="background-color:#2e3436;"] {
+    background-color: #363737 !important;
+  }
+  span[style*="background-color:#cc0000;"] {
+    background-color: #bb0000 !important;
+  }
+  span[style*="background-color:#4e9a06;"] {
+    background-color: #00bb00 !important;
+  }
+  span[style*="background-color:#c4a000;"] {
+    background-color: #bbbb00 !important;
+  }
+  span[style*="background-color:#3465a4;"] {
+    background-color: #0000bb !important;
+  }
+  span[style*="background-color:#75507b;"] {
+    background-color: #bb00bb !important;
+  }
+  span[style*="background-color:#06989a;"] {
+    background-color: #00bbbb !important;
+  }
+  span[style*="background-color:#d3d7cf;"] {
+    background-color: #bac2cc !important;
+  }
+
+  /* BG BRIGHT COLORS */
+  span[style*="background-color:#555753;"] {
+    background-color: #636666 !important;
+  }
+  span[style*="background-color:#ef2929;"] {
+    background-color: #ff5555 !important;
+  }
+  span[style*="background-color:#8ae234;"] {
+    background-color: #55ff55 !important;
+  }
+  span[style*="background-color:#fce94f;"] {
+    background-color: #ffff55 !important;
+  }
+  span[style*="background-color:#729fcf;"] {
+    background-color: #5555ff !important;
+  }
+  span[style*="background-color:#ad7fa8;"] {
+    background-color: #ff55ff !important;
+  }
+  span[style*="background-color:#34e2e2;"] {
+    background-color: #55ffff !important;
+  }
+  span[style*="background-color:#eeeeec;"] {
+    background-color: #d8e2f0 !important;
+  }
+</style>
+<script src="//cdn.jsdelivr.net/sockjs/1.0.0/sockjs.min.js"></script>
+<script src="term.js"></script>
+<script src="vertxshell.js"></script>
+
+<script type="text/javascript">
+  window.addEventListener('load', function () {
+    var url;
+    if (typeof SockJS !== 'undefined') {
+      url = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/shell';
+    } else {
+      url = location.protocol.replace('http', 'ws') + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/shell/websocket';
+    }
+    new VertxTerm(url, {
+      cols: 120,
+      rows: 36
+    });
+  });
+</script>
+

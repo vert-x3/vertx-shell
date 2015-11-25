@@ -32,26 +32,32 @@
 
 package io.vertx.ext.shell.term;
 
-import io.vertx.codegen.annotations.Fluent;
-import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
-import io.vertx.core.buffer.Buffer;
-import io.vertx.ext.shell.term.impl.SockJSTermHandlerImpl;
-import io.vertx.ext.shell.term.impl.HttpTermServer;
-import io.vertx.ext.web.handler.sockjs.SockJSSocket;
+import io.vertx.core.http.HttpServer;
+import io.vertx.core.http.HttpServerOptions;
+import io.vertx.ext.unit.Async;
+import io.vertx.ext.unit.TestContext;
+import io.vertx.ext.web.Router;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@VertxGen
-public interface SockJSTermHandler extends Handler<SockJSSocket> {
+public class HttpTermServerSubRouterTest extends HttpTermServerBase {
 
-  static SockJSTermHandler create(Vertx vertx) {
-    return new SockJSTermHandlerImpl(vertx);
+  public HttpTermServerSubRouterTest() {
+    super("/sub");
   }
 
-  @Fluent
-  SockJSTermHandler termHandler(Handler<Term> handler);
-
+  @Override
+  protected TermServer createServer(TestContext context, HttpTermOptions options) {
+    HttpServer httpServer = vertx.createHttpServer(new HttpServerOptions().setPort(8080));
+    Router router = Router.router(vertx);
+    Router subRouter = Router.router(vertx);
+    router.mountSubRouter("/sub", subRouter);
+    httpServer.requestHandler(router::accept);
+    Async async = context.async();
+    httpServer.listen(8080, context.asyncAssertSuccess(s -> {
+      async.complete();
+    }));
+    return TermServer.createHttpTermServer(vertx, subRouter, options);
+  }
 }

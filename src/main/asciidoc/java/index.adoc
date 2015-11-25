@@ -12,7 +12,7 @@ Vert.x Shell can be extended with custom commands in any language supported by V
 Vert.x Shell is a Vert.x Service and can be started programmatically via the `link:../../apidocs/io/vertx/ext/shell/ShellService.html[ShellService]`
 or deployed as a service.
 
-=== Deployed service
+=== Shell service
 
 The shell can be started as a service directly either from the command line or as a the Vert.x deployment:
 
@@ -33,6 +33,18 @@ keytool -genkey -keyalg RSA -keystore ssh.jks -keysize 2048 -validity 1095 -dnam
 echo user.admin=password > auth.properties
 # start the shell
 vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.2.0-SNAPSHOT
+----
+
+or
+
+.Starting a shell service available via HTTP
+[source,subs="+attributes"]
+----
+# create a certificate for the HTTP server
+keytool -genkey -keyalg RSA -keystore keystore.jks -keysize 2048 -validity 1095 -dname CN=localhost -keypass secret -storepass secret
+# create the auth config
+echo user.admin=password > auth.properties
+vertx run -conf '{"httpOptions":{"port":8080,"ssl":true,"keyStoreOptions":{"path":"keystore.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.2.0-SNAPSHOT
 ----
 
 You can also deploy this service inside your own verticle:
@@ -61,7 +73,28 @@ vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
                 put("port", 5000).
                 put("keyPairOptions",
                     new JsonObject().
-                        put("path", "server-keystore.jks").
+                        put("path", "ssh.jks").
+                        put("password", "wibble")).
+                put("config", new JsonObject().
+                    put("properties_path", "file:/path/to/my/auth.properties")))
+    )
+);
+----
+
+or
+
+[source,java,subs="+attributes"]
+----
+vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
+    new DeploymentOptions().setConfig(
+        new JsonObject().put("httpOptions",
+            new JsonObject().
+                put("host", "localhost").
+                put("port", 8080).
+                put("ssl", true).
+                put("keyStoreOptions",
+                    new JsonObject().
+                        put("path", "keystore.jks").
                         put("password", "wibble")).
                 put("config", new JsonObject().
                     put("properties_path", "file:/path/to/my/auth.properties")))
@@ -118,15 +151,29 @@ implementation is based on a `NetServer`.
 
 CAUTION: Telnet does not provide any authentication nor encryption at all.
 
-== Telnet configuration
+Starting a shell service available via HTTP:
 
-The telnet connector is configured by `link:../../apidocs/io/vertx/ext/shell/ShellServiceOptions.html#setTelnetOptions-io.vertx.ext.shell.term.TelnetTermOptions-[setTelnetOptions]`,
+[source,java]
+----
+ShellService service = ShellService.create(vertx,
+    new ShellServiceOptions().setHttpOptions(
+        new HttpTermOptions().
+            setHost("localhost").
+            setPort(8080)
+    )
+);
+service.start();
+----
+
+== Telnet term configuration
+
+Telnet terms are configured by `link:../../apidocs/io/vertx/ext/shell/ShellServiceOptions.html#setTelnetOptions-io.vertx.ext.shell.term.TelnetTermOptions-[setTelnetOptions]`,
 the `link:../../apidocs/io/vertx/ext/shell/term/TelnetTermOptions.html[TelnetTermOptions]` extends the `link:../../apidocs/io/vertx/core/net/NetServerOptions.html[NetServerOptions]` so they
 have the exact same configuration.
 
-== SSH configuration
+== SSH term configuration
 
-The SSH connector is configured by `link:../../apidocs/io/vertx/ext/shell/ShellServiceOptions.html#setSSHOptions-io.vertx.ext.shell.term.SSHTermOptions-[setSSHOptions]`:
+SSH terms are configured by `link:../../apidocs/io/vertx/ext/shell/ShellServiceOptions.html#setSSHOptions-io.vertx.ext.shell.term.SSHTermOptions-[setSSHOptions]`:
 
 - `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setPort-int-[setPort]`: port
 - `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setHost-java.lang.String-[setHost]`: host
@@ -141,6 +188,17 @@ The server key configuration reuses the key pair store configuration scheme prov
 - `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setKeyPairOptions-io.vertx.core.net.JksOptions-[setKeyPairOptions]`: set `.jks` key pair store
 - `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setPfxKeyPairOptions-io.vertx.core.net.PfxOptions-[setPfxKeyPairOptions]`: set `.pfx` key pair store
 - `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setPemKeyPairOptions-io.vertx.core.net.PemKeyCertOptions-[setPemKeyPairOptions]`: set `.pem` key pair store
+
+== HTTP term configuration
+
+HTTP terms are configured by `link:../../apidocs/io/vertx/ext/shell/ShellServiceOptions.html#setHttpOptions-io.vertx.ext.shell.term.HttpTermOptions-[setHttpOptions]`, the http options
+extends the `link:../../apidocs/io/vertx/core/http/HttpServerOptions.html[HttpServerOptions]` so they expose the exact same configuration.
+
+In addition there are extra options for configuring an HTTP term:
+
+- `link:../../apidocs/io/vertx/ext/shell/term/HttpTermOptions.html#setShiroAuthOptions-io.vertx.ext.auth.shiro.ShiroAuthOptions-[setShiroAuthOptions]`: configures user authentication
+- `link:../../apidocs/io/vertx/ext/shell/term/HttpTermOptions.html#setSockJSHandlerOptions-io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions-[setSockJSHandlerOptions]`: configures SockJS
+- `link:../../apidocs/io/vertx/ext/shell/term/HttpTermOptions.html#setSockJSPath-java.lang.String-[setSockJSPath]`: the SockJS path in the router
 
 == Base commands
 
@@ -469,20 +527,54 @@ of the line to the cursor position, in raw format, i.e without any char escape p
 
 Completion ends with a call to `link:../../apidocs/io/vertx/ext/shell/cli/Completion.html#complete-java.util.List-[complete]`.
 
-== In process shell session
+== Shell server
 
-In process shell session can be created with `link:../../apidocs/io/vertx/ext/shell/ShellService.html#createShell--[createShell]`:
+The Shell service is a convenient facade for starting a preconfigured shell either programmatically or as a Vert.x service.
+When more flexibility is needed, a `link:../../apidocs/io/vertx/ext/shell/ShellServer.html[ShellServer]` can be used instead of the service.
+
+For instance the shell http term can be configured to use an existing router instead of starting its own http server.
+
+Using a shell server requires explicit configuration but provides full flexiblity, a shell server is setup in a few
+steps:
 
 [source,java]
 ----
-Shell shell = shellService.createShell();
+ShellServer server = ShellServer.create(vertx); // <1>
+
+Router shellRouter = Router.router(vertx); // <2>
+router.mountSubRouter("/shell", shellRouter);
+TermServer httpTermServer = TermServer.createHttpTermServer(vertx, router);
+
+TermServer sshTermServer = TermServer.createSSHTermServer(vertx); // <3>
+
+server.registerTermServer(httpTermServer); // <4>
+server.registerTermServer(sshTermServer);
+
+server.commandRegistry().registerCommands(Command.baseCommands()); // <5>
+
+server.listen(); // <6>
+----
+<1> create a the shell server
+<2> create an HTTP term server mounted on an existing router
+<3> create an SSH term server
+<4> register term servers
+<5> register all base commands
+<6> finally start the shell server
+
+Besides, the shell server can also be used for creating in process shell session: it provides a programmatic interactive shell.
+
+In process shell session can be created with `link:../../apidocs/io/vertx/ext/shell/ShellServer.html#createShell--[createShell]`:
+
+[source,java]
+----
+Shell shell = shellServer.createShell();
 ----
 
 The main use case is running or testing a command:
 
 [source,java]
 ----
-Shell shell = shellService.createShell();
+Shell shell = shellServer.createShell();
 
 // Create a job fo the command
 Job job = shell.createJob("my-command 1234");
@@ -513,6 +605,8 @@ session.
 
 Vert.x Shell also provides bare terminal servers for those who need to write pure terminal applications.
 
+=== SSH term
+
 The terminal server `link:../../apidocs/io/vertx/ext/shell/term/Term.html[Term]` handler accepts incoming terminal connections.
 When a remote terminal connects, the `link:../../apidocs/io/vertx/ext/shell/term/Term.html[Term]` can be used to interact with connected
 terminal.
@@ -528,7 +622,10 @@ server.termHandler(term -> {
 server.listen();
 ----
 
-The telnet protocol is also supported:
+The `link:../../apidocs/io/vertx/ext/shell/term/Term.html[Term]` is also a `link:../../apidocs/io/vertx/ext/shell/term/Tty.html[Tty]`, this section explains
+how to use the tty.
+
+=== Telnet term
 
 [source,java]
 ----
@@ -541,5 +638,72 @@ server.termHandler(term -> {
 server.listen();
 ----
 
-The `link:../../apidocs/io/vertx/ext/shell/term/Term.html[Term]` is also a `link:../../apidocs/io/vertx/ext/shell/term/Tty.html[Tty]`, this section explains
-how to use the tty.
+=== HTTP term
+
+The `link:../../apidocs/io/vertx/ext/shell/term/TermServer.html#createHttpTermServer-io.vertx.core.Vertx-[TermServer.createHttpTermServer]` method creates an HTTP term server, built
+on top of Vert.x Web using the SockJS protocol.
+
+[source,java]
+----
+TermServer server = TermServer.createHttpTermServer(vertx, new HttpTermOptions().setPort(5000).setHost("localhost"));
+server.termHandler(term -> {
+  term.setStdin(line -> {
+    term.stdout().write(line);
+  });
+});
+server.listen();
+----
+
+An HTTP term can start its own HTTP server, or it can reuse an existing Vert.x Web `link:../../apidocs/io/vertx/ext/web/Router.html[Router]`.
+
+The shell can be found at `/shell.html`.
+
+[source,java]
+----
+TermServer server = TermServer.createHttpTermServer(vertx, router, new HttpTermOptions().setPort(5000).setHost("localhost"));
+server.termHandler(term -> {
+  term.setStdin(line -> {
+    term.stdout().write(line);
+  });
+});
+server.listen();
+----
+
+The later option is convenient when the HTTP shell is integrated in an existing HTTP server.
+
+The HTTP term server by default is configured for serving:
+
+- the `shell.html` page
+- the `https://github.com/chjj/term.js/[term.js]` client library
+- the `vertxshell.js` client library
+
+The `vertxshell.js` integrates `term.js` is the client side part of the HTTP term.
+
+It integrates `term.js` with SockJS and needs the URL of the HTTP term server endpoint:
+
+[source,javascript]
+----
+window.addEventListener('load', function () {
+  var url = 'http://localhost/shell';
+  new VertxTerm(url, {
+    cols: 80,
+    rows: 24
+   });
+ });
+----
+
+Straight websockets can also be used, if so, the remote term URL should be suffixed with `/websocket`:
+
+[source,javascript]
+----
+window.addEventListener('load', function () {
+  var url = 'ws://localhost/shell/websocket';
+  new VertxTerm(url, {
+    cols: 80,
+    rows: 24
+   });
+ });
+----
+
+For customization purpose these resources can be copied and customized, they are available in the Vert.x Shell
+jar under the `io.vertx.ext.shell` packages.

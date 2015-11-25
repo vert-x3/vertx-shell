@@ -16,9 +16,7 @@
 
 /** @module vertx-shell-js/shell_service */
 var utils = require('vertx-js/util/utils');
-var Shell = require('vertx-shell-js/shell');
 var Vertx = require('vertx-js/vertx');
-var CommandRegistry = require('vertx-shell-js/command_registry');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
@@ -33,20 +31,6 @@ var ShellService = function(j_val) {
 
   var j_shellService = j_val;
   var that = this;
-
-  /**
-   @return the command registry for this service
-
-   @public
-
-   @return {CommandRegistry}
-   */
-  this.getCommandRegistry = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_shellService["getCommandRegistry()"](), CommandRegistry);
-    } else throw new TypeError('function invoked with invalid arguments');
-  };
 
   /**
    Start the shell service, this is an asynchronous start.
@@ -66,20 +50,6 @@ var ShellService = function(j_val) {
         __args[0](null, ar.cause());
       }
     });
-    } else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-   Creates a new shell.
-
-   @public
-
-   @return {Shell} the created shell
-   */
-  this.createShell = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_shellService["createShell()"](), Shell);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

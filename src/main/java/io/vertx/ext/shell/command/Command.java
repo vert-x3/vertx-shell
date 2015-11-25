@@ -38,9 +38,27 @@ import io.vertx.core.cli.CLI;
 import io.vertx.core.cli.Option;
 import io.vertx.core.cli.annotations.CLIConfigurator;
 import io.vertx.ext.shell.cli.Completion;
+import io.vertx.ext.shell.command.base.BusSend;
+import io.vertx.ext.shell.command.base.BusTail;
+import io.vertx.ext.shell.command.base.Echo;
+import io.vertx.ext.shell.command.base.FileSystemCd;
+import io.vertx.ext.shell.command.base.FileSystemLs;
+import io.vertx.ext.shell.command.base.FileSystemPwd;
+import io.vertx.ext.shell.command.base.Help;
+import io.vertx.ext.shell.command.base.LocalMapGet;
+import io.vertx.ext.shell.command.base.LocalMapPut;
+import io.vertx.ext.shell.command.base.LocalMapRm;
+import io.vertx.ext.shell.command.base.NetCommandLs;
+import io.vertx.ext.shell.command.base.Sleep;
+import io.vertx.ext.shell.command.base.VerticleDeploy;
+import io.vertx.ext.shell.command.base.VerticleFactories;
+import io.vertx.ext.shell.command.base.VerticleLs;
+import io.vertx.ext.shell.command.base.VerticleUndeploy;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A Vert.x Shell command, it can be created from any language using the {@link CommandBuilder#command} or from a
@@ -50,6 +68,38 @@ import java.util.List;
  */
 @VertxGen
 public interface Command {
+
+  /**
+   * @return the list of base command classes
+   */
+  @GenIgnore
+  static List<Class<? extends Command>> baseCommandClasses() {
+    List<Class<? extends Command>> list = new ArrayList<>();
+    list.add(Echo.class);
+    list.add(Sleep.class);
+    list.add(Help.class);
+    list.add(FileSystemCd.class);
+    list.add(FileSystemPwd.class);
+    list.add(FileSystemLs.class);
+    list.add(NetCommandLs.class);
+    list.add(LocalMapGet.class);
+    list.add(LocalMapPut.class);
+    list.add(LocalMapRm.class);
+    list.add(BusSend.class);
+    list.add(BusTail.class);
+    list.add(VerticleLs.class);
+    list.add(VerticleDeploy.class);
+    list.add(VerticleUndeploy.class);
+    list.add(VerticleFactories.class);
+    return list;
+  }
+
+  /**
+   * @return the list of base commands
+   */
+  static List<Command> baseCommands() {
+    return baseCommandClasses().stream().map(Command::create).collect(Collectors.toList());
+  }
 
   /**
    * Create a command from a Java class, annotated with Vert.x Core CLI annotations.

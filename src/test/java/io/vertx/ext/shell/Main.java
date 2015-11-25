@@ -45,7 +45,7 @@ import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.registry.CommandRegistry;
-import io.vertx.ext.shell.term.WebTermOptions;
+import io.vertx.ext.shell.term.HttpTermOptions;
 
 /**
  * A simple class for testing from command line directly.
@@ -87,19 +87,24 @@ public class Main {
     // vertx.deployVerticle("command.js");
 
     // Expose the shell
+    ShiroAuthOptions authOptions = new ShiroAuthOptions().
+        setType(ShiroAuthRealmType.PROPERTIES).
+        setConfig(new JsonObject().put("properties_path", "file:src/test/resources/test-auth.properties"));
     SSHTermOptions options = new SSHTermOptions().setPort(5001);
     options.setKeyPairOptions(new JksOptions().
         setPath("src/test/resources/server-keystore.jks").
         setPassword("wibble")).
         setShiroAuthOptions(
-            new ShiroAuthOptions().
-                setType(ShiroAuthRealmType.PROPERTIES).
-                setConfig(new JsonObject().put("properties_path", "file:src/test/resources/test-auth.properties"))
+            authOptions
     );
     ShellService service = ShellService.create(vertx, new ShellServiceOptions().
         setTelnetOptions(new TelnetTermOptions().setPort(5000)).
         setSSHOptions(options).
-        setWebOptions(new WebTermOptions().setHttpServerOptions(new HttpServerOptions().setPort(8080))));
+            setHttpOptions(new HttpTermOptions().
+                    setPort(8080).
+                    setShiroAuthOptions(authOptions)
+            )
+    );
     service.start();
 
   }

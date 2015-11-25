@@ -45,7 +45,7 @@
  * Vert.x Shell is a Vert.x Service and can be started programmatically via the {@link io.vertx.ext.shell.ShellService}
  * or deployed as a service.
  *
- * === Deployed service
+ * === Shell service
  *
  * The shell can be started as a service directly either from the command line or as a the Vert.x deployment:
  *
@@ -68,6 +68,18 @@
  * vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:${maven.groupId}:${maven.artifactId}:${maven.version}
  * ----
  *
+ * or
+ *
+ * .Starting a shell service available via HTTP
+ * [source,subs="+attributes"]
+ * ----
+ * # create a certificate for the HTTP server
+ * keytool -genkey -keyalg RSA -keystore keystore.jks -keysize 2048 -validity 1095 -dname CN=localhost -keypass secret -storepass secret
+ * # create the auth config
+ * echo user.admin=password > auth.properties
+ * vertx run -conf '{"httpOptions":{"port":8080,"ssl":true,"keyStoreOptions":{"path":"keystore.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:${maven.groupId}:${maven.artifactId}:${maven.version}
+ * ----
+ *
  * You can also deploy this service inside your own verticle:
  *
  * [source,$lang,subs="+attributes"]
@@ -80,6 +92,13 @@
  * [source,$lang,subs="+attributes"]
  * ----
  * {@link examples.Examples#deploySSHService(io.vertx.core.Vertx)}
+ * ----
+ *
+ * or
+ *
+ * [source,$lang,subs="+attributes"]
+ * ----
+ * {@link examples.Examples#deployHttpService(io.vertx.core.Vertx)}
  * ----
  *
  * NOTE: when Vert.x Shell is already on your classpath you can use `service:io.vertx.ext.shell` instead
@@ -108,15 +127,22 @@
  *
  * CAUTION: Telnet does not provide any authentication nor encryption at all.
  *
- * == Telnet configuration
+ * Starting a shell service available via HTTP:
  *
- * The telnet connector is configured by {@link io.vertx.ext.shell.ShellServiceOptions#setTelnetOptions},
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#runHttpService}
+ * ----
+ *
+ * == Telnet term configuration
+ *
+ * Telnet terms are configured by {@link io.vertx.ext.shell.ShellServiceOptions#setTelnetOptions},
  * the {@link io.vertx.ext.shell.term.TelnetTermOptions} extends the {@link io.vertx.core.net.NetServerOptions} so they
  * have the exact same configuration.
  *
- * == SSH configuration
+ * == SSH term configuration
  *
- * The SSH connector is configured by {@link io.vertx.ext.shell.ShellServiceOptions#setSSHOptions}:
+ * SSH terms are configured by {@link io.vertx.ext.shell.ShellServiceOptions#setSSHOptions}:
  *
  * - {@link io.vertx.ext.shell.term.SSHTermOptions#setPort}: port
  * - {@link io.vertx.ext.shell.term.SSHTermOptions#setHost}: host
@@ -131,6 +157,17 @@
  * - {@link io.vertx.ext.shell.term.SSHTermOptions#setKeyPairOptions}: set `.jks` key pair store
  * - {@link io.vertx.ext.shell.term.SSHTermOptions#setPfxKeyPairOptions}: set `.pfx` key pair store
  * - {@link io.vertx.ext.shell.term.SSHTermOptions#setPemKeyPairOptions}: set `.pem` key pair store
+ *
+ * == HTTP term configuration
+ *
+ * HTTP terms are configured by {@link io.vertx.ext.shell.ShellServiceOptions#setHttpOptions}, the http options
+ * extends the {@link io.vertx.core.http.HttpServerOptions} so they expose the exact same configuration.
+ *
+ * In addition there are extra options for configuring an HTTP term:
+ *
+ * - {@link io.vertx.ext.shell.term.HttpTermOptions#setShiroAuthOptions}: configures user authentication
+ * - {@link io.vertx.ext.shell.term.HttpTermOptions#setSockJSHandlerOptions}: configures SockJS
+ * - {@link io.vertx.ext.shell.term.HttpTermOptions#setSockJSPath}: the SockJS path in the router
  *
  * == Base commands
  *
@@ -368,9 +405,30 @@
  *
  * Completion ends with a call to {@link io.vertx.ext.shell.cli.Completion#complete(java.util.List)}.
  *
- * == In process shell session
+ * == Shell server
  *
- * In process shell session can be created with {@link io.vertx.ext.shell.ShellService#createShell}:
+ * The Shell service is a convenient facade for starting a preconfigured shell either programmatically or as a Vert.x service.
+ * When more flexibility is needed, a {@link io.vertx.ext.shell.ShellServer} can be used instead of the service.
+ *
+ * For instance the shell http term can be configured to use an existing router instead of starting its own http server.
+ *
+ * Using a shell server requires explicit configuration but provides full flexiblity, a shell server is setup in a few
+ * steps:
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#shellServer}
+ * ----
+ * <1> create a the shell server
+ * <2> create an HTTP term server mounted on an existing router
+ * <3> create an SSH term server
+ * <4> register term servers
+ * <5> register all base commands
+ * <6> finally start the shell server
+ *
+ * Besides, the shell server can also be used for creating in process shell session: it provides a programmatic interactive shell.
+ *
+ * In process shell session can be created with {@link io.vertx.ext.shell.ShellServer#createShell}:
  *
  * [source,$lang]
  * ----
@@ -397,24 +455,84 @@
  *
  * Vert.x Shell also provides bare terminal servers for those who need to write pure terminal applications.
  *
+ * === SSH term
+ *
  * The terminal server {@link io.vertx.ext.shell.term.Term} handler accepts incoming terminal connections.
  * When a remote terminal connects, the {@link io.vertx.ext.shell.term.Term} can be used to interact with connected
  * terminal.
  *
  * [source,$lang]
  * ----
- * {@link examples.Examples#sshEchoTerminal(io.vertx.core.Vertx)}
- * ----
- *
- * The telnet protocol is also supported:
- *
- * [source,$lang]
- * ----
- * {@link examples.Examples#telnetEchoTerminal(io.vertx.core.Vertx)}
+ * {@link examples.Examples#sshEchoTerminal}
  * ----
  *
  * The {@link io.vertx.ext.shell.term.Term} is also a {@link io.vertx.ext.shell.term.Tty}, this section explains
  * how to use the tty.
+ *
+ * === Telnet term
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#telnetEchoTerminal}
+ * ----
+ *
+ * === HTTP term
+ *
+ * The {@link io.vertx.ext.shell.term.TermServer#createHttpTermServer} method creates an HTTP term server, built
+ * on top of Vert.x Web using the SockJS protocol.
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#httpEchoTerminal}
+ * ----
+ *
+ * An HTTP term can start its own HTTP server, or it can reuse an existing Vert.x Web {@link io.vertx.ext.web.Router}.
+ *
+ * The shell can be found at `/shell.html`.
+ *
+ * [source,$lang]
+ * ----
+ * {@link examples.Examples#httpEchoTerminalUsingRouter}
+ * ----
+ *
+ * The later option is convenient when the HTTP shell is integrated in an existing HTTP server.
+ *
+ * The HTTP term server by default is configured for serving:
+ *
+ * - the `shell.html` page
+ * - the `https://github.com/chjj/term.js/[term.js]` client library
+ * - the `vertxshell.js` client library
+ *
+ * The `vertxshell.js` integrates `term.js` is the client side part of the HTTP term.
+ *
+ * It integrates `term.js` with SockJS and needs the URL of the HTTP term server endpoint:
+ *
+ * [source,javascript]
+ * ----
+ * window.addEventListener('load', function () {
+ *   var url = 'http://localhost/shell';
+ *   new VertxTerm(url, {
+ *     cols: 80,
+ *     rows: 24
+ *    });
+ *  });
+ * ----
+ *
+ * Straight websockets can also be used, if so, the remote term URL should be suffixed with `/websocket`:
+ *
+ * [source,javascript]
+ * ----
+ * window.addEventListener('load', function () {
+ *   var url = 'ws://localhost/shell/websocket';
+ *   new VertxTerm(url, {
+ *     cols: 80,
+ *     rows: 24
+ *    });
+ *  });
+ * ----
+ *
+ * For customization purpose these resources can be copied and customized, they are available in the Vert.x Shell
+ * jar under the `io.vertx.ext.shell` packages.
  */
 @ModuleGen(name = "vertx-shell", groupPackage = "io.vertx")
 @Document(fileName = "index.adoc")

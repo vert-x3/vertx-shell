@@ -51,8 +51,6 @@ import io.vertx.core.net.KeyCertOptions;
 import io.vertx.core.net.PfxOptions;
 import io.vertx.core.net.impl.KeyStoreHelper;
 import io.vertx.ext.auth.AuthProvider;
-import io.vertx.ext.auth.shiro.ShiroAuth;
-import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.Term;
@@ -72,7 +70,6 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
 /**
  * Encapsulate the SSH server setup.
@@ -85,7 +82,7 @@ public class SSHTermServer implements TermServer {
 
   private final Vertx vertx;
   private final SSHTermOptions options;
-  private Consumer<TtyConnection> handler;
+  private Handler<TtyConnection> connectionHandler;
   private SshServer nativeServer;
   private final AtomicInteger status = new AtomicInteger(STATUS_STOPPED);
   private ContextInternal listenContext;
@@ -99,12 +96,8 @@ public class SSHTermServer implements TermServer {
     return options;
   }
 
-  public Consumer<TtyConnection> getHandler() {
-    return handler;
-  }
-
-  public SSHTermServer setHandler(Consumer<TtyConnection> handler) {
-    this.handler = handler;
+  public SSHTermServer connectionHandler(Handler<TtyConnection> handler) {
+    this.connectionHandler = handler;
     return this;
   }
 
@@ -118,9 +111,9 @@ public class SSHTermServer implements TermServer {
   @Override
   public TermServer termHandler(Handler<Term> handler) {
     if (handler != null) {
-      setHandler(new TermConnectionHandler(handler));
+      connectionHandler(new TermConnectionHandler(handler));
     } else {
-      setHandler(null);
+      connectionHandler(null);
     }
     return this;
   }
@@ -166,7 +159,7 @@ public class SSHTermServer implements TermServer {
         };
 
         nativeServer = SshServer.setUpDefaultServer();
-        nativeServer.setShellFactory(() -> new TtyCommand(handler));
+        nativeServer.setShellFactory(() -> new TtyCommand(connectionHandler::handle));
         nativeServer.setHost(options.getHost());
         nativeServer.setPort(options.getPort());
         nativeServer.setKeyPairProvider(provider);
@@ -174,11 +167,8 @@ public class SSHTermServer implements TermServer {
         nativeServer.setServiceFactories(Arrays.asList(ServerConnectionServiceFactory.INSTANCE, AsyncUserAuthServiceFactory.INSTANCE));
 
         //
-        AuthProvider authProvider;
-        if (options.getAuthOptions() instanceof ShiroAuthOptions) {
-          ShiroAuthOptions authOptions = (ShiroAuthOptions) options.getAuthOptions();
-          authProvider = ShiroAuth.create(vertx, authOptions);
-        } else {
+        AuthProvider authProvider = Helper.toAuthProvider(vertx, options.getAuthOptions());
+        if (authProvider == null) {
           throw new VertxException("No authenticator");
         }
 
@@ -215,9 +205,9 @@ public class SSHTermServer implements TermServer {
     close(ar -> {});
   }
 
-  public void close(Handler<AsyncResult<Void>> closeHandler) {
+  public void close(Handler<AsyncResult<Void>> completionHandler) {
     if (!status.compareAndSet(STATUS_STARTED, STATUS_STOPPING)) {
-      closeHandler.handle(Future.failedFuture("Invalid state:" + status.get()));
+      completionHandler.handle(Future.failedFuture("Invalid state:" + status.get()));
       return;
     }
     vertx.executeBlocking(fut-> {
@@ -225,12 +215,12 @@ public class SSHTermServer implements TermServer {
         SshServer server = this.nativeServer;
         this.nativeServer = null;
         server.close();
-        closeHandler.handle(Future.succeededFuture());
+        completionHandler.handle(Future.succeededFuture());
       } catch (Exception t) {
-        closeHandler.handle(Future.failedFuture(t));
+        completionHandler.handle(Future.failedFuture(t));
       } finally {
         status.set(STATUS_STOPPED);
       }
-    }, closeHandler);
+    }, completionHandler);
   }
 }

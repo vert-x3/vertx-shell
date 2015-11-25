@@ -32,6 +32,7 @@
 
 package io.vertx.ext.shell.registry;
 
+import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
@@ -95,29 +96,48 @@ public interface CommandRegistry {
    * Register a command
    *
    * @param command the class of the command to register
+   * @return a reference to this, so the API can be used fluently
    */
   @GenIgnore
-  void registerCommand(Class<? extends Command> command);
+  CommandRegistry registerCommand(Class<? extends Command> command);
 
   @GenIgnore
-  void registerCommand(Class<? extends Command> command, Handler<AsyncResult<CommandRegistration>> doneHandler);
+  CommandRegistry registerCommand(Class<? extends Command> command, Handler<AsyncResult<CommandRegistration>> doneHandler);
 
   /**
    * Register a command
    *
    * @param command the command to register
+   * @return a reference to this, so the API can be used fluently
    */
-  void registerCommand(Command command);
+  @Fluent
+  CommandRegistry registerCommand(Command command);
 
-  void registerCommand(Command command, Handler<AsyncResult<CommandRegistration>> doneHandler);
+  @Fluent
+  CommandRegistry registerCommand(Command command, Handler<AsyncResult<CommandRegistration>> doneHandler);
+
+  /**
+   * Register a list of commands.
+   *
+   * @param commands the commands to register
+   * @return a reference to this, so the API can be used fluently
+   */
+  @Fluent
+  CommandRegistry registerCommands(List<Command> commands);
+
+  @Fluent
+  CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<CommandRegistration>> doneHandler);
 
   /**
    * Unregister a command.
    *
    * @param commandName the command name
+   * @return a reference to this, so the API can be used fluently
    */
-  void unregisterCommand(String commandName);
+  @Fluent
+  CommandRegistry unregisterCommand(String commandName);
 
-  void unregisterCommand(String commandName, Handler<AsyncResult<Void>> doneHandler);
+  @Fluent
+  CommandRegistry unregisterCommand(String commandName, Handler<AsyncResult<Void>> doneHandler);
 
 }

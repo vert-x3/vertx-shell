@@ -94,5 +94,19 @@ var Command = function(j_val) {
   this._jdel = j_command;
 };
 
+/**
+ @return the list of base commands
+
+ @memberof module:vertx-shell-js/command
+
+ @return {Array.<Command>}
+ */
+Command.baseCommands = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnListSetVertxGen(JCommand["baseCommands()"](), Command);
+  } else throw new TypeError('function invoked with invalid arguments');
+};
+
 // We export the Constructor function
 module.exports = Command;

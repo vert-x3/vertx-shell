@@ -19,7 +19,6 @@ import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.web.handler.sockjs.SockJSSocket
-import io.vertx.groovy.core.buffer.Buffer
 import io.vertx.groovy.core.Vertx
 import io.vertx.core.Handler
 /**
@@ -36,18 +35,6 @@ public class SockJSTermHandler implements Handler<SockJSSocket> {
   }
   public void handle(SockJSSocket arg0) {
     ((io.vertx.core.Handler) this.delegate).handle((io.vertx.ext.web.handler.sockjs.SockJSSocket)arg0.getDelegate());
-  }
-  public static Buffer defaultVertxTermScriptResource() {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.SockJSTermHandler.defaultVertxTermScriptResource(), io.vertx.groovy.core.buffer.Buffer.class);
-    return ret;
-  }
-  public static Buffer defaultTermScriptResource() {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.SockJSTermHandler.defaultTermScriptResource(), io.vertx.groovy.core.buffer.Buffer.class);
-    return ret;
-  }
-  public static Buffer defaultTermMarkupResource() {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.SockJSTermHandler.defaultTermMarkupResource(), io.vertx.groovy.core.buffer.Buffer.class);
-    return ret;
   }
   public static SockJSTermHandler create(Vertx vertx) {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.SockJSTermHandler.create((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.term.SockJSTermHandler.class);

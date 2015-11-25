@@ -17,6 +17,14 @@ module VertxShell
     def j_del
       @j_del
     end
+    #  @return the list of base commands
+    # @return [Array<::VertxShell::Command>]
+    def self.base_commands
+      if !block_given?
+        return Java::IoVertxExtShellCommand::Command.java_method(:baseCommands, []).call().to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::Command) }
+      end
+      raise ArgumentError, "Invalid arguments when calling base_commands()"
+    end
     #  @return the command name
     # @return [String]
     def name

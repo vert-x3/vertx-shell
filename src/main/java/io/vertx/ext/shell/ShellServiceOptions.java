@@ -36,7 +36,7 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.term.TelnetTermOptions;
-import io.vertx.ext.shell.term.WebTermOptions;
+import io.vertx.ext.shell.term.HttpTermOptions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -77,7 +77,7 @@ public class ShellServiceOptions {
   private String welcomeMessage;
   private TelnetTermOptions telnetOptions;
   private SSHTermOptions sshOptions;
-  private WebTermOptions webOptions;
+  private HttpTermOptions httpOptions;
 
   public ShellServiceOptions() {
     welcomeMessage = DEFAULT_WELCOME_MESSAGE;
@@ -86,7 +86,7 @@ public class ShellServiceOptions {
   public ShellServiceOptions(ShellServiceOptions that) {
     this.telnetOptions = that.telnetOptions != null ? new TelnetTermOptions(that.telnetOptions) : null;
     this.sshOptions = that.sshOptions != null ? new SSHTermOptions(that.sshOptions) : null;
-    this.webOptions = that.webOptions != null ? new WebTermOptions(that.webOptions) : null;
+    this.httpOptions = that.httpOptions != null ? new HttpTermOptions(that.httpOptions) : null;
     this.welcomeMessage = that.welcomeMessage;
   }
 
@@ -149,12 +149,12 @@ public class ShellServiceOptions {
     return this;
   }
 
-  public WebTermOptions getWebOptions() {
-    return webOptions;
+  public HttpTermOptions getHttpOptions() {
+    return httpOptions;
   }
 
-  public ShellServiceOptions setWebOptions(WebTermOptions webOptions) {
-    this.webOptions = webOptions;
+  public ShellServiceOptions setHttpOptions(HttpTermOptions httpOptions) {
+    this.httpOptions = httpOptions;
     return this;
   }
 }

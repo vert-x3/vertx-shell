@@ -35,6 +35,7 @@ package io.vertx.ext.shell;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.CliToken;
+import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.shell.registry.CommandRegistry;
@@ -58,17 +59,17 @@ import java.util.concurrent.TimeUnit;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @RunWith(VertxUnitRunner.class)
-public class ShellServiceTest {
+public class ShellServerTest {
 
   Vertx vertx;
   CommandRegistry registry;
-  ShellService service;
+  ShellServer server;
 
   @Before
   public void before() {
     vertx = Vertx.vertx();
-    registry = CommandRegistry.get(vertx);
-    service = ShellService.create(vertx);
+    server = ShellServer.create(vertx);
+    registry = server.commandRegistry().registerCommands(Command.baseCommands());
   }
 
   @After
@@ -83,7 +84,7 @@ public class ShellServiceTest {
       process.end(3);
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      Shell session = service.createShell();
+      Shell session = server.createShell();
       Job job = session.createJob(CliToken.tokenize("foo"));
       Async async = context.async();
       job.setTty(Pty.create().slave()).terminateHandler(code -> {
@@ -100,7 +101,7 @@ public class ShellServiceTest {
       throw new RuntimeException();
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      Shell shell = service.createShell();
+      Shell shell = server.createShell();
       Job job = shell.createJob("foo");
       Async async = context.async();
       Pty pty = Pty.create();
@@ -123,7 +124,7 @@ public class ShellServiceTest {
       latch.countDown();
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      Shell session = service.createShell();
+      Shell session = server.createShell();
       Job job = session.createJob(CliToken.tokenize("foo"));
       Async async = context.async();
       Pty pty = Pty.create();
@@ -149,7 +150,7 @@ public class ShellServiceTest {
       process.end(0);
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      Shell session = service.createShell();
+      Shell session = server.createShell();
       Job job = session.createJob("foo");
       Async async = context.async();
       LinkedList<String> out = new LinkedList<>();
@@ -189,7 +190,7 @@ public class ShellServiceTest {
       registry.registerCommand(cmd.build(), testContext.asyncAssertSuccess(v2 -> {
         shellCtx.runOnContext(v3 -> {
           testContext.assertTrue(shellCtx == Vertx.currentContext());
-          Shell shell = service.createShell();
+          Shell shell = server.createShell();
           Job job = shell.createJob("foo");
           Pty pty = Pty.create();
           pty.setStdout(text -> {
@@ -223,7 +224,7 @@ public class ShellServiceTest {
       latch.countDown();
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      Shell shell = service.createShell();
+      Shell shell = server.createShell();
       Job job = shell.createJob("foo");
       Async async = context.async();
       Pty pty = Pty.create();
@@ -253,7 +254,7 @@ public class ShellServiceTest {
       process.stdout().write("ping");
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      Shell shell = service.createShell();
+      Shell shell = server.createShell();
       Job job = shell.createJob("foo");
       Pty pty = Pty.create();
       Async async = context.async();
@@ -278,7 +279,7 @@ public class ShellServiceTest {
       process.end();
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      Shell shell = service.createShell();
+      Shell shell = server.createShell();
       Job job = shell.createJob("foo");
       shell.session().put("the_key", "the_value");
       Pty pty = Pty.create();
@@ -301,7 +302,7 @@ public class ShellServiceTest {
       process.end();
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      Shell shell = service.createShell();
+      Shell shell = server.createShell();
       Job job = shell.createJob("foo");
       Pty pty = Pty.create();
       job.setTty(pty.slave()).terminateHandler(status -> {
@@ -323,7 +324,7 @@ public class ShellServiceTest {
       process.end();
     });
     registry.registerCommand(cmd.build(), context.asyncAssertSuccess(v -> {
-      Shell shell = service.createShell();
+      Shell shell = server.createShell();
       Job job = shell.createJob("foo");
       Pty pty = Pty.create();
       shell.session().put("the_key", "the_value");
@@ -347,7 +348,7 @@ public class ShellServiceTest {
     });
     registry.registerCommand(cmd.build(), ar -> registrationLatch.complete());
     registrationLatch.awaitSuccess(10000);
-    Shell shell = service.createShell();
+    Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Pty pty = Pty.create();
     job.setTty(pty.slave()).terminateHandler(status -> {

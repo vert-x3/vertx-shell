@@ -85,11 +85,13 @@ var CommandRegistry = function(j_val) {
    @public
    @param command {Command} 
    @param doneHandler {function} 
+   @return {CommandRegistry}
    */
   this.registerCommand = function() {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
       j_commandRegistry["registerCommand(io.vertx.ext.shell.command.Command)"](__args[0]._jdel);
+      return that;
     }  else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'function') {
       j_commandRegistry["registerCommand(io.vertx.ext.shell.command.Command,io.vertx.core.Handler)"](__args[0]._jdel, function(ar) {
       if (ar.succeeded()) {
@@ -98,6 +100,31 @@ var CommandRegistry = function(j_val) {
         __args[1](null, ar.cause());
       }
     });
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param commands {Array.<Command>} 
+   @param doneHandler {function} 
+   @return {CommandRegistry}
+   */
+  this.registerCommands = function() {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0] instanceof Array) {
+      j_commandRegistry["registerCommands(java.util.List)"](utils.convParamListVertxGen(__args[0]));
+      return that;
+    }  else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0] instanceof Array && typeof __args[1] === 'function') {
+      j_commandRegistry["registerCommands(java.util.List,io.vertx.core.Handler)"](utils.convParamListVertxGen(__args[0]), function(ar) {
+      if (ar.succeeded()) {
+        __args[1](utils.convReturnVertxGen(ar.result(), CommandRegistration), null);
+      } else {
+        __args[1](null, ar.cause());
+      }
+    });
+      return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -106,11 +133,13 @@ var CommandRegistry = function(j_val) {
    @public
    @param commandName {string} 
    @param doneHandler {function} 
+   @return {CommandRegistry}
    */
   this.unregisterCommand = function() {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'string') {
       j_commandRegistry["unregisterCommand(java.lang.String)"](__args[0]);
+      return that;
     }  else if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
       j_commandRegistry["unregisterCommand(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
       if (ar.succeeded()) {
@@ -119,6 +148,7 @@ var CommandRegistry = function(j_val) {
         __args[1](null, ar.cause());
       }
     });
+      return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

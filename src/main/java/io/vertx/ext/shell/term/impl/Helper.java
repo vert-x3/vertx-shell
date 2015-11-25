@@ -32,56 +32,23 @@
 
 package io.vertx.ext.shell.term.impl;
 
-import io.termd.core.tty.TtyConnection;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.term.SockJSTermHandler;
-import io.vertx.ext.shell.term.Term;
-import io.vertx.ext.web.handler.sockjs.SockJSSocket;
-
-import java.util.function.Consumer;
+import io.vertx.ext.auth.AuthOptions;
+import io.vertx.ext.auth.AuthProvider;
+import io.vertx.ext.auth.shiro.ShiroAuth;
+import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class SockJSTermHandlerImpl implements SockJSTermHandler {
+class Helper {
 
-  final Vertx vertx;
-  private Handler<TtyConnection> handler;
-
-  public SockJSTermHandlerImpl(Vertx vertx) {
-    this.vertx = vertx;
-  }
-
-  @Override
-  public SockJSTermHandler termHandler(Handler<Term> handler) {
-    if (handler != null) {
-      this.handler = new TermConnectionHandler(handler);
+  static AuthProvider toAuthProvider(Vertx vertx, AuthOptions options) {
+    if (options instanceof ShiroAuthOptions) {
+      ShiroAuthOptions authOptions = (ShiroAuthOptions) options;
+      return ShiroAuth.create(vertx, authOptions);
     } else {
-      this.handler = null;
-    }
-    return this;
-  }
-
-  public SockJSTermHandler connectionHandler(Handler<TtyConnection> handler) {
-    this.handler = handler;
-    return this;
-  }
-
-  @Override
-  public void handle(SockJSSocket socket) {
-    if (handler != null) {
-      SockJSTtyConnection conn = new SockJSTtyConnection(vertx.getOrCreateContext(), socket);
-      socket.handler(buf -> conn.writeToDecoder(buf.toString()));
-      socket.endHandler(v -> {
-        Consumer<Void> closeHandler = conn.getCloseHandler();
-        if (closeHandler != null) {
-          closeHandler.accept(null);
-        }
-      });
-      handler.handle(conn);
-    } else {
-      socket.close();
+      return null;
     }
   }
 }
