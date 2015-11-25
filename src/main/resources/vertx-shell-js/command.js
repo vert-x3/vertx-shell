@@ -18,6 +18,7 @@
 var utils = require('vertx-js/util/utils');
 var Completion = require('vertx-shell-js/completion');
 var CLI = require('vertx-js/cli');
+var CommandPack = require('vertx-shell-js/command_pack');
 var CommandProcess = require('vertx-shell-js/command_process');
 
 var io = Packages.io;
@@ -95,16 +96,15 @@ var Command = function(j_val) {
 };
 
 /**
- @return the list of base commands
 
  @memberof module:vertx-shell-js/command
 
- @return {Array.<Command>}
+ @return {CommandPack}
  */
 Command.baseCommands = function() {
   var __args = arguments;
   if (__args.length === 0) {
-    return utils.convReturnListSetVertxGen(JCommand["baseCommands()"](), Command);
+    return utils.convReturnVertxGen(JCommand["baseCommands()"](), CommandPack);
   } else throw new TypeError('function invoked with invalid arguments');
 };
 

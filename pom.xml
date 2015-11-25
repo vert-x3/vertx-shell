@@ -97,10 +97,6 @@
       <artifactId>termd-core</artifactId>
       <version>${termd.version}</version>
     </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-dropwizard-metrics</artifactId>
-    </dependency>
 
     <!-- Apache SSHD -->
     <dependency>

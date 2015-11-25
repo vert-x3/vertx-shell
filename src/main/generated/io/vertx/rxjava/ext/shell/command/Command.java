@@ -19,7 +19,6 @@ package io.vertx.rxjava.ext.shell.command;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
-import java.util.List;
 import io.vertx.rxjava.ext.shell.cli.Completion;
 import io.vertx.rxjava.core.cli.CLI;
 
@@ -43,12 +42,8 @@ public class Command {
     return delegate;
   }
 
-  /**
-   * @return the list of base commands
-   * @return 
-   */
-  public static List<Command> baseCommands() { 
-    List<Command> ret = io.vertx.ext.shell.command.Command.baseCommands().stream().map(Command::newInstance).collect(java.util.stream.Collectors.toList());
+  public static CommandPack baseCommands() { 
+    CommandPack ret= CommandPack.newInstance(io.vertx.ext.shell.command.Command.baseCommands());
     return ret;
   }
 

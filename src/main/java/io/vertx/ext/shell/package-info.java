@@ -540,6 +540,27 @@
  *
  * For customization purpose these resources can be copied and customized, they are available in the Vert.x Shell
  * jar under the `io.vertx.ext.shell` packages.
+ *
+ * == Command discovery
+ *
+ * The command discovery can be used when new commands need to be added to Vert.x without an explicit registration.
+ *
+ * For example, the _Dropwizard_ metrics service, adds specific metrics command to the shell service on the fly.
+ *
+ * It can be achieved via the {@code java.util.ServiceLoader} of a {@link io.vertx.ext.shell.command.CommandPack}.
+ *
+ * [source,java]
+ * ----
+ * public class CustomCommandPack implements CommandPack {
+ *
+ *   public void lookupCommands(Vertx vertx, Handler<AsyncResult<List<Command>>> commandsHandler) {
+ *     // call the commandsHandler with the commands
+ *   }
+ * }
+ * ----
+ *
+ * NOTE: this is only valid for the {@link io.vertx.ext.shell.ShellService}. {@link io.vertx.ext.shell.ShellServer}
+ * don't use this mechanism.
  */
 @ModuleGen(name = "vertx-shell", groupPackage = "io.vertx")
 @Document(fileName = "index.adoc")

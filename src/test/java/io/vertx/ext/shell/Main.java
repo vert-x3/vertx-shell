@@ -33,13 +33,10 @@
 package io.vertx.ext.shell;
 
 import io.vertx.core.Vertx;
-import io.vertx.core.VertxOptions;
-import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
-import io.vertx.ext.dropwizard.DropwizardMetricsOptions;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.term.SSHTermOptions;
@@ -56,8 +53,7 @@ public class Main {
 
   public static void main(String[] args) throws Exception {
 
-    Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
-        new DropwizardMetricsOptions().setEnabled(true)));
+    Vertx vertx = Vertx.vertx();
 
     CommandRegistry mgr = CommandRegistry.get(vertx);
 

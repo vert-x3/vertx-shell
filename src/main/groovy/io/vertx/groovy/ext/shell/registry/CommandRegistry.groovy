@@ -18,12 +18,13 @@ package io.vertx.groovy.ext.shell.registry;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
+import io.vertx.groovy.core.Vertx
+import io.vertx.groovy.ext.shell.cli.CliToken
+import io.vertx.groovy.ext.shell.command.CommandPack
 import java.util.List
 import io.vertx.groovy.ext.shell.command.Command
 import io.vertx.groovy.ext.shell.cli.Completion
-import io.vertx.groovy.core.Vertx
 import io.vertx.core.AsyncResult
-import io.vertx.groovy.ext.shell.cli.CliToken
 import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.system.Process
 /**
@@ -105,6 +106,38 @@ public class CommandRegistry {
   }
   /**
    * Register a list of commands.
+   * @param commandPack the commands to register
+   * @return a reference to this, so the API can be used fluently
+   */
+  public CommandRegistry registerCommands(CommandPack commandPack) {
+    this.delegate.registerCommands((io.vertx.ext.shell.command.CommandPack)commandPack.getDelegate());
+    return this;
+  }
+  /**
+   * Register a list of commands.
+   * @param commandPack the commands to register
+   * @param doneHandler 
+   * @return a reference to this, so the API can be used fluently
+   */
+  public CommandRegistry registerCommands(CommandPack commandPack, Handler<AsyncResult<List<CommandRegistration>>> doneHandler) {
+    this.delegate.registerCommands((io.vertx.ext.shell.command.CommandPack)commandPack.getDelegate(), new Handler<AsyncResult<List<io.vertx.ext.shell.registry.CommandRegistration>>>() {
+      public void handle(AsyncResult<List<io.vertx.ext.shell.registry.CommandRegistration>> event) {
+        AsyncResult<List<CommandRegistration>> f
+        if (event.succeeded()) {
+          f = InternalHelper.<List<CommandRegistration>>result(event.result().collect({
+            io.vertx.ext.shell.registry.CommandRegistration element ->
+            new io.vertx.groovy.ext.shell.registry.CommandRegistration(element)
+          }) as List)
+        } else {
+          f = InternalHelper.<List<CommandRegistration>>failure(event.cause())
+        }
+        doneHandler.handle(f)
+      }
+    });
+    return this;
+  }
+  /**
+   * Register a list of commands.
    * @param commands the commands to register
    * @return a reference to this, so the API can be used fluently
    */
@@ -112,14 +145,17 @@ public class CommandRegistry {
     this.delegate.registerCommands((List<io.vertx.ext.shell.command.Command>)(commands.collect({underpants -> underpants.getDelegate()})));
     return this;
   }
-  public CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<CommandRegistration>> doneHandler) {
-    this.delegate.registerCommands((List<io.vertx.ext.shell.command.Command>)(commands.collect({underpants -> underpants.getDelegate()})), new Handler<AsyncResult<io.vertx.ext.shell.registry.CommandRegistration>>() {
-      public void handle(AsyncResult<io.vertx.ext.shell.registry.CommandRegistration> event) {
-        AsyncResult<CommandRegistration> f
+  public CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<List<CommandRegistration>>> doneHandler) {
+    this.delegate.registerCommands((List<io.vertx.ext.shell.command.Command>)(commands.collect({underpants -> underpants.getDelegate()})), new Handler<AsyncResult<List<io.vertx.ext.shell.registry.CommandRegistration>>>() {
+      public void handle(AsyncResult<List<io.vertx.ext.shell.registry.CommandRegistration>> event) {
+        AsyncResult<List<CommandRegistration>> f
         if (event.succeeded()) {
-          f = InternalHelper.<CommandRegistration>result(new CommandRegistration(event.result()))
+          f = InternalHelper.<List<CommandRegistration>>result(event.result().collect({
+            io.vertx.ext.shell.registry.CommandRegistration element ->
+            new io.vertx.groovy.ext.shell.registry.CommandRegistration(element)
+          }) as List)
         } else {
-          f = InternalHelper.<CommandRegistration>failure(event.cause())
+          f = InternalHelper.<List<CommandRegistration>>failure(event.cause())
         }
         doneHandler.handle(f)
       }

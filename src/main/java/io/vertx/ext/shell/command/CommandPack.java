@@ -30,38 +30,29 @@
  *
  */
 
-package io.vertx.ext.shell.command.metrics;
+package io.vertx.ext.shell.command;
 
-import io.vertx.core.cli.annotations.Argument;
-import io.vertx.core.cli.annotations.Description;
-import io.vertx.core.cli.annotations.Name;
-import io.vertx.core.cli.annotations.Summary;
-import io.vertx.core.json.JsonObject;
-import io.vertx.ext.dropwizard.MetricsService;
-import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.command.CommandProcess;
+import io.vertx.codegen.annotations.VertxGen;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
+
+import java.util.List;
 
 /**
+ * A command pack is a set of commands, for instance the base command pack, the metrics command pack, etc...
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@Name("metrics-info")
-@Summary("Show metrics info for the current Vert.x instance in Json format")
-public class MetricsInfo implements Command {
+@VertxGen
+public interface CommandPack {
 
-  private String name;
+  /**
+   * Lookup commands.
+   *
+   * @param vertx the vertx instance
+   * @param commandsHandler the handler that will receive the lookup callback
+   */
+  void lookupCommands(Vertx vertx, Handler<AsyncResult<List<Command>>> commandsHandler);
 
-  @Argument(index = 0, argName = "name")
-  @Description("the metrics name, can be a metrics prefix or a precise name")
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  @Override
-  public void process(CommandProcess process) {
-    String name = process.args().get(0);
-    MetricsService metrics = MetricsService.create(process.vertx());
-    JsonObject snapshot = metrics.getMetricsSnapshot(name);
-    process.write(snapshot.encodePrettily() + "\n");
-    process.end();
-  }
 }

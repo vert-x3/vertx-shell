@@ -39,6 +39,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxException;
+import io.vertx.ext.shell.command.CommandPack;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
@@ -54,7 +55,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -109,13 +109,39 @@ public class CommandRegistryImpl extends AbstractVerticle implements CommandRegi
   }
 
   @Override
+  public CommandRegistry registerCommands(CommandPack commandPack) {
+    return registerCommands(commandPack, ar -> {
+    });
+  }
+
+  @Override
+  public CommandRegistry registerCommands(CommandPack commandPack, Handler<AsyncResult<List<CommandRegistration>>> doneHandler) {
+    commandPack.lookupCommands(vertx, ar -> {
+      if (ar.succeeded()) {
+        registerCommands(ar.result(), doneHandler);
+      } else {
+        doneHandler.handle(Future.failedFuture(ar.cause()));
+      }
+    });
+    return this;
+  }
+
+  @Override
   public CommandRegistry registerCommand(Command command) {
     return registerCommand(command, null);
   }
 
   @Override
   public CommandRegistry registerCommand(Command command, Handler<AsyncResult<CommandRegistration>> doneHandler) {
-    return registerCommands(Collections.singletonList(command), doneHandler);
+    return registerCommands(Collections.singletonList(command), ar -> {
+      if (doneHandler != null) {
+        if (ar.succeeded()) {
+          doneHandler.handle(Future.succeededFuture(ar.result().get(0)));
+        } else {
+          doneHandler.handle(Future.failedFuture(ar.cause()));
+        }
+      }
+    });
   }
 
   @Override
@@ -124,46 +150,38 @@ public class CommandRegistryImpl extends AbstractVerticle implements CommandRegi
   }
 
   @Override
-  public CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<CommandRegistration>> doneHandler) {
+  public CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<List<CommandRegistration>>> doneHandler) {
     Context commandCtx = vertx.getOrCreateContext();
-    AtomicInteger count = new AtomicInteger(commands.size());
-    for (Command command : commands) {
-      String name = command.name();
-      vertx.deployVerticle(new AbstractVerticle() {
-        @Override
-        public void start() throws Exception {
+    vertx.deployVerticle(new AbstractVerticle() {
+      @Override
+      public void start() throws Exception {
+        for (Command command : commands) {
+          String name = command.name();
           CommandRegistrationImpl registration = new CommandRegistrationImpl(CommandRegistryImpl.this, command, commandCtx, context.deploymentID());
           if (commandMap.putIfAbsent(name, registration) != null) {
             throw new Exception("Command " + name + " already registered");
           }
         }
+      }
 
-        @Override
-        public void stop() throws Exception {
+      @Override
+      public void stop() throws Exception {
+        for (Command command : commands) {
+          String name = command.name();
           commandMap.remove(name);
         }
-      }, ar -> {
-        if (doneHandler != null) {
-          if (ar.succeeded()) {
-            CommandRegistrationImpl registration = null;
-            for (CommandRegistrationImpl r : commandMap.values()) {
-              if (r.deploymendID.equals(ar.result())) {
-                registration = r;
-              }
-            }
-            if (registration != null && count.decrementAndGet() == 0) {
-              doneHandler.handle(Future.succeededFuture(registration));
-            } else {
-              count.set(0);
-              doneHandler.handle(Future.failedFuture("Internal error"));
-            }
-          } else {
-            count.set(0);
-            doneHandler.handle(Future.failedFuture(ar.cause()));
-          }
-        }
-      });
-    }
+      }
+    }, ar -> {
+      if (ar.succeeded()) {
+        List<CommandRegistration> regs = commandMap.values().
+            stream().
+            filter(reg -> reg.deploymendID.equals(ar.result())).
+            collect(Collectors.toList());
+        doneHandler.handle(Future.succeededFuture(regs));
+      } else {
+        doneHandler.handle(Future.failedFuture(ar.cause()));
+      }
+    });
     return this;
   }
 

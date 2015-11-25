@@ -19,12 +19,13 @@ package io.vertx.rxjava.ext.shell.registry;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
+import io.vertx.rxjava.core.Vertx;
+import io.vertx.rxjava.ext.shell.cli.CliToken;
+import io.vertx.rxjava.ext.shell.command.CommandPack;
 import java.util.List;
 import io.vertx.rxjava.ext.shell.command.Command;
 import io.vertx.rxjava.ext.shell.cli.Completion;
-import io.vertx.rxjava.core.Vertx;
 import io.vertx.core.AsyncResult;
-import io.vertx.rxjava.ext.shell.cli.CliToken;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.system.Process;
 
@@ -127,6 +128,48 @@ public class CommandRegistry {
 
   /**
    * Register a list of commands.
+   * @param commandPack the commands to register
+   * @return a reference to this, so the API can be used fluently
+   */
+  public CommandRegistry registerCommands(CommandPack commandPack) { 
+    this.delegate.registerCommands((io.vertx.ext.shell.command.CommandPack) commandPack.getDelegate());
+    return this;
+  }
+
+  /**
+   * Register a list of commands.
+   * @param commandPack the commands to register
+   * @param doneHandler 
+   * @return a reference to this, so the API can be used fluently
+   */
+  public CommandRegistry registerCommands(CommandPack commandPack, Handler<AsyncResult<List<CommandRegistration>>> doneHandler) { 
+    this.delegate.registerCommands((io.vertx.ext.shell.command.CommandPack) commandPack.getDelegate(), new Handler<AsyncResult<List<io.vertx.ext.shell.registry.CommandRegistration>>>() {
+      public void handle(AsyncResult<List<io.vertx.ext.shell.registry.CommandRegistration>> event) {
+        AsyncResult<List<CommandRegistration>> f;
+        if (event.succeeded()) {
+          f = InternalHelper.<List<CommandRegistration>>result(event.result().stream().map(CommandRegistration::newInstance).collect(java.util.stream.Collectors.toList()));
+        } else {
+          f = InternalHelper.<List<CommandRegistration>>failure(event.cause());
+        }
+        doneHandler.handle(f);
+      }
+    });
+    return this;
+  }
+
+  /**
+   * Register a list of commands.
+   * @param commandPack the commands to register
+   * @return 
+   */
+  public Observable<List<CommandRegistration>> registerCommandsObservable(CommandPack commandPack) { 
+    io.vertx.rx.java.ObservableFuture<List<CommandRegistration>> doneHandler = io.vertx.rx.java.RxHelper.observableFuture();
+    registerCommands(commandPack, doneHandler.toHandler());
+    return doneHandler;
+  }
+
+  /**
+   * Register a list of commands.
    * @param commands the commands to register
    * @return a reference to this, so the API can be used fluently
    */
@@ -135,14 +178,14 @@ public class CommandRegistry {
     return this;
   }
 
-  public CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<CommandRegistration>> doneHandler) { 
-    this.delegate.registerCommands(commands.stream().map(element -> (io.vertx.ext.shell.command.Command)element.getDelegate()).collect(java.util.stream.Collectors.toList()), new Handler<AsyncResult<io.vertx.ext.shell.registry.CommandRegistration>>() {
-      public void handle(AsyncResult<io.vertx.ext.shell.registry.CommandRegistration> event) {
-        AsyncResult<CommandRegistration> f;
+  public CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<List<CommandRegistration>>> doneHandler) { 
+    this.delegate.registerCommands(commands.stream().map(element -> (io.vertx.ext.shell.command.Command)element.getDelegate()).collect(java.util.stream.Collectors.toList()), new Handler<AsyncResult<List<io.vertx.ext.shell.registry.CommandRegistration>>>() {
+      public void handle(AsyncResult<List<io.vertx.ext.shell.registry.CommandRegistration>> event) {
+        AsyncResult<List<CommandRegistration>> f;
         if (event.succeeded()) {
-          f = InternalHelper.<CommandRegistration>result(new CommandRegistration(event.result()));
+          f = InternalHelper.<List<CommandRegistration>>result(event.result().stream().map(CommandRegistration::newInstance).collect(java.util.stream.Collectors.toList()));
         } else {
-          f = InternalHelper.<CommandRegistration>failure(event.cause());
+          f = InternalHelper.<List<CommandRegistration>>failure(event.cause());
         }
         doneHandler.handle(f);
       }
@@ -150,8 +193,8 @@ public class CommandRegistry {
     return this;
   }
 
-  public Observable<CommandRegistration> registerCommandsObservable(List<Command> commands) { 
-    io.vertx.rx.java.ObservableFuture<CommandRegistration> doneHandler = io.vertx.rx.java.RxHelper.observableFuture();
+  public Observable<List<CommandRegistration>> registerCommandsObservable(List<Command> commands) { 
+    io.vertx.rx.java.ObservableFuture<List<CommandRegistration>> doneHandler = io.vertx.rx.java.RxHelper.observableFuture();
     registerCommands(commands, doneHandler.toHandler());
     return doneHandler;
   }

@@ -37,10 +37,12 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.command.metrics.MetricsInfo;
-import io.vertx.ext.shell.command.metrics.MetricsLs;
+import io.vertx.ext.shell.command.CommandPack;
 import io.vertx.ext.shell.impl.ShellServiceImpl;
 import io.vertx.ext.shell.registry.CommandRegistry;
+
+import java.util.Iterator;
+import java.util.ServiceLoader;
 
 /**
  * The shell service, provides a remotely accessible shell available via Telnet or SSH according to the
@@ -63,9 +65,19 @@ public interface ShellService {
     // Base commands
     registry.registerCommands(Command.baseCommands());
 
-    // Metrics commands
-    registry.registerCommand(MetricsLs.class);
-    registry.registerCommand(MetricsInfo.class);
+    ServiceLoader<CommandPack> loader = ServiceLoader.load(CommandPack.class);
+    Iterator<CommandPack> it = loader.iterator();
+    while (true) {
+      try {
+        if (it.hasNext()) {
+          CommandPack pack = it.next();
+          registry.registerCommands(pack);
+        } else {
+          break;
+        }
+      } catch (Exception e) {
+      }
+    }
 
     return service;
   }
