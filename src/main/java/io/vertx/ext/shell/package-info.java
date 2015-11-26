@@ -191,9 +191,6 @@
  * .. local-map-put
  * .. local-map-get
  * .. local-map-rm
- * . Metrics commands (requires Dropwizard metrics setup)
- * .. metrics-ls: show all available metrics
- * .. metrics-info: show particular metrics
  * . Various commands
  * .. echo
  * .. sleep
@@ -205,7 +202,8 @@
  * .. bg
  * .. jobs
  *
- * NOTE: this command list should evolve in next releases of Vert.x Shell
+ * NOTE: this command list should evolve in next releases of Vert.x Shell. Other Vert.x project may provide commands to extend
+ * Vert.x Shell, for instance Dropwizard Metrics.
  *
  * == Extending Vert.x Shell
  *
