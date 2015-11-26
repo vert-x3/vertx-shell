@@ -547,7 +547,7 @@
  *
  * For example, the _Dropwizard_ metrics service, adds specific metrics command to the shell service on the fly.
  *
- * It can be achieved via the {@code java.util.ServiceLoader} of a {@link io.vertx.ext.shell.command.CommandPack}.
+ * It can be achieved via the {@code java.util.ServiceLoader} of a {@link io.vertx.ext.shell.registry.CommandResolver}.
  *
  * [source,java]
  * ----

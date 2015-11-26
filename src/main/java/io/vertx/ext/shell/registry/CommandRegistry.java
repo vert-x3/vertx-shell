@@ -41,7 +41,6 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.command.CommandPack;
 import io.vertx.ext.shell.registry.impl.CommandRegistryImpl;
 import io.vertx.ext.shell.system.Process;
 
@@ -118,22 +117,22 @@ public interface CommandRegistry {
   CommandRegistry registerCommand(Command command, Handler<AsyncResult<CommandRegistration>> doneHandler);
 
   /**
-   * Register a list of commands.
+   * Register a list of resolved commands.
    *
-   * @param commandPack the commands to register
+   * @param resolver the commands to resolve from
    * @return a reference to this, so the API can be used fluently
    */
   @Fluent
-  CommandRegistry registerCommands(CommandPack commandPack);
+  CommandRegistry registerCommands(CommandResolver resolver);
 
   /**
-   * Register a list of commands.
+   * Register a list of resolved commands.
    *
-   * @param commandPack the commands to register
+   * @param resolver the commands to resolve from
    * @return a reference to this, so the API can be used fluently
    */
   @Fluent
-  CommandRegistry registerCommands(CommandPack commandPack, Handler<AsyncResult<List<CommandRegistration>>> doneHandler);
+  CommandRegistry registerCommands(CommandResolver resolver, Handler<AsyncResult<List<CommandRegistration>>> doneHandler);
 
   /**
    * Register a list of commands.

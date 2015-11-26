@@ -21,8 +21,8 @@ var Command = require('vertx-shell-js/command');
 var Completion = require('vertx-shell-js/completion');
 var Vertx = require('vertx-js/vertx');
 var CliToken = require('vertx-shell-js/cli_token');
-var CommandPack = require('vertx-shell-js/command_pack');
 var Process = require('vertx-shell-js/process');
+var CommandResolver = require('vertx-shell-js/command_resolver');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
@@ -115,13 +115,13 @@ var CommandRegistry = function(j_val) {
   this.registerCommands = function() {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_commandRegistry["registerCommands(io.vertx.ext.shell.command.CommandPack)"](__args[0]._jdel);
+      j_commandRegistry["registerCommands(io.vertx.ext.shell.registry.CommandResolver)"](__args[0]._jdel);
       return that;
     }  else if (__args.length === 1 && typeof __args[0] === 'object' && __args[0] instanceof Array) {
       j_commandRegistry["registerCommands(java.util.List)"](utils.convParamListVertxGen(__args[0]));
       return that;
     }  else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'function') {
-      j_commandRegistry["registerCommands(io.vertx.ext.shell.command.CommandPack,io.vertx.core.Handler)"](__args[0]._jdel, function(ar) {
+      j_commandRegistry["registerCommands(io.vertx.ext.shell.registry.CommandResolver,io.vertx.core.Handler)"](__args[0]._jdel, function(ar) {
       if (ar.succeeded()) {
         __args[1](utils.convReturnListSetVertxGen(ar.result(), CommandRegistration), null);
       } else {

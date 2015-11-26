@@ -14,36 +14,36 @@
  * under the License.
  */
 
-/** @module vertx-shell-js/command_pack */
+/** @module vertx-shell-js/command_resolver */
 var utils = require('vertx-js/util/utils');
 var Command = require('vertx-shell-js/command');
 var Vertx = require('vertx-js/vertx');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JCommandPack = io.vertx.ext.shell.command.CommandPack;
+var JCommandResolver = io.vertx.ext.shell.registry.CommandResolver;
 
 /**
- A command pack is a set of commands, for instance the base command pack, the metrics command pack, etc...
+ A resolver for commands, so the shell can discover commands automatically.
 
  @class
 */
-var CommandPack = function(j_val) {
+var CommandResolver = function(j_val) {
 
-  var j_commandPack = j_val;
+  var j_commandResolver = j_val;
   var that = this;
 
   /**
-   Lookup commands.
+   Resolve commands.
 
    @public
    @param vertx {Vertx} the vertx instance 
-   @param commandsHandler {function} the handler that will receive the lookup callback 
+   @param commandsHandler {function} the handler that will receive the resolution callback 
    */
-  this.lookupCommands = function(vertx, commandsHandler) {
+  this.resolveCommands = function(vertx, commandsHandler) {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'function') {
-      j_commandPack["lookupCommands(io.vertx.core.Vertx,io.vertx.core.Handler)"](vertx._jdel, function(ar) {
+      j_commandResolver["resolveCommands(io.vertx.core.Vertx,io.vertx.core.Handler)"](vertx._jdel, function(ar) {
       if (ar.succeeded()) {
         commandsHandler(utils.convReturnListSetVertxGen(ar.result(), Command), null);
       } else {
@@ -56,8 +56,22 @@ var CommandPack = function(j_val) {
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
-  this._jdel = j_commandPack;
+  this._jdel = j_commandResolver;
+};
+
+/**
+ @return the base commands of Vert.x Shell.
+
+ @memberof module:vertx-shell-js/command_resolver
+
+ @return {CommandResolver}
+ */
+CommandResolver.baseCommands = function() {
+  var __args = arguments;
+  if (__args.length === 0) {
+    return utils.convReturnVertxGen(JCommandResolver["baseCommands()"](), CommandResolver);
+  } else throw new TypeError('function invoked with invalid arguments');
 };
 
 // We export the Constructor function
-module.exports = CommandPack;
+module.exports = CommandResolver;

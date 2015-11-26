@@ -39,7 +39,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxException;
-import io.vertx.ext.shell.command.CommandPack;
+import io.vertx.ext.shell.registry.CommandResolver;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
@@ -85,6 +85,11 @@ public class CommandRegistryImpl extends AbstractVerticle implements CommandRegi
   }
 
   @Override
+  public Vertx getVertx() {
+    return vertx;
+  }
+
+  @Override
   public void stop() throws Exception {
     closed = true;
     registries.remove(vertx);
@@ -109,14 +114,14 @@ public class CommandRegistryImpl extends AbstractVerticle implements CommandRegi
   }
 
   @Override
-  public CommandRegistry registerCommands(CommandPack commandPack) {
-    return registerCommands(commandPack, ar -> {
+  public CommandRegistry registerCommands(CommandResolver resolver) {
+    return registerCommands(resolver, ar -> {
     });
   }
 
   @Override
-  public CommandRegistry registerCommands(CommandPack commandPack, Handler<AsyncResult<List<CommandRegistration>>> doneHandler) {
-    commandPack.lookupCommands(vertx, ar -> {
+  public CommandRegistry registerCommands(CommandResolver resolver, Handler<AsyncResult<List<CommandRegistration>>> doneHandler) {
+    resolver.resolveCommands(vertx, ar -> {
       if (ar.succeeded()) {
         registerCommands(ar.result(), doneHandler);
       } else {

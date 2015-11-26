@@ -20,7 +20,6 @@ import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import io.vertx.groovy.core.Vertx
 import io.vertx.groovy.ext.shell.cli.CliToken
-import io.vertx.groovy.ext.shell.command.CommandPack
 import java.util.List
 import io.vertx.groovy.ext.shell.command.Command
 import io.vertx.groovy.ext.shell.cli.Completion
@@ -105,22 +104,22 @@ public class CommandRegistry {
     return this;
   }
   /**
-   * Register a list of commands.
-   * @param commandPack the commands to register
+   * Register a list of resolved commands.
+   * @param resolver the commands to resolve from
    * @return a reference to this, so the API can be used fluently
    */
-  public CommandRegistry registerCommands(CommandPack commandPack) {
-    this.delegate.registerCommands((io.vertx.ext.shell.command.CommandPack)commandPack.getDelegate());
+  public CommandRegistry registerCommands(CommandResolver resolver) {
+    this.delegate.registerCommands((io.vertx.ext.shell.registry.CommandResolver)resolver.getDelegate());
     return this;
   }
   /**
-   * Register a list of commands.
-   * @param commandPack the commands to register
+   * Register a list of resolved commands.
+   * @param resolver the commands to resolve from
    * @param doneHandler 
    * @return a reference to this, so the API can be used fluently
    */
-  public CommandRegistry registerCommands(CommandPack commandPack, Handler<AsyncResult<List<CommandRegistration>>> doneHandler) {
-    this.delegate.registerCommands((io.vertx.ext.shell.command.CommandPack)commandPack.getDelegate(), new Handler<AsyncResult<List<io.vertx.ext.shell.registry.CommandRegistration>>>() {
+  public CommandRegistry registerCommands(CommandResolver resolver, Handler<AsyncResult<List<CommandRegistration>>> doneHandler) {
+    this.delegate.registerCommands((io.vertx.ext.shell.registry.CommandResolver)resolver.getDelegate(), new Handler<AsyncResult<List<io.vertx.ext.shell.registry.CommandRegistration>>>() {
       public void handle(AsyncResult<List<io.vertx.ext.shell.registry.CommandRegistration>> event) {
         AsyncResult<List<CommandRegistration>> f
         if (event.succeeded()) {

@@ -42,11 +42,6 @@ public class Command {
     return delegate;
   }
 
-  public static CommandPack baseCommands() { 
-    CommandPack ret= CommandPack.newInstance(io.vertx.ext.shell.command.Command.baseCommands());
-    return ret;
-  }
-
   /**
    * @return the command name
    * @return 

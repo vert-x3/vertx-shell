@@ -14,33 +14,42 @@
  * under the License.
  */
 
-package io.vertx.groovy.ext.shell.command;
+package io.vertx.groovy.ext.shell.registry;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import java.util.List
+import io.vertx.groovy.ext.shell.command.Command
 import io.vertx.groovy.core.Vertx
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
 /**
- * A command pack is a set of commands, for instance the base command pack, the metrics command pack, etc...
+ * A resolver for commands, so the shell can discover commands automatically.
 */
 @CompileStatic
-public class CommandPack {
-  private final def io.vertx.ext.shell.command.CommandPack delegate;
-  public CommandPack(Object delegate) {
-    this.delegate = (io.vertx.ext.shell.command.CommandPack) delegate;
+public class CommandResolver {
+  private final def io.vertx.ext.shell.registry.CommandResolver delegate;
+  public CommandResolver(Object delegate) {
+    this.delegate = (io.vertx.ext.shell.registry.CommandResolver) delegate;
   }
   public Object getDelegate() {
     return delegate;
   }
   /**
-   * Lookup commands.
-   * @param vertx the vertx instance
-   * @param commandsHandler the handler that will receive the lookup callback
+   * @return the base commands of Vert.x Shell.
+   * @return 
    */
-  public void lookupCommands(Vertx vertx, Handler<AsyncResult<List<Command>>> commandsHandler) {
-    this.delegate.lookupCommands((io.vertx.core.Vertx)vertx.getDelegate(), new Handler<AsyncResult<List<io.vertx.ext.shell.command.Command>>>() {
+  public static CommandResolver baseCommands() {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.registry.CommandResolver.baseCommands(), io.vertx.groovy.ext.shell.registry.CommandResolver.class);
+    return ret;
+  }
+  /**
+   * Resolve commands.
+   * @param vertx the vertx instance
+   * @param commandsHandler the handler that will receive the resolution callback
+   */
+  public void resolveCommands(Vertx vertx, Handler<AsyncResult<List<Command>>> commandsHandler) {
+    this.delegate.resolveCommands((io.vertx.core.Vertx)vertx.getDelegate(), new Handler<AsyncResult<List<io.vertx.ext.shell.command.Command>>>() {
       public void handle(AsyncResult<List<io.vertx.ext.shell.command.Command>> event) {
         AsyncResult<List<Command>> f
         if (event.succeeded()) {

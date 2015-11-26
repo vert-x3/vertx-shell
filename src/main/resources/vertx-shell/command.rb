@@ -1,6 +1,5 @@
 require 'vertx-shell/completion'
 require 'vertx/cli'
-require 'vertx-shell/command_pack'
 require 'vertx-shell/command_process'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.command.Command
@@ -17,13 +16,6 @@ module VertxShell
     # @return [::VertxShell::Command] the underlying java delegate
     def j_del
       @j_del
-    end
-    # @return [::VertxShell::CommandPack]
-    def self.base_commands
-      if !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::Command.java_method(:baseCommands, []).call(),::VertxShell::CommandPack)
-      end
-      raise ArgumentError, "Invalid arguments when calling base_commands()"
     end
     #  @return the command name
     # @return [String]

@@ -38,7 +38,6 @@ import io.vertx.core.cli.CLI;
 import io.vertx.core.cli.Option;
 import io.vertx.core.cli.annotations.CLIConfigurator;
 import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.command.base.BaseCommandPack;
 
 import java.util.Collections;
 import java.util.List;
@@ -51,10 +50,6 @@ import java.util.List;
  */
 @VertxGen
 public interface Command {
-
-  static CommandPack baseCommands() {
-    return new BaseCommandPack();
-  }
 
   /**
    * Create a command from a Java class, annotated with Vert.x Core CLI annotations.

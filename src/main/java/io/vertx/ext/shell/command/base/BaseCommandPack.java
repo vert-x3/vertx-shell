@@ -38,7 +38,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.command.CommandPack;
+import io.vertx.ext.shell.registry.CommandResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class BaseCommandPack implements CommandPack {
+public class BaseCommandPack implements CommandResolver {
 
   /**
    * @return the list of base command classes
@@ -75,7 +75,7 @@ public class BaseCommandPack implements CommandPack {
   }
 
   @Override
-  public void lookupCommands(Vertx vertx, Handler<AsyncResult<List<Command>>> commandsHandler) {
+  public void resolveCommands(Vertx vertx, Handler<AsyncResult<List<Command>>> commandsHandler) {
     commandsHandler.handle(Future.succeededFuture(baseCommandClasses().stream().map(Command::create).collect(Collectors.toList())));
   }
 }

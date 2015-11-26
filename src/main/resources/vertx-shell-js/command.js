@@ -18,7 +18,6 @@
 var utils = require('vertx-js/util/utils');
 var Completion = require('vertx-shell-js/completion');
 var CLI = require('vertx-js/cli');
-var CommandPack = require('vertx-shell-js/command_pack');
 var CommandProcess = require('vertx-shell-js/command_process');
 
 var io = Packages.io;
@@ -93,19 +92,6 @@ var Command = function(j_val) {
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
   this._jdel = j_command;
-};
-
-/**
-
- @memberof module:vertx-shell-js/command
-
- @return {CommandPack}
- */
-Command.baseCommands = function() {
-  var __args = arguments;
-  if (__args.length === 0) {
-    return utils.convReturnVertxGen(JCommand["baseCommands()"](), CommandPack);
-  } else throw new TypeError('function invoked with invalid arguments');
 };
 
 // We export the Constructor function

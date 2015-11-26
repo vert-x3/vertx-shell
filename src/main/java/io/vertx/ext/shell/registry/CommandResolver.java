@@ -30,29 +30,38 @@
  *
  */
 
-package io.vertx.ext.shell.command;
+package io.vertx.ext.shell.registry;
 
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.base.BaseCommandPack;
 
 import java.util.List;
 
 /**
- * A command pack is a set of commands, for instance the base command pack, the metrics command pack, etc...
+ * A resolver for commands, so the shell can discover commands automatically.
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
-public interface CommandPack {
+public interface CommandResolver {
 
   /**
-   * Lookup commands.
+   * @return the base commands of Vert.x Shell.
+   */
+  static CommandResolver baseCommands() {
+    return new BaseCommandPack();
+  }
+
+  /**
+   * Resolve commands.
    *
    * @param vertx the vertx instance
-   * @param commandsHandler the handler that will receive the lookup callback
+   * @param commandsHandler the handler that will receive the resolution callback
    */
-  void lookupCommands(Vertx vertx, Handler<AsyncResult<List<Command>>> commandsHandler);
+  void resolveCommands(Vertx vertx, Handler<AsyncResult<List<Command>>> commandsHandler);
 
 }

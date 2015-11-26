@@ -33,10 +33,6 @@ public class Command {
   public Object getDelegate() {
     return delegate;
   }
-  public static CommandPack baseCommands() {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.Command.baseCommands(), io.vertx.groovy.ext.shell.command.CommandPack.class);
-    return ret;
-  }
   /**
    * @return the command name
    * @return 

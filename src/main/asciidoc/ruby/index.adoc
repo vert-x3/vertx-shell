@@ -579,7 +579,7 @@ steps:
 require 'vertx-shell/shell_server'
 require 'vertx-web/router'
 require 'vertx-shell/term_server'
-require 'vertx-shell/command'
+require 'vertx-shell/command_resolver'
 
 server = VertxShell::ShellServer.create(vertx)
 
@@ -592,7 +592,7 @@ sshTermServer = VertxShell::TermServer.create_ssh_term_server(vertx)
 server.register_term_server(httpTermServer)
 server.register_term_server(sshTermServer)
 
-server.command_registry().register_commands(VertxShell::Command.base_commands())
+server.command_registry().register_commands(VertxShell::CommandResolver.base_commands())
 
 server.listen()
 
@@ -792,7 +792,7 @@ The command discovery can be used when new commands need to be added to Vert.x w
 
 For example, the _Dropwizard_ metrics service, adds specific metrics command to the shell service on the fly.
 
-It can be achieved via the `java.util.ServiceLoader` of a `link:../../yardoc/VertxShell/CommandPack.html[CommandPack]`.
+It can be achieved via the `java.util.ServiceLoader` of a `link:../../yardoc/VertxShell/CommandResolver.html[CommandResolver]`.
 
 [source,java]
 ----

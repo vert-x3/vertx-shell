@@ -36,8 +36,7 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.command.CommandPack;
+import io.vertx.ext.shell.registry.CommandResolver;
 import io.vertx.ext.shell.impl.ShellServiceImpl;
 import io.vertx.ext.shell.registry.CommandRegistry;
 
@@ -61,16 +60,13 @@ public interface ShellService {
     ShellServer server = ShellServer.create(vertx);
     ShellServiceImpl service = new ShellServiceImpl(vertx, server, options);
     CommandRegistry registry = server.commandRegistry();
-
-    // Base commands
-    registry.registerCommands(Command.baseCommands());
-
-    ServiceLoader<CommandPack> loader = ServiceLoader.load(CommandPack.class);
-    Iterator<CommandPack> it = loader.iterator();
+    registry.registerCommands(CommandResolver.baseCommands());
+    ServiceLoader<CommandResolver> loader = ServiceLoader.load(CommandResolver.class);
+    Iterator<CommandResolver> it = loader.iterator();
     while (true) {
       try {
         if (it.hasNext()) {
-          CommandPack pack = it.next();
+          CommandResolver pack = it.next();
           registry.registerCommands(pack);
         } else {
           break;
@@ -78,7 +74,6 @@ public interface ShellService {
       } catch (Exception e) {
       }
     }
-
     return service;
   }
 

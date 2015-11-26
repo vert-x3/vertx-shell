@@ -38,13 +38,12 @@ import io.vertx.core.cli.Argument;
 import io.vertx.core.cli.CLI;
 import io.vertx.core.cli.CommandLine;
 import io.vertx.core.cli.Option;
-import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.shell.ShellServer;
-import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.registry.CommandResolver;
 import io.vertx.ext.shell.term.HttpTermOptions;
 import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.shell.term.Tty;
@@ -166,7 +165,7 @@ public class Examples {
     server.registerTermServer(httpTermServer); // <4>
     server.registerTermServer(sshTermServer);
 
-    server.commandRegistry().registerCommands(Command.baseCommands()); // <5>
+    server.commandRegistry().registerCommands(CommandResolver.baseCommands()); // <5>
 
     server.listen(); // <6>
   }

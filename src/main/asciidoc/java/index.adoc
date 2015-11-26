@@ -550,7 +550,7 @@ TermServer sshTermServer = TermServer.createSSHTermServer(vertx); // <3>
 server.registerTermServer(httpTermServer); // <4>
 server.registerTermServer(sshTermServer);
 
-server.commandRegistry().registerCommands(Command.baseCommands()); // <5>
+server.commandRegistry().registerCommands(CommandResolver.baseCommands()); // <5>
 
 server.listen(); // <6>
 ----
@@ -721,7 +721,7 @@ The command discovery can be used when new commands need to be added to Vert.x w
 
 For example, the _Dropwizard_ metrics service, adds specific metrics command to the shell service on the fly.
 
-It can be achieved via the `java.util.ServiceLoader` of a `link:../../apidocs/io/vertx/ext/shell/command/CommandPack.html[CommandPack]`.
+It can be achieved via the `java.util.ServiceLoader` of a `link:../../apidocs/io/vertx/ext/shell/registry/CommandResolver.html[CommandResolver]`.
 
 [source,java]
 ----
@@ -744,4 +744,4 @@ my.CustomCommandPack
 This is only valid for the `link:../../apidocs/io/vertx/ext/shell/ShellService.html[ShellService]`. `link:../../apidocs/io/vertx/ext/shell/ShellServer.html[ShellServer]`
 don't use this mechanism.
 
-For shell servers, the command pack can be an argument of `link:../../apidocs/io/vertx/ext/shell/registry/CommandRegistry.html#registerCommands-io.vertx.ext.shell.command.CommandPack-[registerCommands]`.
+For shell servers, the command pack can be an argument of `link:../../apidocs/io/vertx/ext/shell/registry/CommandRegistry.html#registerCommands-io.vertx.ext.shell.registry.CommandResolver-[registerCommands]`.

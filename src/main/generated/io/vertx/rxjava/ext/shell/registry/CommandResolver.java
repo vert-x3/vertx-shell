@@ -14,28 +14,29 @@
  * under the License.
  */
 
-package io.vertx.rxjava.ext.shell.command;
+package io.vertx.rxjava.ext.shell.registry;
 
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
+import io.vertx.rxjava.ext.shell.command.Command;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 
 /**
- * A command pack is a set of commands, for instance the base command pack, the metrics command pack, etc...
+ * A resolver for commands, so the shell can discover commands automatically.
  *
  * <p/>
- * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.command.CommandPack original} non RX-ified interface using Vert.x codegen.
+ * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.registry.CommandResolver original} non RX-ified interface using Vert.x codegen.
  */
 
-public class CommandPack {
+public class CommandResolver {
 
-  final io.vertx.ext.shell.command.CommandPack delegate;
+  final io.vertx.ext.shell.registry.CommandResolver delegate;
 
-  public CommandPack(io.vertx.ext.shell.command.CommandPack delegate) {
+  public CommandResolver(io.vertx.ext.shell.registry.CommandResolver delegate) {
     this.delegate = delegate;
   }
 
@@ -44,12 +45,21 @@ public class CommandPack {
   }
 
   /**
-   * Lookup commands.
-   * @param vertx the vertx instance
-   * @param commandsHandler the handler that will receive the lookup callback
+   * @return the base commands of Vert.x Shell.
+   * @return 
    */
-  public void lookupCommands(Vertx vertx, Handler<AsyncResult<List<Command>>> commandsHandler) { 
-    this.delegate.lookupCommands((io.vertx.core.Vertx) vertx.getDelegate(), new Handler<AsyncResult<List<io.vertx.ext.shell.command.Command>>>() {
+  public static CommandResolver baseCommands() { 
+    CommandResolver ret= CommandResolver.newInstance(io.vertx.ext.shell.registry.CommandResolver.baseCommands());
+    return ret;
+  }
+
+  /**
+   * Resolve commands.
+   * @param vertx the vertx instance
+   * @param commandsHandler the handler that will receive the resolution callback
+   */
+  public void resolveCommands(Vertx vertx, Handler<AsyncResult<List<Command>>> commandsHandler) { 
+    this.delegate.resolveCommands((io.vertx.core.Vertx) vertx.getDelegate(), new Handler<AsyncResult<List<io.vertx.ext.shell.command.Command>>>() {
       public void handle(AsyncResult<List<io.vertx.ext.shell.command.Command>> event) {
         AsyncResult<List<Command>> f;
         if (event.succeeded()) {
@@ -63,18 +73,18 @@ public class CommandPack {
   }
 
   /**
-   * Lookup commands.
+   * Resolve commands.
    * @param vertx the vertx instance
    * @return 
    */
-  public Observable<List<Command>> lookupCommandsObservable(Vertx vertx) { 
+  public Observable<List<Command>> resolveCommandsObservable(Vertx vertx) { 
     io.vertx.rx.java.ObservableFuture<List<Command>> commandsHandler = io.vertx.rx.java.RxHelper.observableFuture();
-    lookupCommands(vertx, commandsHandler.toHandler());
+    resolveCommands(vertx, commandsHandler.toHandler());
     return commandsHandler;
   }
 
 
-  public static CommandPack newInstance(io.vertx.ext.shell.command.CommandPack arg) {
-    return arg != null ? new CommandPack(arg) : null;
+  public static CommandResolver newInstance(io.vertx.ext.shell.registry.CommandResolver arg) {
+    return arg != null ? new CommandResolver(arg) : null;
   }
 }

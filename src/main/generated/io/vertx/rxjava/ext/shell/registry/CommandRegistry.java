@@ -21,7 +21,6 @@ import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.rxjava.ext.shell.cli.CliToken;
-import io.vertx.rxjava.ext.shell.command.CommandPack;
 import java.util.List;
 import io.vertx.rxjava.ext.shell.command.Command;
 import io.vertx.rxjava.ext.shell.cli.Completion;
@@ -127,23 +126,23 @@ public class CommandRegistry {
   }
 
   /**
-   * Register a list of commands.
-   * @param commandPack the commands to register
+   * Register a list of resolved commands.
+   * @param resolver the commands to resolve from
    * @return a reference to this, so the API can be used fluently
    */
-  public CommandRegistry registerCommands(CommandPack commandPack) { 
-    this.delegate.registerCommands((io.vertx.ext.shell.command.CommandPack) commandPack.getDelegate());
+  public CommandRegistry registerCommands(CommandResolver resolver) { 
+    this.delegate.registerCommands((io.vertx.ext.shell.registry.CommandResolver) resolver.getDelegate());
     return this;
   }
 
   /**
-   * Register a list of commands.
-   * @param commandPack the commands to register
+   * Register a list of resolved commands.
+   * @param resolver the commands to resolve from
    * @param doneHandler 
    * @return a reference to this, so the API can be used fluently
    */
-  public CommandRegistry registerCommands(CommandPack commandPack, Handler<AsyncResult<List<CommandRegistration>>> doneHandler) { 
-    this.delegate.registerCommands((io.vertx.ext.shell.command.CommandPack) commandPack.getDelegate(), new Handler<AsyncResult<List<io.vertx.ext.shell.registry.CommandRegistration>>>() {
+  public CommandRegistry registerCommands(CommandResolver resolver, Handler<AsyncResult<List<CommandRegistration>>> doneHandler) { 
+    this.delegate.registerCommands((io.vertx.ext.shell.registry.CommandResolver) resolver.getDelegate(), new Handler<AsyncResult<List<io.vertx.ext.shell.registry.CommandRegistration>>>() {
       public void handle(AsyncResult<List<io.vertx.ext.shell.registry.CommandRegistration>> event) {
         AsyncResult<List<CommandRegistration>> f;
         if (event.succeeded()) {
@@ -158,13 +157,13 @@ public class CommandRegistry {
   }
 
   /**
-   * Register a list of commands.
-   * @param commandPack the commands to register
+   * Register a list of resolved commands.
+   * @param resolver the commands to resolve from
    * @return 
    */
-  public Observable<List<CommandRegistration>> registerCommandsObservable(CommandPack commandPack) { 
+  public Observable<List<CommandRegistration>> registerCommandsObservable(CommandResolver resolver) { 
     io.vertx.rx.java.ObservableFuture<List<CommandRegistration>> doneHandler = io.vertx.rx.java.RxHelper.observableFuture();
-    registerCommands(commandPack, doneHandler.toHandler());
+    registerCommands(resolver, doneHandler.toHandler());
     return doneHandler;
   }
 

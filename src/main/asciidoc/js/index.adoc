@@ -579,7 +579,7 @@ steps:
 var ShellServer = require("vertx-shell-js/shell_server");
 var Router = require("vertx-web-js/router");
 var TermServer = require("vertx-shell-js/term_server");
-var Command = require("vertx-shell-js/command");
+var CommandResolver = require("vertx-shell-js/command_resolver");
 
 var server = ShellServer.create(vertx);
 
@@ -592,7 +592,7 @@ var sshTermServer = TermServer.createSSHTermServer(vertx);
 server.registerTermServer(httpTermServer);
 server.registerTermServer(sshTermServer);
 
-server.commandRegistry().registerCommands(Command.baseCommands());
+server.commandRegistry().registerCommands(CommandResolver.baseCommands());
 
 server.listen();
 
@@ -792,7 +792,7 @@ The command discovery can be used when new commands need to be added to Vert.x w
 
 For example, the _Dropwizard_ metrics service, adds specific metrics command to the shell service on the fly.
 
-It can be achieved via the `java.util.ServiceLoader` of a `link:../../jsdoc/command_pack-CommandPack.html[CommandPack]`.
+It can be achieved via the `java.util.ServiceLoader` of a `link:../../jsdoc/command_resolver-CommandResolver.html[CommandResolver]`.
 
 [source,java]
 ----

@@ -35,8 +35,8 @@ package io.vertx.ext.shell;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.CliToken;
-import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
+import io.vertx.ext.shell.registry.CommandResolver;
 import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.session.Session;
@@ -69,7 +69,7 @@ public class ShellServerTest {
   public void before() {
     vertx = Vertx.vertx();
     server = ShellServer.create(vertx);
-    registry = server.commandRegistry().registerCommands(Command.baseCommands());
+    registry = server.commandRegistry().registerCommands(CommandResolver.baseCommands());
   }
 
   @After

@@ -3,8 +3,8 @@ require 'vertx-shell/command'
 require 'vertx-shell/completion'
 require 'vertx/vertx'
 require 'vertx-shell/cli_token'
-require 'vertx-shell/command_pack'
 require 'vertx-shell/process'
+require 'vertx-shell/command_resolver'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.registry.CommandRegistry
 module VertxShell
@@ -73,12 +73,12 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling register_command(command)"
     end
-    # @overload registerCommands(commandPack)
-    #   @param [::VertxShell::CommandPack] commandPack the commands to register
+    # @overload registerCommands(resolver)
+    #   @param [::VertxShell::CommandResolver] resolver the commands to resolve from
     # @overload registerCommands(commands)
     #   @param [Array<::VertxShell::Command>] commands the commands to register
-    # @overload registerCommands(commandPack,doneHandler)
-    #   @param [::VertxShell::CommandPack] commandPack the commands to register
+    # @overload registerCommands(resolver,doneHandler)
+    #   @param [::VertxShell::CommandResolver] resolver the commands to resolve from
     #   @yield 
     # @overload registerCommands(commands,doneHandler)
     #   @param [Array<::VertxShell::Command>] commands 
@@ -86,13 +86,13 @@ module VertxShell
     # @return [self]
     def register_commands(param_1=nil)
       if param_1.class.method_defined?(:j_del) && !block_given?
-        @j_del.java_method(:registerCommands, [Java::IoVertxExtShellCommand::CommandPack.java_class]).call(param_1.j_del)
+        @j_del.java_method(:registerCommands, [Java::IoVertxExtShellRegistry::CommandResolver.java_class]).call(param_1.j_del)
         return self
       elsif param_1.class == Array && !block_given?
         @j_del.java_method(:registerCommands, [Java::JavaUtil::List.java_class]).call(param_1.map { |element| element.j_del })
         return self
       elsif param_1.class.method_defined?(:j_del) && block_given?
-        @j_del.java_method(:registerCommands, [Java::IoVertxExtShellCommand::CommandPack.java_class,Java::IoVertxCore::Handler.java_class]).call(param_1.j_del,(Proc.new { |ar| yield(ar.failed ? ar.cause : nil, ar.succeeded ? ar.result.to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::CommandRegistration) } : nil) }))
+        @j_del.java_method(:registerCommands, [Java::IoVertxExtShellRegistry::CommandResolver.java_class,Java::IoVertxCore::Handler.java_class]).call(param_1.j_del,(Proc.new { |ar| yield(ar.failed ? ar.cause : nil, ar.succeeded ? ar.result.to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::CommandRegistration) } : nil) }))
         return self
       elsif param_1.class == Array && block_given?
         @j_del.java_method(:registerCommands, [Java::JavaUtil::List.java_class,Java::IoVertxCore::Handler.java_class]).call(param_1.map { |element| element.j_del },(Proc.new { |ar| yield(ar.failed ? ar.cause : nil, ar.succeeded ? ar.result.to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::CommandRegistration) } : nil) }))
