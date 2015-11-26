@@ -16,8 +16,6 @@
 
 package io.vertx.rxjava.ext.shell;
 
-import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.rxjava.ext.shell.system.Shell;
 import io.vertx.rxjava.ext.shell.term.TermServer;
@@ -79,7 +77,7 @@ public class ShellServer {
    * @return a reference to this, so the API can be used fluently
    */
   public ShellServer setWelcomeMessage(String msg) { 
-    this.delegate.setWelcomeMessage(msg);
+    this.delegate.welcomeMessage(msg);
     return this;
   }
 

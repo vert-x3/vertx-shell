@@ -133,7 +133,7 @@ public class ShellServiceImpl implements ShellService {
       server.registerTermServer(new HttpTermServer(vertx, webOptions));
     }
     server.commandResolver(registry);
-    server.setWelcomeMessage(options.getWelcomeMessage());
+    server.welcomeMessage(options.getWelcomeMessage());
     server.listen(startHandler);
   }
 

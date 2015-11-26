@@ -17,7 +17,6 @@
 package io.vertx.groovy.ext.shell;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
-import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.system.Shell
 import io.vertx.groovy.ext.shell.term.TermServer
 import io.vertx.groovy.core.Vertx
@@ -68,7 +67,7 @@ public class ShellServer {
    * @return a reference to this, so the API can be used fluently
    */
   public ShellServer setWelcomeMessage(String msg) {
-    this.delegate.setWelcomeMessage(msg);
+    this.delegate.welcomeMessage(msg);
     return this;
   }
   /**

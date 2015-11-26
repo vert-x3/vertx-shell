@@ -49,7 +49,7 @@ module VertxShell
     # @return [self]
     def set_welcome_message(msg=nil)
       if msg.class == String && !block_given?
-        @j_del.java_method(:setWelcomeMessage, [Java::java.lang.String.java_class]).call(msg)
+        @j_del.java_method(:welcomeMessage, [Java::java.lang.String.java_class]).call(msg)
         return self
       end
       raise ArgumentError, "Invalid arguments when calling set_welcome_message(msg)"
