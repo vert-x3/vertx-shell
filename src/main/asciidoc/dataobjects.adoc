@@ -108,12 +108,30 @@ Set <code>vertxshell.js</code> resource to use.
 |[[usePooledBuffers]]`usePooledBuffers`|`Boolean`|-
 |===
 
+[[ShellServerOptions]]
+== ShellServerOptions
+
+++++
+ The configurations options for the shell server.
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[welcomeMessage]]`welcomeMessage`|`String`|
++++
+Set the shell welcome message, i.e the message displayed in the user console when he connects to the shell.
++++
+|===
+
 [[ShellServiceOptions]]
 == ShellServiceOptions
 
 ++++
  The configurations options for the shell service, the shell connectors can be configured
- with  and .
+ with ,  and .
 ++++
 '''
 

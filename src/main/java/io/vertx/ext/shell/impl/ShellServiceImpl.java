@@ -37,6 +37,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.ShellServer;
+import io.vertx.ext.shell.ShellServerOptions;
 import io.vertx.ext.shell.command.CommandRegistry;
 import io.vertx.ext.shell.command.CommandResolver;
 import io.vertx.ext.shell.spi.CommandResolverFactory;
@@ -68,7 +69,7 @@ public class ShellServiceImpl implements ShellService {
   public ShellServiceImpl(Vertx vertx, ShellServiceOptions options) {
     this.vertx = vertx;
     this.options = options;
-    this.server = ShellServer.create(vertx);
+    this.server = ShellServer.create(vertx, new ShellServerOptions(options));
     this.registry = CommandRegistry.get(vertx);
   }
 
@@ -133,7 +134,6 @@ public class ShellServiceImpl implements ShellService {
       server.registerTermServer(new HttpTermServer(vertx, webOptions));
     }
     server.commandResolver(registry);
-    server.welcomeMessage(options.getWelcomeMessage());
     server.listen(startHandler);
   }
 

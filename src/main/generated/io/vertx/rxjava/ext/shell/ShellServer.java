@@ -16,8 +16,11 @@
 
 package io.vertx.rxjava.ext.shell;
 
+import java.util.Map;
+import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.rxjava.ext.shell.system.Shell;
+import io.vertx.ext.shell.ShellServerOptions;
 import io.vertx.rxjava.ext.shell.term.TermServer;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.core.AsyncResult;
@@ -52,7 +55,18 @@ public class ShellServer {
   }
 
   /**
-   * Create a new shell server.
+   * Create a new shell server with default options.
+   * @param vertx the vertx
+   * @param options the options
+   * @return the created shell server
+   */
+  public static ShellServer create(Vertx vertx, ShellServerOptions options) { 
+    ShellServer ret= ShellServer.newInstance(io.vertx.ext.shell.ShellServer.create((io.vertx.core.Vertx) vertx.getDelegate(), options));
+    return ret;
+  }
+
+  /**
+   * Create a new shell server with specific options.
    * @param vertx the vertx
    * @return the created shell server
    */
@@ -68,16 +82,6 @@ public class ShellServer {
    */
   public ShellServer commandResolver(CommandResolver resolver) { 
     this.delegate.commandResolver((io.vertx.ext.shell.command.CommandResolver) resolver.getDelegate());
-    return this;
-  }
-
-  /**
-   * Set the shell welcome message.
-   * @param msg the welcome message
-   * @return a reference to this, so the API can be used fluently
-   */
-  public ShellServer setWelcomeMessage(String msg) { 
-    this.delegate.welcomeMessage(msg);
     return this;
   }
 

@@ -38,7 +38,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.ShellServer;
-import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.ShellServerOptions;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.CommandRegistry;
 import io.vertx.ext.shell.command.CommandResolver;
@@ -64,10 +64,11 @@ public class ShellServerImpl implements ShellServer {
   private String welcomeMessage;
   private CommandResolver resolver;
 
-  public ShellServerImpl(Vertx vertx) {
+  public ShellServerImpl(Vertx vertx, ShellServerOptions options) {
     this.vertx = vertx;
     this.registry = CommandRegistry.get(vertx);
     this.manager = new InternalCommandManager(registry);
+    this.welcomeMessage = options.getWelcomeMessage();
     this.termServers = new ArrayList<>();
 
     // Register builtin commands so they are listed in help
@@ -89,12 +90,6 @@ public class ShellServerImpl implements ShellServer {
   @Override
   public ShellServer registerTermServer(TermServer termServer) {
     termServers.add(termServer);
-    return this;
-  }
-
-  @Override
-  public ShellServer welcomeMessage(String msg) {
-    welcomeMessage = msg;
     return this;
   }
 

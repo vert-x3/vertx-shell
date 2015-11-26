@@ -59,13 +59,24 @@ import io.vertx.ext.shell.term.TermServer;
 public interface ShellServer {
 
   /**
-   * Create a new shell server.
+   * Create a new shell server with default options.
+   *
+   * @param vertx the vertx
+   * @param options the options
+   * @return the created shell server
+   */
+  static ShellServer create(Vertx vertx, ShellServerOptions options) {
+    return new ShellServerImpl(vertx, options);
+  }
+
+  /**
+   * Create a new shell server with specific options.
    *
    * @param vertx the vertx
    * @return the created shell server
    */
   static ShellServer create(Vertx vertx) {
-    return new ShellServerImpl(vertx);
+    return new ShellServerImpl(vertx, new ShellServerOptions());
   }
 
   /**
@@ -76,15 +87,6 @@ public interface ShellServer {
    */
   @Fluent
   ShellServer commandResolver(CommandResolver resolver);
-
-  /**
-   * Set the shell welcome message.
-   *
-   * @param msg the welcome message
-   * @return a reference to this, so the API can be used fluently
-   */
-  @Fluent
-  ShellServer welcomeMessage(String msg);
 
   /**
    * Register a term server to this shell server, the term server lifecycle methods are managed by this shell server.

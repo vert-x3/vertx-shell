@@ -24,6 +24,7 @@ var CommandResolver = require('vertx-shell-js/command_resolver');
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
 var JShellServer = io.vertx.ext.shell.ShellServer;
+var ShellServerOptions = io.vertx.ext.shell.ShellServerOptions;
 
 /**
  The shell server.<p/>
@@ -46,21 +47,6 @@ var ShellServer = function(j_val) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
       j_shellServer["commandResolver(io.vertx.ext.shell.command.CommandResolver)"](resolver._jdel);
-      return that;
-    } else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-   Set the shell welcome message.
-
-   @public
-   @param msg {string} the welcome message 
-   @return {ShellServer} a reference to this, so the API can be used fluently
-   */
-  this.setWelcomeMessage = function(msg) {
-    var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'string') {
-      j_shellServer["setWelcomeMessage(java.lang.String)"](msg);
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
@@ -143,16 +129,19 @@ var ShellServer = function(j_val) {
 };
 
 /**
- Create a new shell server.
+ Create a new shell server with default options.
 
  @memberof module:vertx-shell-js/shell_server
  @param vertx {Vertx} the vertx 
+ @param options {Object} the options 
  @return {ShellServer} the created shell server
  */
-ShellServer.create = function(vertx) {
+ShellServer.create = function() {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-    return utils.convReturnVertxGen(JShellServer["create(io.vertx.core.Vertx)"](vertx._jdel), ShellServer);
+    return utils.convReturnVertxGen(JShellServer["create(io.vertx.core.Vertx)"](__args[0]._jdel), ShellServer);
+  }else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && (typeof __args[1] === 'object' && __args[1] != null)) {
+    return utils.convReturnVertxGen(JShellServer["create(io.vertx.core.Vertx,io.vertx.ext.shell.ShellServerOptions)"](__args[0]._jdel, __args[1] != null ? new ShellServerOptions(new JsonObject(JSON.stringify(__args[1]))) : null), ShellServer);
   } else throw new TypeError('function invoked with invalid arguments');
 };
 

@@ -43,74 +43,35 @@ import java.io.InputStream;
 
 /**
  * The configurations options for the shell service, the shell connectors can be configured
- * with {@link TelnetTermOptions} and {@link SSHTermOptions}.
+ * with {@link TelnetTermOptions}, {@link SSHTermOptions} and {@link HttpTermOptions}.
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @DataObject(generateConverter = true)
-public class ShellServiceOptions {
+public class ShellServiceOptions extends ShellServerOptions {
 
-  public static final String DEFAULT_WELCOME_MESSAGE;
-
-  static {
-    String welcome = "Welcome to Vert.x Shell";
-    InputStream resource = ShellServiceOptions.class.getResourceAsStream("vertx-banner.txt");
-    if (resource != null) {
-      try(InputStream in = resource) {
-        ByteArrayOutputStream tmp = new ByteArrayOutputStream();
-        byte[] buf = new byte[256];
-        while (true) {
-          int len = in.read(buf);
-          if (len == -1) {
-            break;
-          }
-          tmp.write(buf, 0, len);
-        }
-        welcome = tmp.toString();
-      } catch (Exception ignore) {
-        // Could not load
-      }
-    }
-    DEFAULT_WELCOME_MESSAGE = welcome + "\n\n";
-  }
-
-  private String welcomeMessage;
   private TelnetTermOptions telnetOptions;
   private SSHTermOptions sshOptions;
   private HttpTermOptions httpOptions;
 
   public ShellServiceOptions() {
-    welcomeMessage = DEFAULT_WELCOME_MESSAGE;
   }
 
   public ShellServiceOptions(ShellServiceOptions that) {
+    super(that);
     this.telnetOptions = that.telnetOptions != null ? new TelnetTermOptions(that.telnetOptions) : null;
     this.sshOptions = that.sshOptions != null ? new SSHTermOptions(that.sshOptions) : null;
     this.httpOptions = that.httpOptions != null ? new HttpTermOptions(that.httpOptions) : null;
-    this.welcomeMessage = that.welcomeMessage;
   }
 
   public ShellServiceOptions(JsonObject json) {
-    this();
+    super(json);
     ShellServiceOptionsConverter.fromJson(json, this);
   }
 
-  /**
-   * @return the shell welcome message
-   */
-  public String getWelcomeMessage() {
-    return welcomeMessage;
-  }
-
-  /**
-   * Set the shell welcome message, i.e the message displayed in the user console when he connects to the shell.
-   *
-   * @param welcomeMessage the welcome message
-   * @return a reference to this, so the API can be used fluently
-   */
+  @Override
   public ShellServiceOptions setWelcomeMessage(String welcomeMessage) {
-    this.welcomeMessage = welcomeMessage;
-    return this;
+    return (ShellServiceOptions) super.setWelcomeMessage(welcomeMessage);
   }
 
   /**

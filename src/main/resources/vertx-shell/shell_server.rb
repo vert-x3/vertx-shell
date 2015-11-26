@@ -25,14 +25,17 @@ module VertxShell
     def j_del
       @j_del
     end
-    #  Create a new shell server.
+    #  Create a new shell server with default options.
     # @param [::Vertx::Vertx] vertx the vertx
+    # @param [Hash] options the options
     # @return [::VertxShell::ShellServer] the created shell server
-    def self.create(vertx=nil)
-      if vertx.class.method_defined?(:j_del) && !block_given?
+    def self.create(vertx=nil,options=nil)
+      if vertx.class.method_defined?(:j_del) && !block_given? && options == nil
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShell::ShellServer.java_method(:create, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::ShellServer)
+      elsif vertx.class.method_defined?(:j_del) && options.class == Hash && !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShell::ShellServer.java_method(:create, [Java::IoVertxCore::Vertx.java_class,Java::IoVertxExtShell::ShellServerOptions.java_class]).call(vertx.j_del,Java::IoVertxExtShell::ShellServerOptions.new(::Vertx::Util::Utils.to_json_object(options))),::VertxShell::ShellServer)
       end
-      raise ArgumentError, "Invalid arguments when calling create(vertx)"
+      raise ArgumentError, "Invalid arguments when calling create(vertx,options)"
     end
     #  Set the command resolver for this server.
     # @param [::VertxShell::CommandResolver] resolver the resolver
@@ -43,16 +46,6 @@ module VertxShell
         return self
       end
       raise ArgumentError, "Invalid arguments when calling command_resolver(resolver)"
-    end
-    #  Set the shell welcome message.
-    # @param [String] msg the welcome message
-    # @return [self]
-    def set_welcome_message(msg=nil)
-      if msg.class == String && !block_given?
-        @j_del.java_method(:welcomeMessage, [Java::java.lang.String.java_class]).call(msg)
-        return self
-      end
-      raise ArgumentError, "Invalid arguments when calling set_welcome_message(msg)"
     end
     #  Register a term server to this shell server, the term server lifecycle methods are managed by this shell server.
     # @param [::VertxShell::TermServer] termServer the term server to add

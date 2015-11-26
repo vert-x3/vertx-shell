@@ -17,7 +17,9 @@
 package io.vertx.groovy.ext.shell;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
+import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.system.Shell
+import io.vertx.ext.shell.ShellServerOptions
 import io.vertx.groovy.ext.shell.term.TermServer
 import io.vertx.groovy.core.Vertx
 import io.vertx.core.AsyncResult
@@ -44,7 +46,17 @@ public class ShellServer {
     return delegate;
   }
   /**
-   * Create a new shell server.
+   * Create a new shell server with default options.
+   * @param vertx the vertx
+   * @param options the options (see <a href="../../../../../../../cheatsheet/ShellServerOptions.html">ShellServerOptions</a>)
+   * @return the created shell server
+   */
+  public static ShellServer create(Vertx vertx, Map<String, Object> options) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.ShellServer.create((io.vertx.core.Vertx)vertx.getDelegate(), options != null ? new io.vertx.ext.shell.ShellServerOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.ShellServer.class);
+    return ret;
+  }
+  /**
+   * Create a new shell server with specific options.
    * @param vertx the vertx
    * @return the created shell server
    */
@@ -59,15 +71,6 @@ public class ShellServer {
    */
   public ShellServer commandResolver(CommandResolver resolver) {
     this.delegate.commandResolver((io.vertx.ext.shell.command.CommandResolver)resolver.getDelegate());
-    return this;
-  }
-  /**
-   * Set the shell welcome message.
-   * @param msg the welcome message
-   * @return a reference to this, so the API can be used fluently
-   */
-  public ShellServer setWelcomeMessage(String msg) {
-    this.delegate.welcomeMessage(msg);
     return this;
   }
   /**
