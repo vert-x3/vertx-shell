@@ -37,6 +37,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.registry.CommandResolver;
 
@@ -53,8 +54,8 @@ public class BaseCommandPack implements CommandResolver {
    * @return the list of base command classes
    */
   @GenIgnore
-  static List<Class<? extends Command>> baseCommandClasses() {
-    List<Class<? extends Command>> list = new ArrayList<>();
+  static List<Class<? extends AnnotatedCommand>> baseCommandClasses() {
+    List<Class<? extends AnnotatedCommand>> list = new ArrayList<>();
     list.add(Echo.class);
     list.add(Sleep.class);
     list.add(Help.class);

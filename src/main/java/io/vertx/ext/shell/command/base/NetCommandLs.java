@@ -38,7 +38,7 @@ import io.vertx.core.http.impl.HttpServerImpl;
 import io.vertx.core.impl.VertxInternal;
 import io.vertx.core.net.impl.NetServerImpl;
 import io.vertx.core.net.impl.ServerID;
-import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
 
 import java.util.Map;
@@ -48,7 +48,7 @@ import java.util.Map;
  */
 @Name("net-ls")
 @Summary("List all servers")
-public class NetCommandLs implements Command {
+public class NetCommandLs extends AnnotatedCommand {
 
   @Override
   public void process(CommandProcess process) {

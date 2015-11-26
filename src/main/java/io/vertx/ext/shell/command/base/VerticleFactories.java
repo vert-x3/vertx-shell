@@ -34,10 +34,9 @@ package io.vertx.ext.shell.command.base;
 
 import io.vertx.core.cli.annotations.Name;
 import io.vertx.core.cli.annotations.Summary;
-import io.vertx.core.impl.Deployment;
 import io.vertx.core.impl.VertxInternal;
 import io.vertx.core.spi.VerticleFactory;
-import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
 
 /**
@@ -45,7 +44,7 @@ import io.vertx.ext.shell.command.CommandProcess;
  */
 @Name("verticle-factories")
 @Summary("List all verticle factories")
-public class VerticleFactories implements Command {
+public class VerticleFactories extends AnnotatedCommand {
 
   @Override
   public void process(CommandProcess process) {

@@ -39,7 +39,7 @@ import io.vertx.core.cli.annotations.Name;
 import io.vertx.core.cli.annotations.Summary;
 import io.vertx.core.shareddata.LocalMap;
 import io.vertx.core.shareddata.SharedData;
-import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
 
 /**
@@ -47,7 +47,7 @@ import io.vertx.ext.shell.command.CommandProcess;
  */
 @Name("local-map-put")
 @Summary("Put key/value in a local map")
-public class LocalMapPut implements Command {
+public class LocalMapPut extends AnnotatedCommand {
 
   private String map;
   private String key;

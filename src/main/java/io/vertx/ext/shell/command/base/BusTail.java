@@ -37,7 +37,7 @@ import io.vertx.core.cli.annotations.Description;
 import io.vertx.core.cli.annotations.Name;
 import io.vertx.core.cli.annotations.Summary;
 import io.vertx.core.eventbus.MessageConsumer;
-import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
 
 /**
@@ -45,7 +45,7 @@ import io.vertx.ext.shell.command.CommandProcess;
  */
 @Name("bus-tail")
 @Summary("Subscribe to an event bus address and logs received messages on the console")
-public class BusTail implements Command {
+public class BusTail extends AnnotatedCommand {
 
   private String address;
 

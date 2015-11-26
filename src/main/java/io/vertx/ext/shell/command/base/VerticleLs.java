@@ -36,7 +36,7 @@ import io.vertx.core.cli.annotations.Name;
 import io.vertx.core.cli.annotations.Summary;
 import io.vertx.core.impl.Deployment;
 import io.vertx.core.impl.VertxInternal;
-import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
 
 /**
@@ -44,7 +44,7 @@ import io.vertx.ext.shell.command.CommandProcess;
  */
 @Name("verticle-ls")
 @Summary("List all verticles")
-public class VerticleLs implements Command {
+public class VerticleLs extends AnnotatedCommand {
 
   @Override
   public void process(CommandProcess process) {

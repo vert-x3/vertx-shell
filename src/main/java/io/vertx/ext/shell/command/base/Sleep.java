@@ -37,7 +37,7 @@ import io.vertx.core.cli.annotations.Argument;
 import io.vertx.core.cli.annotations.Description;
 import io.vertx.core.cli.annotations.Name;
 import io.vertx.core.cli.annotations.Summary;
-import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -47,7 +47,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @Name("sleep")
 @Summary("Suspend execution for an interval of time")
-public class Sleep implements Command {
+public class Sleep extends AnnotatedCommand {
 
   private String seconds;
 

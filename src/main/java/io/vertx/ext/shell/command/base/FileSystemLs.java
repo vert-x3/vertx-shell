@@ -40,7 +40,7 @@ import io.vertx.core.cli.annotations.Option;
 import io.vertx.core.cli.annotations.Summary;
 import io.vertx.core.file.FileProps;
 import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
 
 import java.util.AbstractMap;
@@ -54,7 +54,7 @@ import java.util.stream.Stream;
  */
 @Name("ls")
 @Summary("List directory content")
-public class FileSystemLs implements Command {
+public class FileSystemLs extends AnnotatedCommand {
 
   private boolean ell;
   private String file;

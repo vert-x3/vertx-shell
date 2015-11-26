@@ -37,7 +37,7 @@ import io.vertx.core.cli.annotations.Description;
 import io.vertx.core.cli.annotations.Name;
 import io.vertx.core.cli.annotations.Summary;
 import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
 
 /**
@@ -45,7 +45,7 @@ import io.vertx.ext.shell.command.CommandProcess;
  */
 @Name("cd")
 @Summary("Change the current working dir")
-public class FileSystemCd implements Command {
+public class FileSystemCd extends AnnotatedCommand {
 
   private String dir;
 

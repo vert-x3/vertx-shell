@@ -40,6 +40,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
+import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.registry.impl.CommandRegistryImpl;
 import io.vertx.ext.shell.system.Process;
@@ -99,10 +100,10 @@ public interface CommandRegistry {
    * @return a reference to this, so the API can be used fluently
    */
   @GenIgnore
-  CommandRegistry registerCommand(Class<? extends Command> command);
+  CommandRegistry registerCommand(Class<? extends AnnotatedCommand> command);
 
   @GenIgnore
-  CommandRegistry registerCommand(Class<? extends Command> command, Handler<AsyncResult<CommandRegistration>> doneHandler);
+  CommandRegistry registerCommand(Class<? extends AnnotatedCommand> command, Handler<AsyncResult<CommandRegistration>> doneHandler);
 
   /**
    * Register a command

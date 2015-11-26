@@ -36,7 +36,7 @@ import io.vertx.core.cli.annotations.Argument;
 import io.vertx.core.cli.annotations.Description;
 import io.vertx.core.cli.annotations.Name;
 import io.vertx.core.cli.annotations.Summary;
-import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
 
 import java.io.PrintWriter;
@@ -47,7 +47,7 @@ import java.io.StringWriter;
  */
 @Name("verticle-deploy")
 @Summary("Deploy a verticle")
-public class VerticleDeploy implements Command {
+public class VerticleDeploy extends AnnotatedCommand {
 
   private String name;
 

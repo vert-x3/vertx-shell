@@ -36,7 +36,7 @@ import io.vertx.core.cli.annotations.Argument;
 import io.vertx.core.cli.annotations.Description;
 import io.vertx.core.cli.annotations.Name;
 import io.vertx.core.cli.annotations.Summary;
-import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
 
 /**
@@ -44,7 +44,7 @@ import io.vertx.ext.shell.command.CommandProcess;
  */
 @Name("bus-send")
 @Summary("Send a message to the event bus")
-public class BusSend implements Command {
+public class BusSend extends AnnotatedCommand {
 
   private String address;
   private String message;

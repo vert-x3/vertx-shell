@@ -39,6 +39,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxException;
+import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.registry.CommandResolver;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.cli.CliToken;
@@ -104,12 +105,12 @@ public class CommandRegistryImpl extends AbstractVerticle implements CommandRegi
   }
 
   @Override
-  public CommandRegistry registerCommand(Class<? extends Command> command) {
+  public CommandRegistry registerCommand(Class<? extends AnnotatedCommand> command) {
     return registerCommand(Command.create(command));
   }
 
   @Override
-  public CommandRegistry registerCommand(Class<? extends Command> command, Handler<AsyncResult<CommandRegistration>> doneHandler) {
+  public CommandRegistry registerCommand(Class<? extends AnnotatedCommand> command, Handler<AsyncResult<CommandRegistration>> doneHandler) {
     return registerCommand(Command.create(command), doneHandler);
   }
 

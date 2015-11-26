@@ -58,7 +58,7 @@ public interface Command {
    * @return the command object
    */
   @GenIgnore
-  static Command create(Class<? extends Command> clazz) {
+  static Command create(Class<? extends AnnotatedCommand> clazz) {
     CLI cli = CLIConfigurator.define(clazz);
     cli.addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help").setDescription("this help").setHelp(true));
 
@@ -106,7 +106,7 @@ public interface Command {
 
       @Override
       public void process(CommandProcess process) {
-        Command instance;
+        AnnotatedCommand instance;
         try {
           instance = clazz.newInstance();
         } catch (Exception e) {
@@ -119,7 +119,7 @@ public interface Command {
 
       @Override
       public void complete(Completion completion) {
-        Command instance;
+        AnnotatedCommand instance;
         try {
           instance = clazz.newInstance();
         } catch (Exception e) {

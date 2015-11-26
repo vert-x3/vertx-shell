@@ -39,7 +39,7 @@ import io.vertx.core.cli.annotations.Name;
 import io.vertx.core.cli.annotations.Summary;
 import io.vertx.core.shareddata.LocalMap;
 import io.vertx.core.shareddata.SharedData;
-import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
 
 import java.util.List;
@@ -49,7 +49,7 @@ import java.util.List;
  */
 @Name("local-map-rm")
 @Summary("Remove values from a local map")
-public class LocalMapRm implements Command {
+public class LocalMapRm extends AnnotatedCommand {
 
   private String map;
   private List<String> keys;

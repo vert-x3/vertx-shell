@@ -34,7 +34,7 @@ package io.vertx.ext.shell.command.base;
 
 import io.vertx.core.cli.annotations.Name;
 import io.vertx.core.cli.annotations.Summary;
-import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
 import io.vertx.ext.shell.registry.CommandRegistration;
 import io.vertx.ext.shell.registry.CommandRegistry;
@@ -44,7 +44,7 @@ import io.vertx.ext.shell.registry.CommandRegistry;
  */
 @Name("help")
 @Summary("Help")
-public class Help implements Command {
+public class Help extends AnnotatedCommand {
 
   @Override
   public void process(CommandProcess process) {

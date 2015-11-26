@@ -30,26 +30,48 @@
  *
  */
 
-package io.vertx.ext.shell.command.base;
+package io.vertx.ext.shell.command;
 
-import io.vertx.core.cli.annotations.Name;
-import io.vertx.core.cli.annotations.Summary;
-import io.vertx.ext.shell.command.AnnotatedCommand;
-import io.vertx.ext.shell.command.CommandProcess;
+import io.vertx.core.cli.CLI;
+import io.vertx.ext.shell.cli.Completion;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@Name("pwd")
-@Summary("Print the current working dir")
-public class FileSystemPwd extends AnnotatedCommand {
+public abstract class AnnotatedCommand {
 
-  @Override
-  public void process(CommandProcess process) {
-    String cwd = process.session().get("cwd");
-    if (cwd == null) {
-      cwd = new FsHelper().rootDir();
-    }
-    process.write(cwd).write("\n").end();
+  /**
+   * @return the command name
+   */
+  public String name() {
+    return null;
   }
+
+  /**
+   * @return the command line interface, can be null
+   */
+  public CLI cli() {
+    return null;
+  }
+
+  /**
+   * Process the command, when the command is done processing it should call the {@link CommandProcess#end()} method.
+   *
+   * @param process the command process
+   */
+  public abstract void process(CommandProcess process);
+
+  /**
+   * Perform command completion, when the command is done completing it should call {@link Completion#complete(List)}
+   * or {@link Completion#complete(String, boolean)} )} method to signal completion is done.
+   *
+   * @param completion the completion object
+   */
+  public void complete(Completion completion) {
+    completion.complete(Collections.emptyList());
+  }
+
 }
