@@ -110,31 +110,6 @@ var CommandRegistry = function(j_val) {
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
-  /**
-   Register a command resolver.
-
-   @public
-   @param resolver {CommandResolver} the commands to resolve from 
-   @param completionHandler {function} 
-   @return {CommandRegistry} a reference to this, so the API can be used fluently
-   */
-  this.registerResolver = function() {
-    var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_commandRegistry["registerResolver(io.vertx.ext.shell.command.CommandResolver)"](__args[0]._jdel);
-      return that;
-    }  else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'function') {
-      j_commandRegistry["registerResolver(io.vertx.ext.shell.command.CommandResolver,io.vertx.core.Handler)"](__args[0]._jdel, function(ar) {
-      if (ar.succeeded()) {
-        __args[1](utils.convReturnListSetVertxGen(ar.result(), Command), null);
-      } else {
-        __args[1](null, ar.cause());
-      }
-    });
-      return that;
-    } else throw new TypeError('function invoked with invalid arguments');
-  };
-
   // A reference to the underlying Java delegate
   // NOTE! This is an internal API and must not be used in user code.
   // If you rely on this property your code is likely to break if we change it / remove it without warning.
@@ -142,16 +117,30 @@ var CommandRegistry = function(j_val) {
 };
 
 /**
- Get the registry for the Vert.x instance
+ Get the shared registry for the Vert.x instance.
 
  @memberof module:vertx-shell-js/command_registry
  @param vertx {Vertx} the vertx instance 
- @return {CommandRegistry} the registry
+ @return {CommandRegistry} the shared registry
  */
-CommandRegistry.get = function(vertx) {
+CommandRegistry.getShared = function(vertx) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-    return utils.convReturnVertxGen(JCommandRegistry["get(io.vertx.core.Vertx)"](vertx._jdel), CommandRegistry);
+    return utils.convReturnVertxGen(JCommandRegistry["getShared(io.vertx.core.Vertx)"](vertx._jdel), CommandRegistry);
+  } else throw new TypeError('function invoked with invalid arguments');
+};
+
+/**
+ Create a new registry.
+
+ @memberof module:vertx-shell-js/command_registry
+ @param vertx {Vertx} the vertx instance 
+ @return {CommandRegistry} the created registry
+ */
+CommandRegistry.create = function(vertx) {
+  var __args = arguments;
+  if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+    return utils.convReturnVertxGen(JCommandRegistry["create(io.vertx.core.Vertx)"](vertx._jdel), CommandRegistry);
   } else throw new TypeError('function invoked with invalid arguments');
 };
 

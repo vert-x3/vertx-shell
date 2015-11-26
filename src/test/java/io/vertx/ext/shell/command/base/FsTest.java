@@ -67,7 +67,7 @@ public class FsTest {
     root = Files.createTempDirectory(target.toPath(), "fs").toFile();
     System.setProperty("vertx.cwd", root.getAbsolutePath());
     vertx = Vertx.vertx();
-    registry = CommandRegistry.get(vertx);
+    registry = CommandRegistry.getShared(vertx);
     helper = new FsHelper();
   }
 

@@ -270,7 +270,7 @@ builder.processHandler({ process ->
 })
 
 // Register the command
-def registry = CommandRegistry.get(vertx)
+def registry = CommandRegistry.getShared(vertx)
 registry.registerCommand(builder.build(vertx))
 
 ----
@@ -590,7 +590,7 @@ def sshTermServer = TermServer.createSSHTermServer(vertx)
 server.registerTermServer(httpTermServer)
 server.registerTermServer(sshTermServer)
 
-server.commandResolver(CommandResolver.baseCommands(vertx))
+server.registerCommandResolver(CommandResolver.baseCommands(vertx))
 
 server.listen()
 

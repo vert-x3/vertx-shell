@@ -42,6 +42,7 @@ import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.Process;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,10 +54,14 @@ import java.util.stream.Collectors;
  */
 public class InternalCommandManager {
 
-  private final CommandResolver resolver;
+  private final List<CommandResolver> resolvers;
 
-  public InternalCommandManager(CommandResolver resolver) {
-    this.resolver = resolver;
+  public InternalCommandManager(CommandResolver... resolvers) {
+    this.resolvers = Arrays.asList(resolvers);
+  }
+
+  public InternalCommandManager(List<CommandResolver> resolvers) {
+    this.resolvers = resolvers;
   }
 
   /**
@@ -88,15 +93,17 @@ public class InternalCommandManager {
     while (tokens.hasNext()) {
       CliToken token = tokens.next();
       if (token.isText()) {
-        Command command = resolver.getCommand(token.value());
-        if (command == null) {
-          throw new IllegalArgumentException(token.value() + ": command not found");
+        for (CommandResolver resolver : resolvers) {
+          Command command = resolver.getCommand(token.value());
+          if (command != null) {
+            List<CliToken> remaining = new ArrayList<>();
+            while (tokens.hasNext()) {
+              remaining.add(tokens.next());
+            }
+            return command.createProcess(remaining);
+          }
         }
-        List<CliToken> remaining = new ArrayList<>();
-        while (tokens.hasNext()) {
-          remaining.add(tokens.next());
-        }
-        return command.createProcess(remaining);
+        throw new IllegalArgumentException(token.value() + ": command not found");
       }
     }
     throw new IllegalArgumentException();
@@ -129,45 +136,48 @@ public class InternalCommandManager {
           StringBuilder tmp = new StringBuilder();
           newTokens.stream().forEach(token -> tmp.append(token.raw()));
           String line = tmp.toString();
-          Command command = resolver.getCommand(ct.value());
-          if (command != null) {
-            command.complete(new Completion() {
-              @Override
-              public Vertx vertx() {
-                return completion.vertx();
-              }
-              @Override
-              public Session session() {
-                return completion.session();
-              }
-              @Override
-              public String rawLine() {
-                return line;
-              }
-              @Override
-              public List<CliToken> lineTokens() {
-                return newTokens;
-              }
-              @Override
-              public void complete(List<String> candidates) {
-                completion.complete(candidates);
-              }
-              @Override
-              public void complete(String value, boolean terminal) {
-                completion.complete(value, terminal);
-              }
-            });
-          } else {
-            completion.complete(Collections.emptyList());
+          for (CommandResolver resolver : resolvers) {
+            Command command = resolver.getCommand(ct.value());
+            if (command != null) {
+              command.complete(new Completion() {
+                @Override
+                public Vertx vertx() {
+                  return completion.vertx();
+                }
+                @Override
+                public Session session() {
+                  return completion.session();
+                }
+                @Override
+                public String rawLine() {
+                  return line;
+                }
+                @Override
+                public List<CliToken> lineTokens() {
+                  return newTokens;
+                }
+                @Override
+                public void complete(List<String> candidates) {
+                  completion.complete(candidates);
+                }
+                @Override
+                public void complete(String value, boolean terminal) {
+                  completion.complete(value, terminal);
+                }
+              });
+              return;
+            }
           }
+          completion.complete(Collections.emptyList());
         }
       }
     } else {
       String prefix = tokens.size() > 0 ? tokens.getFirst().value() : "";
-      List<String> names = resolver.commands().
-          stream().
-          map(cmd -> cmd.name()).
+      List<String> names = resolvers.stream().
+          flatMap(res -> res.commands().stream()).
+          map(Command::name).
           filter(name -> name.startsWith(prefix)).
+          distinct().
           collect(Collectors.toList());
       if (names.size() == 1) {
         completion.complete(names.get(0).substring(prefix.length()), true);

@@ -32,6 +32,7 @@
 
 package io.vertx.ext.shell.system.impl;
 
+import io.vertx.core.Handler;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.system.Process;
 import io.vertx.ext.shell.session.Session;
@@ -44,6 +45,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -52,7 +54,7 @@ public class ShellImpl implements Shell {
 
   final InternalCommandManager commandManager;
   final SessionImpl session = new SessionImpl();
-  private final SortedMap<Integer, Job> jobs = new TreeMap<>();
+  private final SortedMap<Integer, JobImpl> jobs = new TreeMap<>();
 
   public ShellImpl(InternalCommandManager commandManager) {
     this.commandManager = commandManager;
@@ -92,11 +94,28 @@ public class ShellImpl implements Shell {
   }
 
   @Override
-  public void close() {
-    ArrayList<Job> jobs;
+  public void close(Handler<Void> completionHandler) {
+    ArrayList<JobImpl> jobs;
     synchronized (this) {
       jobs = new ArrayList<>(this.jobs.values());
     }
-    jobs.forEach(Job::terminate);
+    if (jobs.isEmpty()) {
+      completionHandler.handle(null);
+    } else {
+      AtomicInteger count = new AtomicInteger(jobs.size());
+      jobs.forEach(job -> {
+        job.terminateFuture.setHandler(v -> {
+          if (count.decrementAndGet() == 0 && completionHandler != null) {
+            completionHandler.handle(null);
+          }
+        });
+        job.terminate();
+      });
+    }
+  }
+
+  @Override
+  public void close() {
+    close(null);
   }
 }

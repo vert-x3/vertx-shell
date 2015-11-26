@@ -70,7 +70,7 @@ public class ShellServiceImpl implements ShellService {
     this.vertx = vertx;
     this.options = options;
     this.server = ShellServer.create(vertx, new ShellServerOptions(options));
-    this.registry = CommandRegistry.get(vertx);
+    this.registry = CommandRegistry.getShared(vertx);
   }
 
   @Override
@@ -105,22 +105,24 @@ public class ShellServiceImpl implements ShellService {
 
     // When providers are registered we start the server
     AtomicInteger count = new AtomicInteger(factories.size());
+    List<CommandResolver> resolvers = new ArrayList<>();
+    resolvers.add(registry);
     Handler<Void> startServer = v -> {
       if (count.decrementAndGet() == 0) {
-        startServer(registry, startHandler);
+        startServer(resolvers, startHandler);
       }
     };
     for (CommandResolverFactory factory : factories) {
       factory.resolver(vertx, ar -> {
         if (ar.succeeded()) {
-          registry.registerResolver(ar.result());
+          resolvers.add(ar.result());
         }
         startServer.handle(null);
       });
     }
   }
 
-  private void startServer(CommandRegistry registry, Handler<AsyncResult<Void>> startHandler) {
+  private void startServer(List<CommandResolver> resolvers, Handler<AsyncResult<Void>> startHandler) {
     TelnetTermOptions telnetOptions = options.getTelnetOptions();
     SSHTermOptions sshOptions = options.getSSHOptions();
     HttpTermOptions webOptions = options.getHttpOptions();
@@ -133,12 +135,12 @@ public class ShellServiceImpl implements ShellService {
     if (webOptions != null) {
       server.registerTermServer(new HttpTermServer(vertx, webOptions));
     }
-    server.commandResolver(registry);
+    resolvers.forEach(server::registerCommandResolver);
     server.listen(startHandler);
   }
 
   @Override
   public void stop(Handler<AsyncResult<Void>> stopHandler) {
-    server.listen(stopHandler);
+    server.close(stopHandler);
   }
 }

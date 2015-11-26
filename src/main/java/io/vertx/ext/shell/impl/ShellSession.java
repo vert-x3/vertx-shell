@@ -37,9 +37,11 @@ import io.termd.core.readline.Readline;
 import io.termd.core.tty.TtyConnection;
 import io.termd.core.util.Helper;
 import io.termd.core.util.Vector;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.system.impl.InternalCommandManager;
+import io.vertx.ext.shell.system.impl.ShellImpl;
 import io.vertx.ext.shell.term.Tty;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.cli.Completion;
@@ -54,37 +56,48 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
+ * The shell session as seen from the shell server perspective.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class TtyAdapter {
+public class ShellSession {
 
-  final InternalCommandManager registry;
-  final Shell shell;
-  final Vertx vertx;
+  final String id;
+  private final InternalCommandManager manager;
+  private final Shell shell;
+  private final Vertx vertx;
   private final TtyConnection conn;
-  final Readline readline;
-  Job foregroundJob; // The currently running job
-  String welcome;
+  private final Readline readline;
+  final Future<Void> closedFuture;
+  private Job foregroundJob; // The currently running job
+  private String welcome;
 
-  public TtyAdapter(Vertx vertx, TtyConnection conn, Shell shell, InternalCommandManager registry) {
+  public ShellSession(Vertx vertx, TtyConnection conn, InternalCommandManager manager) {
 
     InputStream inputrc = Keymap.class.getResourceAsStream("inputrc");
     Keymap keymap = new Keymap(inputrc);
     Readline readline = new Readline(keymap);
 
+    this.id = UUID.randomUUID().toString();
+    this.shell = new ShellImpl(manager);
     this.vertx = vertx;
     this.conn = conn;
-    this.shell = shell;
     this.readline = readline;
-    this.registry = registry;
+    this.manager = manager;
+    this.closedFuture = Future.future();
   }
 
-  public String welcome() {
-    return welcome;
+  public Shell getShell() {
+    return shell;
+  }
+
+  public long lastAccessedTime() {
+    return conn.lastAccessedTime();
   }
 
   public void setWelcome(String welcome) {
@@ -95,7 +108,7 @@ public class TtyAdapter {
     return conn.size();
   }
 
-  public void init() {
+  public ShellSession init() {
     for (io.termd.core.readline.Function function : Helper.loadServices(Thread.currentThread().getContextClassLoader(), io.termd.core.readline.Function.class)) {
       readline.addFunction(function);
     }
@@ -103,9 +116,9 @@ public class TtyAdapter {
       if (foregroundJob == null) {
         // Bug ???
       } else {
-        if (((TtyImpl)foregroundJob.getTty()).stdin != null) {
+        if (((TtyImpl) foregroundJob.getTty()).stdin != null) {
           // Forward
-          ((TtyImpl)foregroundJob.getTty()).stdin.handle(Helper.fromCodePoints(codePoints));
+          ((TtyImpl) foregroundJob.getTty()).stdin.handle(Helper.fromCodePoints(codePoints));
         } else {
           // Echo
           echo(codePoints);
@@ -135,8 +148,8 @@ public class TtyAdapter {
           break;
         case EOF:
           // Pseudo signal
-          if (((TtyImpl)foregroundJob.getTty()).stdin != null) {
-            ((TtyImpl)foregroundJob.getTty()).stdin.handle(Helper.fromCodePoints(new int[]{key}));
+          if (((TtyImpl) foregroundJob.getTty()).stdin != null) {
+            ((TtyImpl) foregroundJob.getTty()).stdin.handle(Helper.fromCodePoints(new int[]{key}));
           } else {
             echo(key);
             readline.queueEvent(new int[]{key});
@@ -146,18 +159,24 @@ public class TtyAdapter {
           echo(key, '\n');
           echo(Helper.toCodePoints(statusLine(job) + "\n"));
           foregroundJob = null;
-          ((TtyImpl)job.getTty()).stdout = null;
+          ((TtyImpl) job.getTty()).stdout = null;
           job.suspend();
           read(readline);
           break;
       }
     });
     conn.setCloseHandler(v -> {
-      shell.close();
+      shell.close(ar -> {
+        closedFuture.complete();
+      });
     });
     if (welcome != null && welcome.length() > 0) {
       conn.write(welcome);
     }
+    return this;
+  }
+
+  public void readLine() {
     read(readline);
   }
 
@@ -254,7 +273,6 @@ public class TtyAdapter {
         switch (name) {
           case "exit":
           case "logout":
-            // Todo: clean stuff before (like unterminated jobs, etc...)
             conn.close();
             return;
           case "jobs":
@@ -357,7 +375,7 @@ public class TtyAdapter {
           completion.complete(Helper.toCodePoints(value), terminal);
         }
       };
-      registry.complete(comp);
+      manager.complete(comp);
     });
   }
 
@@ -406,5 +424,9 @@ public class TtyAdapter {
     public Stream stdout() {
       return stdout;
     }
+  }
+
+  void close() {
+    conn.close();
   }
 }

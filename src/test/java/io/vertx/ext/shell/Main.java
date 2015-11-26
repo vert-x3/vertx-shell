@@ -55,7 +55,7 @@ public class Main {
 
     Vertx vertx = Vertx.vertx();
 
-    CommandRegistry mgr = CommandRegistry.get(vertx);
+    CommandRegistry mgr = CommandRegistry.getShared(vertx);
 
     CommandBuilder echoKeyboardCmd = CommandBuilder.command("echo-keyboard");
     echoKeyboardCmd.processHandler(process -> {

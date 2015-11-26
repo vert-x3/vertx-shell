@@ -181,6 +181,9 @@ public class HttpTermServer implements TermServer {
   public void close(Handler<AsyncResult<Void>> completionHandler) {
     if (server != null) {
       server.close(completionHandler);
+      server = null;
+    } else {
+      completionHandler.handle(Future.failedFuture("Not started"));
     }
   }
 }

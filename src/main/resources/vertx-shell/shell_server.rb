@@ -37,15 +37,15 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling create(vertx,options)"
     end
-    #  Set the command resolver for this server.
+    #  Register a command resolver for this server.
     # @param [::VertxShell::CommandResolver] resolver the resolver
     # @return [self]
-    def command_resolver(resolver=nil)
+    def register_command_resolver(resolver=nil)
       if resolver.class.method_defined?(:j_del) && !block_given?
-        @j_del.java_method(:commandResolver, [Java::IoVertxExtShellCommand::CommandResolver.java_class]).call(resolver.j_del)
+        @j_del.java_method(:registerCommandResolver, [Java::IoVertxExtShellCommand::CommandResolver.java_class]).call(resolver.j_del)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling command_resolver(resolver)"
+      raise ArgumentError, "Invalid arguments when calling register_command_resolver(resolver)"
     end
     #  Register a term server to this shell server, the term server lifecycle methods are managed by this shell server.
     # @param [::VertxShell::TermServer] termServer the term server to add
@@ -67,12 +67,14 @@ module VertxShell
     end
     #  Start the shell service, this is an asynchronous start.
     # @yield handler for getting notified when service is started
-    # @return [void]
+    # @return [self]
     def listen
       if !block_given?
-        return @j_del.java_method(:listen, []).call()
+        @j_del.java_method(:listen, []).call()
+        return self
       elsif block_given?
-        return @j_del.java_method(:listen, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |ar| yield(ar.failed ? ar.cause : nil) }))
+        @j_del.java_method(:listen, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |ar| yield(ar.failed ? ar.cause : nil) }))
+        return self
       end
       raise ArgumentError, "Invalid arguments when calling listen()"
     end

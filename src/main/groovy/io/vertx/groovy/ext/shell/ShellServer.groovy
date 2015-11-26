@@ -65,12 +65,12 @@ public class ShellServer {
     return ret;
   }
   /**
-   * Set the command resolver for this server.
+   * Register a command resolver for this server.
    * @param resolver the resolver
    * @return a reference to this, so the API can be used fluently
    */
-  public ShellServer commandResolver(CommandResolver resolver) {
-    this.delegate.commandResolver((io.vertx.ext.shell.command.CommandResolver)resolver.getDelegate());
+  public ShellServer registerCommandResolver(CommandResolver resolver) {
+    this.delegate.registerCommandResolver((io.vertx.ext.shell.command.CommandResolver)resolver.getDelegate());
     return this;
   }
   /**
@@ -92,16 +92,20 @@ public class ShellServer {
   }
   /**
    * Start the shell service, this is an asynchronous start.
+   * @return 
    */
-  public void listen() {
+  public ShellServer listen() {
     this.delegate.listen();
+    return this;
   }
   /**
    * Start the shell service, this is an asynchronous start.
    * @param listenHandler handler for getting notified when service is started
+   * @return 
    */
-  public void listen(Handler<AsyncResult<Void>> listenHandler) {
+  public ShellServer listen(Handler<AsyncResult<Void>> listenHandler) {
     this.delegate.listen(listenHandler);
+    return this;
   }
   /**
    * Close the shell server, this is an asynchronous close.

@@ -67,7 +67,7 @@ public class CompletionTest {
 
   @Before
   public void before(TestContext context) {
-    registry = CommandRegistry.get(rule.vertx());
+    registry = CommandRegistry.getShared(rule.vertx());
     registry.registerCommand(CommandBuilder.command("foo").processHandler(proc -> {
     }).completionHandler(
         completion -> {

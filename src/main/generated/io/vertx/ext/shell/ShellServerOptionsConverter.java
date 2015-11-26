@@ -27,12 +27,20 @@ import io.vertx.core.json.JsonArray;
 public class ShellServerOptionsConverter {
 
   public static void fromJson(JsonObject json, ShellServerOptions obj) {
+    if (json.getValue("reaperInterval") instanceof Number) {
+      obj.setReaperInterval(((Number)json.getValue("reaperInterval")).longValue());
+    }
+    if (json.getValue("sessionTimeout") instanceof Number) {
+      obj.setSessionTimeout(((Number)json.getValue("sessionTimeout")).longValue());
+    }
     if (json.getValue("welcomeMessage") instanceof String) {
       obj.setWelcomeMessage((String)json.getValue("welcomeMessage"));
     }
   }
 
   public static void toJson(ShellServerOptions obj, JsonObject json) {
+    json.put("reaperInterval", obj.getReaperInterval());
+    json.put("sessionTimeout", obj.getSessionTimeout());
     if (obj.getWelcomeMessage() != null) {
       json.put("welcomeMessage", obj.getWelcomeMessage());
     }

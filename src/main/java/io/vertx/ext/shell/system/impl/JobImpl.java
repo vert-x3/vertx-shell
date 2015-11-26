@@ -32,6 +32,7 @@
 
 package io.vertx.ext.shell.system.impl;
 
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
 
 import io.vertx.ext.shell.system.Process;
@@ -52,12 +53,14 @@ class JobImpl implements Job {
   volatile long lastStopped; // When the job was last stopped
   volatile Tty tty;
   volatile Handler<Integer> terminateHandler;
+  final Future<Void> terminateFuture;
 
   JobImpl(int id, ShellImpl shell, Process process, String line) {
     this.id = id;
     this.shell = shell;
     this.process = process;
     this.line = line;
+    this.terminateFuture = Future.future();
 
     process.terminateHandler(status -> {
       JobImpl.this.status = ExecStatus.TERMINATED;
@@ -65,6 +68,7 @@ class JobImpl implements Job {
       if (terminateHandler != null) {
         terminateHandler.handle(status);
       }
+      terminateFuture.complete();
     });
   }
 

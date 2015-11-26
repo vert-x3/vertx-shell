@@ -47,12 +47,22 @@ public class CommandRegistry extends CommandResolver {
   }
 
   /**
-   * Get the registry for the Vert.x instance
+   * Get the shared registry for the Vert.x instance.
    * @param vertx the vertx instance
-   * @return the registry
+   * @return the shared registry
    */
-  public static CommandRegistry get(Vertx vertx) { 
-    CommandRegistry ret= CommandRegistry.newInstance(io.vertx.ext.shell.command.CommandRegistry.get((io.vertx.core.Vertx) vertx.getDelegate()));
+  public static CommandRegistry getShared(Vertx vertx) { 
+    CommandRegistry ret= CommandRegistry.newInstance(io.vertx.ext.shell.command.CommandRegistry.getShared((io.vertx.core.Vertx) vertx.getDelegate()));
+    return ret;
+  }
+
+  /**
+   * Create a new registry.
+   * @param vertx the vertx instance
+   * @return the created registry
+   */
+  public static CommandRegistry create(Vertx vertx) { 
+    CommandRegistry ret= CommandRegistry.newInstance(io.vertx.ext.shell.command.CommandRegistry.create((io.vertx.core.Vertx) vertx.getDelegate()));
     return ret;
   }
 
@@ -136,48 +146,6 @@ public class CommandRegistry extends CommandResolver {
   public Observable<Void> unregisterCommandObservable(String commandName) { 
     io.vertx.rx.java.ObservableFuture<Void> completionHandler = io.vertx.rx.java.RxHelper.observableFuture();
     unregisterCommand(commandName, completionHandler.toHandler());
-    return completionHandler;
-  }
-
-  /**
-   * Register a command resolver.
-   * @param resolver the commands to resolve from
-   * @return a reference to this, so the API can be used fluently
-   */
-  public CommandRegistry registerResolver(CommandResolver resolver) { 
-    this.delegate.registerResolver((io.vertx.ext.shell.command.CommandResolver) resolver.getDelegate());
-    return this;
-  }
-
-  /**
-   * Register a command resolver.
-   * @param resolver the commands to resolve from
-   * @param completionHandler 
-   * @return a reference to this, so the API can be used fluently
-   */
-  public CommandRegistry registerResolver(CommandResolver resolver, Handler<AsyncResult<List<Command>>> completionHandler) { 
-    this.delegate.registerResolver((io.vertx.ext.shell.command.CommandResolver) resolver.getDelegate(), new Handler<AsyncResult<List<io.vertx.ext.shell.command.Command>>>() {
-      public void handle(AsyncResult<List<io.vertx.ext.shell.command.Command>> event) {
-        AsyncResult<List<Command>> f;
-        if (event.succeeded()) {
-          f = InternalHelper.<List<Command>>result(event.result().stream().map(Command::newInstance).collect(java.util.stream.Collectors.toList()));
-        } else {
-          f = InternalHelper.<List<Command>>failure(event.cause());
-        }
-        completionHandler.handle(f);
-      }
-    });
-    return this;
-  }
-
-  /**
-   * Register a command resolver.
-   * @param resolver the commands to resolve from
-   * @return 
-   */
-  public Observable<List<Command>> registerResolverObservable(CommandResolver resolver) { 
-    io.vertx.rx.java.ObservableFuture<List<Command>> completionHandler = io.vertx.rx.java.RxHelper.observableFuture();
-    registerResolver(resolver, completionHandler.toHandler());
     return completionHandler;
   }
 

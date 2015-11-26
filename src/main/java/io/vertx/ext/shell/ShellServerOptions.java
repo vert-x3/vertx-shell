@@ -34,9 +34,6 @@ package io.vertx.ext.shell;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.shell.term.HttpTermOptions;
-import io.vertx.ext.shell.term.SSHTermOptions;
-import io.vertx.ext.shell.term.TelnetTermOptions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -48,6 +45,16 @@ import java.io.InputStream;
  */
 @DataObject(generateConverter = true)
 public class ShellServerOptions {
+
+  /**
+   * Default of how often, in ms, to check for expired sessions
+   */
+  public static final long DEFAULT_REAPER_INTERVAL = 1000;
+
+  /**
+   * Default time, in ms, that a shell session lasts for without being accessed before expiring.
+   */
+  public static final long DEFAULT_SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 
   public static final String DEFAULT_WELCOME_MESSAGE;
 
@@ -74,13 +81,19 @@ public class ShellServerOptions {
   }
 
   private String welcomeMessage;
+  private long sessionTimeout;
+  private long reaperInterval;
 
   public ShellServerOptions() {
     welcomeMessage = DEFAULT_WELCOME_MESSAGE;
+    sessionTimeout = DEFAULT_SESSION_TIMEOUT;
+    reaperInterval = DEFAULT_REAPER_INTERVAL;
   }
 
   public ShellServerOptions(ShellServerOptions that) {
-    this.welcomeMessage = that.welcomeMessage;
+    welcomeMessage = that.welcomeMessage;
+    sessionTimeout = that.sessionTimeout;
+    reaperInterval = that.reaperInterval;
   }
 
   public ShellServerOptions(JsonObject json) {
@@ -103,6 +116,24 @@ public class ShellServerOptions {
    */
   public ShellServerOptions setWelcomeMessage(String welcomeMessage) {
     this.welcomeMessage = welcomeMessage;
+    return this;
+  }
+
+  public long getSessionTimeout() {
+    return sessionTimeout;
+  }
+
+  public ShellServerOptions setSessionTimeout(long sessionTimeout) {
+    this.sessionTimeout = sessionTimeout;
+    return this;
+  }
+
+  public long getReaperInterval() {
+    return reaperInterval;
+  }
+
+  public ShellServerOptions setReaperInterval(long reaperInterval) {
+    this.reaperInterval = reaperInterval;
     return this;
   }
 }

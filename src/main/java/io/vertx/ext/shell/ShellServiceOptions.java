@@ -38,9 +38,6 @@ import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.term.HttpTermOptions;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-
 /**
  * The configurations options for the shell service, the shell connectors can be configured
  * with {@link TelnetTermOptions}, {@link SSHTermOptions} and {@link HttpTermOptions}.
@@ -72,6 +69,16 @@ public class ShellServiceOptions extends ShellServerOptions {
   @Override
   public ShellServiceOptions setWelcomeMessage(String welcomeMessage) {
     return (ShellServiceOptions) super.setWelcomeMessage(welcomeMessage);
+  }
+
+  @Override
+  public ShellServiceOptions setSessionTimeout(long timeoutMillis) {
+    return (ShellServiceOptions) super.setSessionTimeout(timeoutMillis);
+  }
+
+  @Override
+  public ShellServiceOptions setReaperInterval(long reaperInterval) {
+    return (ShellServiceOptions) super.setReaperInterval(reaperInterval);
   }
 
   /**

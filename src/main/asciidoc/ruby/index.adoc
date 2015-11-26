@@ -269,7 +269,7 @@ builder.process_handler() { |process|
 }
 
 # Register the command
-registry = VertxShell::CommandRegistry.get(vertx)
+registry = VertxShell::CommandRegistry.get_shared(vertx)
 registry.register_command(builder.build(vertx))
 
 ----
@@ -589,7 +589,7 @@ sshTermServer = VertxShell::TermServer.create_ssh_term_server(vertx)
 server.register_term_server(httpTermServer)
 server.register_term_server(sshTermServer)
 
-server.command_resolver(VertxShell::CommandResolver.base_commands(vertx))
+server.register_command_resolver(VertxShell::CommandResolver.base_commands(vertx))
 
 server.listen()
 

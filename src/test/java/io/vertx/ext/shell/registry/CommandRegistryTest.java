@@ -65,7 +65,7 @@ public class CommandRegistryTest {
   @Before
   public void before(TestContext context) throws Exception {
     vertx = Vertx.vertx();
-    registry = CommandRegistry.get(vertx);
+    registry = CommandRegistry.getShared(vertx);
     long now = System.currentTimeMillis();
     while (vertx.deploymentIDs().size() == 0) {
       context.assertTrue(System.currentTimeMillis() - now < 2000);
@@ -80,7 +80,7 @@ public class CommandRegistryTest {
 
   @Test
   public void testRegister(TestContext context) {
-    CommandRegistry registry = CommandRegistry.get(vertx);
+    CommandRegistry registry = CommandRegistry.getShared(vertx);
     CommandBuilder command = CommandBuilder.command("hello");
     registry.registerCommand(command.build(vertx), context.asyncAssertSuccess(reg -> {
       registry.unregisterCommand("hello", context.asyncAssertSuccess(done -> {
@@ -91,7 +91,7 @@ public class CommandRegistryTest {
 
   @Test
   public void testDuplicateRegistration(TestContext context) {
-    CommandRegistry registry = CommandRegistry.get(vertx);
+    CommandRegistry registry = CommandRegistry.getShared(vertx);
     Command a = CommandBuilder.command("a").build(vertx);
     Command b = CommandBuilder.command("b").build(vertx);
     registry.registerCommand(a, context.asyncAssertSuccess(reg -> {
@@ -106,7 +106,7 @@ public class CommandRegistryTest {
   public void testCloseRegistryOnVertxClose(TestContext context) {
     Vertx vertx = Vertx.vertx();
     int size = vertx.deploymentIDs().size();
-    CommandRegistryImpl registry = (CommandRegistryImpl) CommandRegistry.get(vertx);
+    CommandRegistryImpl registry = (CommandRegistryImpl) CommandRegistry.getShared(vertx);
     while (vertx.deploymentIDs().size() < size + 1) {
       try {
         Thread.sleep(10);
@@ -122,7 +122,7 @@ public class CommandRegistryTest {
 
   @Test
   public void testUndeployInVerticleContext(TestContext context) {
-    CommandRegistry registry = CommandRegistry.get(vertx);
+    CommandRegistry registry = CommandRegistry.getShared(vertx);
     Async async = context.async();
     AtomicReference<String> ref = new AtomicReference<>();
     vertx.deployVerticle(new AbstractVerticle() {

@@ -21,6 +21,7 @@ import io.vertx.core.json.JsonObject
 import java.util.List
 import java.util.Set
 import io.vertx.groovy.ext.shell.cli.CliToken
+import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.session.Session
 /**
  * An interactive session between a consumer and a shell.<p/>
@@ -82,5 +83,12 @@ public class Shell {
    */
   public void close() {
     this.delegate.close();
+  }
+  /**
+   * Close the shell session and terminate all the underlying jobs.
+   * @param completionHandler 
+   */
+  public void close(Handler<Void> completionHandler) {
+    this.delegate.close(completionHandler);
   }
 }

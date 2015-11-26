@@ -165,7 +165,7 @@ public class Examples {
     server.registerTermServer(httpTermServer); // <4>
     server.registerTermServer(sshTermServer);
 
-    server.commandResolver(CommandResolver.baseCommands(vertx)); // <5>
+    server.registerCommandResolver(CommandResolver.baseCommands(vertx)); // <5>
 
     server.listen(); // <6>
   }
@@ -183,7 +183,7 @@ public class Examples {
     });
 
     // Register the command
-    CommandRegistry registry = CommandRegistry.get(vertx);
+    CommandRegistry registry = CommandRegistry.getShared(vertx);
     registry.registerCommand(builder.build(vertx));
   }
 

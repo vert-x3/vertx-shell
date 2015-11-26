@@ -37,16 +37,16 @@ var ShellServer = function(j_val) {
   var that = this;
 
   /**
-   Set the command resolver for this server.
+   Register a command resolver for this server.
 
    @public
    @param resolver {CommandResolver} the resolver 
    @return {ShellServer} a reference to this, so the API can be used fluently
    */
-  this.commandResolver = function(resolver) {
+  this.registerCommandResolver = function(resolver) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_shellServer["commandResolver(io.vertx.ext.shell.command.CommandResolver)"](resolver._jdel);
+      j_shellServer["registerCommandResolver(io.vertx.ext.shell.command.CommandResolver)"](resolver._jdel);
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
@@ -85,11 +85,13 @@ var ShellServer = function(j_val) {
 
    @public
    @param listenHandler {function} handler for getting notified when service is started 
+   @return {ShellServer}
    */
   this.listen = function() {
     var __args = arguments;
     if (__args.length === 0) {
       j_shellServer["listen()"]();
+      return that;
     }  else if (__args.length === 1 && typeof __args[0] === 'function') {
       j_shellServer["listen(io.vertx.core.Handler)"](function(ar) {
       if (ar.succeeded()) {
@@ -98,6 +100,7 @@ var ShellServer = function(j_val) {
         __args[0](null, ar.cause());
       }
     });
+      return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

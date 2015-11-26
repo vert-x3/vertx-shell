@@ -269,7 +269,7 @@ builder.processHandler(function (process) {
 });
 
 // Register the command
-var registry = CommandRegistry.get(vertx);
+var registry = CommandRegistry.getShared(vertx);
 registry.registerCommand(builder.build(vertx));
 
 ----
@@ -589,7 +589,7 @@ var sshTermServer = TermServer.createSSHTermServer(vertx);
 server.registerTermServer(httpTermServer);
 server.registerTermServer(sshTermServer);
 
-server.commandResolver(CommandResolver.baseCommands(vertx));
+server.registerCommandResolver(CommandResolver.baseCommands(vertx));
 
 server.listen();
 

@@ -56,10 +56,13 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling create_job(param_1)"
     end
     #  Close the shell session and terminate all the underlying jobs.
+    # @yield 
     # @return [void]
     def close
       if !block_given?
         return @j_del.java_method(:close, []).call()
+      elsif block_given?
+        return @j_del.java_method(:close, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
       end
       raise ArgumentError, "Invalid arguments when calling close()"
     end

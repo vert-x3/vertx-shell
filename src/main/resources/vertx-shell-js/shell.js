@@ -96,12 +96,14 @@ var Shell = function(j_val) {
    Close the shell session and terminate all the underlying jobs.
 
    @public
-
+   @param completionHandler {function} 
    */
   this.close = function() {
     var __args = arguments;
     if (__args.length === 0) {
       j_shell["close()"]();
+    }  else if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_shell["close(io.vertx.core.Handler)"](__args[0]);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

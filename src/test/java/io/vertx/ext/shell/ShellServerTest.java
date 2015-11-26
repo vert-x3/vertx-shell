@@ -33,9 +33,12 @@
 package io.vertx.ext.shell;
 
 import io.vertx.core.Context;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.CliToken;
+import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
+import io.vertx.ext.shell.command.CommandProcess;
 import io.vertx.ext.shell.command.CommandResolver;
 import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.shell.command.CommandRegistry;
@@ -50,8 +53,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -62,14 +67,18 @@ import java.util.concurrent.TimeUnit;
 public class ShellServerTest {
 
   Vertx vertx;
-  CommandRegistry registry;
   ShellServer server;
+  List<Command> commands;
 
   @Before
-  public void before() {
+  public void before(TestContext context) {
     vertx = Vertx.vertx();
-    registry = CommandRegistry.get(vertx).registerResolver(CommandResolver.baseCommands(vertx));
-    server = ShellServer.create(vertx).commandResolver(registry);
+    server = ShellServer.create(vertx);
+    commands = new ArrayList<>();
+    server.
+        registerCommandResolver(CommandResolver.baseCommands(vertx)).
+        registerCommandResolver(() -> commands).
+        listen(context.asyncAssertSuccess());
   }
 
   @After
@@ -79,90 +88,78 @@ public class ShellServerTest {
 
   @Test
   public void testRun(TestContext context) {
-    CommandBuilder cmd = CommandBuilder.command("foo");
-    cmd.processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       process.end(3);
-    });
-    registry.registerCommand(cmd.build(vertx), context.asyncAssertSuccess(v -> {
-      Shell session = server.createShell();
-      Job job = session.createJob(CliToken.tokenize("foo"));
-      Async async = context.async();
-      job.setTty(Pty.create().slave()).terminateHandler(code -> {
-        context.assertEquals(3, code);
-        async.complete();
-      }).run();
-    }));
+    }).build(vertx));
+    Shell session = server.createShell();
+    Job job = session.createJob(CliToken.tokenize("foo"));
+    Async async = context.async();
+    job.setTty(Pty.create().slave()).terminateHandler(code -> {
+      context.assertEquals(3, code);
+      async.complete();
+    }).run();
   }
 
   @Test
   public void testThrowExceptionInProcess(TestContext context) {
-    CommandBuilder cmd = CommandBuilder.command("foo");
-    cmd.processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       throw new RuntimeException();
-    });
-    registry.registerCommand(cmd.build(vertx), context.asyncAssertSuccess(v -> {
-      Shell shell = server.createShell();
-      Job job = shell.createJob("foo");
-      Async async = context.async();
-      Pty pty = Pty.create();
-      job.setTty(pty.slave()).terminateHandler(code -> {
-        context.assertEquals(1, code);
-        async.complete();
-      }).run();
-    }));
+    }).build(vertx));
+    Shell shell = server.createShell();
+    Job job = shell.createJob("foo");
+    Async async = context.async();
+    Pty pty = Pty.create();
+    job.setTty(pty.slave()).terminateHandler(code -> {
+      context.assertEquals(1, code);
+      async.complete();
+    }).run();
   }
 
   @Test
   public void testStdin(TestContext context) {
-    CommandBuilder cmd = CommandBuilder.command("foo");
     CountDownLatch latch = new CountDownLatch(1);
-    cmd.processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       process.setStdin(data -> {
         context.assertEquals("hello_world", data);
         process.end(0);
       });
       latch.countDown();
-    });
-    registry.registerCommand(cmd.build(vertx), context.asyncAssertSuccess(v -> {
-      Shell session = server.createShell();
-      Job job = session.createJob(CliToken.tokenize("foo"));
-      Async async = context.async();
-      Pty pty = Pty.create();
-      job.setTty(pty.slave());
-      job.terminateHandler(code -> {
-        context.assertEquals(0, code);
-        async.complete();
-      }).run();
-      try {
-        latch.await(10, TimeUnit.SECONDS);
-      } catch (InterruptedException e) {
-        context.fail(e);
-      }
-      pty.stdin().write("hello_world");
-    }));
+    }).build(vertx));
+    Shell session = server.createShell();
+    Job job = session.createJob(CliToken.tokenize("foo"));
+    Async async = context.async();
+    Pty pty = Pty.create();
+    job.setTty(pty.slave());
+    job.terminateHandler(code -> {
+      context.assertEquals(0, code);
+      async.complete();
+    }).run();
+    try {
+      latch.await(10, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {
+      context.fail(e);
+    }
+    pty.stdin().write("hello_world");
   }
 
   @Test
   public void testStdout(TestContext context) {
-    CommandBuilder cmd = CommandBuilder.command("foo");
-    cmd.processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       process.stdout().write("bye_world");
       process.end(0);
-    });
-    registry.registerCommand(cmd.build(vertx), context.asyncAssertSuccess(v -> {
-      Shell session = server.createShell();
-      Job job = session.createJob("foo");
-      Async async = context.async();
-      LinkedList<String> out = new LinkedList<>();
-      Pty pty = Pty.create();
-      pty.setStdout(out::add);
-      job.setTty(pty.slave());
-      job.terminateHandler(code -> {
-        context.assertEquals(0, code);
-        context.assertEquals(Arrays.asList("bye_world"), out);
-        async.complete();
-      }).run();
-    }));
+    }).build(vertx));
+    Shell session = server.createShell();
+    Job job = session.createJob("foo");
+    Async async = context.async();
+    LinkedList<String> out = new LinkedList<>();
+    Pty pty = Pty.create();
+    pty.setStdout(out::add);
+    job.setTty(pty.slave());
+    job.terminateHandler(code -> {
+      context.assertEquals(0, code);
+      context.assertEquals(Arrays.asList("bye_world"), out);
+      async.complete();
+    }).run();
   }
 
   @Test
@@ -187,63 +184,58 @@ public class ShellServerTest {
         });
         latch.countDown();
       });
-      registry.registerCommand(cmd.build(vertx), testContext.asyncAssertSuccess(v2 -> {
-        shellCtx.runOnContext(v3 -> {
+      commands.add(cmd.build(vertx));
+      shellCtx.runOnContext(v3 -> {
+        testContext.assertTrue(shellCtx == Vertx.currentContext());
+        Shell shell = server.createShell();
+        Job job = shell.createJob("foo");
+        Pty pty = Pty.create();
+        pty.setStdout(text -> {
           testContext.assertTrue(shellCtx == Vertx.currentContext());
-          Shell shell = server.createShell();
-          Job job = shell.createJob("foo");
-          Pty pty = Pty.create();
-          pty.setStdout(text -> {
-            testContext.assertTrue(shellCtx == Vertx.currentContext());
-            testContext.assertEquals("pong", text);
-            job.suspend();
-          });
-          job.setTty(pty.slave()).terminateHandler(code -> {
-            testContext.assertTrue(shellCtx == Vertx.currentContext());
-            async.complete();
-          }).run();
-          try {
-            latch.await(10, TimeUnit.SECONDS);
-          } catch (InterruptedException e) {
-            testContext.fail(e);
-          }
-          pty.stdin().write("ping");
+          testContext.assertEquals("pong", text);
+          job.suspend();
         });
-      }));
+        job.setTty(pty.slave()).terminateHandler(code -> {
+          testContext.assertTrue(shellCtx == Vertx.currentContext());
+          async.complete();
+        }).run();
+        try {
+          latch.await(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+          testContext.fail(e);
+        }
+        pty.stdin().write("ping");
+      });
     });
   }
 
   @Test
   public void testSendEvent(TestContext context) {
-    CommandBuilder cmd = CommandBuilder.command("foo");
     CountDownLatch latch = new CountDownLatch(1);
-    cmd.processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       process.suspendHandler(v -> {
         process.end(0);
       });
       latch.countDown();
-    });
-    registry.registerCommand(cmd.build(vertx), context.asyncAssertSuccess(v -> {
-      Shell shell = server.createShell();
-      Job job = shell.createJob("foo");
-      Async async = context.async();
-      Pty pty = Pty.create();
-      job.setTty(pty.slave()).terminateHandler(status -> {
-        async.complete();
-      }).run();
-      try {
-        latch.await(10, TimeUnit.SECONDS);
-      } catch (InterruptedException e) {
-        context.fail(e);
-      }
-      job.suspend();
-    }));
+    }).build(vertx));
+    Shell shell = server.createShell();
+    Job job = shell.createJob("foo");
+    Async async = context.async();
+    Pty pty = Pty.create();
+    job.setTty(pty.slave()).terminateHandler(status -> {
+      async.complete();
+    }).run();
+    try {
+      latch.await(10, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {
+      context.fail(e);
+    }
+    job.suspend();
   }
 
   @Test
   public void testResize(TestContext context) {
-    CommandBuilder cmd = CommandBuilder.command("foo");
-    cmd.processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       context.assertEquals(20, process.width());
       context.assertEquals(10, process.height());
       process.resizehandler(v -> {
@@ -252,102 +244,87 @@ public class ShellServerTest {
         process.end(0);
       });
       process.stdout().write("ping");
+    }).build(vertx));
+    Shell shell = server.createShell();
+    Job job = shell.createJob("foo");
+    Pty pty = Pty.create();
+    Async async = context.async();
+    pty.setSize(20, 10);
+    pty.setStdout(text -> {
+      pty.setSize(25, 15);
     });
-    registry.registerCommand(cmd.build(vertx), context.asyncAssertSuccess(v -> {
-      Shell shell = server.createShell();
-      Job job = shell.createJob("foo");
-      Pty pty = Pty.create();
-      Async async = context.async();
-      pty.setSize(20, 10);
-      pty.setStdout(text -> {
-        pty.setSize(25, 15);
-      });
-      job.setTty(pty.slave()).terminateHandler(status -> {
-        async.complete();
-      }).run();
-    }));
+    job.setTty(pty.slave()).terminateHandler(status -> {
+      async.complete();
+    }).run();
   }
 
   @Test
   public void testSessionGet(TestContext context) throws Exception {
-    CommandBuilder cmd = CommandBuilder.command("foo");
     Async async = context.async();
-    cmd.processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       Session session = process.session();
       context.assertNotNull(session);
       context.assertEquals("the_value", session.get("the_key"));
       process.end();
-    });
-    registry.registerCommand(cmd.build(vertx), context.asyncAssertSuccess(v -> {
-      Shell shell = server.createShell();
-      Job job = shell.createJob("foo");
-      shell.session().put("the_key", "the_value");
-      Pty pty = Pty.create();
-      job.setTty(pty.slave()).terminateHandler(status -> {
-        context.assertEquals(0, status);
-        async.complete();
-      }).run();
-    }));
+    }).build(vertx));
+    Shell shell = server.createShell();
+    Job job = shell.createJob("foo");
+    shell.session().put("the_key", "the_value");
+    Pty pty = Pty.create();
+    job.setTty(pty.slave()).terminateHandler(status -> {
+      context.assertEquals(0, status);
+      async.complete();
+    }).run();
   }
 
   @Test
   public void testSessionPut(TestContext context) throws Exception {
-    CommandBuilder cmd = CommandBuilder.command("foo");
     Async async = context.async();
-    cmd.processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       Session session = process.session();
       context.assertNotNull(session);
       context.assertNull(session.get("the_key"));
       session.put("the_key", "the_value");
       process.end();
-    });
-    registry.registerCommand(cmd.build(vertx), context.asyncAssertSuccess(v -> {
-      Shell shell = server.createShell();
-      Job job = shell.createJob("foo");
-      Pty pty = Pty.create();
-      job.setTty(pty.slave()).terminateHandler(status -> {
-        context.assertEquals(0, status);
-        context.assertEquals("the_value", shell.session().get("the_key"));
-        async.complete();
-      }).run();
-    }));
+    }).build(vertx));
+    Shell shell = server.createShell();
+    Job job = shell.createJob("foo");
+    Pty pty = Pty.create();
+    job.setTty(pty.slave()).terminateHandler(status -> {
+      context.assertEquals(0, status);
+      context.assertEquals("the_value", shell.session().get("the_key"));
+      async.complete();
+    }).run();
   }
 
   @Test
   public void testSessionRemove(TestContext context) throws Exception {
-    CommandBuilder cmd = CommandBuilder.command("foo");
     Async async = context.async();
-    cmd.processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       Session session = process.session();
       context.assertNotNull(session);
       context.assertEquals("the_value", session.remove("the_key"));
       process.end();
-    });
-    registry.registerCommand(cmd.build(vertx), context.asyncAssertSuccess(v -> {
-      Shell shell = server.createShell();
-      Job job = shell.createJob("foo");
-      Pty pty = Pty.create();
-      shell.session().put("the_key", "the_value");
-      job.setTty(pty.slave()).terminateHandler(status -> {
-        context.assertEquals(0, status);
-        context.assertNull(shell.session().get("the_key"));
-        async.complete();
-      }).run();
-    }));
+    }).build(vertx));
+    Shell shell = server.createShell();
+    Job job = shell.createJob("foo");
+    Pty pty = Pty.create();
+    shell.session().put("the_key", "the_value");
+    job.setTty(pty.slave()).terminateHandler(status -> {
+      context.assertEquals(0, status);
+      context.assertNull(shell.session().get("the_key"));
+      async.complete();
+    }).run();
   }
 
   @Test
   public void testClose(TestContext context) {
     Async async = context.async(2);
-    Async registrationLatch = context.async();
     Async runningLatch = context.async();
-    CommandBuilder cmd = CommandBuilder.command("foo");
-    cmd.processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       process.endHandler(v -> async.complete());
       runningLatch.complete();
-    });
-    registry.registerCommand(cmd.build(vertx), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
+    }).build(vertx));
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Pty pty = Pty.create();

@@ -48,7 +48,7 @@ public class Help extends AnnotatedCommand {
 
   @Override
   public void process(CommandProcess process) {
-    CommandRegistry manager = CommandRegistry.get(process.vertx());
+    CommandRegistry manager = CommandRegistry.getShared(process.vertx());
     manager.commands();
     process.write("available commands:\n");
     for (Command command : manager.commands()) {

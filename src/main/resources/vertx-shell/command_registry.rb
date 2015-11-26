@@ -19,14 +19,23 @@ module VertxShell
     def j_del
       @j_del
     end
-    #  Get the registry for the Vert.x instance
+    #  Get the shared registry for the Vert.x instance.
     # @param [::Vertx::Vertx] vertx the vertx instance
-    # @return [::VertxShell::CommandRegistry] the registry
-    def self.get(vertx=nil)
+    # @return [::VertxShell::CommandRegistry] the shared registry
+    def self.get_shared(vertx=nil)
       if vertx.class.method_defined?(:j_del) && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandRegistry.java_method(:get, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::CommandRegistry)
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandRegistry.java_method(:getShared, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::CommandRegistry)
       end
-      raise ArgumentError, "Invalid arguments when calling get(vertx)"
+      raise ArgumentError, "Invalid arguments when calling get_shared(vertx)"
+    end
+    #  Create a new registry.
+    # @param [::Vertx::Vertx] vertx the vertx instance
+    # @return [::VertxShell::CommandRegistry] the created registry
+    def self.create(vertx=nil)
+      if vertx.class.method_defined?(:j_del) && !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandRegistry.java_method(:create, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::CommandRegistry)
+      end
+      raise ArgumentError, "Invalid arguments when calling create(vertx)"
     end
     # @param [::VertxShell::Command] command 
     # @yield 
@@ -66,20 +75,6 @@ module VertxShell
         return self
       end
       raise ArgumentError, "Invalid arguments when calling unregister_command(commandName)"
-    end
-    #  Register a command resolver.
-    # @param [::VertxShell::CommandResolver] resolver the commands to resolve from
-    # @yield 
-    # @return [self]
-    def register_resolver(resolver=nil)
-      if resolver.class.method_defined?(:j_del) && !block_given?
-        @j_del.java_method(:registerResolver, [Java::IoVertxExtShellCommand::CommandResolver.java_class]).call(resolver.j_del)
-        return self
-      elsif resolver.class.method_defined?(:j_del) && block_given?
-        @j_del.java_method(:registerResolver, [Java::IoVertxExtShellCommand::CommandResolver.java_class,Java::IoVertxCore::Handler.java_class]).call(resolver.j_del,(Proc.new { |ar| yield(ar.failed ? ar.cause : nil, ar.succeeded ? ar.result.to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::Command) } : nil) }))
-        return self
-      end
-      raise ArgumentError, "Invalid arguments when calling register_resolver(resolver)"
     end
   end
 end

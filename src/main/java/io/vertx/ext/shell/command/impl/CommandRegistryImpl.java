@@ -38,14 +38,12 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.AnnotatedCommand;
-import io.vertx.ext.shell.command.CommandResolver;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandRegistry;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,12 +52,31 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class CommandRegistryImpl extends AbstractVerticle implements CommandRegistry {
+public class CommandRegistryImpl implements CommandRegistry {
 
   private static Map<Vertx, CommandRegistryImpl> registries = new ConcurrentHashMap<>();
 
   public static CommandRegistry get(Vertx vertx) {
-    return registries.computeIfAbsent(vertx, CommandRegistryImpl::new);
+    return registries.computeIfAbsent(vertx, v -> {
+      CommandRegistryImpl commandRegistry = new CommandRegistryImpl(vertx);
+      // Static registry should be closed when Vert.x closes
+      vertx.deployVerticle(new AbstractVerticle() {
+        @Override
+        public void start() throws Exception {
+          super.start();
+        }
+        @Override
+        public void stop() throws Exception {
+          commandRegistry.close();
+          registries.remove(vertx);
+        }
+      }, ar -> {
+        if (!ar.succeeded()) {
+          registries.remove(vertx);
+        }
+      });
+      return commandRegistry;
+    });
   }
 
   final Vertx vertx;
@@ -67,26 +84,11 @@ public class CommandRegistryImpl extends AbstractVerticle implements CommandRegi
   private volatile boolean closed;
 
   public CommandRegistryImpl(Vertx vertx) {
-
-    // The registry can be removed either on purpose or when Vert.x close
-    vertx.deployVerticle(this, ar -> {
-      if (!ar.succeeded()) {
-        registries.remove(vertx);
-      }
-    });
-
     this.vertx = vertx;
   }
 
-  @Override
-  public Vertx getVertx() {
-    return vertx;
-  }
-
-  @Override
-  public void stop() throws Exception {
+  public void close() {
     closed = true;
-    registries.remove(vertx);
   }
 
   public boolean isClosed() {
@@ -105,28 +107,6 @@ public class CommandRegistryImpl extends AbstractVerticle implements CommandRegi
   @Override
   public CommandRegistry registerCommand(Class<? extends AnnotatedCommand> command, Handler<AsyncResult<Command>> completionHandler) {
     return registerCommand(Command.create(vertx, command), completionHandler);
-  }
-
-  @Override
-  public CommandRegistry registerResolver(CommandResolver resolver) {
-    return registerResolver(resolver, ar -> {});
-  }
-
-  @Override
-  public CommandRegistry registerResolver(CommandResolver resolver, Handler<AsyncResult<List<Command>>> completionHandler) {
-    for (Command command : resolver.commands()) {
-      if (commandMap.containsKey(command.name())) {
-        completionHandler.handle(Future.failedFuture("Duplicate command"));
-        return this;
-      }
-    }
-    List<Command> commands = new ArrayList<>();
-    for (Command command : resolver.commands()) {
-      commands.add(command);
-      commandMap.put(command.name(), new CommandRegistration(command, null));
-    }
-    completionHandler.handle(Future.succeededFuture(commands));
-    return this;
   }
 
   @Override
@@ -154,6 +134,9 @@ public class CommandRegistryImpl extends AbstractVerticle implements CommandRegi
 
   @Override
   public CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<List<Command>>> doneHandler) {
+    if (closed) {
+      throw new IllegalStateException();
+    }
     vertx.deployVerticle(new AbstractVerticle() {
 
       @Override
@@ -197,6 +180,9 @@ public class CommandRegistryImpl extends AbstractVerticle implements CommandRegi
 
   @Override
   public CommandRegistry unregisterCommand(String name, Handler<AsyncResult<Void>> completionHandler) {
+    if (closed) {
+      throw new IllegalStateException();
+    }
     CommandRegistration registration = commandMap.remove(name);
     if (registration != null) {
       String deploymendID = registration.deploymendID;

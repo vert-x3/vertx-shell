@@ -22,6 +22,7 @@ import rx.Observable;
 import java.util.List;
 import java.util.Set;
 import io.vertx.rxjava.ext.shell.cli.CliToken;
+import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.session.Session;
 
 /**
@@ -96,6 +97,14 @@ public class Shell {
    */
   public void close() { 
     this.delegate.close();
+  }
+
+  /**
+   * Close the shell session and terminate all the underlying jobs.
+   * @param completionHandler 
+   */
+  public void close(Handler<Void> completionHandler) { 
+    this.delegate.close(completionHandler);
   }
 
 

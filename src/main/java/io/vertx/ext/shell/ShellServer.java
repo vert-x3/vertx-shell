@@ -80,13 +80,13 @@ public interface ShellServer {
   }
 
   /**
-   * Set the command resolver for this server.
+   * Register a command resolver for this server.
    *
    * @param resolver the resolver
    * @return a reference to this, so the API can be used fluently
    */
   @Fluent
-  ShellServer commandResolver(CommandResolver resolver);
+  ShellServer registerCommandResolver(CommandResolver resolver);
 
   /**
    * Register a term server to this shell server, the term server lifecycle methods are managed by this shell server.
@@ -107,9 +107,9 @@ public interface ShellServer {
   /**
    * Start the shell service, this is an asynchronous start.
    */
-  default void listen() {
-    listen(ar -> {
-    });
+  @Fluent
+  default ShellServer listen() {
+    return listen(ar -> {});
   }
 
   /**
@@ -117,14 +117,14 @@ public interface ShellServer {
    *
    * @param listenHandler handler for getting notified when service is started
    */
-  void listen(Handler<AsyncResult<Void>> listenHandler);
+  @Fluent
+  ShellServer listen(Handler<AsyncResult<Void>> listenHandler);
 
   /**
    * Close the shell server, this is an asynchronous close.
    */
   default void close() {
-    close(ar -> {
-    });
+    close(ar -> {});
   }
 
   /**

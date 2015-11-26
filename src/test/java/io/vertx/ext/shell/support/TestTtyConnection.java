@@ -38,6 +38,7 @@ import io.termd.core.util.Helper;
 import io.termd.core.util.Vector;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -51,9 +52,16 @@ public class TestTtyConnection implements TtyConnection {
   private Consumer<Vector> sizeHandler;
   private BiConsumer<TtyEvent, Integer> eventHandler;
   private Consumer<int[]> stdinHandler;
-  private Consumer<Void> closeHandler;
+  private volatile Consumer<Void> closeHandler;
   private final StringBuilder out = new StringBuilder();
-  private boolean closed;
+  private volatile boolean closed;
+  private final CountDownLatch closeLatch = new CountDownLatch(1);
+  private volatile long lastAccessedTime;
+
+  @Override
+  public long lastAccessedTime() {
+    return lastAccessedTime;
+  }
 
   @Override
   public String terminalType() {
@@ -128,9 +136,12 @@ public class TestTtyConnection implements TtyConnection {
 
   @Override
   public void close() {
-    closed = true;
-    if (closeHandler != null) {
-      closeHandler.accept(null);
+    if (!closed) {
+      closed = true;
+      if (closeHandler != null) {
+        closeHandler.accept(null);
+      }
+      closeLatch.countDown();
     }
   }
 
@@ -171,6 +182,7 @@ public class TestTtyConnection implements TtyConnection {
 
   public void read(String s) {
     reading = true;
+    lastAccessedTime = System.currentTimeMillis();
     stdinHandler.accept(Helper.toCodePoints(s));
     reading = false;
     Runnable task;
@@ -217,5 +229,9 @@ public class TestTtyConnection implements TtyConnection {
 
   public boolean isClosed() {
     return closed;
+  }
+
+  public CountDownLatch getCloseLatch() {
+    return closeLatch;
   }
 }

@@ -33,6 +33,7 @@
 package io.vertx.ext.shell.system;
 
 import io.vertx.codegen.annotations.VertxGen;
+import io.vertx.core.Handler;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.session.Session;
 
@@ -83,4 +84,8 @@ public interface Shell {
    */
   void close();
 
+  /**
+   * Close the shell session and terminate all the underlying jobs.
+   */
+  void close(Handler<Void> completionHandler);
 }

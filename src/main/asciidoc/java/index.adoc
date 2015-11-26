@@ -257,7 +257,7 @@ builder.processHandler(process -> {
 });
 
 // Register the command
-CommandRegistry registry = CommandRegistry.get(vertx);
+CommandRegistry registry = CommandRegistry.getShared(vertx);
 registry.registerCommand(builder.build(vertx));
 ----
 
@@ -547,7 +547,7 @@ TermServer sshTermServer = TermServer.createSSHTermServer(vertx); // <3>
 server.registerTermServer(httpTermServer); // <4>
 server.registerTermServer(sshTermServer);
 
-server.commandResolver(CommandResolver.baseCommands(vertx)); // <5>
+server.registerCommandResolver(CommandResolver.baseCommands(vertx)); // <5>
 
 server.listen(); // <6>
 ----

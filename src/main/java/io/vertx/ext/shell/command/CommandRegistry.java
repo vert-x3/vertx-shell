@@ -54,78 +54,87 @@ import java.util.List;
 public interface CommandRegistry extends CommandResolver {
 
   /**
-   * Get the registry for the Vert.x instance
+   * Get the shared registry for the Vert.x instance.
    *
    * @param vertx the vertx instance
-   * @return the registry
+   * @return the shared registry
    */
-  static CommandRegistry get(Vertx vertx) {
+  static CommandRegistry getShared(Vertx vertx) {
     return CommandRegistryImpl.get(vertx);
   }
 
   /**
-   * Register a command
+   * Create a new registry.
    *
-   * @param command the class of the command to register
-   * @return a reference to this, so the API can be used fluently
+   * @param vertx the vertx instance
+   * @return the created registry
+   */
+  static CommandRegistry create(Vertx vertx) {
+    return new CommandRegistryImpl(vertx);
+  }
+
+  /**
+   * Like {@link #registerCommand(Class, Handler)}, without a completion handler.
    */
   @GenIgnore
   CommandRegistry registerCommand(Class<? extends AnnotatedCommand> command);
 
+  /**
+   * Register a single command.
+   *
+   * @param command the class of the command to register
+   * @param completionHandler notified when the command is registered
+   * @return a reference to this, so the API can be used fluently
+   */
   @GenIgnore
   CommandRegistry registerCommand(Class<? extends AnnotatedCommand> command, Handler<AsyncResult<Command>> completionHandler);
+
+  /**
+   * Like {@link #registerCommand(Command, Handler)}, without a completion handler.
+   */
+  @Fluent
+  CommandRegistry registerCommand(Command command);
 
   /**
    * Register a command
    *
    * @param command the command to register
+   * @param completionHandler notified when the command is registered
    * @return a reference to this, so the API can be used fluently
    */
   @Fluent
-  CommandRegistry registerCommand(Command command);
-
-  @Fluent
   CommandRegistry registerCommand(Command command, Handler<AsyncResult<Command>> completionHandler);
+
+  /**
+   * Like {@link #registerCommands(List, Handler)}, without a completion handler.
+   */
+  @Fluent
+  CommandRegistry registerCommands(List<Command> commands);
 
   /**
    * Register a list of commands.
    *
    * @param commands the commands to register
+   * @param completionHandler notified when the command is registered
    * @return a reference to this, so the API can be used fluently
    */
   @Fluent
-  CommandRegistry registerCommands(List<Command> commands);
-
-  @Fluent
   CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<List<Command>>> completionHandler);
+
+  /**
+   * Like {@link #unregisterCommand(String, Handler)}, without a completion handler.
+   */
+  @Fluent
+  CommandRegistry unregisterCommand(String commandName);
 
   /**
    * Unregister a command.
    *
    * @param commandName the command name
+   * @param completionHandler notified when the command is unregistered
    * @return a reference to this, so the API can be used fluently
    */
-  @Fluent
-  CommandRegistry unregisterCommand(String commandName);
-
   @Fluent
   CommandRegistry unregisterCommand(String commandName, Handler<AsyncResult<Void>> completionHandler);
 
-  /**
-   * Register a command resolver.
-   *
-   * @param resolver the commands to resolve from
-   * @return a reference to this, so the API can be used fluently
-   */
-  @Fluent
-  CommandRegistry registerResolver(CommandResolver resolver);
-
-  /**
-   * Register a command resolver.
-   *
-   * @param resolver the commands to resolve from
-   * @return a reference to this, so the API can be used fluently
-   */
-  @Fluent
-  CommandRegistry registerResolver(CommandResolver resolver, Handler<AsyncResult<List<Command>>> completionHandler);
 }
