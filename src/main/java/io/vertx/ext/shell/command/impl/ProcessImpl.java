@@ -30,7 +30,7 @@
  *
  */
 
-package io.vertx.ext.shell.registry.impl;
+package io.vertx.ext.shell.command.impl;
 
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
@@ -38,6 +38,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.cli.CLIException;
 import io.vertx.core.cli.CommandLine;
 import io.vertx.ext.shell.cli.CliToken;
+import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandProcess;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.session.Session;
@@ -51,9 +52,12 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-class ProcessImpl implements Process {
+public class ProcessImpl implements Process {
 
-  private final CommandRegistrationImpl registration;
+  private final Vertx vertx;
+  private final Context context;
+  private final Command command;
+  private final Handler<CommandProcess> handler;
   private final List<CliToken> args;
   private Tty tty;
   private Session session;
@@ -65,8 +69,11 @@ class ProcessImpl implements Process {
   private Context runnerContext;
   private ExecStatus status;
 
-  public ProcessImpl(CommandRegistrationImpl registration, List<CliToken> args) {
-    this.registration = registration;
+  public ProcessImpl(Vertx vertx, Context context, Command command, List<CliToken> args, Handler<CommandProcess> handler) {
+    this.vertx = vertx;
+    this.context = context;
+    this.command = command;
+    this.handler = handler;
     this.args = args;
     status = ExecStatus.READY;
   }
@@ -104,7 +111,7 @@ class ProcessImpl implements Process {
     if (status == ExecStatus.RUNNING || status == ExecStatus.STOPPED) {
       Handler<Void> handler = interruptHandler;
       if (handler != null) {
-        registration.context.runOnContext(handler::handle);
+        context.runOnContext(handler::handle);
       }
       return handler != null;
     } else {
@@ -118,7 +125,7 @@ class ProcessImpl implements Process {
       status = ExecStatus.RUNNING;
       Handler<Void> handler = resumeHandler;
       if (handler != null) {
-        registration.context.runOnContext(handler::handle);
+        context.runOnContext(handler::handle);
       }
     } else {
       throw new IllegalStateException("Cannot resume process in " + status + " state");
@@ -131,7 +138,7 @@ class ProcessImpl implements Process {
       status = ExecStatus.STOPPED;
       Handler<Void> handler = suspendHandler;
       if (handler != null) {
-        registration.context.runOnContext(handler::handle);
+        context.runOnContext(handler::handle);
       }
     } else {
       throw new IllegalStateException("Cannot suspend process in " + status + " state");
@@ -157,7 +164,7 @@ class ProcessImpl implements Process {
       }
       Handler<Void> handler = endHandler;
       if (handler != null) {
-        registration.context.runOnContext(handler::handle);
+        context.runOnContext(handler::handle);
       }
       return true;
     } else {
@@ -184,16 +191,16 @@ class ProcessImpl implements Process {
       throw new IllegalStateException("Cannot execute process without a Session set");
     }
 
-    this.runnerContext = registration.registry.vertx.getOrCreateContext();
+    this.runnerContext = vertx.getOrCreateContext();
 
     CommandLine cl;
     final List<String> args2 = args.stream().filter(CliToken::isText).map(CliToken::value).collect(Collectors.toList());
-    if (registration.command.cli() != null) {
+    if (command.cli() != null) {
 
       // Build to skip validation problems
-      if (registration.command.cli().parse(args2, false).isAskingForHelp()) {
+      if (command.cli().parse(args2, false).isAskingForHelp()) {
         StringBuilder usage = new StringBuilder();
-        registration.command.cli().usage(usage);
+        command.cli().usage(usage);
         usage.append('\n');
         tty.stdout().handle(usage.toString());
         terminate();
@@ -202,7 +209,7 @@ class ProcessImpl implements Process {
 
       //
       try {
-        cl = registration.command.cli().parse(args2);
+        cl = command.cli().parse(args2);
       } catch (CLIException e) {
         tty.stdout().handle(e.getMessage() + "\n");
         terminate();
@@ -219,7 +226,7 @@ class ProcessImpl implements Process {
 
       @Override
       public Vertx vertx() {
-        return registration.registry.vertx;
+        return vertx;
       }
 
       @Override
@@ -261,7 +268,7 @@ class ProcessImpl implements Process {
       public CommandProcess setStdin(Stream stdin) {
         Stream s;
         if (stdin != null) {
-          s = data -> registration.context.runOnContext(v -> stdin.handle(data));
+          s = data -> context.runOnContext(v -> stdin.handle(data));
         } else {
           s = null;
         }
@@ -296,7 +303,7 @@ class ProcessImpl implements Process {
       @Override
       public CommandProcess resizehandler(Handler<Void> handler) {
         if (handler != null) {
-          tty.resizehandler(v -> registration.context.runOnContext(handler::handle));
+          tty.resizehandler(v -> context.runOnContext(handler::handle));
         } else {
           tty.resizehandler(null);
         }
@@ -339,7 +346,7 @@ class ProcessImpl implements Process {
     };
 
     //
-    registration.context.runOnContext(v -> {
+    context.runOnContext(v -> {
       synchronized (ProcessImpl.this) {
         if (status == ExecStatus.READY) {
           status = ExecStatus.RUNNING;
@@ -349,7 +356,7 @@ class ProcessImpl implements Process {
         }
       }
       try {
-        registration.command.process(process);
+        handler.handle(process);
       } catch (Throwable e) {
         terminate(1);
         throw e;

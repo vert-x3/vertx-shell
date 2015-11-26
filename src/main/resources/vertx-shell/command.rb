@@ -1,6 +1,7 @@
 require 'vertx-shell/completion'
 require 'vertx/cli'
-require 'vertx-shell/command_process'
+require 'vertx-shell/cli_token'
+require 'vertx-shell/process'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.command.Command
 module VertxShell
@@ -33,14 +34,16 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling cli()"
     end
-    #  Process the command, when the command is done processing it should call the {::VertxShell::CommandProcess#end} method.
-    # @param [::VertxShell::CommandProcess] process the command process
-    # @return [void]
-    def process(process=nil)
-      if process.class.method_defined?(:j_del) && !block_given?
-        return @j_del.java_method(:process, [Java::IoVertxExtShellCommand::CommandProcess.java_class]).call(process.j_del)
+    #  Create a new process with the passed arguments.
+    # @param [Array<::VertxShell::CliToken>] args the process arguments
+    # @return [::VertxShell::Process] the process
+    def create_process(args=nil)
+      if !block_given? && args == nil
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:createProcess, []).call(),::VertxShell::Process)
+      elsif args.class == Array && !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:createProcess, [Java::JavaUtil::List.java_class]).call(args.map { |element| element.j_del }),::VertxShell::Process)
       end
-      raise ArgumentError, "Invalid arguments when calling process(process)"
+      raise ArgumentError, "Invalid arguments when calling create_process(args)"
     end
     #  Perform command completion, when the command is done completing it should call 
     #  or  )} method to signal completion is done.

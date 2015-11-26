@@ -36,12 +36,9 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.registry.CommandResolver;
+import io.vertx.ext.shell.command.CommandRegistry;
 import io.vertx.ext.shell.impl.ShellServiceImpl;
-import io.vertx.ext.shell.registry.CommandRegistry;
-
-import java.util.Iterator;
-import java.util.ServiceLoader;
+import io.vertx.ext.shell.system.Shell;
 
 /**
  * The shell service, provides a remotely accessible shell available via Telnet or SSH according to the
@@ -57,24 +54,7 @@ public interface ShellService {
   }
 
   static ShellService create(Vertx vertx, ShellServiceOptions options) {
-    ShellServer server = ShellServer.create(vertx);
-    ShellServiceImpl service = new ShellServiceImpl(vertx, server, options);
-    CommandRegistry registry = server.commandRegistry();
-    registry.registerCommands(CommandResolver.baseCommands());
-    ServiceLoader<CommandResolver> loader = ServiceLoader.load(CommandResolver.class);
-    Iterator<CommandResolver> it = loader.iterator();
-    while (true) {
-      try {
-        if (it.hasNext()) {
-          CommandResolver pack = it.next();
-          registry.registerCommands(pack);
-        } else {
-          break;
-        }
-      } catch (Exception e) {
-      }
-    }
-    return service;
+    return new ShellServiceImpl(vertx, options);
   }
 
   /**
@@ -90,6 +70,16 @@ public interface ShellService {
    * @param startHandler handler for getting notified when service is started
    */
   void start(Handler<AsyncResult<Void>> startHandler);
+
+  /**
+   * @return the command registry of this service
+   */
+  CommandRegistry commandRegistry();
+
+  /**
+   * @return the shell server
+   */
+  ShellServer server();
 
   /**
    * Stop the shell service, this is an asynchronous stop.

@@ -34,10 +34,15 @@ package io.vertx.ext.shell.command;
 
 import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.codegen.annotations.VertxGen;
+import io.vertx.core.Context;
+import io.vertx.core.Vertx;
 import io.vertx.core.cli.CLI;
 import io.vertx.core.cli.Option;
 import io.vertx.core.cli.annotations.CLIConfigurator;
+import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
+import io.vertx.ext.shell.command.impl.*;
+import io.vertx.ext.shell.system.Process;
 
 import java.util.Collections;
 import java.util.List;
@@ -54,11 +59,14 @@ public interface Command {
   /**
    * Create a command from a Java class, annotated with Vert.x Core CLI annotations.
    *
+   *
+   * @param vertx the vertx instance
    * @param clazz the class of the command
    * @return the command object
    */
   @GenIgnore
-  static Command create(Class<? extends AnnotatedCommand> clazz) {
+  static Command create(Vertx vertx, Class<? extends AnnotatedCommand> clazz) {
+    Context context = vertx.getOrCreateContext();
     CLI cli = CLIConfigurator.define(clazz);
     cli.addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help").setDescription("this help").setHelp(true));
 
@@ -104,8 +112,7 @@ public interface Command {
         return cli;
       }
 
-      @Override
-      public void process(CommandProcess process) {
+      private void process(CommandProcess process) {
         AnnotatedCommand instance;
         try {
           instance = clazz.newInstance();
@@ -118,6 +125,11 @@ public interface Command {
       }
 
       @Override
+      public Process createProcess(List<CliToken> args) {
+        return new ProcessImpl(vertx, context, this, args, this::process);
+      }
+
+      @Override
       public void complete(Completion completion) {
         AnnotatedCommand instance;
         try {
@@ -126,7 +138,14 @@ public interface Command {
           Command.super.complete(completion);
           return;
         }
-        instance.complete(completion);
+        context.runOnContext(v -> {
+          try {
+            instance.complete(completion);
+          } catch (Throwable t) {
+            completion.complete(Collections.emptyList());
+            throw t;
+          }
+        });
       }
     };
   }
@@ -146,11 +165,21 @@ public interface Command {
   }
 
   /**
-   * Process the command, when the command is done processing it should call the {@link CommandProcess#end()} method.
+   * Create a new process with empty arguments.
    *
-   * @param process the command process
+   * @return the process
    */
-  void process(CommandProcess process);
+  default Process createProcess() {
+    return createProcess(Collections.emptyList());
+  }
+
+  /**
+   * Create a new process with the passed arguments.
+   *
+   * @param args the process arguments
+   * @return the process
+   */
+  Process createProcess(List<CliToken> args);
 
   /**
    * Perform command completion, when the command is done completing it should call {@link Completion#complete(List)}

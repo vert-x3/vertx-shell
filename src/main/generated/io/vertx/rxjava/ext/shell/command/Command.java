@@ -19,8 +19,11 @@ package io.vertx.rxjava.ext.shell.command;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
+import java.util.List;
 import io.vertx.rxjava.ext.shell.cli.Completion;
 import io.vertx.rxjava.core.cli.CLI;
+import io.vertx.rxjava.ext.shell.cli.CliToken;
+import io.vertx.rxjava.ext.shell.system.Process;
 
 /**
  * A Vert.x Shell command, it can be created from any language using the {@link io.vertx.rxjava.ext.shell.command.CommandBuilder#command} or from a
@@ -61,11 +64,22 @@ public class Command {
   }
 
   /**
-   * Process the command, when the command is done processing it should call the {@link io.vertx.rxjava.ext.shell.command.CommandProcess#end} method.
-   * @param process the command process
+   * Create a new process with empty arguments.
+   * @return the process
    */
-  public void process(CommandProcess process) { 
-    this.delegate.process((io.vertx.ext.shell.command.CommandProcess) process.getDelegate());
+  public Process createProcess() { 
+    Process ret= Process.newInstance(this.delegate.createProcess());
+    return ret;
+  }
+
+  /**
+   * Create a new process with the passed arguments.
+   * @param args the process arguments
+   * @return the process
+   */
+  public Process createProcess(List<CliToken> args) { 
+    Process ret= Process.newInstance(this.delegate.createProcess(args.stream().map(element -> (io.vertx.ext.shell.cli.CliToken)element.getDelegate()).collect(java.util.stream.Collectors.toList())));
+    return ret;
   }
 
   /**

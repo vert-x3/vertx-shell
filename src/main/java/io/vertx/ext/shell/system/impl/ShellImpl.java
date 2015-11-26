@@ -34,7 +34,6 @@ package io.vertx.ext.shell.system.impl;
 
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.system.Process;
-import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.Shell;
@@ -51,12 +50,12 @@ import java.util.TreeMap;
  */
 public class ShellImpl implements Shell {
 
-  final CommandRegistry registry;
+  final InternalCommandManager commandManager;
   final SessionImpl session = new SessionImpl();
   private final SortedMap<Integer, Job> jobs = new TreeMap<>();
 
-  public ShellImpl(CommandRegistry registry) {
-    this.registry = registry;
+  public ShellImpl(InternalCommandManager commandManager) {
+    this.commandManager = commandManager;
   }
 
   public synchronized Set<Job> jobs() {
@@ -80,7 +79,7 @@ public class ShellImpl implements Shell {
   public synchronized Job createJob(List<CliToken> args) {
     StringBuilder line = new StringBuilder();
     args.stream().map(CliToken::raw).forEach(line::append);
-    Process process = registry.createProcess(args);
+    Process process = commandManager.createProcess(args);
     int id = jobs.isEmpty() ? 1 : jobs.lastKey() + 1;
     JobImpl job = new JobImpl(id, this, process, line.toString());
     jobs.put(id, job);

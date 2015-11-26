@@ -21,6 +21,7 @@ import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.rxjava.ext.shell.cli.Completion;
 import io.vertx.rxjava.core.cli.CLI;
+import io.vertx.rxjava.core.Vertx;
 import io.vertx.core.Handler;
 
 /**
@@ -95,10 +96,11 @@ public class CommandBuilder {
 
   /**
    * Build the command
+   * @param vertx the vertx instance
    * @return the built command
    */
-  public Command build() { 
-    Command ret= Command.newInstance(this.delegate.build());
+  public Command build(Vertx vertx) { 
+    Command ret= Command.newInstance(this.delegate.build((io.vertx.core.Vertx) vertx.getDelegate()));
     return ret;
   }
 

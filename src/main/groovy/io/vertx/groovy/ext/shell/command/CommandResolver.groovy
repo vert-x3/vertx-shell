@@ -14,13 +14,14 @@
  * under the License.
  */
 
-package io.vertx.groovy.ext.shell.registry;
+package io.vertx.groovy.ext.shell.command;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
-import io.vertx.groovy.ext.shell.command.Command
+import io.vertx.core.json.JsonObject
+import java.util.List
 import io.vertx.groovy.core.Vertx
 /**
- * A resolver for commands, so the shell can discover commands automatically.
+ * A resolver for commands, so the shell can discover commands.
 */
 @CompileStatic
 public class CommandResolver {
@@ -37,7 +38,7 @@ public class CommandResolver {
    * @return 
    */
   public static CommandResolver baseCommands(Vertx vertx) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandResolver.baseCommands((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.registry.CommandResolver.class);
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandResolver.baseCommands((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.command.CommandResolver.class);
     return ret;
   }
   /**
@@ -48,7 +49,12 @@ public class CommandResolver {
     def ret = this.delegate.commands()?.collect({underpants -> new io.vertx.groovy.ext.shell.command.Command(underpants)});
       return ret;
   }
-  public Command command(String name) {
+  /**
+   * Returns a single command by its name.
+   * @param name the command name
+   * @return the commad or null
+   */
+  public Command getCommand(String name) {
     def ret= InternalHelper.safeCreate(this.delegate.getCommand(name), io.vertx.groovy.ext.shell.command.Command.class);
     return ret;
   }

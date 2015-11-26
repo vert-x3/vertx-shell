@@ -19,7 +19,7 @@ var utils = require('vertx-js/util/utils');
 var Shell = require('vertx-shell-js/shell');
 var TermServer = require('vertx-shell-js/term_server');
 var Vertx = require('vertx-js/vertx');
-var CommandRegistry = require('vertx-shell-js/command_registry');
+var CommandResolver = require('vertx-shell-js/command_resolver');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
@@ -36,16 +36,17 @@ var ShellServer = function(j_val) {
   var that = this;
 
   /**
-   @return the command registry for this server
+   Set the command resolver for this server.
 
    @public
-
-   @return {CommandRegistry}
+   @param resolver {CommandResolver} the resolver 
+   @return {ShellServer} a reference to this, so the API can be used fluently
    */
-  this.commandRegistry = function() {
+  this.commandResolver = function(resolver) {
     var __args = arguments;
-    if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_shellServer["commandRegistry()"](), CommandRegistry);
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      j_shellServer["commandResolver(io.vertx.ext.shell.command.CommandResolver)"](resolver._jdel);
+      return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

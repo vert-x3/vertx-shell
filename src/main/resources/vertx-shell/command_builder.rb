@@ -1,6 +1,7 @@
 require 'vertx-shell/command'
 require 'vertx-shell/completion'
 require 'vertx/cli'
+require 'vertx/vertx'
 require 'vertx-shell/command_process'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.command.CommandBuilder
@@ -54,12 +55,13 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling completion_handler()"
     end
     #  Build the command
+    # @param [::Vertx::Vertx] vertx the vertx instance
     # @return [::VertxShell::Command] the built command
-    def build
-      if !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:build, []).call(),::VertxShell::Command)
+    def build(vertx=nil)
+      if vertx.class.method_defined?(:j_del) && !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:build, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::Command)
       end
-      raise ArgumentError, "Invalid arguments when calling build()"
+      raise ArgumentError, "Invalid arguments when calling build(vertx)"
     end
   end
 end

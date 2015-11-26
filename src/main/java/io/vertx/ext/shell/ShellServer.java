@@ -38,7 +38,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.impl.ShellServerImpl;
-import io.vertx.ext.shell.registry.CommandRegistry;
+import io.vertx.ext.shell.command.CommandResolver;
 import io.vertx.ext.shell.system.Shell;
 import io.vertx.ext.shell.term.TermServer;
 
@@ -69,9 +69,13 @@ public interface ShellServer {
   }
 
   /**
-   * @return the command registry for this server
+   * Set the command resolver for this server.
+   *
+   * @param resolver the resolver
+   * @return a reference to this, so the API can be used fluently
    */
-  CommandRegistry commandRegistry();
+  @Fluent
+  ShellServer commandResolver(CommandResolver resolver);
 
   /**
    * Set the shell welcome message.

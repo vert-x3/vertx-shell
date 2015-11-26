@@ -22,9 +22,9 @@ import rx.Observable;
 import io.vertx.rxjava.ext.shell.system.Shell;
 import io.vertx.rxjava.ext.shell.term.TermServer;
 import io.vertx.rxjava.core.Vertx;
-import io.vertx.rxjava.ext.shell.registry.CommandRegistry;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
+import io.vertx.rxjava.ext.shell.command.CommandResolver;
 
 /**
  * The shell server.<p/>
@@ -64,12 +64,13 @@ public class ShellServer {
   }
 
   /**
-   * @return the command registry for this server
-   * @return 
+   * Set the command resolver for this server.
+   * @param resolver the resolver
+   * @return a reference to this, so the API can be used fluently
    */
-  public CommandRegistry commandRegistry() { 
-    CommandRegistry ret= CommandRegistry.newInstance(this.delegate.commandRegistry());
-    return ret;
+  public ShellServer commandResolver(CommandResolver resolver) { 
+    this.delegate.commandResolver((io.vertx.ext.shell.command.CommandResolver) resolver.getDelegate());
+    return this;
   }
 
   /**

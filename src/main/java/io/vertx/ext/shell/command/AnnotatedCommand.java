@@ -39,6 +39,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * The base command class that Java annotated command should extend.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 public abstract class AnnotatedCommand {

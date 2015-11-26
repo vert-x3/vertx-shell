@@ -30,30 +30,22 @@
  *
  */
 
-package io.vertx.ext.shell.command.base;
+package io.vertx.ext.shell.command.impl;
 
-import io.vertx.core.cli.annotations.Name;
-import io.vertx.core.cli.annotations.Summary;
-import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.command.CommandProcess;
-import io.vertx.ext.shell.command.CommandRegistry;
 
 /**
+ * The command registered with a manager.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@Name("help")
-@Summary("Help")
-public class Help extends AnnotatedCommand {
+class CommandRegistration {
 
-  @Override
-  public void process(CommandProcess process) {
-    CommandRegistry manager = CommandRegistry.get(process.vertx());
-    manager.commands();
-    process.write("available commands:\n");
-    for (Command command : manager.commands()) {
-      process.write(command.name()).write("\n");
-    }
-    process.end();
+  final Command command;
+  final String deploymendID;
+
+  public CommandRegistration(Command command, String deploymentID) {
+    this.command = command;
+    this.deploymendID = deploymentID;
   }
 }

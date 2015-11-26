@@ -220,12 +220,11 @@
  * {@link examples.Examples#helloWorld}
  * ----
  *
- * After a command is created, it needs to be registed to a {@link io.vertx.ext.shell.registry.CommandRegistry}. The
+ * After a command is created, it needs to be registed to a {@link io.vertx.ext.shell.command.CommandRegistry}. The
  * command registry holds all the commands for a Vert.x instance.
  *
- * A command is registered until it is unregistered with the {@link io.vertx.ext.shell.registry.CommandRegistration#unregister()}
- * method or the {@link io.vertx.ext.shell.registry.CommandRegistry#unregisterCommand(java.lang.String)}. When a command is
- * registered from a Verticle, this command is unregistered when this verticle is undeployed.
+ * A command is registered until it is unregistered with the {@link io.vertx.ext.shell.command.CommandRegistry#unregisterCommand(java.lang.String)}.
+ * When a command is registered from a Verticle, this command is unregistered when this verticle is undeployed.
  *
  * NOTE: Command callbacks are invoked in the {@literal io.vertx.core.Context} when the command is registered in the
  * registry. Keep this in mind if you maintain state in a command.
@@ -547,30 +546,31 @@
  *
  * For example, the _Dropwizard_ metrics service, adds specific metrics command to the shell service on the fly.
  *
- * It can be achieved via the {@code java.util.ServiceLoader} of a {@link io.vertx.ext.shell.registry.CommandResolver}.
+ * It can be achieved via the {@code java.util.ServiceLoader} of a {@link io.vertx.ext.shell.spi.CommandResolverFactory}.
  *
  * [source,java]
  * ----
- * public class CustomCommandPack implements CommandPack {
+ * public class CustomCommands implements CommandResolverFactory {
  *
- *   public void lookupCommands(Vertx vertx, Handler<AsyncResult<List<Command>>> commandsHandler) {
- *     // call the commandsHandler with the commands
+ *   public void resolver(Vertx vertx, Handler<AsyncResult<CommandResolver>> resolverHandler) {
+ *     resolverHandler.handler(() -> Arrays.asList(myCommand1, myCommand2));
  *   }
  * }
  * ----
  *
- * The shell service discovery packs using the service loader mechanism:
+ * The {@code resolver} method is async, because the resolver may need to wait some condition before commands
+ * are resolved.
  *
- * .The service provider file `META-INF/services/io.vertx.ext.shell.command.CommandPack`
+ * The shell service discovery using the service loader mechanism:
+ *
+ * .The service provider file `META-INF/services/io.vertx.ext.shell.spi.CommandResolverFactory`
  * [source]
  * ----
- * my.CustomCommandPack
+ * my.CustomCommands
  * ----
  *
  * This is only valid for the {@link io.vertx.ext.shell.ShellService}. {@link io.vertx.ext.shell.ShellServer}
  * don't use this mechanism.
- *
- * For shell servers, the command pack can be an argument of {@link io.vertx.ext.shell.registry.CommandRegistry#registerCommands}.
  */
 @ModuleGen(name = "vertx-shell", groupPackage = "io.vertx")
 @Document(fileName = "index.adoc")

@@ -30,54 +30,41 @@
  *
  */
 
-package io.vertx.ext.shell.registry;
+package io.vertx.ext.shell.command;
 
 import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
-import io.vertx.ext.shell.cli.CliToken;
-import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.system.Process;
+import io.vertx.core.Vertx;
+import io.vertx.ext.shell.command.base.BaseCommandPack;
 
 import java.util.List;
 
 /**
- * A registration of a command in the {@link CommandRegistry}
+ * A resolver for commands, so the shell can discover commands.
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
-public interface CommandRegistration {
+public interface CommandResolver {
 
   /**
-   * @return the registered command.
+   * @return the base commands of Vert.x Shell.
    */
-  Command command();
+  static CommandResolver baseCommands(Vertx vertx) {
+    return new BaseCommandPack(vertx);
+  }
 
   /**
-   * Complete the command for the given completion.
+   * @return the current commands
+   */
+  List<Command> commands();
+
+  /**
+   * Returns a single command by its name.
    *
-   * @param completion the completion
+   * @param name the command name
+   * @return the commad or null
    */
-  void complete(Completion completion);
-
-  /**
-   * Create a new process with the passed arguments.
-   *
-   * @param args the process arguments
-   * @return the process
-   */
-  Process createProcess(List<CliToken> args);
-
-  /**
-   * Unregister the current command
-   */
-  void unregister();
-
-  /**
-   * Unregister the current command
-   */
-  void unregister(Handler<AsyncResult<Void>> handler);
-
+  default Command getCommand(String name) {
+    return commands().stream().filter(cmd -> cmd.name().equals(name)).findFirst().orElse(null);
+  }
 }

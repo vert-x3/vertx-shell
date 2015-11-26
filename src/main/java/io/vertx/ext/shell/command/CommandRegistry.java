@@ -30,7 +30,7 @@
  *
  */
 
-package io.vertx.ext.shell.registry;
+package io.vertx.ext.shell.command;
 
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.GenIgnore;
@@ -38,22 +38,20 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.cli.CliToken;
-import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.command.AnnotatedCommand;
-import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.registry.impl.CommandRegistryImpl;
-import io.vertx.ext.shell.system.Process;
+import io.vertx.ext.shell.command.impl.CommandRegistryImpl;
 
 import java.util.List;
 
 /**
- * A registry that contains the commands known by a shell.
+ * A registry that contains the commands known by a shell.<p/>
+ *
+ * It is a mutable command resolver.
+ *
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
-public interface CommandRegistry {
+public interface CommandRegistry extends CommandResolver {
 
   /**
    * Get the registry for the Vert.x instance
@@ -66,34 +64,6 @@ public interface CommandRegistry {
   }
 
   /**
-   * @return the current command registrations
-   */
-  List<CommandRegistration> registrations();
-
-  /**
-   * Parses a command line and try to create a process.
-   *
-   * @param line the command line to parse
-   * @return the created process
-   */
-  Process createProcess(String line);
-
-  /**
-   * Try to create a process from the command line tokens.
-   *
-   * @param line the command line tokens
-   * @return the created process
-   */
-  Process createProcess(List<CliToken> line);
-
-  /**
-   * Perform completion, the completion argument will be notified of the completion progress.
-   *
-   * @param completion the completion object
-   */
-  void complete(Completion completion);
-
-  /**
    * Register a command
    *
    * @param command the class of the command to register
@@ -103,7 +73,7 @@ public interface CommandRegistry {
   CommandRegistry registerCommand(Class<? extends AnnotatedCommand> command);
 
   @GenIgnore
-  CommandRegistry registerCommand(Class<? extends AnnotatedCommand> command, Handler<AsyncResult<CommandRegistration>> doneHandler);
+  CommandRegistry registerCommand(Class<? extends AnnotatedCommand> command, Handler<AsyncResult<Command>> completionHandler);
 
   /**
    * Register a command
@@ -115,25 +85,7 @@ public interface CommandRegistry {
   CommandRegistry registerCommand(Command command);
 
   @Fluent
-  CommandRegistry registerCommand(Command command, Handler<AsyncResult<CommandRegistration>> doneHandler);
-
-  /**
-   * Register a list of resolved commands.
-   *
-   * @param resolver the commands to resolve from
-   * @return a reference to this, so the API can be used fluently
-   */
-  @Fluent
-  CommandRegistry registerCommands(CommandResolver resolver);
-
-  /**
-   * Register a list of resolved commands.
-   *
-   * @param resolver the commands to resolve from
-   * @return a reference to this, so the API can be used fluently
-   */
-  @Fluent
-  CommandRegistry registerCommands(CommandResolver resolver, Handler<AsyncResult<List<CommandRegistration>>> doneHandler);
+  CommandRegistry registerCommand(Command command, Handler<AsyncResult<Command>> completionHandler);
 
   /**
    * Register a list of commands.
@@ -145,7 +97,7 @@ public interface CommandRegistry {
   CommandRegistry registerCommands(List<Command> commands);
 
   @Fluent
-  CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<List<CommandRegistration>>> doneHandler);
+  CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<List<Command>>> completionHandler);
 
   /**
    * Unregister a command.
@@ -157,6 +109,23 @@ public interface CommandRegistry {
   CommandRegistry unregisterCommand(String commandName);
 
   @Fluent
-  CommandRegistry unregisterCommand(String commandName, Handler<AsyncResult<Void>> doneHandler);
+  CommandRegistry unregisterCommand(String commandName, Handler<AsyncResult<Void>> completionHandler);
 
+  /**
+   * Register a command resolver.
+   *
+   * @param resolver the commands to resolve from
+   * @return a reference to this, so the API can be used fluently
+   */
+  @Fluent
+  CommandRegistry registerResolver(CommandResolver resolver);
+
+  /**
+   * Register a command resolver.
+   *
+   * @param resolver the commands to resolve from
+   * @return a reference to this, so the API can be used fluently
+   */
+  @Fluent
+  CommandRegistry registerResolver(CommandResolver resolver, Handler<AsyncResult<List<Command>>> completionHandler);
 }

@@ -35,16 +35,22 @@ package io.vertx.ext.shell.registry;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
-import io.vertx.ext.shell.registry.impl.CommandRegistryImpl;
+import io.vertx.ext.shell.command.CommandRegistry;
+import io.vertx.ext.shell.command.impl.CommandRegistryImpl;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -54,14 +60,31 @@ import java.util.concurrent.atomic.AtomicReference;
 public class CommandRegistryTest {
 
   Vertx vertx = Vertx.vertx();
+  CommandRegistry registry;
+
+  @Before
+  public void before(TestContext context) throws Exception {
+    vertx = Vertx.vertx();
+    registry = CommandRegistry.get(vertx);
+    long now = System.currentTimeMillis();
+    while (vertx.deploymentIDs().size() == 0) {
+      context.assertTrue(System.currentTimeMillis() - now < 2000);
+      Thread.sleep(1);
+    }
+  }
+
+  @After
+  public void after(TestContext context) {
+    vertx.close(context.asyncAssertSuccess());
+  }
 
   @Test
   public void testRegister(TestContext context) {
     CommandRegistry registry = CommandRegistry.get(vertx);
     CommandBuilder command = CommandBuilder.command("hello");
-    registry.registerCommand(command.build(), context.asyncAssertSuccess(reg -> {
+    registry.registerCommand(command.build(vertx), context.asyncAssertSuccess(reg -> {
       registry.unregisterCommand("hello", context.asyncAssertSuccess(done -> {
-        context.assertEquals(Collections.emptyList(), registry.registrations());
+        context.assertEquals(Collections.emptyList(), registry.commands());
       }));
     }));
   }
@@ -69,9 +92,12 @@ public class CommandRegistryTest {
   @Test
   public void testDuplicateRegistration(TestContext context) {
     CommandRegistry registry = CommandRegistry.get(vertx);
-    CommandBuilder command = CommandBuilder.command("hello");
-    registry.registerCommand(command.build(), context.asyncAssertSuccess(reg -> {
-      registry.registerCommand(command.build(), context.asyncAssertFailure(err -> {
+    Command a = CommandBuilder.command("a").build(vertx);
+    Command b = CommandBuilder.command("b").build(vertx);
+    registry.registerCommand(a, context.asyncAssertSuccess(reg -> {
+      registry.registerCommands(Arrays.asList(a, b), context.asyncAssertFailure(err -> {
+        context.assertEquals(1, registry.commands().size());
+        context.assertNotNull(registry.getCommand("a"));
       }));
     }));
   }
@@ -105,7 +131,7 @@ public class CommandRegistryTest {
         CommandBuilder command = CommandBuilder.command("hello");
         command.processHandler(process -> {
         });
-        registry.registerCommand(command.build(), ar -> {
+        registry.registerCommand(command.build(vertx), ar -> {
           if (ar.succeeded()) {
             startFuture.complete();
           } else {
@@ -119,7 +145,29 @@ public class CommandRegistryTest {
     }));
     async.awaitSuccess(5000);
     vertx.undeploy(ref.get(), context.asyncAssertSuccess(v -> {
-      context.assertEquals(Collections.emptyList(), registry.registrations());
+      context.assertEquals(Collections.emptyList(), registry.commands());
     }));
+  }
+
+  @Test
+  public void testUndeployCommands(TestContext context) throws Exception {
+    Async async = context.async();
+    Set<String> beforeIds = new HashSet<>(vertx.deploymentIDs());
+    registry.registerCommands(
+        Arrays.asList(CommandBuilder.command("a").build(vertx), CommandBuilder.command("b").build(vertx)),
+        context.asyncAssertSuccess(list -> async.complete()));
+    async.awaitSuccess(2000);
+    Set<String> afterIds = new HashSet<>(vertx.deploymentIDs());
+    context.assertTrue(afterIds.removeAll(beforeIds));
+    context.assertEquals(1, afterIds.size());
+    String deploymentId = afterIds.iterator().next();
+    Async async2 = context.async();
+    registry.unregisterCommand("a", context.asyncAssertSuccess(v -> async2.complete()));
+    async2.awaitSuccess(2000);
+    context.assertTrue(vertx.deploymentIDs().contains(deploymentId));
+    Async async3 = context.async();
+    registry.unregisterCommand("b", context.asyncAssertSuccess(v -> async3.complete()));
+    async3.awaitSuccess(2000);
+    context.assertFalse(vertx.deploymentIDs().contains(deploymentId));
   }
 }

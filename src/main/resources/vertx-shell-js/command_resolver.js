@@ -21,10 +21,10 @@ var Vertx = require('vertx-js/vertx');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JCommandResolver = io.vertx.ext.shell.registry.CommandResolver;
+var JCommandResolver = io.vertx.ext.shell.command.CommandResolver;
 
 /**
- A resolver for commands, so the shell can discover commands automatically.
+ A resolver for commands, so the shell can discover commands.
 
  @class
 */
@@ -34,22 +34,30 @@ var CommandResolver = function(j_val) {
   var that = this;
 
   /**
-   Resolve commands.
+   @return the current commands
 
    @public
-   @param vertx {Vertx} the vertx instance 
-   @param commandsHandler {function} the handler that will receive the resolution callback 
+
+   @return {Array.<Command>}
    */
-  this.resolveCommands = function(vertx, commandsHandler) {
+  this.commands = function() {
     var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'function') {
-      j_commandResolver["resolveCommands(io.vertx.core.Vertx,io.vertx.core.Handler)"](vertx._jdel, function(ar) {
-      if (ar.succeeded()) {
-        commandsHandler(utils.convReturnListSetVertxGen(ar.result(), Command), null);
-      } else {
-        commandsHandler(null, ar.cause());
-      }
-    });
+    if (__args.length === 0) {
+      return utils.convReturnListSetVertxGen(j_commandResolver["commands()"](), Command);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Returns a single command by its name.
+
+   @public
+   @param name {string} the command name 
+   @return {Command} the commad or null
+   */
+  this.getCommand = function(name) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'string') {
+      return utils.convReturnVertxGen(j_commandResolver["getCommand(java.lang.String)"](name), Command);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -63,13 +71,13 @@ var CommandResolver = function(j_val) {
  @return the base commands of Vert.x Shell.
 
  @memberof module:vertx-shell-js/command_resolver
-
+ @param vertx {Vertx} 
  @return {CommandResolver}
  */
-CommandResolver.baseCommands = function() {
+CommandResolver.baseCommands = function(vertx) {
   var __args = arguments;
-  if (__args.length === 0) {
-    return utils.convReturnVertxGen(JCommandResolver["baseCommands()"](), CommandResolver);
+  if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+    return utils.convReturnVertxGen(JCommandResolver["baseCommands(io.vertx.core.Vertx)"](vertx._jdel), CommandResolver);
   } else throw new TypeError('function invoked with invalid arguments');
 };
 

@@ -18,8 +18,11 @@ package io.vertx.groovy.ext.shell.command;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
+import java.util.List
 import io.vertx.groovy.ext.shell.cli.Completion
 import io.vertx.groovy.core.cli.CLI
+import io.vertx.groovy.ext.shell.cli.CliToken
+import io.vertx.groovy.ext.shell.system.Process
 /**
  * A Vert.x Shell command, it can be created from any language using the {@link io.vertx.groovy.ext.shell.command.CommandBuilder#command} or from a
  * Java class using {@link io.vertx.groovy.ext.shell.command.Command#create}
@@ -50,11 +53,21 @@ public class Command {
     return ret;
   }
   /**
-   * Process the command, when the command is done processing it should call the {@link io.vertx.groovy.ext.shell.command.CommandProcess#end} method.
-   * @param process the command process
+   * Create a new process with empty arguments.
+   * @return the process
    */
-  public void process(CommandProcess process) {
-    this.delegate.process((io.vertx.ext.shell.command.CommandProcess)process.getDelegate());
+  public Process createProcess() {
+    def ret= InternalHelper.safeCreate(this.delegate.createProcess(), io.vertx.groovy.ext.shell.system.Process.class);
+    return ret;
+  }
+  /**
+   * Create a new process with the passed arguments.
+   * @param args the process arguments
+   * @return the process
+   */
+  public Process createProcess(List<CliToken> args) {
+    def ret= InternalHelper.safeCreate(this.delegate.createProcess((List<io.vertx.ext.shell.cli.CliToken>)(args.collect({underpants -> underpants.getDelegate()}))), io.vertx.groovy.ext.shell.system.Process.class);
+    return ret;
   }
   /**
    * Perform command completion, when the command is done completing it should call 

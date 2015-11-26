@@ -41,7 +41,7 @@ import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.term.TelnetTermOptions;
-import io.vertx.ext.shell.registry.CommandRegistry;
+import io.vertx.ext.shell.command.CommandRegistry;
 import io.vertx.ext.shell.term.HttpTermOptions;
 
 /**
@@ -65,7 +65,7 @@ public class Main {
       });
       process.interruptHandler(v -> process.end());
     });
-    mgr.registerCommand(echoKeyboardCmd.build());
+    mgr.registerCommand(echoKeyboardCmd.build(vertx));
 
     CommandBuilder windowCmd = CommandBuilder.command("window");
     windowCmd.processHandler(process -> {
@@ -77,7 +77,7 @@ public class Main {
         process.end();
       });
     });
-    mgr.registerCommand(windowCmd.build());
+    mgr.registerCommand(windowCmd.build(vertx));
 
     // JS command
     // vertx.deployVerticle("command.js");

@@ -43,7 +43,7 @@ import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.shell.ShellServer;
-import io.vertx.ext.shell.registry.CommandResolver;
+import io.vertx.ext.shell.command.CommandResolver;
 import io.vertx.ext.shell.term.HttpTermOptions;
 import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.shell.term.Tty;
@@ -55,7 +55,7 @@ import io.vertx.ext.shell.ShellService;
 import io.vertx.ext.shell.ShellServiceOptions;
 import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.command.CommandBuilder;
-import io.vertx.ext.shell.registry.CommandRegistry;
+import io.vertx.ext.shell.command.CommandRegistry;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.web.Router;
 
@@ -165,7 +165,7 @@ public class Examples {
     server.registerTermServer(httpTermServer); // <4>
     server.registerTermServer(sshTermServer);
 
-    server.commandRegistry().registerCommands(CommandResolver.baseCommands()); // <5>
+    server.commandResolver(CommandResolver.baseCommands(vertx)); // <5>
 
     server.listen(); // <6>
   }
@@ -184,7 +184,7 @@ public class Examples {
 
     // Register the command
     CommandRegistry registry = CommandRegistry.get(vertx);
-    registry.registerCommand(builder.build());
+    registry.registerCommand(builder.build(vertx));
   }
 
   public void cliCommand() {

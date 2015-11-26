@@ -30,38 +30,26 @@
  *
  */
 
-package io.vertx.ext.shell.registry;
+package io.vertx.ext.shell.spi;
 
-import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.command.base.BaseCommandPack;
-
-import java.util.List;
+import io.vertx.ext.shell.command.CommandResolver;
 
 /**
- * A resolver for commands, so the shell can discover commands automatically.
+ * The SPI interface for discovering commands.
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@VertxGen
-public interface CommandResolver {
+public interface CommandResolverFactory {
 
   /**
-   * @return the base commands of Vert.x Shell.
-   */
-  static CommandResolver baseCommands() {
-    return new BaseCommandPack();
-  }
-
-  /**
-   * Resolve commands.
+   * Obtain a command resolver for a Vert.x instance.
    *
    * @param vertx the vertx instance
-   * @param commandsHandler the handler that will receive the resolution callback
+   * @param resolveHandler the handler that will receive the handler
    */
-  void resolveCommands(Vertx vertx, Handler<AsyncResult<List<Command>>> commandsHandler);
+  void resolver(Vertx vertx, Handler<AsyncResult<CommandResolver>> resolveHandler);
 
 }

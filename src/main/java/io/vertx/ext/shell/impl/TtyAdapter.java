@@ -39,11 +39,11 @@ import io.termd.core.util.Helper;
 import io.termd.core.util.Vector;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.system.impl.InternalCommandManager;
 import io.vertx.ext.shell.term.Tty;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.io.Stream;
-import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.ExecStatus;
@@ -62,7 +62,7 @@ import java.util.stream.Collectors;
  */
 public class TtyAdapter {
 
-  final CommandRegistry registry;
+  final InternalCommandManager registry;
   final Shell shell;
   final Vertx vertx;
   private final TtyConnection conn;
@@ -70,7 +70,7 @@ public class TtyAdapter {
   Job foregroundJob; // The currently running job
   String welcome;
 
-  public TtyAdapter(Vertx vertx, TtyConnection conn, Shell shell, CommandRegistry registry) {
+  public TtyAdapter(Vertx vertx, TtyConnection conn, Shell shell, InternalCommandManager registry) {
 
     InputStream inputrc = Keymap.class.getResourceAsStream("inputrc");
     Keymap keymap = new Keymap(inputrc);

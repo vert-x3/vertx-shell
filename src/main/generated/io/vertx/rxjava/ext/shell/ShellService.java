@@ -20,6 +20,7 @@ import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.ext.shell.ShellServiceOptions;
+import io.vertx.rxjava.ext.shell.command.CommandRegistry;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
@@ -77,6 +78,24 @@ public class ShellService {
     io.vertx.rx.java.ObservableFuture<Void> startHandler = io.vertx.rx.java.RxHelper.observableFuture();
     start(startHandler.toHandler());
     return startHandler;
+  }
+
+  /**
+   * @return the command registry of this service
+   * @return 
+   */
+  public CommandRegistry commandRegistry() { 
+    CommandRegistry ret= CommandRegistry.newInstance(this.delegate.commandRegistry());
+    return ret;
+  }
+
+  /**
+   * @return the shell server
+   * @return 
+   */
+  public ShellServer server() { 
+    ShellServer ret= ShellServer.newInstance(this.delegate.server());
+    return ret;
   }
 
   /**

@@ -17,9 +17,6 @@
 /** @module vertx-shell-js/command_registration */
 var utils = require('vertx-js/util/utils');
 var Command = require('vertx-shell-js/command');
-var Completion = require('vertx-shell-js/completion');
-var CliToken = require('vertx-shell-js/cli_token');
-var Process = require('vertx-shell-js/process');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
@@ -45,33 +42,6 @@ var CommandRegistration = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return utils.convReturnVertxGen(j_commandRegistration["command()"](), Command);
-    } else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-   Complete the command for the given completion.
-
-   @public
-   @param completion {Completion} the completion 
-   */
-  this.complete = function(completion) {
-    var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_commandRegistration["complete(io.vertx.ext.shell.cli.Completion)"](completion._jdel);
-    } else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-   Create a new process with the passed arguments.
-
-   @public
-   @param args {Array.<CliToken>} the process arguments 
-   @return {Process} the process
-   */
-  this.createProcess = function(args) {
-    var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0] instanceof Array) {
-      return utils.convReturnVertxGen(j_commandRegistration["createProcess(java.util.List)"](utils.convParamListVertxGen(args)), Process);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

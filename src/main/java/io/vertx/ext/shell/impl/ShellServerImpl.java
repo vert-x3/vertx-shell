@@ -38,13 +38,17 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.ShellServer;
+import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
-import io.vertx.ext.shell.registry.CommandRegistry;
+import io.vertx.ext.shell.command.CommandRegistry;
+import io.vertx.ext.shell.command.CommandResolver;
+import io.vertx.ext.shell.system.impl.InternalCommandManager;
 import io.vertx.ext.shell.system.Shell;
 import io.vertx.ext.shell.system.impl.ShellImpl;
 import io.vertx.ext.shell.term.TermServer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -55,25 +59,31 @@ public class ShellServerImpl implements ShellServer {
 
   private final Vertx vertx;
   private final CommandRegistry registry;
+  private final InternalCommandManager manager;
   private final List<TermServer> termServers;
   private String welcomeMessage;
+  private CommandResolver resolver;
 
   public ShellServerImpl(Vertx vertx) {
     this.vertx = vertx;
     this.registry = CommandRegistry.get(vertx);
+    this.manager = new InternalCommandManager(registry);
     this.termServers = new ArrayList<>();
 
     // Register builtin commands so they are listed in help
-    registry.registerCommand(CommandBuilder.command("exit").processHandler(process -> {}).build());
-    registry.registerCommand(CommandBuilder.command("logout").processHandler(process -> {}).build());
-    registry.registerCommand(CommandBuilder.command("jobs").processHandler(process -> {}).build());
-    registry.registerCommand(CommandBuilder.command("fg").processHandler(process -> {}).build());
-    registry.registerCommand(CommandBuilder.command("bg").processHandler(process -> {}).build());
+    registry.registerResolver(() -> Arrays.asList(
+        CommandBuilder.command("exit").processHandler(process -> {}).build(vertx),
+        CommandBuilder.command("logout").processHandler(process -> {}).build(vertx),
+        CommandBuilder.command("jobs").processHandler(process -> {}).build(vertx),
+        CommandBuilder.command("fg").processHandler(process -> {}).build(vertx),
+        CommandBuilder.command("bg").processHandler(process -> {}).build(vertx)
+    ));
   }
 
   @Override
-  public CommandRegistry commandRegistry() {
-    return registry;
+  public ShellServer commandResolver(CommandResolver resolver) {
+    this.resolver = resolver;
+    return this;
   }
 
   @Override
@@ -92,7 +102,7 @@ public class ShellServerImpl implements ShellServer {
   public void listen(Handler<AsyncResult<Void>> listenHandler) {
     Handler<TtyConnection> boostrapHandler = conn -> {
       Shell shell = createShell();
-      TtyAdapter adapter = new TtyAdapter(vertx, conn, shell, registry);
+      TtyAdapter adapter = new TtyAdapter(vertx, conn, shell, manager);
       adapter.setWelcome(welcomeMessage);
       adapter.init();
     };
@@ -111,6 +121,9 @@ public class ShellServerImpl implements ShellServer {
         listenHandler.handle(Future.failedFuture(ar.cause()));
       }
     };
+    if (resolver != null) {
+      registry.registerResolver(resolver);
+    }
     termServers.forEach(termServer -> {
       termServer.connectionHandler(boostrapHandler);
       termServer.listen(handler);
@@ -119,7 +132,7 @@ public class ShellServerImpl implements ShellServer {
 
   @Override
   public Shell createShell() {
-    return new ShellImpl(registry);
+    return new ShellImpl(manager);
   }
 
   @Override

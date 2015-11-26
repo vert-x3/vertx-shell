@@ -18,7 +18,8 @@
 var utils = require('vertx-js/util/utils');
 var Completion = require('vertx-shell-js/completion');
 var CLI = require('vertx-js/cli');
-var CommandProcess = require('vertx-shell-js/command_process');
+var CliToken = require('vertx-shell-js/cli_token');
+var Process = require('vertx-shell-js/process');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
@@ -62,15 +63,18 @@ var Command = function(j_val) {
   };
 
   /**
-   Process the command, when the command is done processing it should call the {@link CommandProcess#end} method.
+   Create a new process with the passed arguments.
 
    @public
-   @param process {CommandProcess} the command process 
+   @param args {Array.<CliToken>} the process arguments 
+   @return {Process} the process
    */
-  this.process = function(process) {
+  this.createProcess = function() {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_command["process(io.vertx.ext.shell.command.CommandProcess)"](process._jdel);
+    if (__args.length === 0) {
+      return utils.convReturnVertxGen(j_command["createProcess()"](), Process);
+    }  else if (__args.length === 1 && typeof __args[0] === 'object' && __args[0] instanceof Array) {
+      return utils.convReturnVertxGen(j_command["createProcess(java.util.List)"](utils.convParamListVertxGen(__args[0])), Process);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

@@ -33,8 +33,7 @@
 package io.vertx.ext.shell.command.base;
 
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.command.base.FsHelper;
-import io.vertx.ext.shell.registry.CommandRegistry;
+import io.vertx.ext.shell.command.CommandRegistry;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.After;

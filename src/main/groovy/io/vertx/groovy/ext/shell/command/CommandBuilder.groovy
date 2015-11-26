@@ -20,6 +20,7 @@ import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.cli.Completion
 import io.vertx.groovy.core.cli.CLI
+import io.vertx.groovy.core.Vertx
 import io.vertx.core.Handler
 /**
  * A build for Vert.x Shell command.
@@ -82,10 +83,11 @@ public class CommandBuilder {
   }
   /**
    * Build the command
+   * @param vertx the vertx instance
    * @return the built command
    */
-  public Command build() {
-    def ret= InternalHelper.safeCreate(this.delegate.build(), io.vertx.groovy.ext.shell.command.Command.class);
+  public Command build(Vertx vertx) {
+    def ret= InternalHelper.safeCreate(this.delegate.build((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.command.Command.class);
     return ret;
   }
 }

@@ -30,16 +30,16 @@
  *
  */
 
-package io.vertx.ext.shell.system;
+package io.vertx.ext.shell.command;
 
 import io.vertx.core.Context;
-import io.vertx.core.Future;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.ShellService;
+import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.CommandProcess;
-import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.shell.session.Session;
+import io.vertx.ext.shell.system.*;
+import io.vertx.ext.shell.system.Process;
 import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
@@ -51,23 +51,19 @@ import org.junit.runner.RunWith;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @RunWith(VertxUnitRunner.class)
-public class ProcessTest {
+public class CommandProcessTest {
 
   Vertx vertx;
-  CommandRegistry registry;
-  ShellService service;
 
   @Before
   public void before() {
     vertx = Vertx.vertx();
-    registry = CommandRegistry.get(vertx);
-    service = ShellService.create(vertx);
   }
 
   @After
@@ -77,25 +73,20 @@ public class ProcessTest {
 
   @Test
   public void testRunReadyProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async runningLatch = context.async();
-    command.processHandler(process -> runningLatch.complete());
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    builder.processHandler(process -> runningLatch.complete());
+    Command command = builder.build(vertx);
+    io.vertx.ext.shell.system.Process process = command.createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.run();
   }
 
   @Test
   public void testRunRunningProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async runningLatch = context.async();
-    command.processHandler(process -> runningLatch.complete());
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    builder.processHandler(process -> runningLatch.complete());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.run();
     runningLatch.awaitSuccess(10000);
     try {
@@ -107,17 +98,14 @@ public class ProcessTest {
 
   @Test
   public void testRunSuspendedProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async suspendedLatch = context.async();
     Async runningLatch = context.async();
-    command.processHandler(process -> {
+    builder.processHandler(process -> {
       process.suspendHandler(v -> suspendedLatch.complete());
       runningLatch.complete();
     });
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.run();
     runningLatch.awaitSuccess(10000);
     process.suspend();
@@ -131,13 +119,10 @@ public class ProcessTest {
 
   @Test
   public void testRunTerminatedProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async terminatedLatch = context.async();
-    command.processHandler(CommandProcess::end);
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    builder.processHandler(CommandProcess::end);
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.terminateHandler(status -> terminatedLatch.complete());
     process.run();
     terminatedLatch.awaitSuccess(10000);
@@ -150,12 +135,9 @@ public class ProcessTest {
 
   @Test
   public void testSuspendReadyProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
-    command.processHandler(process -> context.fail());
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    CommandBuilder builder = CommandBuilder.command("hello");
+    builder.processHandler(process -> context.fail());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     try {
       process.suspend();
       context.fail();
@@ -165,17 +147,14 @@ public class ProcessTest {
 
   @Test
   public void testSuspendRunningProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async suspendedLatch = context.async();
     Async runningLatch = context.async();
-    command.processHandler(process -> {
+    builder.processHandler(process -> {
       process.suspendHandler(v -> suspendedLatch.complete());
       runningLatch.complete();
     });
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.run();
     runningLatch.awaitSuccess(10000);
     process.suspend();
@@ -183,17 +162,14 @@ public class ProcessTest {
 
   @Test
   public void testSuspendSuspendedProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async suspendedLatch = context.async();
     Async runningLatch = context.async();
-    command.processHandler(process -> {
+    builder.processHandler(process -> {
       process.suspendHandler(v -> suspendedLatch.complete());
       runningLatch.complete();
     });
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.run();
     runningLatch.awaitSuccess(10000);
     process.suspend();
@@ -207,13 +183,10 @@ public class ProcessTest {
 
   @Test
   public void testSuspendTerminatedProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async terminatedLatch = context.async();
-    command.processHandler(CommandProcess::end);
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    builder.processHandler(CommandProcess::end);
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.terminateHandler(status -> terminatedLatch.complete());
     process.run();
     terminatedLatch.awaitSuccess(10000);
@@ -226,12 +199,9 @@ public class ProcessTest {
 
   @Test
   public void testResumeReadyProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
-    command.processHandler(process -> context.fail());
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    CommandBuilder builder = CommandBuilder.command("hello");
+    builder.processHandler(process -> context.fail());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     try {
       process.resume();
       context.fail();
@@ -241,13 +211,10 @@ public class ProcessTest {
 
   @Test
   public void testResumeRunningProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async runningLatch = context.async();
-    command.processHandler(process -> runningLatch.complete());
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    builder.processHandler(process -> runningLatch.complete());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.run();
     runningLatch.awaitSuccess(10000);
     try {
@@ -259,12 +226,11 @@ public class ProcessTest {
 
   @Test
   public void testResumeSuspendedProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async runningLatch = context.async();
     Async suspendedLatch = context.async();
     Async resumedLatch = context.async();
-    command.processHandler(process -> {
+    builder.processHandler(process -> {
       process.suspendHandler(v -> {
         suspendedLatch.complete();
       });
@@ -273,9 +239,7 @@ public class ProcessTest {
       });
       runningLatch.complete();
     });
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.run();
     runningLatch.awaitSuccess(10000);
     process.suspend();
@@ -285,13 +249,10 @@ public class ProcessTest {
 
   @Test
   public void testResumeTerminatedProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async terminatedLatch = context.async();
-    command.processHandler(CommandProcess::end);
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    builder.processHandler(CommandProcess::end);
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.terminateHandler(status -> terminatedLatch.complete());
     process.run();
     terminatedLatch.awaitSuccess(10000);
@@ -304,12 +265,9 @@ public class ProcessTest {
 
   @Test
   public void testInterruptReadyProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
-    command.processHandler(process -> context.fail());
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    CommandBuilder builder = CommandBuilder.command("hello");
+    builder.processHandler(process -> context.fail());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     try {
       process.interrupt();
       context.fail();
@@ -319,17 +277,14 @@ public class ProcessTest {
 
   @Test
   public void testInterruptRunningProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async runningLatch = context.async();
     Async interruptedLatch = context.async(3);
-    command.processHandler(process -> {
+    builder.processHandler(process -> {
       process.interruptHandler(v -> interruptedLatch.complete());
       runningLatch.complete();
     });
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.run();
     runningLatch.awaitSuccess(10000);
     process.interrupt();
@@ -339,19 +294,16 @@ public class ProcessTest {
 
   @Test
   public void testInterruptSuspendedProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async runningLatch = context.async();
     Async suspendedLatch = context.async();
     Async interruptedLatch = context.async(3);
-    command.processHandler(process -> {
+    builder.processHandler(process -> {
       process.interruptHandler(v -> interruptedLatch.complete());
       process.suspendHandler(v -> suspendedLatch.complete());
       runningLatch.complete();
     });
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.run();
     runningLatch.awaitSuccess(10000);
     process.suspend();
@@ -363,13 +315,10 @@ public class ProcessTest {
 
   @Test
   public void testInterruptTerminatedProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async terminatedLatch = context.async();
-    command.processHandler(process -> process.end());
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    builder.processHandler(process -> process.end());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.terminateHandler(v -> terminatedLatch.complete());
     process.run();
     terminatedLatch.awaitSuccess(10000);
@@ -382,17 +331,14 @@ public class ProcessTest {
 
   @Test
   public void testTerminateRunningProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async terminatedLatch = context.async(2);
-    Async registrationLatch = context.async();
     Async runningLatch = context.async();
-    command.processHandler(process -> {
+    builder.processHandler(process -> {
       process.endHandler(v -> terminatedLatch.complete());
       runningLatch.complete();
     });
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.terminateHandler(status -> terminatedLatch.complete());
     process.run();
     runningLatch.awaitSuccess(10000);
@@ -401,19 +347,16 @@ public class ProcessTest {
 
   @Test
   public void testTerminateSuspendedProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async runningLatch = context.async();
     Async suspendedLatch = context.async();
     Async terminatedLatch = context.async(2);
-    command.processHandler(process -> {
+    builder.processHandler(process -> {
       process.suspendHandler(v -> suspendedLatch.complete());
       process.endHandler(v -> terminatedLatch.complete());
       runningLatch.complete();
     });
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.terminateHandler(code -> terminatedLatch.complete());
     process.run();
     runningLatch.awaitSuccess(10000);
@@ -424,25 +367,19 @@ public class ProcessTest {
 
   @Test
   public void testTerminateReadyProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
-    command.processHandler(process -> context.fail());
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    CommandBuilder builder = CommandBuilder.command("hello");
+    builder.processHandler(process -> context.fail());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.terminate();
   }
 
   @Test
   public void testTerminateTerminatedProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async runningLatch = context.async();
     Async terminatedLatch = context.async();
-    command.processHandler(process -> runningLatch.complete());
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    builder.processHandler(process -> runningLatch.complete());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.terminateHandler(status -> terminatedLatch.complete());
     process.run();
     runningLatch.awaitSuccess(10000);
@@ -457,16 +394,13 @@ public class ProcessTest {
 
   @Test
   public void testEndRunningProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async endedHandler = context.async();
-    command.processHandler(process -> {
+    builder.processHandler(process -> {
       process.endHandler(v -> endedHandler.complete());
       process.end(0);
     });
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     Async terminatedHandler = context.async();
     process.terminateHandler(code -> terminatedHandler.complete());
     process.run();
@@ -474,20 +408,17 @@ public class ProcessTest {
 
   @Test
   public void testEndSuspendedProcess(TestContext context) {
-    CommandBuilder command = CommandBuilder.command("hello");
-    Async registrationLatch = context.async();
+    CommandBuilder builder = CommandBuilder.command("hello");
     Async runningLatch = context.async();
     Async endedHandler = context.async();
-    command.processHandler(process -> {
+    builder.processHandler(process -> {
       process.suspendHandler(v -> {
         process.end(0);
       });
       process.endHandler(v -> endedHandler.complete());
       runningLatch.complete();
     });
-    registry.registerCommand(command.build(), ar -> registrationLatch.complete());
-    registrationLatch.awaitSuccess(10000);
-    Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     Async terminatedHandler = context.async();
     process.terminateHandler(code -> terminatedHandler.complete());
     process.run();
@@ -497,17 +428,19 @@ public class ProcessTest {
 
   @Test
   public void testTerminatedDoesNotExecute(TestContext context) throws InterruptedException {
+    AtomicReference<Command> cmd = new AtomicReference<>();
     Async registrationLatch = context.async();
     CountDownLatch runningLatch = new CountDownLatch(1);
     Context ctx = vertx.getOrCreateContext();
     ctx.runOnContext(v -> {
-      CommandBuilder command = CommandBuilder.command("hello");
-      command.processHandler(process -> runningLatch.countDown());
-      registry.registerCommand(command.build(), ar -> registrationLatch.complete());
+      CommandBuilder builder = CommandBuilder.command("hello");
+      builder.processHandler(process -> runningLatch.countDown());
+      cmd.set(builder.build(vertx));
+      registrationLatch.complete();
     });
     registrationLatch.awaitSuccess(10000);
     ctx.runOnContext(v -> {
-      Process process = registry.createProcess("hello").setSession(Session.create()).setTty(Pty.create().slave());
+      Process process = cmd.get().createProcess().setSession(Session.create()).setTty(Pty.create().slave());
       process.run();
       process.terminate();
     });

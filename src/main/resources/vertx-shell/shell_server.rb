@@ -1,7 +1,7 @@
 require 'vertx-shell/shell'
 require 'vertx-shell/term_server'
 require 'vertx/vertx'
-require 'vertx-shell/command_registry'
+require 'vertx-shell/command_resolver'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.ShellServer
 module VertxShell
@@ -34,13 +34,15 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling create(vertx)"
     end
-    #  @return the command registry for this server
-    # @return [::VertxShell::CommandRegistry]
-    def command_registry
-      if !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:commandRegistry, []).call(),::VertxShell::CommandRegistry)
+    #  Set the command resolver for this server.
+    # @param [::VertxShell::CommandResolver] resolver the resolver
+    # @return [self]
+    def command_resolver(resolver=nil)
+      if resolver.class.method_defined?(:j_del) && !block_given?
+        @j_del.java_method(:commandResolver, [Java::IoVertxExtShellCommand::CommandResolver.java_class]).call(resolver.j_del)
+        return self
       end
-      raise ArgumentError, "Invalid arguments when calling command_registry()"
+      raise ArgumentError, "Invalid arguments when calling command_resolver(resolver)"
     end
     #  Set the shell welcome message.
     # @param [String] msg the welcome message

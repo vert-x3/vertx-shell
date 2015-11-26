@@ -32,14 +32,19 @@
 
 package io.vertx.ext.shell.command.impl;
 
+import io.vertx.core.Context;
 import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
 import io.vertx.core.cli.CLI;
+import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.CommandProcess;
+import io.vertx.ext.shell.system.Process;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -69,7 +74,8 @@ public class CommandBuilderImpl implements CommandBuilder {
   }
 
   @Override
-  public Command build() {
+  public Command build(Vertx vertx) {
+    Context context = vertx.getOrCreateContext();
     return new Command() {
       @Override
       public String name() {
@@ -81,14 +87,21 @@ public class CommandBuilderImpl implements CommandBuilder {
       }
 
       @Override
-      public void process(CommandProcess process) {
-        processHandler.handle(process);
+      public Process createProcess(List<CliToken> args) {
+        return new ProcessImpl(vertx, context, this, args, processHandler);
       }
 
       @Override
       public void complete(Completion completion) {
         if (completeHandler != null) {
-          completeHandler.handle(completion);
+          context.runOnContext(v -> {
+            try {
+              completeHandler.handle(completion);
+            } catch (Throwable t) {
+              completion.complete(Collections.emptyList());
+              throw t;
+            }
+          });
         } else {
           Command.super.complete(completion);
         }

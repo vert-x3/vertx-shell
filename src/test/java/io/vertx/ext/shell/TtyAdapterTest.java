@@ -37,7 +37,8 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.base.Sleep;
-import io.vertx.ext.shell.registry.CommandRegistry;
+import io.vertx.ext.shell.command.CommandRegistry;
+import io.vertx.ext.shell.system.impl.InternalCommandManager;
 import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.ExecStatus;
 import io.vertx.ext.shell.impl.TtyAdapter;
@@ -65,13 +66,15 @@ public class TtyAdapterTest {
 
   Vertx vertx;
   CommandRegistry registry;
+  InternalCommandManager manager;
   ShellServer server;
 
   @Before
   public void before() {
     vertx = Vertx.vertx();
-    server = ShellServer.create(vertx);
-    registry = server.commandRegistry();
+    registry = CommandRegistry.get(vertx);
+    server = ShellServer.create(vertx).commandResolver(registry);
+    manager = new InternalCommandManager(registry);
   }
 
   @After
@@ -82,14 +85,14 @@ public class TtyAdapterTest {
   @Test
   public void testVertx(TestContext context) {
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), manager);
     shell.init();
     Async registrationLatch = context.async();
     Async done = context.async();
     registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
       context.assertEquals(vertx, process.vertx());
       done.complete();
-    }).build(), context.asyncAssertSuccess(reg -> {
+    }).build(vertx), context.asyncAssertSuccess(reg -> {
       registrationLatch.complete();
     }));
     registrationLatch.awaitSuccess(10000);
@@ -99,7 +102,7 @@ public class TtyAdapterTest {
   @Test
   public void testExecuteProcess(TestContext context) {
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), manager);
     shell.init();
     context.assertNull(shell.foregroundJob());
     context.assertEquals(Collections.emptySet(), shell.jobs());
@@ -112,7 +115,7 @@ public class TtyAdapterTest {
       context.assertEquals("foo", job.line());
       context.assertEquals(ExecStatus.RUNNING, job.status());
       async.complete();
-    }).build(), reg -> {
+    }).build(vertx), reg -> {
       registrationLatch.complete();
     });
     registrationLatch.awaitSuccess(10000);
@@ -122,13 +125,13 @@ public class TtyAdapterTest {
   @Test
   public void testHandleReadlineBuffered(TestContext context) {
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), manager);
     shell.init();
     Async registrationLatch = context.async(2);
     Async async = context.async();
     registry.registerCommand(CommandBuilder.command("_not_consumed").processHandler(process -> {
       async.complete();
-    }).build(), reg -> {
+    }).build(vertx), reg -> {
       registrationLatch.complete();
     });
     registry.registerCommand(CommandBuilder.command("read").processHandler(process -> {
@@ -139,7 +142,7 @@ public class TtyAdapterTest {
           process.end();
         }
       });
-    }).build(), context.asyncAssertSuccess(v -> {
+    }).build(vertx), context.asyncAssertSuccess(v -> {
       registrationLatch.complete();
     }));
     registrationLatch.awaitSuccess(10000);
@@ -149,7 +152,7 @@ public class TtyAdapterTest {
   @Test
   public void testExecuteReadlineBuffered(TestContext context) {
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), manager);
     shell.init();
     Async registrationLatch = context.async();
     Async async = context.async();
@@ -159,7 +162,7 @@ public class TtyAdapterTest {
         async.complete();
       }
       process.end(0);
-    }).build(), context.asyncAssertSuccess(v -> {
+    }).build(vertx), context.asyncAssertSuccess(v -> {
       registrationLatch.complete();
     }));
     registrationLatch.awaitSuccess(10000);
@@ -169,7 +172,7 @@ public class TtyAdapterTest {
   @Test
   public void testSuspendProcess(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), manager);
     shell.init();
     Async done = context.async();
     Async registrationLatch = context.async();
@@ -182,7 +185,7 @@ public class TtyAdapterTest {
         done.complete();
       });
       latch2.complete();
-    }).build(), reg -> {
+    }).build(vertx), reg -> {
       registrationLatch.complete();
     });
     registrationLatch.awaitSuccess();
@@ -194,7 +197,7 @@ public class TtyAdapterTest {
   @Test
   public void testSuspendedProcessDisconnectedFromTty(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), manager);
     shell.init();
     Async registrationsLatch = context.async(3);
     Async done = context.async();
@@ -210,7 +213,7 @@ public class TtyAdapterTest {
         latch2.complete();
       });
       latch1.complete();
-    }).build(), ar -> {
+    }).build(vertx), ar -> {
       registrationsLatch.complete();
     });
     registry.registerCommand(CommandBuilder.command("wait").processHandler(process -> {
@@ -220,12 +223,12 @@ public class TtyAdapterTest {
       process.suspendHandler(v -> {
         process.end(0);
       });
-    }).build(), ar -> {
+    }).build(vertx), ar -> {
       registrationsLatch.complete();
     });
     registry.registerCommand(CommandBuilder.command("end").processHandler(process -> {
       done.complete();
-    }).build(), ar -> {
+    }).build(vertx), ar -> {
       registrationsLatch.complete();
     });
     registrationsLatch.awaitSuccess(10000);
@@ -242,7 +245,7 @@ public class TtyAdapterTest {
   @Test
   public void testResumeProcessToForeground(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), manager);
     shell.init();
     Async registrationLatch = context.async();
     CountDownLatch latch1 = new CountDownLatch(1);
@@ -271,7 +274,7 @@ public class TtyAdapterTest {
         latch4.countDown();
       });
       latch1.countDown();
-    }).build(), reg -> {
+    }).build(vertx), reg -> {
       registrationLatch.complete();
     });
     registrationLatch.awaitSuccess(10000);
@@ -289,7 +292,7 @@ public class TtyAdapterTest {
   @Test
   public void testResumeProcessToBackground(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), manager);
     shell.init();
     Async registrationLatch = context.async();
     CountDownLatch latch1 = new CountDownLatch(1);
@@ -320,7 +323,7 @@ public class TtyAdapterTest {
         latch3.countDown();
       });
       latch1.countDown();
-    }).build(), reg -> {
+    }).build(vertx), reg -> {
       registrationLatch.complete();
     });
     registrationLatch.awaitSuccess(10000);
@@ -340,7 +343,7 @@ public class TtyAdapterTest {
   @Test
   public void backgroundToForeground(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), manager);
     shell.init();
     Async registrationLatch = context.async();
     CountDownLatch latch1 = new CountDownLatch(1);
@@ -360,7 +363,7 @@ public class TtyAdapterTest {
         async.complete();
       });
       latch1.countDown();
-    }).build(), reg -> {
+    }).build(vertx), reg -> {
       registrationLatch.complete();
     });
     registrationLatch.awaitSuccess(10000);
@@ -381,7 +384,7 @@ public class TtyAdapterTest {
   public void testExecuteBufferedCommand(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection();
     Shell shell = server.createShell();
-    TtyAdapter adapter = new TtyAdapter(vertx, conn, shell, registry);
+    TtyAdapter adapter = new TtyAdapter(vertx, conn, shell, manager);
     adapter.init();
     CountDownLatch latch = new CountDownLatch(1);
     Async registrationLatch = context.async(2);
@@ -391,13 +394,13 @@ public class TtyAdapterTest {
       conn.read("bar");
       process.end();
       latch.countDown();
-    }).build(), reg -> {
+    }).build(vertx), reg -> {
       registrationLatch.complete();
     });
     registry.registerCommand(CommandBuilder.command("bar").processHandler(process -> {
       context.assertEquals(null, conn.checkWritten("\n"));
       done.complete();
-    }).build(), reg2 -> {
+    }).build(vertx), reg2 -> {
       registrationLatch.complete();
     });
     registrationLatch.awaitSuccess(2000);
@@ -411,7 +414,7 @@ public class TtyAdapterTest {
   @Test
   public void testEchoCharsDuringExecute(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), manager);
     shell.init();
     Async registrationLatch = context.async();
     Async async = context.async();
@@ -428,7 +431,7 @@ public class TtyAdapterTest {
       conn.read("\004");
       context.assertNull(conn.checkWritten("^D"));
       async.complete();
-    }).build(), reg -> {
+    }).build(vertx), reg -> {
       registrationLatch.complete();
     });
     registrationLatch.awaitSuccess(10000);
@@ -437,11 +440,11 @@ public class TtyAdapterTest {
 
   @Test
   public void testExit(TestContext context) throws Exception {
-    registry.registerCommand(Command.create(Sleep.class));
+    registry.registerCommand(Command.create(vertx, Sleep.class));
     for (String cmd : Arrays.asList("exit", "logout")) {
       TestTtyConnection conn = new TestTtyConnection();
       Shell shell = server.createShell();
-      TtyAdapter adapter = new TtyAdapter(vertx, conn, shell, registry);
+      TtyAdapter adapter = new TtyAdapter(vertx, conn, shell, manager);
       adapter.init();
       conn.read("sleep 10000\r");
       conn.sendEvent(TtyEvent.SUSP);
@@ -459,7 +462,7 @@ public class TtyAdapterTest {
   @Test
   public void testEOF(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection();
-    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), registry);
+    TtyAdapter shell = new TtyAdapter(vertx, conn, server.createShell(), manager);
     shell.init();
     conn.read("\u0004");
     context.assertTrue(conn.isClosed());

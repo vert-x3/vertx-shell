@@ -21,9 +21,9 @@ import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.system.Shell
 import io.vertx.groovy.ext.shell.term.TermServer
 import io.vertx.groovy.core.Vertx
-import io.vertx.groovy.ext.shell.registry.CommandRegistry
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
+import io.vertx.groovy.ext.shell.command.CommandResolver
 /**
  * The shell server.<p/>
  *
@@ -54,12 +54,13 @@ public class ShellServer {
     return ret;
   }
   /**
-   * @return the command registry for this server
-   * @return 
+   * Set the command resolver for this server.
+   * @param resolver the resolver
+   * @return a reference to this, so the API can be used fluently
    */
-  public CommandRegistry commandRegistry() {
-    def ret= InternalHelper.safeCreate(this.delegate.commandRegistry(), io.vertx.groovy.ext.shell.registry.CommandRegistry.class);
-    return ret;
+  public ShellServer commandResolver(CommandResolver resolver) {
+    this.delegate.commandResolver((io.vertx.ext.shell.command.CommandResolver)resolver.getDelegate());
+    return this;
   }
   /**
    * Set the shell welcome message.

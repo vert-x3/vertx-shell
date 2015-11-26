@@ -30,13 +30,15 @@
  *
  */
 
-package io.vertx.ext.shell.command;
+package io.vertx.ext.shell.registry;
 
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.command.CommandBuilder;
+import io.vertx.ext.shell.command.CommandRegistry;
+import io.vertx.ext.shell.system.impl.InternalCommandManager;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.registry.CommandRegistry;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.RunTestOnContext;
@@ -60,28 +62,30 @@ public class CompletionTest {
   @Rule
   public final RunTestOnContext rule = new RunTestOnContext();
 
-  private CommandRegistry mgr;
+  private CommandRegistry registry;
+  private InternalCommandManager mgr;
 
   @Before
   public void before(TestContext context) {
-    mgr = CommandRegistry.get(rule.vertx());
-    mgr.registerCommand(CommandBuilder.command("foo").processHandler(proc -> {
+    registry = CommandRegistry.get(rule.vertx());
+    registry.registerCommand(CommandBuilder.command("foo").processHandler(proc -> {
     }).completionHandler(
         completion -> {
           completion.complete("completed_by_foo", false);
         }
-    ).build(), context.asyncAssertSuccess(v1 -> {
-      mgr.registerCommand(CommandBuilder.command("bar").processHandler(proc -> {
-      }).build(), context.asyncAssertSuccess(v2 -> {
-        mgr.registerCommand(CommandBuilder.command("baz").processHandler(proc -> {
-        }).build(), context.asyncAssertSuccess(v3 -> {
-          mgr.registerCommand(CommandBuilder.command("err").processHandler(proc -> {
+    ).build(rule.vertx()), context.asyncAssertSuccess(v1 -> {
+      registry.registerCommand(CommandBuilder.command("bar").processHandler(proc -> {
+      }).build(rule.vertx()), context.asyncAssertSuccess(v2 -> {
+        registry.registerCommand(CommandBuilder.command("baz").processHandler(proc -> {
+        }).build(rule.vertx()), context.asyncAssertSuccess(v3 -> {
+          registry.registerCommand(CommandBuilder.command("err").processHandler(proc -> {
           }).completionHandler(completion -> {
             throw new RuntimeException("expected");
-          }).build(), context.asyncAssertSuccess());
+          }).build(rule.vertx()), context.asyncAssertSuccess());
         }));
       }));
     }));
+    mgr = new InternalCommandManager(registry);
   }
 
   @Test

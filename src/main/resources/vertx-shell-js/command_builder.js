@@ -19,6 +19,7 @@ var utils = require('vertx-js/util/utils');
 var Command = require('vertx-shell-js/command');
 var Completion = require('vertx-shell-js/completion');
 var CLI = require('vertx-js/cli');
+var Vertx = require('vertx-js/vertx');
 var CommandProcess = require('vertx-shell-js/command_process');
 
 var io = Packages.io;
@@ -74,13 +75,13 @@ var CommandBuilder = function(j_val) {
    Build the command
 
    @public
-
+   @param vertx {Vertx} the vertx instance 
    @return {Command} the built command
    */
-  this.build = function() {
+  this.build = function(vertx) {
     var __args = arguments;
-    if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_commandBuilder["build()"](), Command);
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      return utils.convReturnVertxGen(j_commandBuilder["build(io.vertx.core.Vertx)"](vertx._jdel), Command);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

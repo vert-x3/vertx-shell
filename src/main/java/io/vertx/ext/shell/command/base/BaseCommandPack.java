@@ -33,13 +33,10 @@
 package io.vertx.ext.shell.command.base;
 
 import io.vertx.codegen.annotations.GenIgnore;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.registry.CommandResolver;
+import io.vertx.ext.shell.command.CommandResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,8 +72,17 @@ public class BaseCommandPack implements CommandResolver {
     return list;
   }
 
+  final Vertx vertx;
+
+  public BaseCommandPack(Vertx vertx) {
+    this.vertx = vertx;
+  }
+
   @Override
-  public void resolveCommands(Vertx vertx, Handler<AsyncResult<List<Command>>> commandsHandler) {
-    commandsHandler.handle(Future.succeededFuture(baseCommandClasses().stream().map(Command::create).collect(Collectors.toList())));
+  public List<Command> commands() {
+    return baseCommandClasses().
+        stream().
+        map(clazz -> Command.create(vertx, clazz)).
+        collect(Collectors.toList());
   }
 }

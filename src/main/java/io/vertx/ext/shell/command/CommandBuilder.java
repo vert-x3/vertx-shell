@@ -35,6 +35,7 @@ package io.vertx.ext.shell.command;
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
 import io.vertx.core.cli.CLI;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.command.impl.CommandBuilderImpl;
@@ -91,8 +92,9 @@ public interface CommandBuilder {
   /**
    * Build the command
    *
+   * @param vertx the vertx instance
    * @return the built command
    */
-  Command build();
+  Command build(Vertx vertx);
 
 }
