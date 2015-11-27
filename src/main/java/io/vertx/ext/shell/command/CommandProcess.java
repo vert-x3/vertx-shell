@@ -115,11 +115,17 @@ public interface CommandProcess extends Tty {
    * and the shell closes.
    *
    * @param handler the end handler
-   * @return this command
+   * @return a reference to this, so the API can be used fluently
    */
   @Fluent
   CommandProcess endHandler(Handler<Void> handler);
 
+  /**
+   * Write some text to the standard output.
+   *
+   * @param text the text
+   * @return a reference to this, so the API can be used fluently
+   */
   @Fluent
   CommandProcess write(String text);
 

@@ -36,23 +36,34 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.command.CommandRegistry;
 import io.vertx.ext.shell.impl.ShellServiceImpl;
-import io.vertx.ext.shell.system.Shell;
 
 /**
  * The shell service, provides a remotely accessible shell available via Telnet or SSH according to the
- * {@link io.vertx.ext.shell.ShellServiceOptions} configuration.
+ * {@link io.vertx.ext.shell.ShellServiceOptions} configuration.<p/>
+ *
+ * The shell service will expose commands using {@link io.vertx.ext.shell.command.CommandResolver} on the classpath and
+ * the shared command registry for the Vert.x instance.
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
 public interface ShellService {
 
+  /**
+   * Like {@link #create(Vertx, ShellServiceOptions)}, with default options.
+   */
   static ShellService create(Vertx vertx) {
     return create(vertx, new ShellServiceOptions());
   }
 
+  /**
+   * Create a new shell service.
+   *
+   * @param vertx the Vert.x instance
+   * @param options the service config options
+   * @return the shell service
+   */
   static ShellService create(Vertx vertx, ShellServiceOptions options) {
     return new ShellServiceImpl(vertx, options);
   }

@@ -119,19 +119,37 @@ public class ShellServerOptions {
     return this;
   }
 
+  /**
+   * @return the session timeout
+   */
   public long getSessionTimeout() {
     return sessionTimeout;
   }
 
+  /**
+   * Set the session timeout.
+   *
+   * @param sessionTimeout the new session timeout
+   * @return a reference to this, so the API can be used fluently
+   */
   public ShellServerOptions setSessionTimeout(long sessionTimeout) {
     this.sessionTimeout = sessionTimeout;
     return this;
   }
 
+  /**
+   * @return the reaper interval
+   */
   public long getReaperInterval() {
     return reaperInterval;
   }
 
+  /**
+   * Set the repear interval, i.e the period at which session eviction is performed.
+   *
+   * @param reaperInterval the new repeat interval
+   * @return a reference to this, so the API can be used fluently
+   */
   public ShellServerOptions setReaperInterval(long reaperInterval) {
     this.reaperInterval = reaperInterval;
     return this;
