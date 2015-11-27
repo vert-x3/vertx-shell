@@ -74,11 +74,6 @@ public class ShellServiceImpl implements ShellService {
   }
 
   @Override
-  public CommandRegistry commandRegistry() {
-    return registry;
-  }
-
-  @Override
   public ShellServer server() {
     return server;
   }

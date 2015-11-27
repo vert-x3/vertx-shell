@@ -37,8 +37,9 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling create(vertx)"
     end
-    # @param [::VertxShell::Command] command 
-    # @yield 
+    #  Register a command
+    # @param [::VertxShell::Command] command the command to register
+    # @yield notified when the command is registered
     # @return [self]
     def register_command(command=nil)
       if command.class.method_defined?(:j_del) && !block_given?
@@ -50,8 +51,9 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling register_command(command)"
     end
-    # @param [Array<::VertxShell::Command>] commands 
-    # @yield 
+    #  Register a list of commands.
+    # @param [Array<::VertxShell::Command>] commands the commands to register
+    # @yield notified when the command is registered
     # @return [self]
     def register_commands(commands=nil)
       if commands.class == Array && !block_given?
@@ -63,8 +65,9 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling register_commands(commands)"
     end
-    # @param [String] commandName 
-    # @yield 
+    #  Unregister a command.
+    # @param [String] commandName the command name
+    # @yield notified when the command is unregistered
     # @return [self]
     def unregister_command(commandName=nil)
       if commandName.class == String && !block_given?

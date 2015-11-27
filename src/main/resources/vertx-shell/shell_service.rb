@@ -1,5 +1,4 @@
 require 'vertx-shell/shell_server'
-require 'vertx-shell/command_registry'
 require 'vertx/vertx'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.ShellService
@@ -38,14 +37,6 @@ module VertxShell
         return @j_del.java_method(:start, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |ar| yield(ar.failed ? ar.cause : nil) }))
       end
       raise ArgumentError, "Invalid arguments when calling start()"
-    end
-    #  @return the command registry of this service
-    # @return [::VertxShell::CommandRegistry]
-    def command_registry
-      if !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:commandRegistry, []).call(),::VertxShell::CommandRegistry)
-      end
-      raise ArgumentError, "Invalid arguments when calling command_registry()"
     end
     #  @return the shell server
     # @return [::VertxShell::ShellServer]

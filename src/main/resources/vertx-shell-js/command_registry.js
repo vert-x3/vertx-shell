@@ -39,11 +39,12 @@ var CommandRegistry = function(j_val) {
   CommandResolver.call(this, j_val);
 
   /**
+   Register a command
 
    @public
-   @param command {Command} 
-   @param completionHandler {function} 
-   @return {CommandRegistry}
+   @param command {Command} the command to register 
+   @param completionHandler {function} notified when the command is registered 
+   @return {CommandRegistry} a reference to this, so the API can be used fluently
    */
   this.registerCommand = function() {
     var __args = arguments;
@@ -63,11 +64,12 @@ var CommandRegistry = function(j_val) {
   };
 
   /**
+   Register a list of commands.
 
    @public
-   @param commands {Array.<Command>} 
-   @param completionHandler {function} 
-   @return {CommandRegistry}
+   @param commands {Array.<Command>} the commands to register 
+   @param completionHandler {function} notified when the command is registered 
+   @return {CommandRegistry} a reference to this, so the API can be used fluently
    */
   this.registerCommands = function() {
     var __args = arguments;
@@ -87,11 +89,12 @@ var CommandRegistry = function(j_val) {
   };
 
   /**
+   Unregister a command.
 
    @public
-   @param commandName {string} 
-   @param completionHandler {function} 
-   @return {CommandRegistry}
+   @param commandName {string} the command name 
+   @param completionHandler {function} notified when the command is unregistered 
+   @return {CommandRegistry} a reference to this, so the API can be used fluently
    */
   this.unregisterCommand = function() {
     var __args = arguments;

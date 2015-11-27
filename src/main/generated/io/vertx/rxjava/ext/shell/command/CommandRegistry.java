@@ -67,15 +67,21 @@ public class CommandRegistry extends CommandResolver {
   }
 
   /**
-   * Register a command
-   * @param command the command to register
-   * @return a reference to this, so the API can be used fluently
+   * Like {@link io.vertx.rxjava.ext.shell.command.CommandRegistry#registerCommand}, without a completion handler.
+   * @param command 
+   * @return 
    */
   public CommandRegistry registerCommand(Command command) { 
     this.delegate.registerCommand((io.vertx.ext.shell.command.Command) command.getDelegate());
     return this;
   }
 
+  /**
+   * Register a command
+   * @param command the command to register
+   * @param completionHandler notified when the command is registered
+   * @return a reference to this, so the API can be used fluently
+   */
   public CommandRegistry registerCommand(Command command, Handler<AsyncResult<Command>> completionHandler) { 
     this.delegate.registerCommand((io.vertx.ext.shell.command.Command) command.getDelegate(), new Handler<AsyncResult<io.vertx.ext.shell.command.Command>>() {
       public void handle(AsyncResult<io.vertx.ext.shell.command.Command> event) {
@@ -91,6 +97,11 @@ public class CommandRegistry extends CommandResolver {
     return this;
   }
 
+  /**
+   * Register a command
+   * @param command the command to register
+   * @return 
+   */
   public Observable<Command> registerCommandObservable(Command command) { 
     io.vertx.rx.java.ObservableFuture<Command> completionHandler = io.vertx.rx.java.RxHelper.observableFuture();
     registerCommand(command, completionHandler.toHandler());
@@ -98,15 +109,21 @@ public class CommandRegistry extends CommandResolver {
   }
 
   /**
-   * Register a list of commands.
-   * @param commands the commands to register
-   * @return a reference to this, so the API can be used fluently
+   * Like {@link io.vertx.ext.shell.command.CommandRegistry}, without a completion handler.
+   * @param commands 
+   * @return 
    */
   public CommandRegistry registerCommands(List<Command> commands) { 
     this.delegate.registerCommands(commands.stream().map(element -> (io.vertx.ext.shell.command.Command)element.getDelegate()).collect(java.util.stream.Collectors.toList()));
     return this;
   }
 
+  /**
+   * Register a list of commands.
+   * @param commands the commands to register
+   * @param completionHandler notified when the command is registered
+   * @return a reference to this, so the API can be used fluently
+   */
   public CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<List<Command>>> completionHandler) { 
     this.delegate.registerCommands(commands.stream().map(element -> (io.vertx.ext.shell.command.Command)element.getDelegate()).collect(java.util.stream.Collectors.toList()), new Handler<AsyncResult<List<io.vertx.ext.shell.command.Command>>>() {
       public void handle(AsyncResult<List<io.vertx.ext.shell.command.Command>> event) {
@@ -122,6 +139,11 @@ public class CommandRegistry extends CommandResolver {
     return this;
   }
 
+  /**
+   * Register a list of commands.
+   * @param commands the commands to register
+   * @return 
+   */
   public Observable<List<Command>> registerCommandsObservable(List<Command> commands) { 
     io.vertx.rx.java.ObservableFuture<List<Command>> completionHandler = io.vertx.rx.java.RxHelper.observableFuture();
     registerCommands(commands, completionHandler.toHandler());
@@ -129,20 +151,31 @@ public class CommandRegistry extends CommandResolver {
   }
 
   /**
-   * Unregister a command.
-   * @param commandName the command name
-   * @return a reference to this, so the API can be used fluently
+   * Like {@link io.vertx.ext.shell.command.CommandRegistry}, without a completion handler.
+   * @param commandName 
+   * @return 
    */
   public CommandRegistry unregisterCommand(String commandName) { 
     this.delegate.unregisterCommand(commandName);
     return this;
   }
 
+  /**
+   * Unregister a command.
+   * @param commandName the command name
+   * @param completionHandler notified when the command is unregistered
+   * @return a reference to this, so the API can be used fluently
+   */
   public CommandRegistry unregisterCommand(String commandName, Handler<AsyncResult<Void>> completionHandler) { 
     this.delegate.unregisterCommand(commandName, completionHandler);
     return this;
   }
 
+  /**
+   * Unregister a command.
+   * @param commandName the command name
+   * @return 
+   */
   public Observable<Void> unregisterCommandObservable(String commandName) { 
     io.vertx.rx.java.ObservableFuture<Void> completionHandler = io.vertx.rx.java.RxHelper.observableFuture();
     unregisterCommand(commandName, completionHandler.toHandler());

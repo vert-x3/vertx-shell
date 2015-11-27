@@ -72,11 +72,6 @@ public interface ShellService {
   void start(Handler<AsyncResult<Void>> startHandler);
 
   /**
-   * @return the command registry of this service
-   */
-  CommandRegistry commandRegistry();
-
-  /**
    * @return the shell server
    */
   ShellServer server();
