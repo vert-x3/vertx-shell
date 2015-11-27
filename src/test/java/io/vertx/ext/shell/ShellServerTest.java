@@ -319,21 +319,21 @@ public class ShellServerTest {
 
   @Test
   public void testClose(TestContext context) {
-    Async async = context.async(2);
+    Async endLatch = context.async(2);
     Async runningLatch = context.async();
     commands.add(CommandBuilder.command("foo").processHandler(process -> {
-      process.endHandler(v -> async.complete());
-      runningLatch.complete();
+      process.endHandler(v -> endLatch.countDown());
+      runningLatch.countDown();
     }).build(vertx));
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Pty pty = Pty.create();
     job.setTty(pty.slave()).terminateHandler(status -> {
-      async.complete();
+      endLatch.countDown();
     }).run();
     runningLatch.awaitSuccess(10000);
     shell.close();
-    async.awaitSuccess(10000);
+    endLatch.awaitSuccess(10000);
     context.assertEquals(0, shell.jobs().size());
   }
 

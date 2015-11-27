@@ -176,7 +176,7 @@ var CommandProcess = function(j_val) {
 
    @public
    @param handler {function} the end handler 
-   @return {CommandProcess} this command
+   @return {CommandProcess} a reference to this, so the API can be used fluently
    */
   this.endHandler = function(handler) {
     var __args = arguments;
@@ -187,10 +187,11 @@ var CommandProcess = function(j_val) {
   };
 
   /**
+   Write some text to the standard output.
 
    @public
-   @param text {string} 
-   @return {CommandProcess}
+   @param text {string} the text 
+   @return {CommandProcess} a reference to this, so the API can be used fluently
    */
   this.write = function(text) {
     var __args = arguments;

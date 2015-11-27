@@ -4,7 +4,10 @@ require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.ShellService
 module VertxShell
   #  The shell service, provides a remotely accessible shell available via Telnet or SSH according to the
-  #  {Hash} configuration.
+  #  {Hash} configuration.<p/>
+  # 
+  #  The shell service will expose commands using {::VertxShell::CommandResolver} on the classpath and
+  #  the shared command registry for the Vert.x instance.
   class ShellService
     # @private
     # @param j_del [::VertxShell::ShellService] the java delegate
@@ -16,9 +19,10 @@ module VertxShell
     def j_del
       @j_del
     end
-    # @param [::Vertx::Vertx] vertx 
-    # @param [Hash] options 
-    # @return [::VertxShell::ShellService]
+    #  Create a new shell service.
+    # @param [::Vertx::Vertx] vertx the Vert.x instance
+    # @param [Hash] options the service config options
+    # @return [::VertxShell::ShellService] the shell service
     def self.create(vertx=nil,options=nil)
       if vertx.class.method_defined?(:j_del) && !block_given? && options == nil
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShell::ShellService.java_method(:create, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::ShellService)

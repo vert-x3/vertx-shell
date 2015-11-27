@@ -96,11 +96,12 @@ var ShellService = function(j_val) {
 };
 
 /**
+ Create a new shell service.
 
  @memberof module:vertx-shell-js/shell_service
- @param vertx {Vertx} 
- @param options {Object} 
- @return {ShellService}
+ @param vertx {Vertx} the Vert.x instance 
+ @param options {Object} the service config options 
+ @return {ShellService} the shell service
  */
 ShellService.create = function() {
   var __args = arguments;

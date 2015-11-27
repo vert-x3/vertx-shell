@@ -303,12 +303,12 @@ public abstract class HttpTermServerBase {
     server.authProvider(authProvider);
     server.termHandler(term -> {
       context.assertEquals(1, count.get());
-      async.complete();
+      async.countDown();
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
       client.websocket(8080, "localhost", basePath + "/shell/websocket", new CaseInsensitiveHeaders().add("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes())), ws -> {
-        async.complete();
+        async.countDown();
       }, err -> {
         context.fail();
       });

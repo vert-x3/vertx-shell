@@ -26,7 +26,10 @@ import io.vertx.core.Handler;
 
 /**
  * The shell service, provides a remotely accessible shell available via Telnet or SSH according to the
- * {@link io.vertx.ext.shell.ShellServiceOptions} configuration.
+ * {@link io.vertx.ext.shell.ShellServiceOptions} configuration.<p/>
+ *
+ * The shell service will expose commands using {@link io.vertx.rxjava.ext.shell.command.CommandResolver} on the classpath and
+ * the shared command registry for the Vert.x instance.
  *
  * <p/>
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.ShellService original} non RX-ified interface using Vert.x codegen.
@@ -44,11 +47,22 @@ public class ShellService {
     return delegate;
   }
 
+  /**
+   * Like {@link io.vertx.rxjava.ext.shell.ShellService#create}, with default options.
+   * @param vertx 
+   * @return 
+   */
   public static ShellService create(Vertx vertx) { 
     ShellService ret= ShellService.newInstance(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx) vertx.getDelegate()));
     return ret;
   }
 
+  /**
+   * Create a new shell service.
+   * @param vertx the Vert.x instance
+   * @param options the service config options
+   * @return the shell service
+   */
   public static ShellService create(Vertx vertx, ShellServiceOptions options) { 
     ShellService ret= ShellService.newInstance(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx) vertx.getDelegate(), options));
     return ret;

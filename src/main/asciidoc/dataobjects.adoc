@@ -120,8 +120,14 @@ Set <code>vertxshell.js</code> resource to use.
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[reaperInterval]]`reaperInterval`|`Number (long)`|-
-|[[sessionTimeout]]`sessionTimeout`|`Number (long)`|-
+|[[reaperInterval]]`reaperInterval`|`Number (long)`|
++++
+Set the repear interval, i.e the period at which session eviction is performed.
++++
+|[[sessionTimeout]]`sessionTimeout`|`Number (long)`|
++++
+Set the session timeout.
++++
 |[[welcomeMessage]]`welcomeMessage`|`String`|
 +++
 Set the shell welcome message, i.e the message displayed in the user console when he connects to the shell.
@@ -142,8 +148,14 @@ Set the shell welcome message, i.e the message displayed in the user console whe
 |===
 ^|Name | Type ^| Description
 |[[httpOptions]]`httpOptions`|`link:dataobjects.html#HttpTermOptions[HttpTermOptions]`|-
-|[[reaperInterval]]`reaperInterval`|`Number (long)`|-
-|[[sessionTimeout]]`sessionTimeout`|`Number (long)`|-
+|[[reaperInterval]]`reaperInterval`|`Number (long)`|
++++
+Set the repear interval, i.e the period at which session eviction is performed.
++++
+|[[sessionTimeout]]`sessionTimeout`|`Number (long)`|
++++
+Set the session timeout.
++++
 |[[sshOptions]]`sshOptions`|`link:dataobjects.html#SSHTermOptions[SSHTermOptions]`|
 +++
 Set the SSH options, if the option is null, SSH will not be started.

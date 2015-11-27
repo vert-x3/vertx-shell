@@ -24,7 +24,10 @@ import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
 /**
  * The shell service, provides a remotely accessible shell available via Telnet or SSH according to the
- * <a href="../../../../../../../cheatsheet/ShellServiceOptions.html">ShellServiceOptions</a> configuration.
+ * <a href="../../../../../../../cheatsheet/ShellServiceOptions.html">ShellServiceOptions</a> configuration.<p/>
+ *
+ * The shell service will expose commands using {@link io.vertx.groovy.ext.shell.command.CommandResolver} on the classpath and
+ * the shared command registry for the Vert.x instance.
 */
 @CompileStatic
 public class ShellService {
@@ -35,10 +38,21 @@ public class ShellService {
   public Object getDelegate() {
     return delegate;
   }
+  /**
+   * Like {@link io.vertx.groovy.ext.shell.ShellService#create}, with default options.
+   * @param vertx 
+   * @return 
+   */
   public static ShellService create(Vertx vertx) {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.ShellService.class);
     return ret;
   }
+  /**
+   * Create a new shell service.
+   * @param vertx the Vert.x instance
+   * @param options the service config options (see <a href="../../../../../../../cheatsheet/ShellServiceOptions.html">ShellServiceOptions</a>)
+   * @return the shell service
+   */
   public static ShellService create(Vertx vertx, Map<String, Object> options) {
     def ret= InternalHelper.safeCreate(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx)vertx.getDelegate(), options != null ? new io.vertx.ext.shell.ShellServiceOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.ShellService.class);
     return ret;

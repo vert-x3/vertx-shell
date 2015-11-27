@@ -281,7 +281,7 @@ public class CommandProcessTest {
     Async runningLatch = context.async();
     Async interruptedLatch = context.async(3);
     builder.processHandler(process -> {
-      process.interruptHandler(v -> interruptedLatch.complete());
+      process.interruptHandler(v -> interruptedLatch.countDown());
       runningLatch.complete();
     });
     Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
@@ -299,7 +299,7 @@ public class CommandProcessTest {
     Async suspendedLatch = context.async();
     Async interruptedLatch = context.async(3);
     builder.processHandler(process -> {
-      process.interruptHandler(v -> interruptedLatch.complete());
+      process.interruptHandler(v -> interruptedLatch.countDown());
       process.suspendHandler(v -> suspendedLatch.complete());
       runningLatch.complete();
     });
@@ -335,11 +335,11 @@ public class CommandProcessTest {
     Async terminatedLatch = context.async(2);
     Async runningLatch = context.async();
     builder.processHandler(process -> {
-      process.endHandler(v -> terminatedLatch.complete());
+      process.endHandler(v -> terminatedLatch.countDown());
       runningLatch.complete();
     });
     Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
-    process.terminateHandler(status -> terminatedLatch.complete());
+    process.terminateHandler(status -> terminatedLatch.countDown());
     process.run();
     runningLatch.awaitSuccess(10000);
     process.terminate();
@@ -353,11 +353,11 @@ public class CommandProcessTest {
     Async terminatedLatch = context.async(2);
     builder.processHandler(process -> {
       process.suspendHandler(v -> suspendedLatch.complete());
-      process.endHandler(v -> terminatedLatch.complete());
+      process.endHandler(v -> terminatedLatch.countDown());
       runningLatch.complete();
     });
     Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
-    process.terminateHandler(code -> terminatedLatch.complete());
+    process.terminateHandler(code -> terminatedLatch.countDown());
     process.run();
     runningLatch.awaitSuccess(10000);
     process.suspend();

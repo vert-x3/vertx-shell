@@ -131,7 +131,7 @@ public class TtyAdapterTest {
     registry.registerCommand(CommandBuilder.command("_not_consumed").processHandler(process -> {
       async.complete();
     }).build(vertx), reg -> {
-      registrationLatch.complete();
+      registrationLatch.countDown();
     });
     registry.registerCommand(CommandBuilder.command("read").processHandler(process -> {
       StringBuilder buffer = new StringBuilder();
@@ -142,7 +142,7 @@ public class TtyAdapterTest {
         }
       });
     }).build(vertx), context.asyncAssertSuccess(v -> {
-      registrationLatch.complete();
+      registrationLatch.countDown();
     }));
     registrationLatch.awaitSuccess(10000);
     conn.read("read\rthe_line_not_consumed\r");
@@ -209,16 +209,16 @@ public class TtyAdapterTest {
       });
       process.suspendHandler(v -> {
         context.assertNull(process.stdout());
-        latch2.complete();
+        latch2.countDown();
       });
-      latch1.complete();
+      latch1.countDown();
     }).build(vertx), ar -> {
-      registrationsLatch.complete();
+      registrationsLatch.countDown();
     });
     registry.registerCommand(CommandBuilder.command("wait").processHandler(process -> {
       // Do nothing, this command is used to escape from readline and make
       // sure that the read data is not sent to the stopped command
-      latch3.complete();
+      latch3.countDown();
       process.suspendHandler(v -> {
         process.end(0);
       });
@@ -393,13 +393,13 @@ public class TtyAdapterTest {
       process.end();
       latch.countDown();
     }).build(vertx), reg -> {
-      registrationLatch.complete();
+      registrationLatch.countDown();
     });
     registry.registerCommand(CommandBuilder.command("bar").processHandler(process -> {
       context.assertEquals(null, conn.checkWritten("\n"));
       done.complete();
     }).build(vertx), reg2 -> {
-      registrationLatch.complete();
+      registrationLatch.countDown();
     });
     registrationLatch.awaitSuccess(2000);
     conn.read("foo\r");

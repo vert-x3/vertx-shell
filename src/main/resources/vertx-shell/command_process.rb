@@ -113,7 +113,8 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling end_handler()"
     end
-    # @param [String] text 
+    #  Write some text to the standard output.
+    # @param [String] text the text
     # @return [self]
     def write(text=nil)
       if text.class == String && !block_given?

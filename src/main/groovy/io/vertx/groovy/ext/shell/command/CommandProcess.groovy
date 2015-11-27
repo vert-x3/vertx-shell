@@ -117,12 +117,17 @@ public class CommandProcess extends Tty {
    * Set an end handler, this handler is called when the command is ended, for instance the command is running
    * and the shell closes.
    * @param handler the end handler
-   * @return this command
+   * @return a reference to this, so the API can be used fluently
    */
   public CommandProcess endHandler(Handler<Void> handler) {
     this.delegate.endHandler(handler);
     return this;
   }
+  /**
+   * Write some text to the standard output.
+   * @param text the text
+   * @return a reference to this, so the API can be used fluently
+   */
   public CommandProcess write(String text) {
     this.delegate.write(text);
     return this;
