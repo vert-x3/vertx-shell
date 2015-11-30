@@ -58,6 +58,8 @@ public class ShellImpl implements Shell {
 
   public ShellImpl(InternalCommandManager commandManager) {
     this.commandManager = commandManager;
+
+    session.put("vert.x-command-manager", commandManager);
   }
 
   public synchronized Set<Job> jobs() {

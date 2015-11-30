@@ -64,6 +64,10 @@ public class InternalCommandManager {
     this.resolvers = resolvers;
   }
 
+  public List<CommandResolver> getResolvers() {
+    return resolvers;
+  }
+
   /**
    * Parses a command line and try to create a process.
    *

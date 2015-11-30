@@ -37,7 +37,10 @@ import io.vertx.core.cli.annotations.Summary;
 import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandProcess;
-import io.vertx.ext.shell.command.CommandRegistry;
+import io.vertx.ext.shell.system.impl.InternalCommandManager;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -48,10 +51,10 @@ public class Help extends AnnotatedCommand {
 
   @Override
   public void process(CommandProcess process) {
-    CommandRegistry manager = CommandRegistry.getShared(process.vertx());
-    manager.commands();
+    InternalCommandManager mgr = process.session().get("vert.x-command-manager");
+    List<Command> commands = mgr.getResolvers().stream().flatMap(r -> r.commands().stream()).distinct().collect(Collectors.toList());
     process.write("available commands:\n");
-    for (Command command : manager.commands()) {
+    for (Command command : commands) {
       process.write(command.name()).write("\n");
     }
     process.end();
