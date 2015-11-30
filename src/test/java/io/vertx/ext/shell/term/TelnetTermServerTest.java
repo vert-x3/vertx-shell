@@ -41,6 +41,7 @@ import org.apache.commons.net.telnet.EchoOptionHandler;
 import org.apache.commons.net.telnet.SimpleOptionHandler;
 import org.apache.commons.net.telnet.TelnetClient;
 import org.apache.commons.net.telnet.TerminalTypeOptionHandler;
+import org.apache.commons.net.telnet.WindowSizeOptionHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -192,6 +193,22 @@ public class TelnetTermServerTest {
         }
       });
     });
+    client.connect("localhost", server.actualPort());
+  }
+
+  @Test
+  public void testWindowSize(TestContext context) throws Exception {
+    Async async = context.async();
+    startTelnet(context, term -> {
+      context.assertEquals(-1, term.width());
+      context.assertEquals(-1, term.height());
+      term.resizehandler(v -> {
+        context.assertEquals(10, term.width());
+        context.assertEquals(20, term.height());
+        async.complete();
+      });
+    });
+    client.addOptionHandler(new WindowSizeOptionHandler(10, 20, false, false, true, false));
     client.connect("localhost", server.actualPort());
   }
 }

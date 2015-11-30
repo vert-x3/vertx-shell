@@ -34,6 +34,7 @@ package io.vertx.ext.shell.term.impl;
 
 import io.termd.core.tty.TtyConnection;
 import io.termd.core.util.Helper;
+import io.termd.core.util.Vector;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.term.Term;
@@ -72,12 +73,14 @@ class TermConnectionHandler implements Handler<TtyConnection> {
 
       @Override
       public int width() {
-        return conn.size().x();
+        Vector size = conn.size();
+        return size != null ? size.x() : -1;
       }
 
       @Override
       public int height() {
-        return conn.size().y();
+        Vector size = conn.size();
+        return size != null ? size.y() : -1;
       }
 
       @Override
