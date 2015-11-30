@@ -95,6 +95,7 @@ public class HttpTermOptions extends HttpServerOptions {
 
   public HttpTermOptions(JsonObject json) {
     super(json);
+    init();
     HttpTermOptionsConverter.fromJson(json, this);
   }
 

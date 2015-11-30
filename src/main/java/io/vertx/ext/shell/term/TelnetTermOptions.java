@@ -48,7 +48,7 @@ import java.nio.charset.StandardCharsets;
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@DataObject()
+@DataObject(generateConverter = true)
 public class TelnetTermOptions extends NetServerOptions {
 
   public static final boolean DEFAULT_IN_BINARY = true;
@@ -60,9 +60,7 @@ public class TelnetTermOptions extends NetServerOptions {
   private String charset;
 
   public TelnetTermOptions() {
-    this.outBinary = DEFAULT_OUT_BINARY;
-    this.inBinary = DEFAULT_IN_BINARY;
-    this.charset = DEFAULT_CHARSET;
+    init();
   }
 
   public TelnetTermOptions(TelnetTermOptions other) {
@@ -74,6 +72,14 @@ public class TelnetTermOptions extends NetServerOptions {
 
   public TelnetTermOptions(JsonObject json) {
     super(json);
+    init();
+    TelnetTermOptionsConverter.fromJson(json, this);
+  }
+
+  private void init() {
+    this.outBinary = DEFAULT_OUT_BINARY;
+    this.inBinary = DEFAULT_IN_BINARY;
+    this.charset = DEFAULT_CHARSET;
   }
 
   @Override
