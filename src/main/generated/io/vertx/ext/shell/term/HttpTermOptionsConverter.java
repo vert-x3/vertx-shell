@@ -33,9 +33,6 @@ public class HttpTermOptionsConverter {
     if (json.getValue("shellHtmlResource") instanceof String) {
       obj.setShellHtmlResource(io.vertx.core.buffer.Buffer.buffer(java.util.Base64.getDecoder().decode((String)json.getValue("shellHtmlResource"))));
     }
-    if (json.getValue("shiroAuthOptions") instanceof JsonObject) {
-      obj.setShiroAuthOptions(new io.vertx.ext.auth.shiro.ShiroAuthOptions((JsonObject)json.getValue("shiroAuthOptions")));
-    }
     if (json.getValue("sockJSHandlerOptions") instanceof JsonObject) {
       obj.setSockJSHandlerOptions(new io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions((JsonObject)json.getValue("sockJSHandlerOptions")));
     }

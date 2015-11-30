@@ -34,6 +34,7 @@ package io.vertx.ext.shell.term;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.annotations.GenIgnore;
+import io.vertx.core.VertxException;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.core.net.KeyCertOptions;
@@ -41,8 +42,8 @@ import io.vertx.core.net.NetServerOptions;
 import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.core.net.PfxOptions;
 import io.vertx.ext.auth.AuthOptions;
-import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 
+import java.lang.reflect.Constructor;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -80,6 +81,7 @@ public class SSHTermOptions {
   public SSHTermOptions(JsonObject json) {
     this();
     SSHTermOptionsConverter.fromJson(json, this);
+    authOptions = json.getJsonObject("authOptions") != null ? createAuthOptions(json.getJsonObject("authOptions")) : null;
   }
 
   /**
@@ -162,13 +164,14 @@ public class SSHTermOptions {
   }
 
   /**
-   * Set the auth options as a Shiro auth.
+   * Set the auth options.
    *
-   * @param shiroAuthOptions the Shiro auth options
+   * @param authOptions the auth options
    * @return a reference to this, so the API can be used fluently
    */
-  public SSHTermOptions setShiroAuthOptions(ShiroAuthOptions shiroAuthOptions) {
-    this.authOptions = shiroAuthOptions;
+  @GenIgnore
+  public SSHTermOptions setAuthOptions(AuthOptions authOptions) {
+    this.authOptions = authOptions;
     return this;
   }
 
@@ -185,5 +188,46 @@ public class SSHTermOptions {
   public SSHTermOptions setDefaultCharset(String defaultCharset) {
     this.defaultCharset = defaultCharset;
     return this;
+  }
+
+  /**
+   * Internal method needed to load auth options supposed by Vert.x Shell.
+   *
+   * Create the auth options from a json value, the implementation makes a lookup on the {@literal provider}
+   * property of the json object and returns the corresponding class.
+   *
+   * @param json the json value
+   * @return the auth provider
+   */
+  static AuthOptions createAuthOptions(JsonObject json) {
+
+    String provider = json.getString("provider", "");
+    String impl;
+    switch (provider) {
+      case "shiro":
+        impl = "io.vertx.ext.auth.shiro.ShiroAuthOptions";
+        break;
+      case "jdbc":
+        impl = "io.vertx.ext.auth.jdbc.JDBCAuthOptions";
+        break;
+      case "mongo":
+        impl = "io.vertx.ext.auth.mongo.MongoAuthOptions";
+        break;
+      default:
+        throw new IllegalArgumentException("Invalid auth provider: " + provider);
+    }
+
+    try {
+      ClassLoader cl = Thread.currentThread().getContextClassLoader();
+      Class<?> optionsClass = cl.loadClass(impl);
+      Constructor<?> ctor = optionsClass.getConstructor(JsonObject.class);
+      return (AuthOptions) ctor.newInstance(json);
+    } catch (ClassNotFoundException e) {
+      throw new VertxException("Provider class not found " + impl + " / check your classpath");
+    } catch(InstantiationException e) {
+      throw new VertxException("Cannot create " + provider +" options", e.getCause());
+    } catch (Exception e) {
+      throw new VertxException("Cannot create " + provider + " options" + provider, e);
+    }
   }
 }

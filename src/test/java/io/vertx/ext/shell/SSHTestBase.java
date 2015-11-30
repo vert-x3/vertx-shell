@@ -90,7 +90,7 @@ public abstract class SSHTestBase {
   protected void startShell() throws Exception {
     startShell(new SSHTermOptions().setPort(5000).setHost("localhost").setKeyPairOptions(
         new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
-        setShiroAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
+        setAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
             new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
   }
 
@@ -123,7 +123,7 @@ public abstract class SSHTestBase {
 
       @Override
       public boolean promptYesNo(String s) {
-;        // Accept all server keys
+        ;        // Accept all server keys
         return true;
       }
 
@@ -183,7 +183,7 @@ public abstract class SSHTestBase {
   public void testNoKeyPairConfigured() throws Exception {
     try {
       startShell(new SSHTermOptions().setPort(5000).setHost("localhost").
-              setShiroAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
+              setAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
                   new JsonObject().put("properties_path", "classpath:test-auth.properties")))
       );
     } catch (ExecutionException e) {

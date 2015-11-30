@@ -131,7 +131,7 @@ public class HttpTermServer implements TermServer {
     }
 
     if (options.getAuthOptions() != null) {
-      authProvider = Helper.toAuthProvider(vertx, options.getAuthOptions());
+      authProvider = options.getAuthOptions().createProvider(vertx);
     }
 
     if (options.getSockJSPath() != null && options.getSockJSHandlerOptions() != null) {

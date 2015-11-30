@@ -32,13 +32,27 @@
 
 package io.vertx.ext.shell;
 
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.Session;
 import io.vertx.core.AsyncResult;
+import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.mongo.MongoAuth;
+import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.shell.term.SSHTermOptions;
+import io.vertx.ext.unit.Async;
+import io.vertx.ext.unit.TestContext;
 import org.junit.After;
+import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -82,5 +96,106 @@ public class SSHShellTest extends SSHTestBase {
       }
     });
     fut.get(10, TimeUnit.SECONDS);
+  }
+
+  @Test
+  public void testDeployServiceWithShiroAuthOptions(TestContext context) throws Exception {
+    Async async = context.async();
+    vertx.deployVerticle("service:io.vertx.ext.shell", new DeploymentOptions().setConfig(new JsonObject().put("sshOptions",
+        new JsonObject().
+            put("host", "localhost").
+            put("port", 5000).
+            put("keyPairOptions", new JsonObject().
+                put("path", "src/test/resources/server-keystore.jks").
+                put("password", "wibble")).
+            put("authOptions", new JsonObject().put("provider", "shiro").put("config",
+                new JsonObject().
+                    put("properties_path", "classpath:test-auth.properties")))))
+        , context.asyncAssertSuccess(v -> {
+      async.complete();
+    }));
+    async.awaitSuccess(2000);
+    Session session = createSession("paulo", "secret", false);
+    session.connect();
+    Channel channel = session.openChannel("shell");
+    channel.connect();
+    channel.disconnect();
+    session.disconnect();
+  }
+
+  protected static JsonObject config() {
+    return new JsonObject()
+        .put("url", "jdbc:hsqldb:mem:test?shutdown=true")
+        .put("driver_class", "org.hsqldb.jdbcDriver");
+  }
+
+  @Test
+  public void testDeployServiceWithJDBCAuthOptions(TestContext context) throws Exception {
+    List<String> SQL  = Arrays.asList(
+        "create table user (username varchar(255), password varchar(255), password_salt varchar(255) );",
+        "create table user_roles (username varchar(255), role varchar(255));",
+        "insert into user values ('tim', 'EC0D6302E35B7E792DF9DA4A5FE0DB3B90FCAB65A6215215771BF96D498A01DA8234769E1CE8269A105E9112F374FDAB2158E7DA58CDC1348A732351C38E12A0', 'C59EB438D1E24CACA2B1A48BC129348589D49303858E493FBE906A9158B7D5DC');"
+    );
+    Connection conn = DriverManager.getConnection(config().getString("url"));
+    for (String sql : SQL) {
+      System.out.println("Executing: "  + sql);
+      conn.createStatement().execute(sql);
+    }
+    Async async = context.async();
+    vertx.deployVerticle("service:io.vertx.ext.shell", new DeploymentOptions().setConfig(new JsonObject().put("sshOptions",
+        new JsonObject().
+            put("host", "localhost").
+            put("port", 5000).
+            put("keyPairOptions", new JsonObject().
+                put("path", "src/test/resources/server-keystore.jks").
+                put("password", "wibble")).
+            put("authOptions", new JsonObject().put("provider", "jdbc").put("config",
+                new JsonObject()
+                    .put("url", "jdbc:hsqldb:mem:test?shutdown=true")
+                    .put("driver_class", "org.hsqldb.jdbcDriver")))))
+        , context.asyncAssertSuccess(v -> {
+      async.complete();
+    }));
+    async.awaitSuccess(2000);
+    Session session = createSession("tim", "sausages", false);
+    session.connect();
+    Channel channel = session.openChannel("shell");
+    channel.connect();
+    channel.disconnect();
+    session.disconnect();
+  }
+
+  @Test
+  public void testDeployServiceWithMongoAuthOptions(TestContext context) throws Exception {
+    Async mongo = context.async();
+    vertx.deployVerticle("service:io.vertx.vertx-mongo-embedded-db", context.asyncAssertSuccess(v -> mongo.complete()));
+    mongo.awaitSuccess(2000);
+    JsonObject config = new JsonObject().put("connection_string", "mongodb://localhost:27018");
+    MongoClient client = MongoClient.createNonShared(vertx, config);
+    MongoAuth auth = MongoAuth.create(client, new JsonObject());
+    Async ready = context.async();
+    auth.insertUser("admin", "password", Collections.emptyList(), Collections.emptyList(), context.asyncAssertSuccess(v -> ready.complete()));
+    ready.awaitSuccess(2000);
+    Async async = context.async();
+    vertx.deployVerticle("service:io.vertx.ext.shell", new DeploymentOptions().setConfig(new JsonObject().put("sshOptions",
+        new JsonObject().
+            put("host", "localhost").
+            put("port", 5000).
+            put("keyPairOptions", new JsonObject().
+                put("path", "src/test/resources/server-keystore.jks").
+                put("password", "wibble")).
+            put("authOptions", new JsonObject().put("provider", "mongo").put("config",
+                new JsonObject().
+                    put("connection_string", "mongodb://localhost:27018")))))
+        , context.asyncAssertSuccess(v -> {
+      async.complete();
+    }));
+    async.awaitSuccess(2000);
+    Session session = createSession("admin", "password", false);
+    session.connect();
+    Channel channel = session.openChannel("shell");
+    channel.connect();
+    channel.disconnect();
+    session.disconnect();
   }
 }

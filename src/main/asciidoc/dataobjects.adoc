@@ -44,10 +44,6 @@ Set the charset used for encoding / decoding text data from/to SockJS
 +++
 Set <code>shell.html</code> resource to use.
 +++
-|[[shiroAuthOptions]]`shiroAuthOptions`|`link:dataobjects.html#ShiroAuthOptions[ShiroAuthOptions]`|
-+++
-Set the auth options as a Shiro auth.
-+++
 |[[soLinger]]`soLinger`|`Number (int)`|-
 |[[sockJSHandlerOptions]]`sockJSHandlerOptions`|`link:dataobjects.html#SockJSHandlerOptions[SockJSHandlerOptions]`|
 +++
@@ -227,10 +223,6 @@ Set the key pair options in pfx format.
 |[[port]]`port`|`Number (int)`|
 +++
 Set the port
-+++
-|[[shiroAuthOptions]]`shiroAuthOptions`|`link:dataobjects.html#ShiroAuthOptions[ShiroAuthOptions]`|
-+++
-Set the auth options as a Shiro auth.
 +++
 |===
 

@@ -33,6 +33,7 @@
 package io.vertx.ext.shell.term;
 
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.ClientAuth;
 import io.vertx.core.http.HttpServerOptions;
@@ -42,7 +43,6 @@ import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.core.net.PemTrustOptions;
 import io.vertx.core.net.PfxOptions;
 import io.vertx.ext.auth.AuthOptions;
-import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.shell.term.impl.HttpTermServer;
 import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
 
@@ -97,6 +97,7 @@ public class HttpTermOptions extends HttpServerOptions {
     super(json);
     init();
     HttpTermOptionsConverter.fromJson(json, this);
+    authOptions = json.getJsonObject("authOptions") != null ? SSHTermOptions.createAuthOptions(json.getJsonObject("authOptions")) : null;
   }
 
   public HttpTermOptions(HttpTermOptions that) {
@@ -161,13 +162,14 @@ public class HttpTermOptions extends HttpServerOptions {
   }
 
   /**
-   * Set the auth options as a Shiro auth.
+   * Set the auth options.
    *
-   * @param shiroAuthOptions the Shiro auth options
+   * @param authOptions the auth options
    * @return a reference to this, so the API can be used fluently
    */
-  public HttpTermOptions setShiroAuthOptions(ShiroAuthOptions shiroAuthOptions) {
-    this.authOptions = shiroAuthOptions;
+  @GenIgnore
+  public HttpTermOptions setAuthOptions(AuthOptions authOptions) {
+    this.authOptions = authOptions;
     return this;
   }
 

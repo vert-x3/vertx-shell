@@ -60,7 +60,6 @@ import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.session.ServerConnectionServiceFactory;
 
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -133,7 +132,7 @@ public class SSHTermServer implements TermServer {
       return this;
     }
     if (options.getAuthOptions() != null) {
-      authProvider = Helper.toAuthProvider(vertx, options.getAuthOptions());
+      authProvider = options.getAuthOptions().createProvider(vertx);
     }
     Charset defaultCharset = Charset.forName(options.getDefaultCharset());
     listenContext = (ContextInternal) vertx.getOrCreateContext();

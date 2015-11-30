@@ -96,15 +96,15 @@ public class Main {
     options.setKeyPairOptions(new JksOptions().
         setPath("src/test/resources/server-keystore.jks").
         setPassword("wibble")).
-        setShiroAuthOptions(
+        setAuthOptions(
             authOptions
-    );
+        );
     ShellService service = ShellService.create(vertx, new ShellServiceOptions().
         setTelnetOptions(new TelnetTermOptions().setPort(5000)).
         setSSHOptions(options).
             setHttpOptions(new HttpTermOptions().
                     setPort(8080).
-                    setShiroAuthOptions(authOptions)
+                    setAuthOptions(authOptions)
             )
     );
     service.start();

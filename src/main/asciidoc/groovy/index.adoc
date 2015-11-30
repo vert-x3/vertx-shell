@@ -32,7 +32,7 @@ keytool -genkey -keyalg RSA -keystore ssh.jks -keysize 2048 -validity 1095 -dnam
 # create the auth config
 echo user.admin=password > auth.properties
 # start the shell
-vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.2.0-SNAPSHOT
+vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","password":"secret"},"authOptions":{"provider":"shiro","config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.2.0-SNAPSHOT
 ----
 
 or
@@ -44,7 +44,7 @@ or
 keytool -genkey -keyalg RSA -keystore keystore.jks -keysize 2048 -validity 1095 -dname CN=localhost -keypass secret -storepass secret
 # create the auth config
 echo user.admin=password > auth.properties
-vertx run -conf '{"httpOptions":{"port":8080,"ssl":true,"keyStoreOptions":{"path":"keystore.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.2.0-SNAPSHOT
+vertx run -conf '{"httpOptions":{"port":8080,"ssl":true,"keyStoreOptions":{"path":"keystore.jks","password":"secret"},"authOptions":{"provider":""shiro,"config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.2.0-SNAPSHOT
 ----
 
 You can also deploy this service inside your own verticle:
@@ -72,11 +72,14 @@ vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
       host:"localhost",
       port:5000,
       keyPairOptions:[
-        path:"ssh.jks",
+        path:"src/test/resources/ssh.jks",
         password:"wibble"
       ],
-      config:[
-        properties_path:"file:/path/to/my/auth.properties"
+      authOptions:[
+        provider:"shiro",
+        config:[
+          properties_path:"file:/path/to/my/auth.properties"
+        ]
       ]
     ]
   ]
@@ -94,12 +97,15 @@ vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
       host:"localhost",
       port:8080,
       ssl:true,
-      keyStoreOptions:[
-        path:"keystore.jks",
+      keyPairOptions:[
+        path:"src/test/resources/server-keystore.jks",
         password:"wibble"
       ],
-      config:[
-        properties_path:"file:/path/to/my/auth.properties"
+      authOptions:[
+        provider:"shiro",
+        config:[
+          properties_path:"file:/path/to/my/auth.properties"
+        ]
       ]
     ]
   ]
@@ -128,7 +134,7 @@ def service = ShellService.create(vertx, [
       path:"server-keystore.jks",
       password:"wibble"
     ],
-    shiroAuthOptions:[
+    authOptions:[
       type:ShiroAuthRealmType.PROPERTIES,
       config:[
         properties_path:"file:/path/to/my/auth.properties"
@@ -175,6 +181,36 @@ service.start()
 
 ----
 
+== Authentication
+
+The SSH and HTTP connectors provide both authentication built on top of _vertx-auth_ with the following supported
+providers:
+
+- _shiro_ : provides `.properties` and _LDAP_ backend as seen in the ShellService presentation
+- _jdbc_ : JDBC backend
+- _mongo_ : MongoDB backend
+
+These options can be created directly using directly `link:../../vertx-auth-common/dataobjects.html#AuthOptions[AuthOptions]`:
+
+- `link:../../vertx-auth-shiro/dataobjects.html#ShiroAuthOptions[ShiroAuthOptions]` for Shiro
+- `link:../../vertx-auth-jdbc/dataobjects.html#JDBCAuthOptions[JDBCAuthOptions]` for JDBC
+- `link:../../vertx-auth-mongo/dataobjects.html#MongoAuthOptions[MongoAuthOptions]` for Mongo
+
+As for external service configuration in Json, the `authOptions` uses the `provider` property to distinguish:
+
+----
+{
+  ...
+  "authOptions": {
+    "provider":"shiro",
+    "config": {
+      "properties_path":"file:auth.properties"
+    }
+  }
+  ...
+}
+----
+
 == Telnet term configuration
 
 Telnet terms are configured by `link:../dataobjects.html#ShellServiceOptions#setTelnetOptions(io.vertx.ext.shell.term.TelnetTermOptions)[telnetOptions]`,
@@ -191,13 +227,110 @@ SSH terms are configured by `link:../dataobjects.html#ShellServiceOptions#setSSH
 Only username/password authentication is supported at the moment, it can be configured with property file
 or LDAP, see Vert.x Auth for more info:
 
-- `link:../dataobjects.html#SSHTermOptions#setShiroAuthOptions(io.vertx.ext.auth.shiro.ShiroAuthOptions)[shiroAuthOptions]`: configures user authentication
+- `link:../dataobjects.html#SSHTermOptions#setAuthOptions(io.vertx.ext.auth.AuthOptions)[authOptions]`: configures user authentication
 
 The server key configuration reuses the key pair store configuration scheme provided by _Vert.x Core_:
 
 - `link:../dataobjects.html#SSHTermOptions#setKeyPairOptions(io.vertx.core.net.JksOptions)[keyPairOptions]`: set `.jks` key pair store
 - `link:../dataobjects.html#SSHTermOptions#setPfxKeyPairOptions(io.vertx.core.net.PfxOptions)[pfxKeyPairOptions]`: set `.pfx` key pair store
 - `link:../dataobjects.html#SSHTermOptions#setPemKeyPairOptions(io.vertx.core.net.PemKeyCertOptions)[pemKeyPairOptions]`: set `.pem` key pair store
+
+
+.Deploying the Shell Service on SSH with Mongo authentication
+[source,groovy,subs="+attributes"]
+----
+vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", [
+  config:[
+    sshOptions:[
+      host:"localhost",
+      port:5000,
+      keyPairOptions:[
+        path:"src/test/resources/ssh.jks",
+        password:"wibble"
+      ],
+      authOptions:[
+        provider:"mongo",
+        config:[
+          connection_string:"mongodb://localhost:27018"
+        ]
+      ]
+    ]
+  ]
+])
+
+----
+
+.Running the Shell Service on SSH with Mongo authentication
+[source,groovy,subs="+attributes"]
+----
+import io.vertx.groovy.ext.shell.ShellService
+def service = ShellService.create(vertx, [
+  sSHOptions:[
+    host:"localhost",
+    port:5000,
+    keyPairOptions:[
+      path:"server-keystore.jks",
+      password:"wibble"
+    ],
+    authOptions:[
+      config:[
+        connection_string:"mongodb://localhost:27018"
+      ]
+    ]
+  ]
+])
+service.start()
+
+----
+
+.Deploying the Shell Service on SSH with JDBC authentication
+[source,groovy,subs="+attributes"]
+----
+vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", [
+  config:[
+    sshOptions:[
+      host:"localhost",
+      port:5000,
+      keyPairOptions:[
+        path:"src/test/resources/ssh.jks",
+        password:"wibble"
+      ],
+      authOptions:[
+        provider:"jdbc",
+        config:[
+          url:"jdbc:hsqldb:mem:test?shutdown=true",
+          driver_class:"org.hsqldb.jdbcDriver"
+        ]
+      ]
+    ]
+  ]
+])
+
+----
+
+.Running the Shell Service on SSH with JDBC authentication
+[source,groovy,subs="+attributes"]
+----
+import io.vertx.groovy.ext.shell.ShellService
+def service = ShellService.create(vertx, [
+  sSHOptions:[
+    host:"localhost",
+    port:5000,
+    keyPairOptions:[
+      path:"server-keystore.jks",
+      password:"wibble"
+    ],
+    authOptions:[
+      config:[
+        url:"jdbc:hsqldb:mem:test?shutdown=true",
+        driver_class:"org.hsqldb.jdbcDriver"
+      ]
+    ]
+  ]
+])
+service.start()
+
+----
 
 == HTTP term configuration
 
@@ -206,9 +339,99 @@ extends the `link:../../vertx-core/dataobjects.html#HttpServerOptions[HttpServer
 
 In addition there are extra options for configuring an HTTP term:
 
-- `link:../dataobjects.html#HttpTermOptions#setShiroAuthOptions(io.vertx.ext.auth.shiro.ShiroAuthOptions)[shiroAuthOptions]`: configures user authentication
+- `link:../dataobjects.html#HttpTermOptions#setAuthOptions(io.vertx.ext.auth.AuthOptions)[authOptions]`: configures user authentication
 - `link:../dataobjects.html#HttpTermOptions#setSockJSHandlerOptions(io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions)[sockJSHandlerOptions]`: configures SockJS
 - `link:../dataobjects.html#HttpTermOptions#setSockJSPath(java.lang.String)[sockJSPath]`: the SockJS path in the router
+
+.Deploying the Shell Service on HTTP with Mongo authentication
+[source,groovy,subs="+attributes"]
+----
+vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", [
+  config:[
+    httpOptions:[
+      host:"localhost",
+      port:8080,
+      ssl:true,
+      keyPairOptions:[
+        path:"src/test/resources/server-keystore.jks",
+        password:"wibble"
+      ],
+      authOptions:[
+        provider:"mongo",
+        config:[
+          connection_string:"mongodb://localhost:27018"
+        ]
+      ]
+    ]
+  ]
+])
+
+----
+
+.Running the Shell Service on HTTP with Mongo authentication
+[source,groovy,subs="+attributes"]
+----
+import io.vertx.groovy.ext.shell.ShellService
+def service = ShellService.create(vertx, [
+  httpOptions:[
+    host:"localhost",
+    port:8080,
+    authOptions:[
+      config:[
+        connection_string:"mongodb://localhost:27018"
+      ]
+    ]
+  ]
+])
+service.start()
+
+----
+
+.Deploying the Shell Service on HTTP with JDBC authentication
+[source,groovy,subs="+attributes"]
+----
+vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", [
+  config:[
+    httpOptions:[
+      host:"localhost",
+      port:8080,
+      ssl:true,
+      keyPairOptions:[
+        path:"src/test/resources/server-keystore.jks",
+        password:"wibble"
+      ],
+      authOptions:[
+        provider:"jdbc",
+        config:[
+          url:"jdbc:hsqldb:mem:test?shutdown=true",
+          driver_class:"org.hsqldb.jdbcDriver"
+        ]
+      ]
+    ]
+  ]
+])
+
+----
+
+.Running the Shell Service on HTTP with JDBC authentication
+[source,groovy,subs="+attributes"]
+----
+import io.vertx.groovy.ext.shell.ShellService
+def service = ShellService.create(vertx, [
+  httpOptions:[
+    host:"localhost",
+    port:8080,
+    authOptions:[
+      config:[
+        url:"jdbc:hsqldb:mem:test?shutdown=true",
+        driver_class:"org.hsqldb.jdbcDriver"
+      ]
+    ]
+  ]
+])
+service.start()
+
+----
 
 == Base commands
 

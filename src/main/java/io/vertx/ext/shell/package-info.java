@@ -65,7 +65,7 @@
  * # create the auth config
  * echo user.admin=password > auth.properties
  * # start the shell
- * vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:${maven.groupId}:${maven.artifactId}:${maven.version}
+ * vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","password":"secret"},"authOptions":{"provider":"shiro","config":{"properties_path":"file:auth.properties"}}}}' maven:${maven.groupId}:${maven.artifactId}:${maven.version}
  * ----
  *
  * or
@@ -77,7 +77,7 @@
  * keytool -genkey -keyalg RSA -keystore keystore.jks -keysize 2048 -validity 1095 -dname CN=localhost -keypass secret -storepass secret
  * # create the auth config
  * echo user.admin=password > auth.properties
- * vertx run -conf '{"httpOptions":{"port":8080,"ssl":true,"keyStoreOptions":{"path":"keystore.jks","password":"secret"},"shiroAuthOptions":{"config":{"properties_path":"file:auth.properties"}}}}' maven:${maven.groupId}:${maven.artifactId}:${maven.version}
+ * vertx run -conf '{"httpOptions":{"port":8080,"ssl":true,"keyStoreOptions":{"path":"keystore.jks","password":"secret"},"authOptions":{"provider":""shiro,"config":{"properties_path":"file:auth.properties"}}}}' maven:${maven.groupId}:${maven.artifactId}:${maven.version}
  * ----
  *
  * You can also deploy this service inside your own verticle:
@@ -91,14 +91,14 @@
  *
  * [source,$lang,subs="+attributes"]
  * ----
- * {@link examples.Examples#deploySSHService(io.vertx.core.Vertx)}
+ * {@link examples.Examples#deploySSHServiceWithShiro(io.vertx.core.Vertx)}
  * ----
  *
  * or
  *
  * [source,$lang,subs="+attributes"]
  * ----
- * {@link examples.Examples#deployHttpService(io.vertx.core.Vertx)}
+ * {@link examples.Examples#deployHttpServiceWithShiro(io.vertx.core.Vertx)}
  * ----
  *
  * NOTE: when Vert.x Shell is already on your classpath you can use `service:io.vertx.ext.shell` instead
@@ -112,7 +112,7 @@
  *
  * [source,$lang]
  * ----
- * {@link examples.Examples#runSSHService(io.vertx.core.Vertx)}
+ * {@link examples.Examples#runSSHServiceWithShiro(io.vertx.core.Vertx)}
  * ----
  *
  * Starting a shell service available via Telnet:
@@ -134,6 +134,36 @@
  * {@link examples.Examples#runHttpService}
  * ----
  *
+ * == Authentication
+ *
+ * The SSH and HTTP connectors provide both authentication built on top of _vertx-auth_ with the following supported
+ * providers:
+ *
+ * - _shiro_ : provides `.properties` and _LDAP_ backend as seen in the ShellService presentation
+ * - _jdbc_ : JDBC backend
+ * - _mongo_ : MongoDB backend
+ *
+ * These options can be created directly using directly {@link io.vertx.ext.auth.AuthOptions}:
+ *
+ * - {@link io.vertx.ext.auth.shiro.ShiroAuthOptions} for Shiro
+ * - {@link io.vertx.ext.auth.jdbc.JDBCAuthOptions} for JDBC
+ * - {@link io.vertx.ext.auth.mongo.MongoAuthOptions} for Mongo
+ *
+ * As for external service configuration in Json, the `authOptions` uses the `provider` property to distinguish:
+ *
+ * ----
+ * {
+ *   ...
+ *   "authOptions": {
+ *     "provider":"shiro",
+ *     "config": {
+ *       "properties_path":"file:auth.properties"
+ *     }
+ *   }
+ *   ...
+ * }
+ * ----
+ *
  * == Telnet term configuration
  *
  * Telnet terms are configured by {@link io.vertx.ext.shell.ShellServiceOptions#setTelnetOptions},
@@ -150,13 +180,38 @@
  * Only username/password authentication is supported at the moment, it can be configured with property file
  * or LDAP, see Vert.x Auth for more info:
  *
- * - {@link io.vertx.ext.shell.term.SSHTermOptions#setShiroAuthOptions}: configures user authentication
+ * - {@link io.vertx.ext.shell.term.SSHTermOptions#setAuthOptions}: configures user authentication
  *
  * The server key configuration reuses the key pair store configuration scheme provided by _Vert.x Core_:
  *
  * - {@link io.vertx.ext.shell.term.SSHTermOptions#setKeyPairOptions}: set `.jks` key pair store
  * - {@link io.vertx.ext.shell.term.SSHTermOptions#setPfxKeyPairOptions}: set `.pfx` key pair store
  * - {@link io.vertx.ext.shell.term.SSHTermOptions#setPemKeyPairOptions}: set `.pem` key pair store
+ *
+ *
+ * .Deploying the Shell Service on SSH with Mongo authentication
+ * [source,$lang,subs="+attributes"]
+ * ----
+ * {@link examples.Examples#deploySSHServiceWithMongo(io.vertx.core.Vertx)}
+ * ----
+ *
+ * .Running the Shell Service on SSH with Mongo authentication
+ * [source,$lang,subs="+attributes"]
+ * ----
+ * {@link examples.Examples#runSSHServiceWithMongo(io.vertx.core.Vertx)}
+ * ----
+ *
+ * .Deploying the Shell Service on SSH with JDBC authentication
+ * [source,$lang,subs="+attributes"]
+ * ----
+ * {@link examples.Examples#deploySSHServiceWithJDBC(io.vertx.core.Vertx)}
+ * ----
+ *
+ * .Running the Shell Service on SSH with JDBC authentication
+ * [source,$lang,subs="+attributes"]
+ * ----
+ * {@link examples.Examples#runSSHServiceWithJDBC(io.vertx.core.Vertx)}
+ * ----
  *
  * == HTTP term configuration
  *
@@ -165,9 +220,33 @@
  *
  * In addition there are extra options for configuring an HTTP term:
  *
- * - {@link io.vertx.ext.shell.term.HttpTermOptions#setShiroAuthOptions}: configures user authentication
+ * - {@link io.vertx.ext.shell.term.HttpTermOptions#setAuthOptions}: configures user authentication
  * - {@link io.vertx.ext.shell.term.HttpTermOptions#setSockJSHandlerOptions}: configures SockJS
  * - {@link io.vertx.ext.shell.term.HttpTermOptions#setSockJSPath}: the SockJS path in the router
+ *
+ * .Deploying the Shell Service on HTTP with Mongo authentication
+ * [source,$lang,subs="+attributes"]
+ * ----
+ * {@link examples.Examples#deployHttpServiceWithMongo(io.vertx.core.Vertx)}
+ * ----
+ *
+ * .Running the Shell Service on HTTP with Mongo authentication
+ * [source,$lang,subs="+attributes"]
+ * ----
+ * {@link examples.Examples#runHTTPServiceWithMongo(io.vertx.core.Vertx)}
+ * ----
+ *
+ * .Deploying the Shell Service on HTTP with JDBC authentication
+ * [source,$lang,subs="+attributes"]
+ * ----
+ * {@link examples.Examples#deployHttpServiceWithJDBC(io.vertx.core.Vertx)}
+ * ----
+ *
+ * .Running the Shell Service on HTTP with JDBC authentication
+ * [source,$lang,subs="+attributes"]
+ * ----
+ * {@link examples.Examples#runHTTPServiceWithJDBC(io.vertx.core.Vertx)}
+ * ----
  *
  * == Base commands
  *

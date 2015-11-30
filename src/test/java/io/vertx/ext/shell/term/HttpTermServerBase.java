@@ -245,7 +245,7 @@ public abstract class HttpTermServerBase {
   @Test
   public void testSecure(TestContext context) {
     Async async = context.async();
-    server = createServer(context, new HttpTermOptions().setShiroAuthOptions(
+    server = createServer(context, new HttpTermOptions().setAuthOptions(
         new ShiroAuthOptions().
             setType(ShiroAuthRealmType.PROPERTIES).
             setConfig(new JsonObject().put("properties_path", "classpath:test-auth.properties"))).setPort(8080));

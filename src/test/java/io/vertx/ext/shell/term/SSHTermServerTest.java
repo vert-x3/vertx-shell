@@ -310,7 +310,7 @@ public class SSHTermServerTest extends SSHTestBase {
     };
     startShell(new SSHTermOptions().setDefaultCharset("ISO_8859_1").setPort(5000).setHost("localhost").setKeyPairOptions(
         new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
-        setShiroAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
+        setAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
             new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
     Session session = createSession("paulo", "secret", false);
     session.connect();
