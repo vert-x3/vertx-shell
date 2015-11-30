@@ -36,10 +36,10 @@ import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.core.buffer.Buffer;
 import io.vertx.ext.shell.term.impl.SockJSTermHandlerImpl;
-import io.vertx.ext.shell.term.impl.HttpTermServer;
 import io.vertx.ext.web.handler.sockjs.SockJSSocket;
+
+import java.nio.charset.Charset;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -47,8 +47,8 @@ import io.vertx.ext.web.handler.sockjs.SockJSSocket;
 @VertxGen
 public interface SockJSTermHandler extends Handler<SockJSSocket> {
 
-  static SockJSTermHandler create(Vertx vertx) {
-    return new SockJSTermHandlerImpl(vertx);
+  static SockJSTermHandler create(Vertx vertx, String charset) {
+    return new SockJSTermHandlerImpl(vertx, Charset.forName(charset));
   }
 
   @Fluent

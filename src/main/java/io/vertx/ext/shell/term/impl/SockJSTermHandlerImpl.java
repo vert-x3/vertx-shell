@@ -39,6 +39,7 @@ import io.vertx.ext.shell.term.SockJSTermHandler;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.web.handler.sockjs.SockJSSocket;
 
+import java.nio.charset.Charset;
 import java.util.function.Consumer;
 
 /**
@@ -46,10 +47,12 @@ import java.util.function.Consumer;
  */
 public class SockJSTermHandlerImpl implements SockJSTermHandler {
 
+  final Charset charset;
   final Vertx vertx;
   private Handler<TtyConnection> handler;
 
-  public SockJSTermHandlerImpl(Vertx vertx) {
+  public SockJSTermHandlerImpl(Vertx vertx, Charset charset) {
+    this.charset = charset;
     this.vertx = vertx;
   }
 
@@ -71,7 +74,7 @@ public class SockJSTermHandlerImpl implements SockJSTermHandler {
   @Override
   public void handle(SockJSSocket socket) {
     if (handler != null) {
-      SockJSTtyConnection conn = new SockJSTtyConnection(vertx.getOrCreateContext(), socket);
+      SockJSTtyConnection conn = new SockJSTtyConnection(charset, vertx.getOrCreateContext(), socket);
       socket.handler(buf -> conn.writeToDecoder(buf.toString()));
       socket.endHandler(v -> {
         Consumer<Void> closeHandler = conn.getCloseHandler();

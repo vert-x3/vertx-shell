@@ -79,6 +79,12 @@ public class Main {
     });
     mgr.registerCommand(windowCmd.build(vertx));
 
+    CommandBuilder charsetTestCmd = CommandBuilder.command("charset-test");
+    charsetTestCmd.processHandler(process -> {
+      process.write("\u20AC").end();
+    });
+    mgr.registerCommand(charsetTestCmd.build(vertx));
+
     // JS command
     // vertx.deployVerticle("command.js");
 

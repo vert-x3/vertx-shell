@@ -43,7 +43,6 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.AbstractUser;
 import io.vertx.ext.auth.AuthProvider;
-import io.vertx.ext.auth.User;
 import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.shell.SSHTestBase;
@@ -52,6 +51,7 @@ import io.vertx.ext.unit.TestContext;
 import org.junit.After;
 import org.junit.Test;
 
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -60,7 +60,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -303,4 +302,22 @@ public class SSHTermServerTest extends SSHTestBase {
     context.assertEquals(1, count.get());
   }
 
+  @Test
+  public void testDifferentCharset(TestContext context) throws Exception {
+    termHandler = term -> {
+      term.stdout().write("\u20AC");
+      term.close();
+    };
+    startShell(new SSHTermOptions().setDefaultCharset("ISO_8859_1").setPort(5000).setHost("localhost").setKeyPairOptions(
+        new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
+        setShiroAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
+            new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
+    Session session = createSession("paulo", "secret", false);
+    session.connect();
+    Channel channel = session.openChannel("shell");
+    channel.connect();
+    InputStream in = channel.getInputStream();
+    int b = in.read();
+    context.assertEquals(63, b);
+  }
 }

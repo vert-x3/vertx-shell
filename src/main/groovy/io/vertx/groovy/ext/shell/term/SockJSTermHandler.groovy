@@ -36,8 +36,8 @@ public class SockJSTermHandler implements Handler<SockJSSocket> {
   public void handle(SockJSSocket arg0) {
     ((io.vertx.core.Handler) this.delegate).handle((io.vertx.ext.web.handler.sockjs.SockJSSocket)arg0.getDelegate());
   }
-  public static SockJSTermHandler create(Vertx vertx) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.SockJSTermHandler.create((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.term.SockJSTermHandler.class);
+  public static SockJSTermHandler create(Vertx vertx, String charset) {
+    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.SockJSTermHandler.create((io.vertx.core.Vertx)vertx.getDelegate(), charset), io.vertx.groovy.ext.shell.term.SockJSTermHandler.class);
     return ret;
   }
   public SockJSTermHandler termHandler(Handler<Term> handler) {

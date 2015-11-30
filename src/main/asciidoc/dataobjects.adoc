@@ -17,6 +17,10 @@
 +++
 @return the auth options
 +++
+|[[charset]]`charset`|`String`|
++++
+Set the charset used for encoding / decoding text data from/to SockJS
++++
 |[[clientAuth]]`clientAuth`|`link:enums.html#ClientAuth[ClientAuth]`|-
 |[[clientAuthRequired]]`clientAuthRequired`|`Boolean`|-
 |[[compressionSupported]]`compressionSupported`|`Boolean`|-
@@ -83,6 +87,10 @@ Set <code>vertxshell.js</code> resource to use.
 |===
 ^|Name | Type ^| Description
 |[[acceptBacklog]]`acceptBacklog`|`Number (int)`|-
+|[[charset]]`charset`|`String`|
++++
+Set the charset to use when binary mode is active, see link and link.
++++
 |[[clientAuth]]`clientAuth`|`link:enums.html#ClientAuth[ClientAuth]`|-
 |[[clientAuthRequired]]`clientAuthRequired`|`Boolean`|-
 |[[crlPaths]]`crlPaths`|`Array of String`|-
@@ -90,7 +98,17 @@ Set <code>vertxshell.js</code> resource to use.
 |[[enabledCipherSuites]]`enabledCipherSuites`|`Array of String`|-
 |[[host]]`host`|`String`|-
 |[[idleTimeout]]`idleTimeout`|`Number (int)`|-
+|[[inBinary]]`inBinary`|`Boolean`|
++++
+Set the telnet connection to negociate binary data format when receiving from the client, the default value is true. This
+ allows to send data in 8 bit format and thus charset like UTF-8.
++++
 |[[keyStoreOptions]]`keyStoreOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|-
+|[[outBinary]]`outBinary`|`Boolean`|
++++
+Set the telnet connection to negociate binary data format when sending to the client, the default value is true. This
+ allows to send data in 8 bit format and thus charset like UTF-8.
++++
 |[[pemKeyCertOptions]]`pemKeyCertOptions`|`link:dataobjects.html#PemKeyCertOptions[PemKeyCertOptions]`|-
 |[[pemTrustOptions]]`pemTrustOptions`|`link:dataobjects.html#PemTrustOptions[PemTrustOptions]`|-
 |[[pfxKeyCertOptions]]`pfxKeyCertOptions`|`link:dataobjects.html#PfxOptions[PfxOptions]`|-
@@ -185,6 +203,10 @@ Set the shell welcome message, i.e the message displayed in the user console whe
 |[[authOptions]]`authOptions`|`link:dataobjects.html#AuthOptions[AuthOptions]`|
 +++
 @return the auth options
++++
+|[[defaultCharset]]`defaultCharset`|`String`|
++++
+Set the default charset to use when the client does not specifies one.
 +++
 |[[host]]`host`|`String`|
 +++

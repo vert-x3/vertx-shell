@@ -27,6 +27,9 @@ import io.vertx.core.json.JsonArray;
 public class SSHTermOptionsConverter {
 
   public static void fromJson(JsonObject json, SSHTermOptions obj) {
+    if (json.getValue("defaultCharset") instanceof String) {
+      obj.setDefaultCharset((String)json.getValue("defaultCharset"));
+    }
     if (json.getValue("host") instanceof String) {
       obj.setHost((String)json.getValue("host"));
     }
@@ -48,6 +51,9 @@ public class SSHTermOptionsConverter {
   }
 
   public static void toJson(SSHTermOptions obj, JsonObject json) {
+    if (obj.getDefaultCharset() != null) {
+      json.put("defaultCharset", obj.getDefaultCharset());
+    }
     if (obj.getHost() != null) {
       json.put("host", obj.getHost());
     }

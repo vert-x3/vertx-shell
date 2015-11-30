@@ -46,6 +46,8 @@ import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.shell.term.impl.HttpTermServer;
 import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * The web term configuration options.
  *
@@ -53,6 +55,8 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
  */
 @DataObject(generateConverter = true)
 public class HttpTermOptions extends HttpServerOptions {
+
+  public static final String DEFAULT_CHARSET = StandardCharsets.UTF_8.name();
 
   /**
    * @return the {@code vertxshell.js} default resource as a buffer
@@ -83,6 +87,7 @@ public class HttpTermOptions extends HttpServerOptions {
   private Buffer vertsShellJsResource;
   private Buffer termJsResource;
   private Buffer shellHtmlResource;
+  private String charset;
 
   public HttpTermOptions() {
     init();
@@ -99,6 +104,7 @@ public class HttpTermOptions extends HttpServerOptions {
     vertsShellJsResource = that.vertsShellJsResource != null ? that.vertsShellJsResource.copy() : null;
     termJsResource = that.termJsResource != null ? that.termJsResource.copy() : null;
     shellHtmlResource = that.shellHtmlResource != null ? that.shellHtmlResource.copy() : null;
+    charset = that.charset;
   }
 
   private void init() {
@@ -107,6 +113,7 @@ public class HttpTermOptions extends HttpServerOptions {
     vertsShellJsResource = defaultVertxShellJsResource();
     termJsResource = defaultTermJsResource();
     shellHtmlResource = defaultShellHtmlResource();
+    charset = DEFAULT_CHARSET;
   }
 
   /**
@@ -339,6 +346,24 @@ public class HttpTermOptions extends HttpServerOptions {
    */
   public HttpTermOptions setShellHtmlResource(Buffer shellHtmlResource) {
     this.shellHtmlResource = shellHtmlResource;
+    return this;
+  }
+
+  /**
+   * @return the charset used for encoding / decoding text from/to SockJS
+   */
+  public String getCharset() {
+    return charset;
+  }
+
+  /**
+   * Set the charset used for encoding / decoding text data from/to SockJS
+   *
+   * @param charset the charset to use
+   * @return a reference to this, so the API can be used fluently
+   */
+  public HttpTermOptions setCharset(String charset) {
+    this.charset = charset;
     return this;
   }
 }

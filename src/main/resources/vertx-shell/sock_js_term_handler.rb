@@ -25,12 +25,13 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling handle(arg0)"
     end
     # @param [::Vertx::Vertx] vertx 
+    # @param [String] charset 
     # @return [::VertxShell::SockJSTermHandler]
-    def self.create(vertx=nil)
-      if vertx.class.method_defined?(:j_del) && !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::SockJSTermHandler.java_method(:create, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::SockJSTermHandler)
+    def self.create(vertx=nil,charset=nil)
+      if vertx.class.method_defined?(:j_del) && charset.class == String && !block_given?
+        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::SockJSTermHandler.java_method(:create, [Java::IoVertxCore::Vertx.java_class,Java::java.lang.String.java_class]).call(vertx.j_del,charset),::VertxShell::SockJSTermHandler)
       end
-      raise ArgumentError, "Invalid arguments when calling create(vertx)"
+      raise ArgumentError, "Invalid arguments when calling create(vertx,charset)"
     end
     # @yield 
     # @return [self]

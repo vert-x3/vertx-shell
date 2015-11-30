@@ -32,9 +32,6 @@
 
 package io.vertx.ext.shell.term;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -42,7 +39,6 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.CaseInsensitiveHeaders;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.AbstractUser;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.shiro.ShiroAuthOptions;
@@ -55,6 +51,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -335,6 +332,27 @@ public abstract class HttpTermServerBase {
       }, err -> {
         assertEquals(1, count.get());
         async.complete();
+      });
+    }));
+  }
+
+  @Test
+  public void testDifferentCharset(TestContext context) throws Exception {
+    Async async = context.async();
+    server = createServer(context, new HttpTermOptions().setPort(8080).setCharset("ISO_8859_1"));
+    server.termHandler(term -> {
+      term.stdout().write("\u20AC");
+      term.close();
+    });
+    server.listen(context.asyncAssertSuccess(server -> {
+      HttpClient client = vertx.createHttpClient();
+      client.websocket(8080, "localhost", basePath + "/shell/websocket", new CaseInsensitiveHeaders().add("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes())), ws -> {
+        ws.handler(buf -> {
+          context.assertTrue(Arrays.equals(new byte[]{63}, buf.getBytes()));
+          async.complete();
+        });
+      }, err -> {
+        context.fail();
       });
     }));
   }

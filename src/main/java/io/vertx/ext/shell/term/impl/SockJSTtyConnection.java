@@ -41,6 +41,8 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.web.handler.sockjs.SockJSSocket;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -54,8 +56,8 @@ public class SockJSTtyConnection extends HttpTtyConnection {
   private final Context context;
   private final SockJSSocket socket;
 
-  public SockJSTtyConnection(Context context, SockJSSocket socket) {
-    super(getInitialSize(socket));
+  public SockJSTtyConnection(Charset charset, Context context, SockJSSocket socket) {
+    super(charset, getInitialSize(socket));
     this.context = context;
     this.socket = socket;
   }

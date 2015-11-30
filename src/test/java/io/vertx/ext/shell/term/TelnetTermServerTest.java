@@ -48,11 +48,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 /**
@@ -86,7 +90,11 @@ public class TelnetTermServerTest {
   }
 
   private void startTelnet(TestContext context, Handler<Term> termHandler) {
-    server = TermServer.createTelnetTermServer(vertx, new TelnetTermOptions().setPort(4000));
+    startTelnet(context, new TelnetTermOptions(), termHandler);
+  }
+
+  private void startTelnet(TestContext context, TelnetTermOptions options, Handler<Term> termHandler) {
+    server = TermServer.createTelnetTermServer(vertx, options.setPort(4000));
     server.termHandler(termHandler);
     Async async = context.async();
     server.listen(context.asyncAssertSuccess(v -> async.complete()));
@@ -210,5 +218,44 @@ public class TelnetTermServerTest {
     });
     client.addOptionHandler(new WindowSizeOptionHandler(10, 20, false, false, true, false));
     client.connect("localhost", server.actualPort());
+  }
+
+  @Test
+  public void testOutBinaryTrue(TestContext context) throws Exception {
+    startTelnet(context, new TelnetTermOptions().setOutBinary(true), term -> {
+      term.stdout().write("\u20AC");
+    });
+    client.addOptionHandler(new WindowSizeOptionHandler(10, 20, false, false, true, false));
+    client.connect("localhost", server.actualPort());
+    InputStream in = client.getInputStream();
+    context.assertEquals(226, in.read());
+    context.assertEquals(130, in.read());
+    context.assertEquals(172, in.read());
+  }
+
+  @Test
+  public void testOutBinaryFalse(TestContext context) throws Exception {
+    byte[] expected = StandardCharsets.US_ASCII.encode("€").array();
+    startTelnet(context, new TelnetTermOptions().setOutBinary(false), term -> {
+      term.stdout().write("\u20AC");
+    });
+    client.addOptionHandler(new WindowSizeOptionHandler(10, 20, false, false, true, false));
+    client.connect("localhost", server.actualPort());
+    InputStream in = client.getInputStream();
+    for (int i = 0;i < expected.length;i++) {
+      context.assertEquals((int)expected[i], in.read());
+    }
+  }
+
+  @Test
+  public void testDifferentCharset(TestContext context) throws Exception {
+    startTelnet(context, new TelnetTermOptions().setCharset("ISO_8859_1"), term -> {
+      term.stdout().write("\u20AC");
+      term.close();
+    });
+    client.connect("localhost", server.actualPort());
+    InputStream in = client.getInputStream();
+    int b = in.read();
+    context.assertEquals(63, b);
   }
 }

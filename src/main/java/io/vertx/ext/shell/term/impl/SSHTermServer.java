@@ -59,6 +59,8 @@ import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.session.ServerConnectionServiceFactory;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -133,6 +135,7 @@ public class SSHTermServer implements TermServer {
     if (options.getAuthOptions() != null) {
       authProvider = Helper.toAuthProvider(vertx, options.getAuthOptions());
     }
+    Charset defaultCharset = Charset.forName(options.getDefaultCharset());
     listenContext = (ContextInternal) vertx.getOrCreateContext();
     vertx.executeBlocking(fut -> {
 
@@ -169,7 +172,7 @@ public class SSHTermServer implements TermServer {
         };
 
         nativeServer = SshServer.setUpDefaultServer();
-        nativeServer.setShellFactory(() -> new TtyCommand(connectionHandler::handle));
+        nativeServer.setShellFactory(() -> new TtyCommand(defaultCharset, connectionHandler::handle));
         nativeServer.setHost(options.getHost());
         nativeServer.setPort(options.getPort());
         nativeServer.setKeyPairProvider(provider);

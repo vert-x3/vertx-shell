@@ -27,6 +27,9 @@ import io.vertx.core.json.JsonArray;
 public class HttpTermOptionsConverter {
 
   public static void fromJson(JsonObject json, HttpTermOptions obj) {
+    if (json.getValue("charset") instanceof String) {
+      obj.setCharset((String)json.getValue("charset"));
+    }
     if (json.getValue("shellHtmlResource") instanceof String) {
       obj.setShellHtmlResource(io.vertx.core.buffer.Buffer.buffer(java.util.Base64.getDecoder().decode((String)json.getValue("shellHtmlResource"))));
     }
@@ -48,6 +51,9 @@ public class HttpTermOptionsConverter {
   }
 
   public static void toJson(HttpTermOptions obj, JsonObject json) {
+    if (obj.getCharset() != null) {
+      json.put("charset", obj.getCharset());
+    }
     if (obj.getShellHtmlResource() != null) {
       json.put("shellHtmlResource", obj.getShellHtmlResource().getBytes());
     }

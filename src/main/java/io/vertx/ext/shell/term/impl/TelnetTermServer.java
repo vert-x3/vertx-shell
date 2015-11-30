@@ -44,6 +44,8 @@ import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.Term;
 
+import java.nio.charset.Charset;
+
 /**
  * Encapsulate the Telnet server setup.
  *
@@ -58,7 +60,7 @@ public class TelnetTermServer implements TermServer {
 
   public TelnetTermServer(Vertx vertx, TelnetTermOptions options) {
     this.vertx = vertx;
-    this.options = options;
+    this.options = new TelnetTermOptions(options);
   }
 
   @Override
@@ -84,10 +86,11 @@ public class TelnetTermServer implements TermServer {
 
   @Override
   public TermServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
+    Charset charset = Charset.forName(options.getCharset());
     if (server == null) {
       server = vertx.createNetServer(options);
       server.connectHandler(new TelnetSocketHandler(vertx, () -> {
-        return new TelnetTtyConnection(true, true, handler::handle);
+        return new TelnetTtyConnection(options.getInBinary(), options.getOutBinary(), charset, handler::handle);
       }));
       server.listen(ar -> {
         if (ar.succeeded()) {

@@ -37,6 +37,8 @@ import io.termd.core.tty.TtyEvent;
 import io.termd.core.util.Helper;
 import io.termd.core.util.Vector;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -57,6 +59,16 @@ public class TestTtyConnection implements TtyConnection {
   private volatile boolean closed;
   private final CountDownLatch closeLatch = new CountDownLatch(1);
   private volatile long lastAccessedTime;
+
+  @Override
+  public Charset inputCharset() {
+    return StandardCharsets.UTF_8;
+  }
+
+  @Override
+  public Charset outputCharset() {
+    return StandardCharsets.UTF_8;
+  }
 
   @Override
   public long lastAccessedTime() {

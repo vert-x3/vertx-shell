@@ -51,6 +51,7 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -121,6 +122,8 @@ public class HttpTermServer implements TermServer {
   @Override
   public TermServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
 
+    Charset charset = Charset.forName(options.getCharset());
+
     boolean createServer = false;
     if (router == null) {
       createServer = true;
@@ -137,7 +140,7 @@ public class HttpTermServer implements TermServer {
         router.route(options.getSockJSPath()).handler(basicAuthHandler);
       }
       SockJSHandler sockJSHandler = SockJSHandler.create(vertx, options.getSockJSHandlerOptions());
-      sockJSHandler.socketHandler(new SockJSTermHandlerImpl(vertx).connectionHandler(handler::handle));
+      sockJSHandler.socketHandler(new SockJSTermHandlerImpl(vertx, charset).connectionHandler(handler::handle));
       router.route(options.getSockJSPath()).handler(sockJSHandler);
     }
 

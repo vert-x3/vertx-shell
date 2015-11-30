@@ -41,6 +41,8 @@ import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.core.net.PemTrustOptions;
 import io.vertx.core.net.PfxOptions;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * Telnet options configuration, extends {@link io.vertx.core.net.NetServerOptions}.
  *
@@ -49,11 +51,25 @@ import io.vertx.core.net.PfxOptions;
 @DataObject()
 public class TelnetTermOptions extends NetServerOptions {
 
+  public static final boolean DEFAULT_IN_BINARY = true;
+  public static final boolean DEFAULT_OUT_BINARY = true;
+  public static final String DEFAULT_CHARSET = StandardCharsets.UTF_8.name();
+
+  private boolean outBinary;
+  private boolean inBinary;
+  private String charset;
+
   public TelnetTermOptions() {
+    this.outBinary = DEFAULT_OUT_BINARY;
+    this.inBinary = DEFAULT_IN_BINARY;
+    this.charset = DEFAULT_CHARSET;
   }
 
   public TelnetTermOptions(TelnetTermOptions other) {
     super(other);
+    outBinary = other.outBinary;
+    inBinary = other.inBinary;
+    charset = other.charset;
   }
 
   public TelnetTermOptions(JsonObject json) {
@@ -173,5 +189,52 @@ public class TelnetTermOptions extends NetServerOptions {
   @Override
   public TelnetTermOptions setClientAuthRequired(boolean clientAuthRequired) {
     return (TelnetTermOptions) super.setClientAuthRequired(clientAuthRequired);
+  }
+
+  public boolean getOutBinary() {
+    return outBinary;
+  }
+
+  /**
+   * Set the telnet connection to negociate binary data format when sending to the client, the default value is true. This
+   * allows to send data in 8 bit format and thus charset like UTF-8.
+   *
+   * @param outBinary the out binary value
+   * @return a reference to this, so the API can be used fluently
+   */
+  public TelnetTermOptions setOutBinary(boolean outBinary) {
+    this.outBinary = outBinary;
+    return this;
+  }
+
+  public boolean getInBinary() {
+    return inBinary;
+  }
+
+  /**
+   * Set the telnet connection to negociate binary data format when receiving from the client, the default value is true. This
+   * allows to send data in 8 bit format and thus charset like UTF-8.
+   *
+   * @param inBinary the in binary value
+   * @return a reference to this, so the API can be used fluently
+   */
+  public TelnetTermOptions setInBinary(boolean inBinary) {
+    this.inBinary = inBinary;
+    return this;
+  }
+
+  public String getCharset() {
+    return charset;
+  }
+
+  /**
+   * Set the charset to use when binary mode is active, see {@link #setInBinary(boolean)} and {@link #setOutBinary(boolean)}.
+   *
+   * @param charset the charset
+   * @return a reference to this, so the API can be used fluently
+   */
+  public TelnetTermOptions setCharset(String charset) {
+    this.charset = charset;
+    return this;
   }
 }

@@ -43,6 +43,8 @@ import io.vertx.core.net.PfxOptions;
 import io.vertx.ext.auth.AuthOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * The SSH term configuration options.
  *
@@ -51,17 +53,20 @@ import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 @DataObject(generateConverter = true)
 public class SSHTermOptions {
 
-  private static final String DEFAULT_HOST = NetServerOptions.DEFAULT_HOST;
-  private static final int DEFAULT_PORT = NetServerOptions.DEFAULT_PORT;
+  public static final String DEFAULT_HOST = NetServerOptions.DEFAULT_HOST;
+  public static final int DEFAULT_PORT = NetServerOptions.DEFAULT_PORT;
+  public static final String DEFAULT_DEFAULT_CHARSET = StandardCharsets.UTF_8.name();
 
   private String host;
   private int port;
   private KeyCertOptions keyPairOptions;
   private AuthOptions authOptions;
+  private String defaultCharset;
 
   public SSHTermOptions() {
     host = DEFAULT_HOST;
     port = DEFAULT_PORT;
+    defaultCharset = DEFAULT_DEFAULT_CHARSET;
   }
 
   public SSHTermOptions(SSHTermOptions that) {
@@ -69,6 +74,7 @@ public class SSHTermOptions {
     this.port = that.port;
     this.keyPairOptions = that.keyPairOptions != null ? that.keyPairOptions.clone() : null;
     this.authOptions = that.authOptions != null ? that.authOptions.clone() : null;
+    this.defaultCharset = that.defaultCharset;
   }
 
   public SSHTermOptions(JsonObject json) {
@@ -163,6 +169,21 @@ public class SSHTermOptions {
    */
   public SSHTermOptions setShiroAuthOptions(ShiroAuthOptions shiroAuthOptions) {
     this.authOptions = shiroAuthOptions;
+    return this;
+  }
+
+  public String getDefaultCharset() {
+    return defaultCharset;
+  }
+
+  /**
+   * Set the default charset to use when the client does not specifies one.
+   *
+   * @param defaultCharset the default charset
+   * @return a reference to this, so the API can be used fluently
+   */
+  public SSHTermOptions setDefaultCharset(String defaultCharset) {
+    this.defaultCharset = defaultCharset;
     return this;
   }
 }

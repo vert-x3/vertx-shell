@@ -71,12 +71,13 @@ var SockJSTermHandler = function(j_val) {
 
  @memberof module:vertx-shell-js/sock_js_term_handler
  @param vertx {Vertx} 
+ @param charset {string} 
  @return {SockJSTermHandler}
  */
-SockJSTermHandler.create = function(vertx) {
+SockJSTermHandler.create = function(vertx, charset) {
   var __args = arguments;
-  if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-    return utils.convReturnVertxGen(JSockJSTermHandler["create(io.vertx.core.Vertx)"](vertx._jdel), SockJSTermHandler);
+  if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'string') {
+    return utils.convReturnVertxGen(JSockJSTermHandler["create(io.vertx.core.Vertx,java.lang.String)"](vertx._jdel, charset), SockJSTermHandler);
   } else throw new TypeError('function invoked with invalid arguments');
 };
 
