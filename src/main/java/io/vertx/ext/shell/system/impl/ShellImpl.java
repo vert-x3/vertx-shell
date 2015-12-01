@@ -40,6 +40,7 @@ import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.Shell;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -55,6 +56,7 @@ public class ShellImpl implements Shell {
   final InternalCommandManager commandManager;
   final SessionImpl session = new SessionImpl();
   private final SortedMap<Integer, JobImpl> jobs = new TreeMap<>();
+  private boolean closed = false;
 
   public ShellImpl(InternalCommandManager commandManager) {
     this.commandManager = commandManager;
@@ -97,9 +99,14 @@ public class ShellImpl implements Shell {
 
   @Override
   public void close(Handler<Void> completionHandler) {
-    ArrayList<JobImpl> jobs;
+    List<JobImpl> jobs;
     synchronized (this) {
-      jobs = new ArrayList<>(this.jobs.values());
+      if (closed) {
+        jobs = Collections.emptyList();
+      } else {
+        jobs = new ArrayList<>(this.jobs.values());
+        closed = true;
+      }
     }
     if (jobs.isEmpty()) {
       completionHandler.handle(null);

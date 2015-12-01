@@ -18,6 +18,7 @@ package io.vertx.groovy.ext.shell.system;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
+import io.vertx.ext.shell.system.ExecStatus
 import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.term.Tty
 import io.vertx.groovy.ext.shell.session.Session
@@ -32,6 +33,10 @@ public class Process {
   }
   public Object getDelegate() {
     return delegate;
+  }
+  public ExecStatus status() {
+    def ret = this.delegate.status();
+    return ret;
   }
   /**
    * Set the process tty.
@@ -83,11 +88,27 @@ public class Process {
     this.delegate.run();
   }
   /**
+   * Run the process.
+   * @param completionHandler 
+   */
+  public void run(Handler<Void> completionHandler) {
+    this.delegate.run(completionHandler);
+  }
+  /**
    * Attempt to interrupt the process.
    * @return true if the process caught the signal
    */
   public boolean interrupt() {
     def ret = this.delegate.interrupt();
+    return ret;
+  }
+  /**
+   * Attempt to interrupt the process.
+   * @param completionHandler 
+   * @return true if the process caught the signal
+   */
+  public boolean interrupt(Handler<Void> completionHandler) {
+    def ret = this.delegate.interrupt(completionHandler);
     return ret;
   }
   /**
@@ -97,15 +118,36 @@ public class Process {
     this.delegate.resume();
   }
   /**
+   * Suspend the process.
+   * @param completionHandler 
+   */
+  public void resume(Handler<Void> completionHandler) {
+    this.delegate.resume(completionHandler);
+  }
+  /**
    * Resume the process.
    */
   public void suspend() {
     this.delegate.suspend();
   }
   /**
+   * Resume the process.
+   * @param completionHandler 
+   */
+  public void suspend(Handler<Void> completionHandler) {
+    this.delegate.suspend(completionHandler);
+  }
+  /**
    * Terminate the process.
    */
   public void terminate() {
     this.delegate.terminate();
+  }
+  /**
+   * Terminate the process.
+   * @param completionHandler 
+   */
+  public void terminate(Handler<Void> completionHandler) {
+    this.delegate.terminate(completionHandler);
   }
 }

@@ -43,6 +43,7 @@ import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.ExecStatus;
 import io.vertx.ext.shell.impl.ShellSession;
 import io.vertx.ext.shell.support.TestTtyConnection;
+import io.vertx.ext.shell.system.impl.JobImpl;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -436,21 +437,27 @@ public class TtyAdapterTest {
     conn.read("foo\r");
   }
 
-  @Test
   public void testExit(TestContext context) throws Exception {
-    registry.registerCommand(Command.create(vertx, Sleep.class));
+    Async regLatch = context.async();
+    registry.registerCommand(Command.create(vertx, Sleep.class), context.asyncAssertSuccess(v -> regLatch.complete()));
+    regLatch.awaitSuccess(2000);
     for (String cmd : Arrays.asList("exit", "logout")) {
       TestTtyConnection conn = new TestTtyConnection();
       ShellSession adapter = new ShellSession(vertx, conn, manager);
       adapter.init().readLine();
       conn.read("sleep 10000\r");
+      long now = System.currentTimeMillis();
+      while (adapter.jobs().size() == 0 || ((JobImpl)adapter.jobs().iterator().next()).actualStatus() != ExecStatus.RUNNING) {
+        context.assertTrue(System.currentTimeMillis() - now < 2000);
+        Thread.sleep(1);
+      }
       conn.sendEvent(TtyEvent.SUSP);
       conn.read("bg\r");
       conn.read(cmd + "\r");
       context.assertTrue(conn.isClosed());
-      long now = System.currentTimeMillis();
+      now = System.currentTimeMillis();
       while (adapter.getShell().jobs().size() > 0) {
-        context.assertTrue((System.currentTimeMillis() - now) < 10000);
+        context.assertTrue((System.currentTimeMillis() - now) < 2000);
         Thread.sleep(10);
       }
     }

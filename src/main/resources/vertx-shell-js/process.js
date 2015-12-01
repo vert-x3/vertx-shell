@@ -34,6 +34,19 @@ var Process = function(j_val) {
   var that = this;
 
   /**
+
+   @public
+
+   @return {Object}
+   */
+  this.status = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return utils.convReturnEnum(j_process["status()"]());
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
    Set the process tty.
 
    @public
@@ -112,12 +125,14 @@ var Process = function(j_val) {
    Run the process.
 
    @public
-
+   @param completionHandler {function} 
    */
   this.run = function() {
     var __args = arguments;
     if (__args.length === 0) {
       j_process["run()"]();
+    }  else if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_process["run(io.vertx.core.Handler)"](__args[0]);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -125,13 +140,15 @@ var Process = function(j_val) {
    Attempt to interrupt the process.
 
    @public
-
+   @param completionHandler {function} 
    @return {boolean} true if the process caught the signal
    */
   this.interrupt = function() {
     var __args = arguments;
     if (__args.length === 0) {
       return j_process["interrupt()"]();
+    }  else if (__args.length === 1 && typeof __args[0] === 'function') {
+      return j_process["interrupt(io.vertx.core.Handler)"](__args[0]);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -139,12 +156,14 @@ var Process = function(j_val) {
    Suspend the process.
 
    @public
-
+   @param completionHandler {function} 
    */
   this.resume = function() {
     var __args = arguments;
     if (__args.length === 0) {
       j_process["resume()"]();
+    }  else if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_process["resume(io.vertx.core.Handler)"](__args[0]);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -152,12 +171,14 @@ var Process = function(j_val) {
    Resume the process.
 
    @public
-
+   @param completionHandler {function} 
    */
   this.suspend = function() {
     var __args = arguments;
     if (__args.length === 0) {
       j_process["suspend()"]();
+    }  else if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_process["suspend(io.vertx.core.Handler)"](__args[0]);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -165,12 +186,14 @@ var Process = function(j_val) {
    Terminate the process.
 
    @public
-
+   @param completionHandler {function} 
    */
   this.terminate = function() {
     var __args = arguments;
     if (__args.length === 0) {
       j_process["terminate()"]();
+    }  else if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_process["terminate(io.vertx.core.Handler)"](__args[0]);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

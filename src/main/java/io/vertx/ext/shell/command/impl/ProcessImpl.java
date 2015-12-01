@@ -79,6 +79,11 @@ public class ProcessImpl implements Process {
   }
 
   @Override
+  public ExecStatus status() {
+    return status;
+  }
+
+  @Override
   public synchronized Process setTty(Tty tty) {
     this.tty = tty;
     return this;
@@ -107,12 +112,20 @@ public class ProcessImpl implements Process {
   }
 
   @Override
-  public synchronized boolean interrupt() {
+  public boolean interrupt(Handler<Void> completionHandler) {
     if (status == ExecStatus.RUNNING || status == ExecStatus.STOPPED) {
       Handler<Void> handler = interruptHandler;
-      if (handler != null) {
-        context.runOnContext(handler::handle);
-      }
+      runnerContext.runOnContext(v -> {
+        try {
+          if (handler != null) {
+            handler.handle(null);
+          }
+        } finally {
+          if (completionHandler != null) {
+            runnerContext.runOnContext(completionHandler);
+          }
+        }
+      });
       return handler != null;
     } else {
       throw new IllegalStateException("Cannot interrupt process in " + status + " state");
@@ -120,39 +133,55 @@ public class ProcessImpl implements Process {
   }
 
   @Override
-  public synchronized void resume() {
+  public synchronized void resume(Handler<Void> completionHandler) {
     if (status == ExecStatus.STOPPED) {
       status = ExecStatus.RUNNING;
       Handler<Void> handler = resumeHandler;
-      if (handler != null) {
-        context.runOnContext(handler::handle);
-      }
+      context.runOnContext(v -> {
+        try {
+          if (handler != null) {
+            handler.handle(null);
+          }
+        } finally {
+          if (completionHandler != null) {
+            runnerContext.runOnContext(completionHandler);
+          }
+        }
+      });
     } else {
       throw new IllegalStateException("Cannot resume process in " + status + " state");
     }
   }
 
   @Override
-  public synchronized void suspend() {
+  public void suspend(Handler<Void> completionHandler) {
     if (status == ExecStatus.RUNNING) {
       status = ExecStatus.STOPPED;
       Handler<Void> handler = suspendHandler;
-      if (handler != null) {
-        context.runOnContext(handler::handle);
-      }
+      context.runOnContext(v -> {
+        try {
+          if (handler != null) {
+            handler.handle(null);
+          }
+        } finally {
+          if (completionHandler != null) {
+            runnerContext.runOnContext(completionHandler);
+          }
+        }
+      });
     } else {
       throw new IllegalStateException("Cannot suspend process in " + status + " state");
     }
   }
 
   @Override
-  public void terminate() {
-    if (!terminate(-10)) {
+  public void terminate(Handler<Void> completionHandler) {
+    if (!terminate(-10, completionHandler)) {
       throw new IllegalStateException("Cannot terminate terminated process");
     }
   }
 
-  private synchronized boolean terminate(int statusCode) {
+  private synchronized boolean terminate(int statusCode, Handler<Void> completionHandler) {
     if (status != ExecStatus.TERMINATED) {
       status = ExecStatus.TERMINATED;
       tty.setStdin(null);
@@ -163,9 +192,17 @@ public class ProcessImpl implements Process {
         });
       }
       Handler<Void> handler = endHandler;
-      if (handler != null) {
-        context.runOnContext(handler::handle);
-      }
+      context.runOnContext(v -> {
+        try {
+          if (handler != null) {
+            handler.handle(null);
+          }
+        } finally {
+          if (completionHandler != null) {
+            runnerContext.runOnContext(completionHandler);
+          }
+        }
+      });
       return true;
     } else {
       return false;
@@ -173,11 +210,12 @@ public class ProcessImpl implements Process {
   }
 
   @Override
-  public synchronized void run() {
+  public synchronized void run(Handler<Void> completionHandler) {
 
     if (status != ExecStatus.READY) {
       throw new IllegalStateException("Cannot run proces in " + status + " state");
     }
+    status = ExecStatus.RUNNING;
 
     // Make a local copy
     Tty tty = this.tty;
@@ -312,25 +350,33 @@ public class ProcessImpl implements Process {
 
       @Override
       public CommandProcess interruptHandler(Handler<Void> handler) {
-        interruptHandler = handler;
+        synchronized (ProcessImpl.this) {
+          interruptHandler = handler;
+        }
         return this;
       }
 
       @Override
       public CommandProcess suspendHandler(Handler<Void> handler) {
-        suspendHandler = handler;
+        synchronized (ProcessImpl.this) {
+          suspendHandler = handler;
+        }
         return this;
       }
 
       @Override
       public CommandProcess resumeHandler(Handler<Void> handler) {
-        resumeHandler = handler;
+        synchronized (ProcessImpl.this) {
+          resumeHandler = handler;
+        }
         return this;
       }
 
       @Override
       public CommandProcess endHandler(Handler<Void> handler) {
-        endHandler = handler;
+        synchronized (ProcessImpl.this) {
+          endHandler = handler;
+        }
         return this;
       }
 
@@ -341,24 +387,22 @@ public class ProcessImpl implements Process {
 
       @Override
       public void end(int statusCode) {
-        terminate(statusCode);
+        terminate(statusCode, null);
       }
     };
 
     //
     context.runOnContext(v -> {
-      synchronized (ProcessImpl.this) {
-        if (status == ExecStatus.READY) {
-          status = ExecStatus.RUNNING;
-        } else {
-          // It can only be terminated status
-          return;
-        }
-      }
       try {
-        handler.handle(process);
+        try {
+          handler.handle(process);
+        } finally {
+          if (completionHandler != null) {
+            runnerContext.runOnContext(completionHandler);
+          }
+        }
       } catch (Throwable e) {
-        terminate(1);
+        terminate(1, null);
         throw e;
       }
     });

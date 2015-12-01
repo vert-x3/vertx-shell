@@ -46,6 +46,8 @@ import io.vertx.ext.shell.session.Session;
 @VertxGen
 public interface Process {
 
+  ExecStatus status();
+
   /**
    * Set the process tty.
    *
@@ -86,29 +88,65 @@ public interface Process {
   /**
    * Run the process.
    */
-  void run();
+  default void run() {
+    run(null);
+  }
+
+  /**
+   * Run the process.
+   */
+  void run(Handler<Void> completionHandler);
 
   /**
    * Attempt to interrupt the process.
    *
    * @return true if the process caught the signal
    */
-  boolean interrupt();
+  default boolean interrupt() {
+    return interrupt(null);
+  }
+
+  /**
+   * Attempt to interrupt the process.
+   *
+   * @return true if the process caught the signal
+   */
+  boolean interrupt(Handler<Void> completionHandler);
 
   /**
    * Suspend the process.
    */
-  void resume();
+  default void resume() {
+    resume(null);
+  }
+
+  /**
+   * Suspend the process.
+   */
+  void resume(Handler<Void> completionHandler);
 
   /**
    * Resume the process.
    */
-  void suspend();
+  default void suspend() {
+    suspend(null);
+  }
+
+  /**
+   * Resume the process.
+   */
+  void suspend(Handler<Void> completionHandler);
 
   /**
    * Terminate the process.
    */
-  void terminate();
+  default void terminate() {
+    terminate(null);
+  }
 
+  /**
+   * Terminate the process.
+   */
+  void terminate(Handler<Void> completionHandler);
 
 }

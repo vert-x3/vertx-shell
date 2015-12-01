@@ -43,13 +43,13 @@ import io.vertx.ext.shell.system.ExecStatus;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-class JobImpl implements Job {
+public class JobImpl implements Job {
 
   final int id;
   final ShellImpl shell;
   final Process process;
   final String line;
-  private volatile ExecStatus status;
+  private volatile ExecStatus actualStatus; // Used internally for testing only
   volatile long lastStopped; // When the job was last stopped
   volatile Tty tty;
   volatile Handler<Integer> terminateHandler;
@@ -63,13 +63,17 @@ class JobImpl implements Job {
     this.terminateFuture = Future.future();
 
     process.terminateHandler(status -> {
-      JobImpl.this.status = ExecStatus.TERMINATED;
+      actualStatus = ExecStatus.TERMINATED;
       shell.removeJob(JobImpl.this.id);
       if (terminateHandler != null) {
         terminateHandler.handle(status);
       }
       terminateFuture.complete();
     });
+  }
+
+  public ExecStatus actualStatus() {
+    return actualStatus;
   }
 
   @Override
@@ -86,8 +90,9 @@ class JobImpl implements Job {
   @Override
   public void resume() {
     try {
-      process.resume();
-      status = ExecStatus.RUNNING;
+      process.resume(v -> {
+        actualStatus = ExecStatus.RUNNING;
+      });
     } catch (IllegalStateException ignore) {
     }
   }
@@ -95,15 +100,15 @@ class JobImpl implements Job {
   @Override
   public void suspend() {
     try {
-      process.suspend();
-      status = ExecStatus.STOPPED;
+      process.suspend(v -> {
+        actualStatus = ExecStatus.STOPPED;
+      });
     } catch (IllegalStateException ignore) {
     }
   }
 
   @Override
   public void terminate() {
-    status = ExecStatus.TERMINATED;
     process.terminate();
   }
 
@@ -112,7 +117,7 @@ class JobImpl implements Job {
   }
 
   public ExecStatus status() {
-    return status;
+    return process.status();
   }
 
   public String line() {
@@ -137,9 +142,10 @@ class JobImpl implements Job {
 
   @Override
   public void run() {
-    status = ExecStatus.RUNNING;
     process.setTty(tty);
     process.setSession(shell.session);
-    process.run();
+    process.run(v -> {
+      actualStatus = ExecStatus.RUNNING;
+    });
   }
 }

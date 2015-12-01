@@ -15,6 +15,13 @@ module VertxShell
     def j_del
       @j_del
     end
+    # @return [:READY,:RUNNING,:STOPPED,:TERMINATED]
+    def status
+      if !block_given?
+        return @j_del.java_method(:status, []).call().name.intern
+      end
+      raise ArgumentError, "Invalid arguments when calling status()"
+    end
     #  Set the process tty.
     # @param [::VertxShell::Tty] tty the process tty
     # @return [self]
@@ -62,42 +69,57 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling terminate_handler()"
     end
     #  Run the process.
+    # @yield 
     # @return [void]
     def run
       if !block_given?
         return @j_del.java_method(:run, []).call()
+      elsif block_given?
+        return @j_del.java_method(:run, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
       end
       raise ArgumentError, "Invalid arguments when calling run()"
     end
     #  Attempt to interrupt the process.
+    # @yield 
     # @return [true,false] true if the process caught the signal
     def interrupt?
       if !block_given?
         return @j_del.java_method(:interrupt, []).call()
+      elsif block_given?
+        return @j_del.java_method(:interrupt, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
       end
       raise ArgumentError, "Invalid arguments when calling interrupt?()"
     end
     #  Suspend the process.
+    # @yield 
     # @return [void]
     def resume
       if !block_given?
         return @j_del.java_method(:resume, []).call()
+      elsif block_given?
+        return @j_del.java_method(:resume, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
       end
       raise ArgumentError, "Invalid arguments when calling resume()"
     end
     #  Resume the process.
+    # @yield 
     # @return [void]
     def suspend
       if !block_given?
         return @j_del.java_method(:suspend, []).call()
+      elsif block_given?
+        return @j_del.java_method(:suspend, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
       end
       raise ArgumentError, "Invalid arguments when calling suspend()"
     end
     #  Terminate the process.
+    # @yield 
     # @return [void]
     def terminate
       if !block_given?
         return @j_del.java_method(:terminate, []).call()
+      elsif block_given?
+        return @j_del.java_method(:terminate, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
       end
       raise ArgumentError, "Invalid arguments when calling terminate()"
     end
