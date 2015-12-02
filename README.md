@@ -58,8 +58,3 @@ or with SSH
 - advanced option configuration (beyond host/port)
 - web connector
 - event bus connector
-
-## Todo
-
-- test close a session where a command is already closed -> throws ISE
-- commands in bg or stopped should not read from TTY nor write to sdout
