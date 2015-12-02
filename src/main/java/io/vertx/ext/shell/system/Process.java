@@ -94,6 +94,8 @@ public interface Process {
 
   /**
    * Run the process.
+   *
+   * @param completionHandler handler called after process callback
    */
   void run(Handler<Void> completionHandler);
 
@@ -109,6 +111,7 @@ public interface Process {
   /**
    * Attempt to interrupt the process.
    *
+   * @param completionHandler handler called after interrupt callback
    * @return true if the process caught the signal
    */
   boolean interrupt(Handler<Void> completionHandler);
@@ -122,6 +125,8 @@ public interface Process {
 
   /**
    * Suspend the process.
+   *
+   * @param completionHandler handler called after resume callback
    */
   void resume(Handler<Void> completionHandler);
 
@@ -134,6 +139,8 @@ public interface Process {
 
   /**
    * Resume the process.
+   *
+   * @param completionHandler handler called after suspend callback
    */
   void suspend(Handler<Void> completionHandler);
 
@@ -146,6 +153,8 @@ public interface Process {
 
   /**
    * Terminate the process.
+   *
+   * @param completionHandler handler called after end callback
    */
   void terminate(Handler<Void> completionHandler);
 
