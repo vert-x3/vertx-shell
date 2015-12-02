@@ -301,7 +301,6 @@ public class CommandProcessTest {
     Async interruptedLatch = context.async(6);
     builder.processHandler(process -> {
       process.interruptHandler(v -> {
-        status.incrementAndGet();
         interruptedLatch.countDown();
       });
       runningLatch.complete();
@@ -310,15 +309,15 @@ public class CommandProcessTest {
     process.run();
     runningLatch.awaitSuccess(10000);
     process.interrupt(v -> {
+      context.assertEquals(0, status.getAndIncrement());
+      interruptedLatch.countDown();
+    });
+    process.interrupt(v -> {
       context.assertEquals(1, status.getAndIncrement());
       interruptedLatch.countDown();
     });
     process.interrupt(v -> {
-      context.assertEquals(3, status.getAndIncrement());
-      interruptedLatch.countDown();
-    });
-    process.interrupt(v -> {
-      context.assertEquals(5, status.getAndIncrement());
+      context.assertEquals(2, status.getAndIncrement());
       interruptedLatch.countDown();
     });
   }
