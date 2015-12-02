@@ -32,33 +32,21 @@
 
 package io.vertx.ext.shell.impl;
 
-import io.termd.core.readline.Keymap;
-import io.termd.core.readline.Readline;
-import io.termd.core.tty.TtyConnection;
 import io.termd.core.util.Helper;
-import io.termd.core.util.Vector;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.system.impl.InternalCommandManager;
 import io.vertx.ext.shell.system.impl.ShellImpl;
-import io.vertx.ext.shell.term.Tty;
-import io.vertx.ext.shell.session.Session;
-import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.ExecStatus;
 import io.vertx.ext.shell.system.Shell;
+import io.vertx.ext.shell.term.Term;
 
-import java.io.InputStream;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * The shell session as seen from the shell server perspective.
@@ -71,25 +59,20 @@ public class ShellSession {
   private final InternalCommandManager manager;
   private final Shell shell;
   private final Vertx vertx;
-  private final TtyConnection conn;
-  private final Readline readline;
+  private Term term;
+
   final Future<Void> closedFuture;
   private Job foregroundJob; // The currently running job
   private String welcome;
 
-  public ShellSession(Vertx vertx, TtyConnection conn, InternalCommandManager manager) {
-
-    InputStream inputrc = Keymap.class.getResourceAsStream("inputrc");
-    Keymap keymap = new Keymap(inputrc);
-    Readline readline = new Readline(keymap);
-
+  public ShellSession(Vertx vertx, Term term, InternalCommandManager manager) {
     this.id = UUID.randomUUID().toString();
     this.shell = new ShellImpl(manager);
     this.vertx = vertx;
-    this.conn = conn;
-    this.readline = readline;
     this.manager = manager;
     this.closedFuture = Future.future();
+    this.term = term.setSession(shell.session());
+
   }
 
   public Shell getShell() {
@@ -97,119 +80,36 @@ public class ShellSession {
   }
 
   public long lastAccessedTime() {
-    return conn.lastAccessedTime();
+    return term.lastAccessedTime();
   }
 
   public void setWelcome(String welcome) {
     this.welcome = welcome;
   }
 
-  public Vector size() {
-    return conn.size();
-  }
-
   public ShellSession init() {
-    for (io.termd.core.readline.Function function : Helper.loadServices(Thread.currentThread().getContextClassLoader(), io.termd.core.readline.Function.class)) {
-      readline.addFunction(function);
-    }
-    conn.setStdinHandler(codePoints -> {
-      if (foregroundJob == null) {
-        // Bug ???
-      } else {
-        if (((TtyImpl) foregroundJob.getTty()).stdin != null) {
-          // Forward
-          ((TtyImpl) foregroundJob.getTty()).stdin.handle(Helper.fromCodePoints(codePoints));
-        } else {
-          // Echo
-          echo(codePoints);
-          readline.queueEvent(codePoints);
-        }
-      }
-    });
-    conn.setSizeHandler(resize -> {
+
+    term.interruptHandler(key -> foregroundJob.interrupt());
+
+    term.suspendHandler(key -> {
       Job job = foregroundJob;
-      if (job != null) {
-        TtyImpl tty = (TtyImpl) job.getTty();
-        if (tty.resizeHandler != null) {
-          tty.resizeHandler.handle(null);
-        }
-      }
+      term.echo(Helper.fromCodePoints(new int[]{key, '\n'}));
+      term.echo(statusLine(job) + "\n");
+      foregroundJob = null;
+      job.suspend();
+      readline();
+      return true;
     });
-    conn.setEventHandler((event, key) -> {
-      Job job = foregroundJob;
-      switch (event) {
-        case INTR:
-          if (!job.interrupt()) {
-            echo(key);
-            readline.queueEvent(new int[]{key});
-          } else {
-            echo(key, '\n');
-          }
-          break;
-        case EOF:
-          // Pseudo signal
-          if (((TtyImpl) foregroundJob.getTty()).stdin != null) {
-            ((TtyImpl) foregroundJob.getTty()).stdin.handle(Helper.fromCodePoints(new int[]{key}));
-          } else {
-            echo(key);
-            readline.queueEvent(new int[]{key});
-          }
-          break;
-        case SUSP:
-          echo(key, '\n');
-          echo(Helper.toCodePoints(statusLine(job) + "\n"));
-          foregroundJob = null;
-          ((TtyImpl) job.getTty()).stdout = null;
-          job.suspend();
-          read(readline);
-          break;
-      }
-    });
-    conn.setCloseHandler(v -> {
+
+    term.closeHandler(v -> {
       shell.close(ar -> {
         closedFuture.complete();
       });
     });
     if (welcome != null && welcome.length() > 0) {
-      conn.write(welcome);
+      term.stdout().write(welcome);
     }
     return this;
-  }
-
-  public void readLine() {
-    read(readline);
-  }
-
-  private void echo(int... codePoints) {
-    Consumer<int[]> out = conn.stdoutHandler();
-    for (int codePoint : codePoints) {
-      if (codePoint < 32) {
-        if (codePoint == '\t') {
-          out.accept(new int[]{'\t'});
-        } else if (codePoint == '\b') {
-          out.accept(new int[]{'\b',' ','\b'});
-        } else if (codePoint == '\r' || codePoint == '\n') {
-          out.accept(new int[]{'\n'});
-        } else {
-          out.accept(new int[]{'^', codePoint + 64});
-        }
-      } else {
-        if (codePoint == 127) {
-          out.accept(new int[]{'\b',' ','\b'});
-        } else {
-          out.accept(new int[]{codePoint});
-        }
-      }
-    }
-  }
-
-  void checkPending() {
-    if (foregroundJob != null && ((TtyImpl)foregroundJob.getTty()).stdin != null && readline.hasEvent()) {
-      ((TtyImpl)foregroundJob.getTty()).stdin.handle(Helper.fromCodePoints(readline.nextEvent().buffer().array()));
-      vertx.runOnContext(v -> {
-        checkPending();
-      });
-    }
   }
 
   public Job foregroundJob() {
@@ -224,12 +124,12 @@ public class ShellSession {
     return shell.getJob(id);
   }
 
-  private void jobs(Readline readline) {
+  private void jobs2() {
     shell.jobs().forEach(job -> {
       String line = statusLine(job) + "\n";
-      conn.write(line);
+      term.stdout().write(line);
     });
-    read(readline);
+    readline();
   }
 
   public String statusLine(Job job) {
@@ -250,12 +150,12 @@ public class ShellSession {
         findFirst().orElse(null);
   }
 
-  void read(Readline readline) {
-    readline.readline(conn, "% ", line -> {
+  public void readline() {
+    term.readline("% ", line -> {
 
       if (line == null) {
         // EOF
-        conn.close();
+        term.close();
         return;
       }
 
@@ -263,7 +163,7 @@ public class ShellSession {
 
       if (tokens.stream().filter(CliToken::isText).count() == 0) {
         // For now do like this
-        read(readline);
+        ShellSession.this.readline();
         return;
       }
 
@@ -273,24 +173,23 @@ public class ShellSession {
         switch (name) {
           case "exit":
           case "logout":
-            conn.close();
+            term.close();
             return;
           case "jobs":
-            jobs(readline);
+            jobs2();
             return;
           case "fg": {
             Job job = findJob();
             if (job == null) {
-              conn.write("no such job\n");
-              read(readline);
+              term.stdout().write("no such job\n");
+              readline();
             } else {
               foregroundJob = job;
-              echo(Helper.toCodePoints(job.line() + "\n"));
+              term.echo(job.line() + "\n");
               if (job.status() == ExecStatus.STOPPED) {
-                ((TtyImpl)job.getTty()).stdout = conn::write; // We set stdout whether or not it's background (maybe do something different)
-                job.resume();
+                job.resume(true);
               } else {
-                // BG -> FG : nothing to do for now
+                job.toForeground();
               }
             }
             return;
@@ -298,17 +197,16 @@ public class ShellSession {
           case "bg": {
             Job job = findJob();
             if (job == null) {
-              conn.write("no such job\n");
+              term.stdout().write("no such job\n");
             } else {
               if (job.status() == ExecStatus.STOPPED) {
-                ((TtyImpl)job.getTty()).stdout = conn::write; // We set stdout whether or not it's background (maybe do something different)
-                job.resume();
-                echo(Helper.toCodePoints(statusLine(job) + "\n"));
+                job.resume(false);
+                term.echo(statusLine(job) + "\n");
               } else {
-                conn.write("job " + job.id() + " already in background\n");
+                term.stdout().write("job " + job.id() + " already in background\n");
               }
             }
-            read(readline);
+            readline();
             return;
           }
         }
@@ -318,115 +216,25 @@ public class ShellSession {
       try {
         job = shell.createJob(tokens);
       } catch (Exception e) {
-        echo(Helper.toCodePoints(e.getMessage() + "\n"));
-        read(readline);
+        term.echo(e.getMessage() + "\n");
+        readline();
         return;
       }
       foregroundJob = job;
-      TtyImpl tty = new TtyImpl(job);
-      tty.stdout = conn::write;
-      job.setTty(tty);
+      job.setTty(term);
       job.terminateHandler(status -> {
         if (foregroundJob == job) {
           foregroundJob = null;
-          ((TtyImpl)job.getTty()).stdout = null;
-          read(readline);
+          readline();
         }
       });
       job.run();
     }, completion -> {
-      String line = Helper.fromCodePoints(completion.line());
-      List<CliToken> tokens = Collections.unmodifiableList(CliToken.tokenize(line));
-      Completion comp = new Completion() {
-
-        @Override
-        public Vertx vertx() {
-          return vertx;
-        }
-
-        @Override
-        public Session session() {
-          return shell.session();
-        }
-
-        @Override
-        public String rawLine() {
-          return line;
-        }
-
-        @Override
-        public List<CliToken> lineTokens() {
-          return tokens;
-        }
-
-        @Override
-        public void complete(List<String> candidates) {
-          if (candidates.size() > 0) {
-            completion.suggest(candidates.stream().
-                map(Helper::toCodePoints).
-                collect(Collectors.toList()));
-          } else {
-            completion.end();
-          }
-        }
-
-        @Override
-        public void complete(String value, boolean terminal) {
-          completion.complete(Helper.toCodePoints(value), terminal);
-        }
-      };
-      manager.complete(comp);
+      manager.complete(completion);
     });
   }
 
-  class TtyImpl implements Tty {
-
-    final Job job;
-    volatile Stream stdin;
-    volatile Stream stdout;
-    volatile Handler<Void> resizeHandler;
-
-    public TtyImpl(Job job) {
-      this.job = job;
-    }
-
-    @Override
-    public String type() {
-      return conn.terminalType();
-    }
-
-    @Override
-    public int width() {
-      return size() != null ? size().x() : -1;
-    }
-
-    @Override
-    public int height() {
-      return size() != null ? size().y() : -1;
-    }
-
-    @Override
-    public Tty setStdin(Stream stdin) {
-      this.stdin = stdin;
-      if (foregroundJob == job) {
-        checkPending();
-      }
-      return this;
-    }
-
-    @Override
-    public Tty resizehandler(Handler<Void> handler) {
-      resizeHandler = handler;
-      return this;
-    }
-
-    @Override
-    public Stream stdout() {
-      return stdout;
-    }
-  }
-
   void close() {
-    conn.close();
+    term.close();
   }
 }

@@ -59,7 +59,7 @@ public class SockJSTermHandlerImpl implements SockJSTermHandler {
   @Override
   public SockJSTermHandler termHandler(Handler<Term> handler) {
     if (handler != null) {
-      this.handler = new TermConnectionHandler(handler);
+      this.handler = new TermConnectionHandler(vertx, handler);
     } else {
       this.handler = null;
     }

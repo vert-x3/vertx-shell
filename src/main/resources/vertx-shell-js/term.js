@@ -16,15 +16,18 @@
 
 /** @module vertx-shell-js/term */
 var utils = require('vertx-js/util/utils');
+var Completion = require('vertx-shell-js/completion');
 var Stream = require('vertx-shell-js/stream');
+var SignalHandler = require('vertx-shell-js/signal_handler');
 var Tty = require('vertx-shell-js/tty');
+var Session = require('vertx-shell-js/session');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
 var JTerm = io.vertx.ext.shell.term.Term;
 
 /**
- The remote terminal.
+ The terminal.
 
  @class
 */
@@ -63,6 +66,102 @@ var Term = function(j_val) {
   };
 
   /**
+   @return the last time this term received input
+
+   @public
+
+   @return {number}
+   */
+  this.lastAccessedTime = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return j_term["lastAccessedTime()"]();
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Echo some text in the terminal.
+
+   @public
+   @param text {string} the text to echo 
+   @return {Term} a reference to this, so the API can be used fluently
+   */
+  this.echo = function(text) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'string') {
+      j_term["echo(java.lang.String)"](text);
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Associate the term with a session.
+
+   @public
+   @param session {Session} the session to set 
+   @return {Term} a reference to this, so the API can be used fluently
+   */
+  this.setSession = function(session) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      return utils.convReturnVertxGen(j_term["setSession(io.vertx.ext.shell.session.Session)"](session._jdel), Term);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Set an interrupt signal handler on the term.
+
+   @public
+   @param handler {SignalHandler} the interrupt handler 
+   @return {Term} a reference to this, so the API can be used fluently
+   */
+  this.interruptHandler = function(handler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      j_term["interruptHandler(io.vertx.ext.shell.term.SignalHandler)"](handler._jdel);
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Set a suspend signal handler on the term.
+
+   @public
+   @param handler {SignalHandler} the suspend handler 
+   @return {Term} a reference to this, so the API can be used fluently
+   */
+  this.suspendHandler = function(handler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      j_term["suspendHandler(io.vertx.ext.shell.term.SignalHandler)"](handler._jdel);
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Prompt the user a line of text, providing a completion handler to handle user's completion.
+
+   @public
+   @param prompt {string} the displayed prompt 
+   @param lineHandler {function} the line handler called with the line 
+   @param completionHandler {function} the completion handler 
+   */
+  this.readline = function() {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_term["readline(java.lang.String,io.vertx.core.Handler)"](__args[0], function(jVal) {
+      __args[1](jVal);
+    });
+    }  else if (__args.length === 3 && typeof __args[0] === 'string' && typeof __args[1] === 'function' && typeof __args[2] === 'function') {
+      j_term["readline(java.lang.String,io.vertx.core.Handler,io.vertx.core.Handler)"](__args[0], function(jVal) {
+      __args[1](jVal);
+    }, function(jVal) {
+      __args[2](utils.convReturnVertxGen(jVal, Completion));
+    });
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
    Set a handler that will be called when the terminal is closed.
 
    @public
@@ -78,7 +177,7 @@ var Term = function(j_val) {
   };
 
   /**
-   Close the remote terminal.
+   Close the connection to terminal.
 
    @public
 

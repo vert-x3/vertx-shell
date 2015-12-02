@@ -30,33 +30,16 @@
  *
  */
 
-package io.vertx.ext.shell.term.impl;
+package io.vertx.ext.shell.term;
 
-import io.termd.core.tty.TtyConnection;
-import io.termd.core.util.Helper;
-import io.termd.core.util.Vector;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
-import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.io.Stream;
-import io.vertx.ext.shell.session.Session;
-import io.vertx.ext.shell.term.Term;
+import io.vertx.codegen.annotations.VertxGen;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-class TermConnectionHandler implements Handler<TtyConnection> {
+@VertxGen
+public interface SignalHandler {
 
-  final Vertx vertx;
-  final Handler<Term> handler;
+  boolean deliver(int key);
 
-  public TermConnectionHandler(Vertx vertx, Handler<Term> handler) {
-    this.vertx = vertx;
-    this.handler = handler;
-  }
-
-  @Override
-  public void handle(TtyConnection conn) {
-    handler.handle(new TtyImpl(vertx, conn));
-  }
 }

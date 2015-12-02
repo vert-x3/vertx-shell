@@ -125,14 +125,19 @@ var Process = function(j_val) {
    Run the process.
 
    @public
+   @param foregraound {boolean} 
    @param completionHandler {function} handler called after process callback 
    */
   this.run = function() {
     var __args = arguments;
     if (__args.length === 0) {
       j_process["run()"]();
+    }  else if (__args.length === 1 && typeof __args[0] ==='boolean') {
+      j_process["run(boolean)"](__args[0]);
     }  else if (__args.length === 1 && typeof __args[0] === 'function') {
       j_process["run(io.vertx.core.Handler)"](__args[0]);
+    }  else if (__args.length === 2 && typeof __args[0] ==='boolean' && typeof __args[1] === 'function') {
+      j_process["run(boolean,io.vertx.core.Handler)"](__args[0], __args[1]);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -156,14 +161,19 @@ var Process = function(j_val) {
    Suspend the process.
 
    @public
+   @param foreground {boolean} 
    @param completionHandler {function} handler called after resume callback 
    */
   this.resume = function() {
     var __args = arguments;
     if (__args.length === 0) {
       j_process["resume()"]();
+    }  else if (__args.length === 1 && typeof __args[0] ==='boolean') {
+      j_process["resume(boolean)"](__args[0]);
     }  else if (__args.length === 1 && typeof __args[0] === 'function') {
       j_process["resume(io.vertx.core.Handler)"](__args[0]);
+    }  else if (__args.length === 2 && typeof __args[0] ==='boolean' && typeof __args[1] === 'function') {
+      j_process["resume(boolean,io.vertx.core.Handler)"](__args[0], __args[1]);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -194,6 +204,36 @@ var Process = function(j_val) {
       j_process["terminate()"]();
     }  else if (__args.length === 1 && typeof __args[0] === 'function') {
       j_process["terminate(io.vertx.core.Handler)"](__args[0]);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Set the process in background.
+
+   @public
+   @param completionHandler {function} handler called after background callback 
+   */
+  this.toBackground = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      j_process["toBackground()"]();
+    }  else if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_process["toBackground(io.vertx.core.Handler)"](__args[0]);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Set the process in foreground.
+
+   @public
+   @param completionHandler {function} handler called after foreground callback 
+   */
+  this.toForeground = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      j_process["toForeground()"]();
+    }  else if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_process["toForeground(io.vertx.core.Handler)"](__args[0]);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

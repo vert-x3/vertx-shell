@@ -109,10 +109,23 @@ public class Job {
     return ret;
   }
   /**
-   * Suspend the job.
+   * Resume the job to foreground.
    */
   public void resume() {
     this.delegate.resume();
+  }
+  public void toBackground() {
+    this.delegate.toBackground();
+  }
+  public void toForeground() {
+    this.delegate.toForeground();
+  }
+  /**
+   * Resume the job.
+   * @param foreground true when the job is resumed in foreground
+   */
+  public void resume(boolean foreground) {
+    this.delegate.resume(foreground);
   }
   /**
    * Resume the job.

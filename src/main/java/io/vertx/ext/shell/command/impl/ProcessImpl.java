@@ -66,8 +66,13 @@ public class ProcessImpl implements Process {
   private Handler<Void> suspendHandler;
   private Handler<Void> resumeHandler;
   private Handler<Void> endHandler;
+  private Handler<Void> backgroundHandler;
+  private Handler<Void> foregroundHandler;
   private Handler<Integer> terminateHandler;
   private ExecStatus status;
+  private boolean foreground;
+  private Stream stdin;
+  private Handler<Void> resizeHandler;
 
   public ProcessImpl(Vertx vertx, Context context, Command commandContext, List<CliToken> args, Handler<CommandProcess> handler) {
     this.vertx = vertx;
@@ -134,10 +139,19 @@ public class ProcessImpl implements Process {
   }
 
   @Override
-  public synchronized void resume(Handler<Void> completionHandler) {
+  public synchronized void resume(boolean fg, Handler<Void> completionHandler) {
     if (status == ExecStatus.STOPPED) {
       status = ExecStatus.RUNNING;
+      foreground = fg;
       Handler<Void> handler = resumeHandler;
+      if (fg) {
+        if (stdin != null) {
+          tty.setStdin(stdin);
+        }
+        if (resizeHandler != null) {
+          tty.resizehandler(resizeHandler);
+        }
+      }
       context.runOnContext(v -> {
         try {
           if (handler != null) {
@@ -158,6 +172,12 @@ public class ProcessImpl implements Process {
   public void suspend(Handler<Void> completionHandler) {
     if (status == ExecStatus.RUNNING) {
       status = ExecStatus.STOPPED;
+      if (foreground) {
+        foreground = false;
+        if (tty != null) {
+          tty.setStdin(null);
+        }
+      }
       Handler<Void> handler = suspendHandler;
       context.runOnContext(v -> {
         try {
@@ -176,6 +196,48 @@ public class ProcessImpl implements Process {
   }
 
   @Override
+  public void toBackground(Handler<Void> completionHandler) {
+    setForeground(false, completionHandler);
+  }
+
+  @Override
+  public void toForeground(Handler<Void> completionHandler) {
+    setForeground(true, completionHandler);
+  }
+
+  private void setForeground(boolean fg, Handler<Void> completionHandler) {
+    if (status == ExecStatus.RUNNING) {
+      if (foreground != fg) {
+        foreground = fg;
+        if (fg) {
+          if (stdin != null) {
+            tty.setStdin(stdin);
+          }
+          if (resizeHandler != null) {
+            tty.resizehandler(resizeHandler);
+          }
+        } else {
+          throw new UnsupportedOperationException();
+        }
+        Handler<Void> handler = fg ? foregroundHandler : backgroundHandler;
+        context.runOnContext(v -> {
+          try {
+            if (handler != null) {
+              handler.handle(null);
+            }
+          } finally {
+            if (completionHandler != null) {
+              processContext.runOnContext(completionHandler);
+            }
+          }
+        });
+      }
+    } else {
+      throw new IllegalStateException("Cannot set to " + (fg ? "foreground" : "background") + " a process in " + status + " state");
+    }
+  }
+
+  @Override
   public void terminate(Handler<Void> completionHandler) {
     if (!terminate(-10, completionHandler)) {
       throw new IllegalStateException("Cannot terminate terminated process");
@@ -185,7 +247,12 @@ public class ProcessImpl implements Process {
   private synchronized boolean terminate(int statusCode, Handler<Void> completionHandler) {
     if (status != ExecStatus.TERMINATED) {
       status = ExecStatus.TERMINATED;
-      tty.setStdin(null);
+      if (foreground) {
+        foreground = false;
+        if (tty != null) {
+          tty.setStdin(null);
+        }
+      }
       Handler<Integer> terminateHandler = this.terminateHandler;
       Handler<Void> handler = endHandler;
       context.runOnContext(v1 -> {
@@ -209,12 +276,13 @@ public class ProcessImpl implements Process {
   }
 
   @Override
-  public synchronized void run(Handler<Void> completionHandler) {
+  public synchronized void run(boolean fg, Handler<Void> completionHandler) {
 
     if (status != ExecStatus.READY) {
       throw new IllegalStateException("Cannot run proces in " + status + " state");
     }
     status = ExecStatus.RUNNING;
+    foreground = fg;
 
     // Make a local copy
     Tty tty = this.tty;
@@ -285,6 +353,11 @@ public class ProcessImpl implements Process {
       }
 
       @Override
+      public boolean isInForeground() {
+        return foreground;
+      }
+
+      @Override
       public Session session() {
         return session;
       }
@@ -300,19 +373,25 @@ public class ProcessImpl implements Process {
       }
 
       @Override
-      public CommandProcess setStdin(Stream stdin) {
-        Stream s;
-        if (stdin != null) {
-          s = data -> context.runOnContext(v -> stdin.handle(data));
+      public CommandProcess setStdin(Stream stream) {
+        if (stream != null) {
+          stdin = data -> context.runOnContext(v -> stream.handle(data));
         } else {
-          s = null;
+          stdin = null;
         }
-        tty.setStdin(s);
+        if (foreground && stdin != null) {
+          tty.setStdin(stdin);
+        }
         return this;
       }
 
       @Override
       public Stream stdout() {
+        synchronized (ProcessImpl.this) {
+          if (status != ExecStatus.RUNNING) {
+            return null;
+          }
+        }
         Stream contextStdout = tty.stdout();
         if (contextStdout != stdout) {
           if (contextStdout != null) {
@@ -338,10 +417,11 @@ public class ProcessImpl implements Process {
       @Override
       public CommandProcess resizehandler(Handler<Void> handler) {
         if (handler != null) {
-          tty.resizehandler(v -> context.runOnContext(handler::handle));
+          resizeHandler = v -> context.runOnContext(handler::handle);
         } else {
-          tty.resizehandler(null);
+          resizeHandler = null;
         }
+        tty.resizehandler(resizeHandler);
         return this;
       }
 
@@ -378,6 +458,22 @@ public class ProcessImpl implements Process {
       }
 
       @Override
+      public CommandProcess backgroundHandler(Handler<Void> handler) {
+        synchronized (ProcessImpl.this) {
+          backgroundHandler = handler;
+        }
+        return this;
+      }
+
+      @Override
+      public CommandProcess foregroundHandler(Handler<Void> handler) {
+        synchronized (ProcessImpl.this) {
+          foregroundHandler = handler;
+        }
+        return this;
+      }
+
+      @Override
       public void end() {
         end(0);
       }
@@ -385,6 +481,12 @@ public class ProcessImpl implements Process {
       @Override
       public void end(int statusCode) {
         terminate(statusCode, null);
+      }
+
+      @Override
+      public void toBackground() {
+//        ProcessImpl.this.toBackground();
+        throw new UnsupportedOperationException();
       }
     };
 

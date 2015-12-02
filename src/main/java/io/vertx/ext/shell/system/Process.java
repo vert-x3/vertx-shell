@@ -94,10 +94,26 @@ public interface Process {
 
   /**
    * Run the process.
+   */
+  default void run(boolean foreground) {
+    run(foreground, null);
+  }
+
+  /**
+   * Run the process.
    *
    * @param completionHandler handler called after process callback
    */
-  void run(Handler<Void> completionHandler);
+  default void run(Handler<Void> completionHandler) {
+    run(true, completionHandler);
+  }
+
+  /**
+   * Run the process.
+   *
+   * @param completionHandler handler called after process callback
+   */
+  void run(boolean foregraound, Handler<Void> completionHandler);
 
   /**
    * Attempt to interrupt the process.
@@ -125,10 +141,26 @@ public interface Process {
 
   /**
    * Suspend the process.
+   */
+  default void resume(boolean foreground) {
+    resume(foreground, null);
+  }
+
+  /**
+   * Suspend the process.
    *
    * @param completionHandler handler called after resume callback
    */
-  void resume(Handler<Void> completionHandler);
+  default void resume(Handler<Void> completionHandler) {
+    resume(true, completionHandler);
+  }
+
+  /**
+   * Suspend the process.
+   *
+   * @param completionHandler handler called after resume callback
+   */
+  void resume(boolean foreground, Handler<Void> completionHandler);
 
   /**
    * Resume the process.
@@ -158,4 +190,31 @@ public interface Process {
    */
   void terminate(Handler<Void> completionHandler);
 
+  /**
+   * Set the process in background.
+   */
+  default void toBackground() {
+    toBackground(null);
+  }
+
+  /**
+   * Set the process in background.
+   *
+   * @param completionHandler handler called after background callback
+   */
+  void toBackground(Handler<Void> completionHandler);
+
+  /**
+   * Set the process in foreground.
+   */
+  default void toForeground() {
+    toForeground(null);
+  }
+
+  /**
+   * Set the process in foreground.
+   *
+   * @param completionHandler handler called after foreground callback
+   */
+  void toForeground(Handler<Void> completionHandler);
 }

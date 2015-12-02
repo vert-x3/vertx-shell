@@ -88,9 +88,9 @@ public class JobImpl implements Job {
   }
 
   @Override
-  public void resume() {
+  public void resume(boolean foreground) {
     try {
-      process.resume(v -> {
+      process.resume(foreground, v -> {
         actualStatus = ExecStatus.RUNNING;
       });
     } catch (IllegalStateException ignore) {
@@ -126,6 +126,16 @@ public class JobImpl implements Job {
 
   public String line() {
     return line;
+  }
+
+  @Override
+  public void toBackground() {
+    process.toBackground();
+  }
+
+  @Override
+  public void toForeground() {
+    process.toForeground();
   }
 
   @Override

@@ -66,7 +66,7 @@ public class ShellSessionCloseTest {
   public void before(TestContext context) {
     vertx = Vertx.vertx();
     registry = CommandRegistry.getShared(vertx);
-    termServer = new TestTermServer();
+    termServer = new TestTermServer(vertx);
   }
 
   @After

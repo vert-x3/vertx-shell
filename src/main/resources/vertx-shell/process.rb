@@ -69,15 +69,20 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling terminate_handler()"
     end
     #  Run the process.
+    # @param [true,false] foregraound 
     # @yield handler called after process callback
     # @return [void]
-    def run
-      if !block_given?
+    def run(foregraound=nil)
+      if !block_given? && foregraound == nil
         return @j_del.java_method(:run, []).call()
-      elsif block_given?
+      elsif (foregraound.class == TrueClass || foregraound.class == FalseClass) && !block_given?
+        return @j_del.java_method(:run, [Java::boolean.java_class]).call(foregraound)
+      elsif block_given? && foregraound == nil
         return @j_del.java_method(:run, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
+      elsif (foregraound.class == TrueClass || foregraound.class == FalseClass) && block_given?
+        return @j_del.java_method(:run, [Java::boolean.java_class,Java::IoVertxCore::Handler.java_class]).call(foregraound,Proc.new { yield })
       end
-      raise ArgumentError, "Invalid arguments when calling run()"
+      raise ArgumentError, "Invalid arguments when calling run(foregraound)"
     end
     #  Attempt to interrupt the process.
     # @yield handler called after interrupt callback
@@ -91,15 +96,20 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling interrupt?()"
     end
     #  Suspend the process.
+    # @param [true,false] foreground 
     # @yield handler called after resume callback
     # @return [void]
-    def resume
-      if !block_given?
+    def resume(foreground=nil)
+      if !block_given? && foreground == nil
         return @j_del.java_method(:resume, []).call()
-      elsif block_given?
+      elsif (foreground.class == TrueClass || foreground.class == FalseClass) && !block_given?
+        return @j_del.java_method(:resume, [Java::boolean.java_class]).call(foreground)
+      elsif block_given? && foreground == nil
         return @j_del.java_method(:resume, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
+      elsif (foreground.class == TrueClass || foreground.class == FalseClass) && block_given?
+        return @j_del.java_method(:resume, [Java::boolean.java_class,Java::IoVertxCore::Handler.java_class]).call(foreground,Proc.new { yield })
       end
-      raise ArgumentError, "Invalid arguments when calling resume()"
+      raise ArgumentError, "Invalid arguments when calling resume(foreground)"
     end
     #  Resume the process.
     # @yield handler called after suspend callback
@@ -122,6 +132,28 @@ module VertxShell
         return @j_del.java_method(:terminate, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
       end
       raise ArgumentError, "Invalid arguments when calling terminate()"
+    end
+    #  Set the process in background.
+    # @yield handler called after background callback
+    # @return [void]
+    def to_background
+      if !block_given?
+        return @j_del.java_method(:toBackground, []).call()
+      elsif block_given?
+        return @j_del.java_method(:toBackground, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
+      end
+      raise ArgumentError, "Invalid arguments when calling to_background()"
+    end
+    #  Set the process in foreground.
+    # @yield handler called after foreground callback
+    # @return [void]
+    def to_foreground
+      if !block_given?
+        return @j_del.java_method(:toForeground, []).call()
+      elsif block_given?
+        return @j_del.java_method(:toForeground, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
+      end
+      raise ArgumentError, "Invalid arguments when calling to_foreground()"
     end
   end
 end

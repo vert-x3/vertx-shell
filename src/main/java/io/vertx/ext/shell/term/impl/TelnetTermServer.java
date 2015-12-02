@@ -55,7 +55,7 @@ public class TelnetTermServer implements TermServer {
 
   private final Vertx vertx;
   private final TelnetTermOptions options;
-  private Handler<TtyConnection> handler;
+  private Handler<TtyConnection> connectionHandler;
   private NetServer server;
 
   public TelnetTermServer(Vertx vertx, TelnetTermOptions options) {
@@ -69,17 +69,11 @@ public class TelnetTermServer implements TermServer {
   }
 
   @Override
-  public TermServer connectionHandler(Handler<TtyConnection> handler) {
-    this.handler = handler;
-    return this;
-  }
-
-  @Override
   public TermServer termHandler(Handler<Term> handler) {
     if (handler != null) {
-      connectionHandler(new TermConnectionHandler(handler));
+      connectionHandler = new TermConnectionHandler(vertx, handler);
     } else {
-      connectionHandler(null);
+      connectionHandler = null;
     }
     return this;
   }
@@ -90,7 +84,7 @@ public class TelnetTermServer implements TermServer {
     if (server == null) {
       server = vertx.createNetServer(options);
       server.connectHandler(new TelnetSocketHandler(vertx, () -> {
-        return new TelnetTtyConnection(options.getInBinary(), options.getOutBinary(), charset, handler::handle);
+        return new TelnetTtyConnection(options.getInBinary(), options.getOutBinary(), charset, connectionHandler::handle);
       }));
       server.listen(ar -> {
         if (ar.succeeded()) {

@@ -60,6 +60,14 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling session()"
     end
+    #  @return true if the command is running in foreground
+    # @return [true,false]
+    def in_foreground?
+      if !block_given?
+        return @j_del.java_method(:isInForeground, []).call()
+      end
+      raise ArgumentError, "Invalid arguments when calling in_foreground?()"
+    end
     # @param [::VertxShell::Stream] stdin 
     # @return [self]
     def set_stdin(stdin=nil)
@@ -123,6 +131,26 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling write(text)"
     end
+    #  Set a background handler, this handler is called when the command is running and put to background.
+    # @yield the background handler
+    # @return [self]
+    def background_handler
+      if block_given?
+        @j_del.java_method(:backgroundHandler, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
+        return self
+      end
+      raise ArgumentError, "Invalid arguments when calling background_handler()"
+    end
+    #  Set a foreground handler, this handler is called when the command is running and put to foreground.
+    # @yield the foreground handler
+    # @return [self]
+    def foreground_handler
+      if block_given?
+        @j_del.java_method(:foregroundHandler, [Java::IoVertxCore::Handler.java_class]).call(Proc.new { yield })
+        return self
+      end
+      raise ArgumentError, "Invalid arguments when calling foreground_handler()"
+    end
     # @yield 
     # @return [self]
     def resizehandler
@@ -142,6 +170,14 @@ module VertxShell
         return @j_del.java_method(:end, [Java::int.java_class]).call(status)
       end
       raise ArgumentError, "Invalid arguments when calling end(status)"
+    end
+    #  Move the command to background : todo it should trigger readline and that will not work for now.
+    # @return [void]
+    def to_background
+      if !block_given?
+        return @j_del.java_method(:toBackground, []).call()
+      end
+      raise ArgumentError, "Invalid arguments when calling to_background()"
     end
   end
 end

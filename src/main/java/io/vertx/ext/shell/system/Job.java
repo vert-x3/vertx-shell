@@ -103,9 +103,22 @@ public interface Job {
   boolean interrupt();
 
   /**
-   * Suspend the job.
+   * Resume the job to foreground.
    */
-  void resume();
+  default void resume() {
+    resume(true);
+  }
+
+  void toBackground();
+
+  void toForeground();
+
+  /**
+   * Resume the job.
+   *
+   * @param foreground true when the job is resumed in foreground
+   */
+  void resume(boolean foreground);
 
   /**
    * Resume the job.

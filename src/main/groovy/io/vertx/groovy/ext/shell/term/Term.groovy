@@ -18,10 +18,12 @@ package io.vertx.groovy.ext.shell.term;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
+import io.vertx.groovy.ext.shell.cli.Completion
 import io.vertx.groovy.ext.shell.io.Stream
 import io.vertx.core.Handler
+import io.vertx.groovy.ext.shell.session.Session
 /**
- * The remote terminal.
+ * The terminal.
 */
 @CompileStatic
 public class Term extends Tty {
@@ -42,6 +44,71 @@ public class Term extends Tty {
     return this;
   }
   /**
+   * @return the last time this term received input
+   * @return 
+   */
+  public long lastAccessedTime() {
+    def ret = this.delegate.lastAccessedTime();
+    return ret;
+  }
+  /**
+   * Echo some text in the terminal.
+   * @param text the text to echo
+   * @return a reference to this, so the API can be used fluently
+   */
+  public Term echo(String text) {
+    this.delegate.echo(text);
+    return this;
+  }
+  /**
+   * Associate the term with a session.
+   * @param session the session to set
+   * @return a reference to this, so the API can be used fluently
+   */
+  public Term setSession(Session session) {
+    def ret= InternalHelper.safeCreate(this.delegate.setSession((io.vertx.ext.shell.session.Session)session.getDelegate()), io.vertx.groovy.ext.shell.term.Term.class);
+    return ret;
+  }
+  /**
+   * Set an interrupt signal handler on the term.
+   * @param handler the interrupt handler
+   * @return a reference to this, so the API can be used fluently
+   */
+  public Term interruptHandler(SignalHandler handler) {
+    this.delegate.interruptHandler((io.vertx.ext.shell.term.SignalHandler)handler.getDelegate());
+    return this;
+  }
+  /**
+   * Set a suspend signal handler on the term.
+   * @param handler the suspend handler
+   * @return a reference to this, so the API can be used fluently
+   */
+  public Term suspendHandler(SignalHandler handler) {
+    this.delegate.suspendHandler((io.vertx.ext.shell.term.SignalHandler)handler.getDelegate());
+    return this;
+  }
+  /**
+   * Prompt the user a line of text.
+   * @param prompt the displayed prompt
+   * @param lineHandler the line handler called with the line
+   */
+  public void readline(String prompt, Handler<String> lineHandler) {
+    this.delegate.readline(prompt, lineHandler);
+  }
+  /**
+   * Prompt the user a line of text, providing a completion handler to handle user's completion.
+   * @param prompt the displayed prompt
+   * @param lineHandler the line handler called with the line
+   * @param completionHandler the completion handler
+   */
+  public void readline(String prompt, Handler<String> lineHandler, Handler<Completion> completionHandler) {
+    this.delegate.readline(prompt, lineHandler, new Handler<io.vertx.ext.shell.cli.Completion>() {
+      public void handle(io.vertx.ext.shell.cli.Completion event) {
+        completionHandler.handle(new io.vertx.groovy.ext.shell.cli.Completion(event));
+      }
+    });
+  }
+  /**
    * Set a handler that will be called when the terminal is closed.
    * @param handler the handler
    * @return a reference to this, so the API can be used fluently
@@ -51,7 +118,7 @@ public class Term extends Tty {
     return this;
   }
   /**
-   * Close the remote terminal.
+   * Close the connection to terminal.
    */
   public void close() {
     this.delegate.close();

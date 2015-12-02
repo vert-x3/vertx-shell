@@ -32,7 +32,6 @@
 
 package io.vertx.ext.shell.impl;
 
-import io.termd.core.tty.TtyConnection;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -44,6 +43,7 @@ import io.vertx.ext.shell.command.CommandResolver;
 import io.vertx.ext.shell.system.impl.InternalCommandManager;
 import io.vertx.ext.shell.system.Shell;
 import io.vertx.ext.shell.system.impl.ShellImpl;
+import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
 
 import java.util.ArrayList;
@@ -107,15 +107,15 @@ public class ShellServerImpl implements ShellServer {
     return this;
   }
 
-  private void handleConnection(TtyConnection conn) {
+  private void handleTerm(Term term) {
     synchronized (this) {
       // That might happen with multiple ser
       if (closed) {
-        conn.close();
+        term.close();
         return;
       }
     }
-    ShellSession session = new ShellSession(vertx, conn, manager);
+    ShellSession session = new ShellSession(vertx, term, manager);
     session.setWelcome(welcomeMessage);
     session.closedFuture.setHandler(ar -> {
       boolean completeSessionClosed;
@@ -129,7 +129,7 @@ public class ShellServerImpl implements ShellServer {
     });
     session.init();
     sessions.put(session.id, session); // Put after init so the close handler on the connection is set
-    session.readLine(); // Now readline
+    session.readline(); // Now readline
   }
 
   @Override
@@ -168,7 +168,7 @@ public class ShellServerImpl implements ShellServer {
       }
     };
     toStart.forEach(termServer -> {
-      termServer.connectionHandler(this::handleConnection);
+      termServer.termHandler(this::handleTerm);
       termServer.listen(handler);
     });
     return this;

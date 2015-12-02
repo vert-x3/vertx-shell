@@ -161,15 +161,41 @@ var Job = function(j_val) {
   };
 
   /**
-   Suspend the job.
+   Resume the job.
 
    @public
-
+   @param foreground {boolean} true when the job is resumed in foreground 
    */
   this.resume = function() {
     var __args = arguments;
     if (__args.length === 0) {
       j_job["resume()"]();
+    }  else if (__args.length === 1 && typeof __args[0] ==='boolean') {
+      j_job["resume(boolean)"](__args[0]);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+
+   */
+  this.toBackground = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      j_job["toBackground()"]();
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+
+   */
+  this.toForeground = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      j_job["toForeground()"]();
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

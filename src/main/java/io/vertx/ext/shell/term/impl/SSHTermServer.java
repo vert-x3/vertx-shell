@@ -98,11 +98,6 @@ public class SSHTermServer implements TermServer {
     return options;
   }
 
-  public SSHTermServer connectionHandler(Handler<TtyConnection> handler) {
-    this.connectionHandler = handler;
-    return this;
-  }
-
   /**
    * @return the underlying native server
    */
@@ -113,9 +108,9 @@ public class SSHTermServer implements TermServer {
   @Override
   public TermServer termHandler(Handler<Term> handler) {
     if (handler != null) {
-      connectionHandler(new TermConnectionHandler(handler));
+      connectionHandler = new TermConnectionHandler(vertx, handler);
     } else {
-      connectionHandler(null);
+      connectionHandler = null;
     }
     return this;
   }

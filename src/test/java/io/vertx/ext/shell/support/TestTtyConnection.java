@@ -32,6 +32,7 @@
 
 package io.vertx.ext.shell.support;
 
+import io.termd.core.tty.ReadBuffer;
 import io.termd.core.tty.TtyConnection;
 import io.termd.core.tty.TtyEvent;
 import io.termd.core.util.Helper;
@@ -50,6 +51,7 @@ import java.util.function.Consumer;
  */
 public class TestTtyConnection implements TtyConnection {
 
+  private final ReadBuffer readBuffer = new ReadBuffer(this::execute);
   private Consumer<String> terminalTypeHandler;
   private Consumer<Vector> sizeHandler;
   private BiConsumer<TtyEvent, Integer> eventHandler;

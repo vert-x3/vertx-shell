@@ -36,31 +36,35 @@ import io.termd.core.tty.TtyConnection;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
+import io.vertx.ext.shell.term.impl.TtyImpl;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 public class TestTermServer implements TermServer {
 
-  private Handler<TtyConnection> connHandler;
+  private final Vertx vertx;
+  private Handler<TtyConnection> connectionHandler;
+
+  public TestTermServer(Vertx vertx) {
+    this.vertx = vertx;
+  }
 
   public TestTtyConnection openConnection() {
     TestTtyConnection conn = new TestTtyConnection();
-    connHandler.handle(conn);
+    connectionHandler.handle(conn);
     return conn;
   }
 
   @Override
   public TermServer termHandler(Handler<Term> handler) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public TermServer connectionHandler(Handler<TtyConnection> handler) {
-    connHandler = handler;
+    connectionHandler = conn -> {
+      handler.handle(new TtyImpl(vertx, conn));
+    };
     return this;
   }
 

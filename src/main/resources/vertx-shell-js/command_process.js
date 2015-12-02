@@ -109,6 +109,20 @@ var CommandProcess = function(j_val) {
   };
 
   /**
+   @return true if the command is running in foreground
+
+   @public
+
+   @return {boolean}
+   */
+  this.isInForeground = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return j_commandProcess["isInForeground()"]();
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
 
    @public
    @param stdin {Stream} 
@@ -202,6 +216,36 @@ var CommandProcess = function(j_val) {
   };
 
   /**
+   Set a background handler, this handler is called when the command is running and put to background.
+
+   @public
+   @param handler {function} the background handler 
+   @return {CommandProcess} this command
+   */
+  this.backgroundHandler = function(handler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_commandProcess["backgroundHandler(io.vertx.core.Handler)"](handler);
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Set a foreground handler, this handler is called when the command is running and put to foreground.
+
+   @public
+   @param handler {function} the foreground handler 
+   @return {CommandProcess} this command
+   */
+  this.foregroundHandler = function(handler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_commandProcess["foregroundHandler(io.vertx.core.Handler)"](handler);
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
 
    @public
    @param handler {function} 
@@ -227,6 +271,19 @@ var CommandProcess = function(j_val) {
       j_commandProcess["end()"]();
     }  else if (__args.length === 1 && typeof __args[0] ==='number') {
       j_commandProcess["end(int)"](__args[0]);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Move the command to background : todo it should trigger readline and that will not work for now.
+
+   @public
+
+   */
+  this.toBackground = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      j_commandProcess["toBackground()"]();
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

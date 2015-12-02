@@ -35,10 +35,12 @@ package io.vertx.ext.shell.term;
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
+import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.io.Stream;
+import io.vertx.ext.shell.session.Session;
 
 /**
- * The remote terminal.
+ * The terminal.
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
@@ -52,6 +54,63 @@ public interface Term extends Tty {
   Term setStdin(Stream stdin);
 
   /**
+   * @return the last time this term received input
+   */
+  long lastAccessedTime();
+
+  /**
+   * Echo some text in the terminal.
+   *
+   * @param text the text to echo
+   * @return a reference to this, so the API can be used fluently
+   */
+  @Fluent
+  Term echo(String text);
+
+  /**
+   * Associate the term with a session.
+   *
+   * @param session the session to set
+   * @return a reference to this, so the API can be used fluently
+   */
+  Term setSession(Session session);
+
+  /**
+   * Set an interrupt signal handler on the term.
+   *
+   * @param handler the interrupt handler
+   * @return a reference to this, so the API can be used fluently
+   */
+  @Fluent
+  Term interruptHandler(SignalHandler handler);
+
+  /**
+   * Set a suspend signal handler on the term.
+   *
+   * @param handler the suspend handler
+   * @return a reference to this, so the API can be used fluently
+   */
+  @Fluent
+  Term suspendHandler(SignalHandler handler);
+
+  /**
+   * Prompt the user a line of text.
+   *
+   * @param prompt the displayed prompt
+   * @param lineHandler the line handler called with the line
+   */
+  void readline(String prompt, Handler<String> lineHandler);
+
+  /**
+   * Prompt the user a line of text, providing a completion handler to handle user's completion.
+   *
+   * @param prompt the displayed prompt
+   * @param lineHandler the line handler called with the line
+   * @param completionHandler the completion handler
+   */
+  void readline(String prompt, Handler<String> lineHandler, Handler<Completion> completionHandler);
+
+  /**
    * Set a handler that will be called when the terminal is closed.
    *
    * @param handler the handler
@@ -61,7 +120,7 @@ public interface Term extends Tty {
   Term closeHandler(Handler<Void> handler);
 
   /**
-   * Close the remote terminal.
+   * Close the connection to terminal.
    */
   void close();
 }

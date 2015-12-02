@@ -93,13 +93,30 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling interrupt?()"
     end
-    #  Suspend the job.
+    #  Resume the job.
+    # @param [true,false] foreground true when the job is resumed in foreground
     # @return [void]
-    def resume
-      if !block_given?
+    def resume(foreground=nil)
+      if !block_given? && foreground == nil
         return @j_del.java_method(:resume, []).call()
+      elsif (foreground.class == TrueClass || foreground.class == FalseClass) && !block_given?
+        return @j_del.java_method(:resume, [Java::boolean.java_class]).call(foreground)
       end
-      raise ArgumentError, "Invalid arguments when calling resume()"
+      raise ArgumentError, "Invalid arguments when calling resume(foreground)"
+    end
+    # @return [void]
+    def to_background
+      if !block_given?
+        return @j_del.java_method(:toBackground, []).call()
+      end
+      raise ArgumentError, "Invalid arguments when calling to_background()"
+    end
+    # @return [void]
+    def to_foreground
+      if !block_given?
+        return @j_del.java_method(:toForeground, []).call()
+      end
+      raise ArgumentError, "Invalid arguments when calling to_foreground()"
     end
     #  Resume the job.
     # @return [void]

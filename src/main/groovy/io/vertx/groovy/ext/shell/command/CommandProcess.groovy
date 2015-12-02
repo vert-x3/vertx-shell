@@ -79,6 +79,14 @@ public class CommandProcess extends Tty {
     def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.groovy.ext.shell.session.Session.class);
     return ret;
   }
+  /**
+   * @return true if the command is running in foreground
+   * @return 
+   */
+  public boolean isInForeground() {
+    def ret = this.delegate.isInForeground();
+    return ret;
+  }
   public CommandProcess setStdin(Stream stdin) {
     ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) this.delegate).setStdin((io.vertx.ext.shell.io.Stream)stdin.getDelegate());
     return this;
@@ -132,6 +140,24 @@ public class CommandProcess extends Tty {
     this.delegate.write(text);
     return this;
   }
+  /**
+   * Set a background handler, this handler is called when the command is running and put to background.
+   * @param handler the background handler
+   * @return this command
+   */
+  public CommandProcess backgroundHandler(Handler<Void> handler) {
+    this.delegate.backgroundHandler(handler);
+    return this;
+  }
+  /**
+   * Set a foreground handler, this handler is called when the command is running and put to foreground.
+   * @param handler the foreground handler
+   * @return this command
+   */
+  public CommandProcess foregroundHandler(Handler<Void> handler) {
+    this.delegate.foregroundHandler(handler);
+    return this;
+  }
   public CommandProcess resizehandler(Handler<Void> handler) {
     ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) this.delegate).resizehandler(handler);
     return this;
@@ -141,6 +167,12 @@ public class CommandProcess extends Tty {
    */
   public void end() {
     this.delegate.end();
+  }
+  /**
+   * Move the command to background : todo it should trigger readline and that will not work for now.
+   */
+  public void toBackground() {
+    this.delegate.toBackground();
   }
   /**
    * End the process.

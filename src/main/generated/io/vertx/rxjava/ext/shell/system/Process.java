@@ -105,10 +105,27 @@ public class Process {
 
   /**
    * Run the process.
+   * @param foreground 
+   */
+  public void run(boolean foreground) { 
+    this.delegate.run(foreground);
+  }
+
+  /**
+   * Run the process.
    * @param completionHandler handler called after process callback
    */
   public void run(Handler<Void> completionHandler) { 
     this.delegate.run(completionHandler);
+  }
+
+  /**
+   * Run the process.
+   * @param foregraound 
+   * @param completionHandler handler called after process callback
+   */
+  public void run(boolean foregraound, Handler<Void> completionHandler) { 
+    this.delegate.run(foregraound, completionHandler);
   }
 
   /**
@@ -139,10 +156,27 @@ public class Process {
 
   /**
    * Suspend the process.
+   * @param foreground 
+   */
+  public void resume(boolean foreground) { 
+    this.delegate.resume(foreground);
+  }
+
+  /**
+   * Suspend the process.
    * @param completionHandler handler called after resume callback
    */
   public void resume(Handler<Void> completionHandler) { 
     this.delegate.resume(completionHandler);
+  }
+
+  /**
+   * Suspend the process.
+   * @param foreground 
+   * @param completionHandler handler called after resume callback
+   */
+  public void resume(boolean foreground, Handler<Void> completionHandler) { 
+    this.delegate.resume(foreground, completionHandler);
   }
 
   /**
@@ -173,6 +207,36 @@ public class Process {
    */
   public void terminate(Handler<Void> completionHandler) { 
     this.delegate.terminate(completionHandler);
+  }
+
+  /**
+   * Set the process in background.
+   */
+  public void toBackground() { 
+    this.delegate.toBackground();
+  }
+
+  /**
+   * Set the process in background.
+   * @param completionHandler handler called after background callback
+   */
+  public void toBackground(Handler<Void> completionHandler) { 
+    this.delegate.toBackground(completionHandler);
+  }
+
+  /**
+   * Set the process in foreground.
+   */
+  public void toForeground() { 
+    this.delegate.toForeground();
+  }
+
+  /**
+   * Set the process in foreground.
+   * @param completionHandler handler called after foreground callback
+   */
+  public void toForeground(Handler<Void> completionHandler) { 
+    this.delegate.toForeground(completionHandler);
   }
 
 

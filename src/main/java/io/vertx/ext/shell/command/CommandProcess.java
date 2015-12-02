@@ -77,6 +77,11 @@ public interface CommandProcess extends Tty {
    */
   Session session();
 
+  /**
+   * @return true if the command is running in foreground
+   */
+  boolean isInForeground();
+
   @Fluent
   CommandProcess setStdin(Stream stdin);
 
@@ -129,6 +134,24 @@ public interface CommandProcess extends Tty {
   @Fluent
   CommandProcess write(String text);
 
+  /**
+   * Set a background handler, this handler is called when the command is running and put to background.
+   *
+   * @param handler the background handler
+   * @return this command
+   */
+  @Fluent
+  CommandProcess backgroundHandler(Handler<Void> handler);
+
+  /**
+   * Set a foreground handler, this handler is called when the command is running and put to foreground.
+   *
+   * @param handler the foreground handler
+   * @return this command
+   */
+  @Fluent
+  CommandProcess foregroundHandler(Handler<Void> handler);
+
   @Override
   CommandProcess resizehandler(Handler<Void> handler);
 
@@ -136,6 +159,11 @@ public interface CommandProcess extends Tty {
    * End the process with the exit status {@literal 0}
    */
   void end();
+
+  /**
+   * Move the command to background : todo it should trigger readline and that will not work for now.
+   */
+  void toBackground();
 
   /**
    * End the process.
