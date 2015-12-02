@@ -109,7 +109,11 @@ public class JobImpl implements Job {
 
   @Override
   public void terminate() {
-    process.terminate();
+    try {
+      process.terminate();
+    } catch (IllegalStateException ignore) {
+      // Process already terminated, likely by itself
+    }
   }
 
   public long lastStopped() {

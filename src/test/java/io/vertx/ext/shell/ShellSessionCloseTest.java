@@ -32,8 +32,10 @@
 
 package io.vertx.ext.shell;
 
+import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.CommandBuilder;
+import io.vertx.ext.shell.command.CommandProcess;
 import io.vertx.ext.shell.command.CommandRegistry;
 import io.vertx.ext.shell.support.TestTermServer;
 import io.vertx.ext.shell.support.TestTtyConnection;
@@ -46,6 +48,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /**
@@ -107,7 +110,7 @@ public class ShellSessionCloseTest {
   public void testLastAccessed(TestContext context) throws Exception {
     startShellServer(context, 100, 100);
     TestTtyConnection conn = termServer.openConnection();
-    for (int i = 0;i < 100;i++) {
+    for (int i = 0; i < 100; i++) {
       conn.read("" + i);
       Thread.sleep(10);
       context.assertFalse(conn.isClosed());
@@ -151,5 +154,40 @@ public class ShellSessionCloseTest {
     closer.accept(conn);
     processEnded.awaitSuccess(2000);
     context.assertTrue(conn.getCloseLatch().await(2, TimeUnit.SECONDS));
+  }
+
+  @Test
+  public void testCloseWhileEnding(TestContext context) throws Exception {
+    Async processStarted = context.async();
+    Async registered = context.async();
+    Async processEnding = context.async();
+    Async processEnd = context.async();
+    Async closed = context.async();
+    AtomicReference<Runnable> end = new AtomicReference<>();
+    registry.registerCommand(CommandBuilder.command("cmd").processHandler(process -> {
+      process.endHandler(v -> {
+        processEnding.complete();
+        processEnd.awaitSuccess(2000);
+      });
+      Context ctx = process.vertx().getOrCreateContext();
+      end.set(() -> {
+        ctx.runOnContext(v -> {
+          process.end();
+        });
+      });
+      processStarted.complete();
+    }).build(vertx), context.asyncAssertSuccess(v -> registered.complete()));
+    registered.awaitSuccess(2000);
+    startShellServer(context, 30000, 100);
+    TestTtyConnection conn = termServer.openConnection();
+    conn.read("cmd\r");
+    processStarted.awaitSuccess(2000);
+    end.get().run();
+    processEnding.awaitSuccess(2000);
+    shellServer.close(context.asyncAssertSuccess(v -> {
+        closed.complete();
+      }
+    ));
+    processEnd.complete();
   }
 }

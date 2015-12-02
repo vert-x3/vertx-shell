@@ -187,18 +187,16 @@ public class ProcessImpl implements Process {
       status = ExecStatus.TERMINATED;
       tty.setStdin(null);
       Handler<Integer> terminateHandler = this.terminateHandler;
-      if (terminateHandler != null) {
-        processContext.runOnContext(v -> {
-          terminateHandler.handle(statusCode);
-        });
-      }
       Handler<Void> handler = endHandler;
-      context.runOnContext(v -> {
+      context.runOnContext(v1 -> {
         try {
           if (handler != null) {
             handler.handle(null);
           }
         } finally {
+          if (terminateHandler != null) {
+            processContext.runOnContext(v2 -> terminateHandler.handle(statusCode));
+          }
           if (completionHandler != null) {
             processContext.runOnContext(completionHandler);
           }
