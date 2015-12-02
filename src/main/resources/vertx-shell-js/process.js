@@ -125,7 +125,7 @@ var Process = function(j_val) {
    Run the process.
 
    @public
-   @param completionHandler {function} 
+   @param completionHandler {function} handler called after process callback 
    */
   this.run = function() {
     var __args = arguments;
@@ -140,7 +140,7 @@ var Process = function(j_val) {
    Attempt to interrupt the process.
 
    @public
-   @param completionHandler {function} 
+   @param completionHandler {function} handler called after interrupt callback 
    @return {boolean} true if the process caught the signal
    */
   this.interrupt = function() {
@@ -156,7 +156,7 @@ var Process = function(j_val) {
    Suspend the process.
 
    @public
-   @param completionHandler {function} 
+   @param completionHandler {function} handler called after resume callback 
    */
   this.resume = function() {
     var __args = arguments;
@@ -171,7 +171,7 @@ var Process = function(j_val) {
    Resume the process.
 
    @public
-   @param completionHandler {function} 
+   @param completionHandler {function} handler called after suspend callback 
    */
   this.suspend = function() {
     var __args = arguments;
@@ -186,7 +186,7 @@ var Process = function(j_val) {
    Terminate the process.
 
    @public
-   @param completionHandler {function} 
+   @param completionHandler {function} handler called after end callback 
    */
   this.terminate = function() {
     var __args = arguments;

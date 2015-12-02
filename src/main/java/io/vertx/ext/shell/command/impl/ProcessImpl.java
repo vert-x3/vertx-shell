@@ -56,7 +56,8 @@ public class ProcessImpl implements Process {
 
   private final Vertx vertx;
   private final Context context;
-  private final Command command;
+  private final Context processContext;
+  private final Command commandContext;
   private final Handler<CommandProcess> handler;
   private final List<CliToken> args;
   private Tty tty;
@@ -66,15 +67,15 @@ public class ProcessImpl implements Process {
   private Handler<Void> resumeHandler;
   private Handler<Void> endHandler;
   private Handler<Integer> terminateHandler;
-  private Context runnerContext;
   private ExecStatus status;
 
-  public ProcessImpl(Vertx vertx, Context context, Command command, List<CliToken> args, Handler<CommandProcess> handler) {
+  public ProcessImpl(Vertx vertx, Context context, Command commandContext, List<CliToken> args, Handler<CommandProcess> handler) {
     this.vertx = vertx;
     this.context = context;
-    this.command = command;
+    this.commandContext = commandContext;
     this.handler = handler;
     this.args = args;
+    processContext = vertx.getOrCreateContext();
     status = ExecStatus.READY;
   }
 
@@ -115,14 +116,14 @@ public class ProcessImpl implements Process {
   public boolean interrupt(Handler<Void> completionHandler) {
     if (status == ExecStatus.RUNNING || status == ExecStatus.STOPPED) {
       Handler<Void> handler = interruptHandler;
-      runnerContext.runOnContext(v -> {
+      processContext.runOnContext(v -> {
         try {
           if (handler != null) {
             handler.handle(null);
           }
         } finally {
           if (completionHandler != null) {
-            runnerContext.runOnContext(completionHandler);
+            processContext.runOnContext(completionHandler);
           }
         }
       });
@@ -144,7 +145,7 @@ public class ProcessImpl implements Process {
           }
         } finally {
           if (completionHandler != null) {
-            runnerContext.runOnContext(completionHandler);
+            processContext.runOnContext(completionHandler);
           }
         }
       });
@@ -165,7 +166,7 @@ public class ProcessImpl implements Process {
           }
         } finally {
           if (completionHandler != null) {
-            runnerContext.runOnContext(completionHandler);
+            processContext.runOnContext(completionHandler);
           }
         }
       });
@@ -187,7 +188,7 @@ public class ProcessImpl implements Process {
       tty.setStdin(null);
       Handler<Integer> terminateHandler = this.terminateHandler;
       if (terminateHandler != null) {
-        runnerContext.runOnContext(v -> {
+        processContext.runOnContext(v -> {
           terminateHandler.handle(statusCode);
         });
       }
@@ -199,7 +200,7 @@ public class ProcessImpl implements Process {
           }
         } finally {
           if (completionHandler != null) {
-            runnerContext.runOnContext(completionHandler);
+            processContext.runOnContext(completionHandler);
           }
         }
       });
@@ -229,16 +230,14 @@ public class ProcessImpl implements Process {
       throw new IllegalStateException("Cannot execute process without a Session set");
     }
 
-    this.runnerContext = vertx.getOrCreateContext();
-
     CommandLine cl;
     final List<String> args2 = args.stream().filter(CliToken::isText).map(CliToken::value).collect(Collectors.toList());
-    if (command.cli() != null) {
+    if (commandContext.cli() != null) {
 
       // Build to skip validation problems
-      if (command.cli().parse(args2, false).isAskingForHelp()) {
+      if (commandContext.cli().parse(args2, false).isAskingForHelp()) {
         StringBuilder usage = new StringBuilder();
-        command.cli().usage(usage);
+        commandContext.cli().usage(usage);
         usage.append('\n');
         tty.stdout().handle(usage.toString());
         terminate();
@@ -247,7 +246,7 @@ public class ProcessImpl implements Process {
 
       //
       try {
-        cl = command.cli().parse(args2);
+        cl = commandContext.cli().parse(args2);
       } catch (CLIException e) {
         tty.stdout().handle(e.getMessage() + "\n");
         terminate();
@@ -320,7 +319,7 @@ public class ProcessImpl implements Process {
         if (contextStdout != stdout) {
           if (contextStdout != null) {
             wrappedStdout = line -> {
-              runnerContext.runOnContext(v -> {
+              processContext.runOnContext(v -> {
                 contextStdout.handle(line);
               });
             };
@@ -398,7 +397,7 @@ public class ProcessImpl implements Process {
           handler.handle(process);
         } finally {
           if (completionHandler != null) {
-            runnerContext.runOnContext(completionHandler);
+            processContext.runOnContext(completionHandler);
           }
         }
       } catch (Throwable e) {

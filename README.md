@@ -63,4 +63,3 @@ or with SSH
 
 - test close a session where a command is already closed -> throws ISE
 - commands in bg or stopped should not read from TTY nor write to sdout
-- check contexts in CommandProcessTest

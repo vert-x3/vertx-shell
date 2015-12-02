@@ -69,7 +69,7 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling terminate_handler()"
     end
     #  Run the process.
-    # @yield 
+    # @yield handler called after process callback
     # @return [void]
     def run
       if !block_given?
@@ -80,7 +80,7 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling run()"
     end
     #  Attempt to interrupt the process.
-    # @yield 
+    # @yield handler called after interrupt callback
     # @return [true,false] true if the process caught the signal
     def interrupt?
       if !block_given?
@@ -91,7 +91,7 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling interrupt?()"
     end
     #  Suspend the process.
-    # @yield 
+    # @yield handler called after resume callback
     # @return [void]
     def resume
       if !block_given?
@@ -102,7 +102,7 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling resume()"
     end
     #  Resume the process.
-    # @yield 
+    # @yield handler called after suspend callback
     # @return [void]
     def suspend
       if !block_given?
@@ -113,7 +113,7 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling suspend()"
     end
     #  Terminate the process.
-    # @yield 
+    # @yield handler called after end callback
     # @return [void]
     def terminate
       if !block_given?

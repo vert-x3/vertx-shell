@@ -49,6 +49,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -72,8 +73,17 @@ public class CommandProcessTest {
     vertx.close(context.asyncAssertSuccess());
   }
 
+  private Process createProcessInContext(Context context, Command command) throws Exception {
+    CompletableFuture<Process> fut = new CompletableFuture<>();
+    context.runOnContext(v -> {
+      Process process = command.createProcess().setSession(Session.create()).setTty(Pty.create().slave());
+      fut.complete(process);
+    });
+    return fut.get(2000, TimeUnit.MILLISECONDS);
+  }
+
   @Test
-  public void testRunReadyProcess(TestContext context) {
+  public void testRunReadyProcess(TestContext context) throws Exception {
     AtomicInteger status = new AtomicInteger();
     CommandBuilder builder = CommandBuilder.command("hello");
     Async runningLatch = context.async(2);
@@ -82,8 +92,10 @@ public class CommandProcessTest {
       runningLatch.countDown();
     });
     Command command = builder.build(vertx);
-    io.vertx.ext.shell.system.Process process = command.createProcess().setSession(Session.create()).setTty(Pty.create().slave());
+    Context ctx = vertx.getOrCreateContext();
+    Process process = createProcessInContext(ctx, command);
     process.run(v -> {
+      context.assertEquals(ctx, Vertx.currentContext());
       context.assertEquals(1, status.getAndIncrement());
       runningLatch.countDown();
     });
@@ -154,7 +166,7 @@ public class CommandProcessTest {
   }
 
   @Test
-  public void testSuspendRunningProcess(TestContext context) {
+  public void testSuspendRunningProcess(TestContext context) throws Exception {
     CommandBuilder builder = CommandBuilder.command("hello");
     AtomicInteger status = new AtomicInteger();
     Async suspendedLatch = context.async(2);
@@ -164,10 +176,12 @@ public class CommandProcessTest {
       process.suspendHandler(v -> suspendedLatch.complete());
       runningLatch.complete();
     });
-    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
+    Context ctx = vertx.getOrCreateContext();
+    Process process = createProcessInContext(ctx, builder.build(vertx));
     process.run();
     runningLatch.awaitSuccess(10000);
     process.suspend(v -> {
+      context.assertEquals(ctx, Vertx.currentContext());
       context.assertEquals(1, status.getAndIncrement());
       suspendedLatch.countDown();
     });
@@ -238,7 +252,7 @@ public class CommandProcessTest {
   }
 
   @Test
-  public void testResumeSuspendedProcess(TestContext context) {
+  public void testResumeSuspendedProcess(TestContext context) throws Exception {
     CommandBuilder builder = CommandBuilder.command("hello");
     AtomicInteger status = new AtomicInteger();
     Async runningLatch = context.async();
@@ -254,12 +268,14 @@ public class CommandProcessTest {
       });
       runningLatch.complete();
     });
-    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
+    Context ctx = vertx.getOrCreateContext();
+    Process process = createProcessInContext(ctx, builder.build(vertx));
     process.run();
     runningLatch.awaitSuccess(10000);
     process.suspend();
     suspendedLatch.awaitSuccess(10000);
     process.resume(v -> {
+      context.assertEquals(ctx, Vertx.currentContext());
       context.assertEquals(1, status.getAndIncrement());
       resumedLatch.countDown();
     });
@@ -294,7 +310,7 @@ public class CommandProcessTest {
   }
 
   @Test
-  public void testInterruptRunningProcess(TestContext context) {
+  public void testInterruptRunningProcess(TestContext context) throws Exception {
     CommandBuilder builder = CommandBuilder.command("hello");
     AtomicInteger status = new AtomicInteger();
     Async runningLatch = context.async();
@@ -305,18 +321,22 @@ public class CommandProcessTest {
       });
       runningLatch.complete();
     });
-    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
+    Context ctx = vertx.getOrCreateContext();
+    Process process = createProcessInContext(ctx, builder.build(vertx));
     process.run();
     runningLatch.awaitSuccess(10000);
     process.interrupt(v -> {
+      context.assertEquals(ctx, Vertx.currentContext());
       context.assertEquals(0, status.getAndIncrement());
       interruptedLatch.countDown();
     });
     process.interrupt(v -> {
+      context.assertEquals(ctx, Vertx.currentContext());
       context.assertEquals(1, status.getAndIncrement());
       interruptedLatch.countDown();
     });
     process.interrupt(v -> {
+      context.assertEquals(ctx, Vertx.currentContext());
       context.assertEquals(2, status.getAndIncrement());
       interruptedLatch.countDown();
     });
@@ -360,7 +380,7 @@ public class CommandProcessTest {
   }
 
   @Test
-  public void testTerminateRunningProcess(TestContext context) {
+  public void testTerminateRunningProcess(TestContext context) throws Exception {
     CommandBuilder builder = CommandBuilder.command("hello");
     AtomicInteger status = new AtomicInteger();
     Async terminatedLatch = context.async(3);
@@ -372,18 +392,20 @@ public class CommandProcessTest {
       });
       runningLatch.complete();
     });
-    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
+    Context ctx = vertx.getOrCreateContext();
+    Process process = createProcessInContext(ctx, builder.build(vertx));
     process.terminateHandler(code -> terminatedLatch.countDown());
     process.run();
     runningLatch.awaitSuccess(10000);
     process.terminate(v -> {
+      context.assertEquals(ctx, Vertx.currentContext());
       context.assertEquals(1, status.getAndIncrement());
       terminatedLatch.countDown();
     });
   }
 
   @Test
-  public void testTerminateSuspendedProcess(TestContext context) {
+  public void testTerminateSuspendedProcess(TestContext context) throws Exception {
     CommandBuilder builder = CommandBuilder.command("hello");
     AtomicInteger status = new AtomicInteger();
     Async runningLatch = context.async();
@@ -397,24 +419,38 @@ public class CommandProcessTest {
       });
       runningLatch.complete();
     });
-    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
-    process.terminateHandler(code -> terminatedLatch.countDown());
+    Context ctx = vertx.getOrCreateContext();
+    Process process = createProcessInContext(ctx, builder.build(vertx));
+    process.terminateHandler(code -> {
+      context.assertEquals(ctx, Vertx.currentContext());
+      terminatedLatch.countDown();
+    });
     process.run();
     runningLatch.awaitSuccess(10000);
     process.suspend();
     suspendedLatch.awaitSuccess(10000);
     process.terminate(v -> {
+      context.assertEquals(ctx, Vertx.currentContext());
       context.assertEquals(1, status.getAndIncrement());
       terminatedLatch.countDown();
     });
   }
 
   @Test
-  public void testTerminateReadyProcess(TestContext context) {
+  public void testTerminateReadyProcess(TestContext context) throws Exception {
     CommandBuilder builder = CommandBuilder.command("hello");
+    Async terminatedLatch = context.async(2);
     builder.processHandler(process -> context.fail());
-    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
-    process.terminate();
+    Context ctx = vertx.getOrCreateContext();
+    Process process = createProcessInContext(ctx, builder.build(vertx));
+    process.terminateHandler(code -> {
+      context.assertEquals(ctx, Vertx.currentContext());
+      terminatedLatch.countDown();
+    });
+    process.terminate(v -> {
+      context.assertEquals(ctx, Vertx.currentContext());
+      terminatedLatch.countDown();
+    });
   }
 
   @Test
@@ -437,21 +473,25 @@ public class CommandProcessTest {
   }
 
   @Test
-  public void testEndRunningProcess(TestContext context) {
+  public void testEndRunningProcess(TestContext context) throws Exception {
     CommandBuilder builder = CommandBuilder.command("hello");
     Async endedHandler = context.async();
     builder.processHandler(process -> {
       process.endHandler(v -> endedHandler.complete());
       process.end(0);
     });
-    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
+    Context ctx = vertx.getOrCreateContext();
+    Process process = createProcessInContext(ctx, builder.build(vertx));
     Async terminatedHandler = context.async();
-    process.terminateHandler(code -> terminatedHandler.complete());
+    process.terminateHandler(code -> {
+      context.assertEquals(ctx, Vertx.currentContext());
+      terminatedHandler.complete();
+    });
     process.run();
   }
 
   @Test
-  public void testEndSuspendedProcess(TestContext context) {
+  public void testEndSuspendedProcess(TestContext context) throws Exception {
     CommandBuilder builder = CommandBuilder.command("hello");
     Async runningLatch = context.async();
     Async endedHandler = context.async();
@@ -462,9 +502,13 @@ public class CommandProcessTest {
       process.endHandler(v -> endedHandler.complete());
       runningLatch.complete();
     });
-    Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
+    Context ctx = vertx.getOrCreateContext();
+    Process process = createProcessInContext(ctx, builder.build(vertx));
     Async terminatedHandler = context.async();
-    process.terminateHandler(code -> terminatedHandler.complete());
+    process.terminateHandler(code -> {
+      context.assertEquals(ctx, Vertx.currentContext());
+      terminatedHandler.complete();
+    });
     process.run();
     runningLatch.awaitSuccess(10000);
     process.suspend();

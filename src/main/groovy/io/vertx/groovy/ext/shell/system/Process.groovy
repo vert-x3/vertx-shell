@@ -89,7 +89,7 @@ public class Process {
   }
   /**
    * Run the process.
-   * @param completionHandler 
+   * @param completionHandler handler called after process callback
    */
   public void run(Handler<Void> completionHandler) {
     this.delegate.run(completionHandler);
@@ -104,7 +104,7 @@ public class Process {
   }
   /**
    * Attempt to interrupt the process.
-   * @param completionHandler 
+   * @param completionHandler handler called after interrupt callback
    * @return true if the process caught the signal
    */
   public boolean interrupt(Handler<Void> completionHandler) {
@@ -119,7 +119,7 @@ public class Process {
   }
   /**
    * Suspend the process.
-   * @param completionHandler 
+   * @param completionHandler handler called after resume callback
    */
   public void resume(Handler<Void> completionHandler) {
     this.delegate.resume(completionHandler);
@@ -132,7 +132,7 @@ public class Process {
   }
   /**
    * Resume the process.
-   * @param completionHandler 
+   * @param completionHandler handler called after suspend callback
    */
   public void suspend(Handler<Void> completionHandler) {
     this.delegate.suspend(completionHandler);
@@ -145,7 +145,7 @@ public class Process {
   }
   /**
    * Terminate the process.
-   * @param completionHandler 
+   * @param completionHandler handler called after end callback
    */
   public void terminate(Handler<Void> completionHandler) {
     this.delegate.terminate(completionHandler);
