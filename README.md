@@ -43,6 +43,7 @@ or with SSH
 
 ## Roadmap
 
+- event bus connector : execute shell commands using event bus
 - composite commands _bus send_ instead of _bus-send_
 - http client command
 - JDBC/Mongo auth
@@ -56,5 +57,3 @@ or with SSH
 - more OOTB commands
 - stream more than just text : any T should be streamable (in particular json)
 - advanced option configuration (beyond host/port)
-- web connector
-- event bus connector
