@@ -32,6 +32,7 @@
 
 package io.vertx.ext.shell.system;
 
+import io.vertx.codegen.annotations.CacheReturn;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.cli.CliToken;
@@ -51,6 +52,7 @@ public interface Shell {
   /**
    * @return the shell session
    */
+  @CacheReturn
   Session session();
 
   /**

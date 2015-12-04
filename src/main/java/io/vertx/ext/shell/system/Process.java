@@ -32,6 +32,7 @@
 
 package io.vertx.ext.shell.system;
 
+import io.vertx.codegen.annotations.CacheReturn;
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
@@ -60,6 +61,7 @@ public interface Process {
   /**
    * @return the process tty
    */
+  @CacheReturn
   Tty getTty();
 
   /**
@@ -74,8 +76,15 @@ public interface Process {
   /**
    * @return the process session
    */
+  @CacheReturn
   Session getSession();
 
+  /**
+   * Set an handler for receiving notifications when process status changes.
+   *
+   * @param handler the handler getting the notifications
+   * @return this object
+   */
   @Fluent
   Process statusUpdateHandler(Handler<ProcessStatus> handler);
 
