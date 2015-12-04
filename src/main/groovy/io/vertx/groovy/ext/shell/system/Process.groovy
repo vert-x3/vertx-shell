@@ -19,6 +19,7 @@ import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.shell.system.ExecStatus
+import io.vertx.ext.shell.system.ProcessStatus
 import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.term.Tty
 import io.vertx.groovy.ext.shell.session.Session
@@ -72,13 +73,12 @@ public class Process {
     def ret= InternalHelper.safeCreate(this.delegate.getSession(), io.vertx.groovy.ext.shell.session.Session.class);
     return ret;
   }
-  /**
-   * Set an handler called when the process terminates.
-   * @param handler the terminate handler
-   * @return this object
-   */
-  public Process terminateHandler(Handler<Integer> handler) {
-    this.delegate.terminateHandler(handler);
+  public Process statusUpdateHandler(Handler<Map<String, Object>> handler) {
+    this.delegate.statusUpdateHandler(new Handler<ProcessStatus>() {
+      public void handle(ProcessStatus event) {
+        handler.handle((Map<String, Object>)InternalHelper.wrapObject(event?.toJson()));
+      }
+    });
     return this;
   }
   /**

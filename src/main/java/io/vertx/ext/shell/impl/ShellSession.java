@@ -34,7 +34,6 @@ package io.vertx.ext.shell.impl;
 
 import io.termd.core.util.Helper;
 import io.vertx.core.Future;
-import io.vertx.core.Vertx;
 import io.vertx.ext.shell.system.impl.InternalCommandManager;
 import io.vertx.ext.shell.system.impl.ShellImpl;
 import io.vertx.ext.shell.cli.CliToken;
@@ -56,23 +55,19 @@ import java.util.UUID;
 public class ShellSession {
 
   final String id;
+  final Future<Void> closedFuture;
   private final InternalCommandManager manager;
   private final Shell shell;
-  private final Vertx vertx;
   private Term term;
-
-  final Future<Void> closedFuture;
   private Job foregroundJob; // The currently running job
   private String welcome;
 
-  public ShellSession(Vertx vertx, Term term, InternalCommandManager manager) {
+  public ShellSession(Term term, InternalCommandManager manager) {
     this.id = UUID.randomUUID().toString();
     this.shell = new ShellImpl(manager);
-    this.vertx = vertx;
     this.manager = manager;
     this.closedFuture = Future.future();
     this.term = term.setSession(shell.session());
-
   }
 
   public Shell getShell() {
@@ -92,20 +87,17 @@ public class ShellSession {
     term.interruptHandler(key -> foregroundJob.interrupt());
 
     term.suspendHandler(key -> {
-      Job job = foregroundJob;
       term.echo(Helper.fromCodePoints(new int[]{key, '\n'}));
-      term.echo(statusLine(job) + "\n");
-      foregroundJob = null;
-      job.suspend();
-      readline();
+      term.echo(statusLine(foregroundJob) + "\n");
+      foregroundJob.suspend();
       return true;
     });
 
-    term.closeHandler(v -> {
-      shell.close(ar -> {
-        closedFuture.complete();
-      });
-    });
+    term.closeHandler(v ->
+        shell.close(ar ->
+            closedFuture.complete()
+        )
+    );
     if (welcome != null && welcome.length() > 0) {
       term.stdout().write(welcome);
     }
@@ -122,14 +114,6 @@ public class ShellSession {
 
   public Job getJob(int id) {
     return shell.getJob(id);
-  }
-
-  private void jobs2() {
-    shell.jobs().forEach(job -> {
-      String line = statusLine(job) + "\n";
-      term.stdout().write(line);
-    });
-    readline();
   }
 
   public String statusLine(Job job) {
@@ -176,7 +160,11 @@ public class ShellSession {
             term.close();
             return;
           case "jobs":
-            jobs2();
+            shell.jobs().forEach(job -> {
+              String statusLine = statusLine(job) + "\n";
+              term.stdout().write(statusLine);
+            });
+            readline();
             return;
           case "fg": {
             Job job = findJob();
@@ -184,8 +172,6 @@ public class ShellSession {
               term.stdout().write("no such job\n");
               readline();
             } else {
-              foregroundJob = job;
-              term.echo(job.line() + "\n");
               if (job.status() == ExecStatus.STOPPED) {
                 job.resume(true);
               } else {
@@ -222,8 +208,14 @@ public class ShellSession {
       }
       foregroundJob = job;
       job.setTty(term);
-      job.terminateHandler(status -> {
-        if (foregroundJob == job) {
+      job.statusUpdateHandler(status -> {
+        if (foregroundJob == job && !status.isForeground()) {
+          foregroundJob = null;
+          readline();
+        } else if (status.getExecStatus() == ExecStatus.RUNNING && status.isForeground()) {
+          foregroundJob = job;
+          term.echo(job.line() + "\n");
+        } else if (foregroundJob == job && status.getExecStatus() == ExecStatus.STOPPED) {
           foregroundJob = null;
           readline();
         }

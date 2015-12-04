@@ -76,14 +76,8 @@ public interface Process {
    */
   Session getSession();
 
-  /**
-   * Set an handler called when the process terminates.
-   *
-   * @param handler the terminate handler
-   * @return this object
-   */
   @Fluent
-  Process terminateHandler(Handler<Integer> handler);
+  Process statusUpdateHandler(Handler<ProcessStatus> handler);
 
   /**
    * Run the process.

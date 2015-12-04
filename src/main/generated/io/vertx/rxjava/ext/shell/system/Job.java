@@ -20,6 +20,7 @@ import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.ext.shell.system.ExecStatus;
+import io.vertx.ext.shell.system.ProcessStatus;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.term.Tty;
 
@@ -105,8 +106,8 @@ public class Job {
    * @param handler the terminate handler
    * @return this object
    */
-  public Job terminateHandler(Handler<Integer> handler) { 
-    this.delegate.terminateHandler(handler);
+  public Job statusUpdateHandler(Handler<ProcessStatus> handler) { 
+    this.delegate.statusUpdateHandler(handler);
     return this;
   }
 

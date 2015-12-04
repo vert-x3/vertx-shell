@@ -857,7 +857,7 @@ pty.set_stdout(lambda { |data|
 
 # Run the command
 job.set_tty(pty.slave())
-job.terminate_handler() { |status|
+job.status_update_handler() { |status|
   puts "Command terminated with status #{status}"
 }
 

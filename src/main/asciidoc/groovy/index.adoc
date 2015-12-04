@@ -858,7 +858,7 @@ pty.setStdout({ data ->
 
 // Run the command
 job.setTty(pty.slave())
-job.terminateHandler({ status ->
+job.statusUpdateHandler({ status ->
   println("Command terminated with status ${status}")
 })
 

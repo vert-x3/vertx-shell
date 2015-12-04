@@ -88,7 +88,7 @@ public interface Job {
    * @return this object
    */
   @Fluent
-  Job terminateHandler(Handler<Integer> handler);
+  Job statusUpdateHandler(Handler<ProcessStatus> handler);
 
   /**
    * Run the job, before running the job a {@link Tty} must be set.

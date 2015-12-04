@@ -36,6 +36,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 
 import io.vertx.ext.shell.system.Process;
+import io.vertx.ext.shell.system.ProcessStatus;
 import io.vertx.ext.shell.term.Tty;
 import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.ExecStatus;
@@ -52,7 +53,7 @@ public class JobImpl implements Job {
   private volatile ExecStatus actualStatus; // Used internally for testing only
   volatile long lastStopped; // When the job was last stopped
   volatile Tty tty;
-  volatile Handler<Integer> terminateHandler;
+  volatile Handler<ProcessStatus> statusUpdateHandler;
   final Future<Void> terminateFuture;
 
   JobImpl(int id, ShellImpl shell, Process process, String line) {
@@ -62,13 +63,16 @@ public class JobImpl implements Job {
     this.line = line;
     this.terminateFuture = Future.future();
 
-    process.terminateHandler(status -> {
-      actualStatus = ExecStatus.TERMINATED;
-      shell.removeJob(JobImpl.this.id);
-      if (terminateHandler != null) {
-        terminateHandler.handle(status);
+    process.statusUpdateHandler(status -> {
+      if (status.getExecStatus() == ExecStatus.TERMINATED) {
+        shell.removeJob(JobImpl.this.id);
       }
-      terminateFuture.complete();
+      if (statusUpdateHandler != null) {
+        statusUpdateHandler.handle(status);
+      }
+      if (status.getExecStatus() == ExecStatus.TERMINATED) {
+        terminateFuture.complete();
+      }
     });
   }
 
@@ -77,8 +81,8 @@ public class JobImpl implements Job {
   }
 
   @Override
-  public Job terminateHandler(Handler<Integer> handler) {
-    terminateHandler = handler;
+  public Job statusUpdateHandler(Handler<ProcessStatus> handler) {
+    statusUpdateHandler = handler;
     return this;
   }
 

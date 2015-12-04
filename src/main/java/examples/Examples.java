@@ -522,7 +522,7 @@ public class Examples {
 
     // Run the command
     job.setTty(pty.slave());
-    job.terminateHandler(status -> {
+    job.statusUpdateHandler(status -> {
       System.out.println("Command terminated with status " + status);
     });
   }

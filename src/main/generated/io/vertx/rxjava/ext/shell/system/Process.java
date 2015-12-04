@@ -20,6 +20,7 @@ import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.ext.shell.system.ExecStatus;
+import io.vertx.ext.shell.system.ProcessStatus;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.term.Tty;
 import io.vertx.rxjava.ext.shell.session.Session;
@@ -86,13 +87,8 @@ public class Process {
     return ret;
   }
 
-  /**
-   * Set an handler called when the process terminates.
-   * @param handler the terminate handler
-   * @return this object
-   */
-  public Process terminateHandler(Handler<Integer> handler) { 
-    this.delegate.terminateHandler(handler);
+  public Process statusUpdateHandler(Handler<ProcessStatus> handler) { 
+    this.delegate.statusUpdateHandler(handler);
     return this;
   }
 

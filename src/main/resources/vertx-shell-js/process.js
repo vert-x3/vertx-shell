@@ -22,6 +22,7 @@ var Session = require('vertx-shell-js/session');
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
 var JProcess = io.vertx.ext.shell.system.Process;
+var ProcessStatus = io.vertx.ext.shell.system.ProcessStatus;
 
 /**
  A process managed by the shell.
@@ -105,17 +106,16 @@ var Process = function(j_val) {
   };
 
   /**
-   Set an handler called when the process terminates.
 
    @public
-   @param handler {function} the terminate handler 
-   @return {Process} this object
+   @param handler {function} 
+   @return {Process}
    */
-  this.terminateHandler = function(handler) {
+  this.statusUpdateHandler = function(handler) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_process["terminateHandler(io.vertx.core.Handler)"](function(jVal) {
-      handler(jVal);
+      j_process["statusUpdateHandler(io.vertx.core.Handler)"](function(jVal) {
+      handler(utils.convReturnDataObject(jVal));
     });
       return that;
     } else throw new TypeError('function invoked with invalid arguments');

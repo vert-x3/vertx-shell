@@ -21,6 +21,7 @@ var Tty = require('vertx-shell-js/tty');
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
 var JJob = io.vertx.ext.shell.system.Job;
+var ProcessStatus = io.vertx.ext.shell.system.ProcessStatus;
 
 /**
 
@@ -123,11 +124,11 @@ var Job = function(j_val) {
    @param handler {function} the terminate handler 
    @return {Job} this object
    */
-  this.terminateHandler = function(handler) {
+  this.statusUpdateHandler = function(handler) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_job["terminateHandler(io.vertx.core.Handler)"](function(jVal) {
-      handler(jVal);
+      j_job["statusUpdateHandler(io.vertx.core.Handler)"](function(jVal) {
+      handler(utils.convReturnDataObject(jVal));
     });
       return that;
     } else throw new TypeError('function invoked with invalid arguments');

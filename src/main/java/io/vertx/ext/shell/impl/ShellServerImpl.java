@@ -115,7 +115,7 @@ public class ShellServerImpl implements ShellServer {
         return;
       }
     }
-    ShellSession session = new ShellSession(vertx, term, manager);
+    ShellSession session = new ShellSession(term, manager);
     session.setWelcome(welcomeMessage);
     session.closedFuture.setHandler(ar -> {
       boolean completeSessionClosed;

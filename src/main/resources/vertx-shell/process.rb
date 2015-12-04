@@ -58,15 +58,14 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling get_session()"
     end
-    #  Set an handler called when the process terminates.
-    # @yield the terminate handler
+    # @yield 
     # @return [self]
-    def terminate_handler
+    def status_update_handler
       if block_given?
-        @j_del.java_method(:terminateHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
+        @j_del.java_method(:statusUpdateHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event != nil ? JSON.parse(event.toJson.encode) : nil) }))
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling terminate_handler()"
+      raise ArgumentError, "Invalid arguments when calling status_update_handler()"
     end
     #  Run the process.
     # @param [true,false] foregraound 

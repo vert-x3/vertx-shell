@@ -33,15 +33,13 @@
 package io.vertx.ext.shell;
 
 import io.vertx.core.Context;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
-import io.vertx.ext.shell.command.CommandProcess;
+import io.vertx.ext.shell.command.CommandProcessTest;
 import io.vertx.ext.shell.command.CommandResolver;
 import io.vertx.ext.shell.term.Pty;
-import io.vertx.ext.shell.command.CommandRegistry;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.Shell;
@@ -94,10 +92,10 @@ public class ShellServerTest {
     Shell session = server.createShell();
     Job job = session.createJob(CliToken.tokenize("foo"));
     Async async = context.async();
-    job.setTty(Pty.create().slave()).terminateHandler(code -> {
+    job.setTty(Pty.create().slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(code -> {
       context.assertEquals(3, code);
       async.complete();
-    }).run();
+    })).run();
   }
 
   @Test
@@ -109,10 +107,10 @@ public class ShellServerTest {
     Job job = shell.createJob("foo");
     Async async = context.async();
     Pty pty = Pty.create();
-    job.setTty(pty.slave()).terminateHandler(code -> {
+    job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(code -> {
       context.assertEquals(1, code);
       async.complete();
-    }).run();
+    })).run();
   }
 
   @Test
@@ -130,10 +128,10 @@ public class ShellServerTest {
     Async async = context.async();
     Pty pty = Pty.create();
     job.setTty(pty.slave());
-    job.terminateHandler(code -> {
+    job.statusUpdateHandler(CommandProcessTest.terminateHandler(code -> {
       context.assertEquals(0, code);
       async.complete();
-    }).run();
+    })).run();
     try {
       latch.await(10, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
@@ -155,11 +153,11 @@ public class ShellServerTest {
     Pty pty = Pty.create();
     pty.setStdout(out::add);
     job.setTty(pty.slave());
-    job.terminateHandler(code -> {
+    job.statusUpdateHandler(CommandProcessTest.terminateHandler(code -> {
       context.assertEquals(0, code);
       context.assertEquals(Arrays.asList("bye_world"), out);
       async.complete();
-    }).run();
+    })).run();
   }
 
   @Test
@@ -195,10 +193,10 @@ public class ShellServerTest {
           testContext.assertEquals("pong", text);
           job.suspend();
         });
-        job.setTty(pty.slave()).terminateHandler(code -> {
+        job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(code -> {
           testContext.assertTrue(shellCtx == Vertx.currentContext());
           async.complete();
-        }).run();
+        })).run();
         try {
           latch.await(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
@@ -222,9 +220,9 @@ public class ShellServerTest {
     Job job = shell.createJob("foo");
     Async async = context.async();
     Pty pty = Pty.create();
-    job.setTty(pty.slave()).terminateHandler(status -> {
+    job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
       async.complete();
-    }).run();
+    })).run();
     try {
       latch.await(10, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
@@ -253,9 +251,9 @@ public class ShellServerTest {
     pty.setStdout(text -> {
       pty.setSize(25, 15);
     });
-    job.setTty(pty.slave()).terminateHandler(status -> {
+    job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
       async.complete();
-    }).run();
+    })).run();
   }
 
   @Test
@@ -271,10 +269,10 @@ public class ShellServerTest {
     Job job = shell.createJob("foo");
     shell.session().put("the_key", "the_value");
     Pty pty = Pty.create();
-    job.setTty(pty.slave()).terminateHandler(status -> {
+    job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
       context.assertEquals(0, status);
       async.complete();
-    }).run();
+    })).run();
   }
 
   @Test
@@ -290,11 +288,11 @@ public class ShellServerTest {
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Pty pty = Pty.create();
-    job.setTty(pty.slave()).terminateHandler(status -> {
+    job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
       context.assertEquals(0, status);
       context.assertEquals("the_value", shell.session().get("the_key"));
       async.complete();
-    }).run();
+    })).run();
   }
 
   @Test
@@ -310,11 +308,11 @@ public class ShellServerTest {
     Job job = shell.createJob("foo");
     Pty pty = Pty.create();
     shell.session().put("the_key", "the_value");
-    job.setTty(pty.slave()).terminateHandler(status -> {
+    job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
       context.assertEquals(0, status);
       context.assertNull(shell.session().get("the_key"));
       async.complete();
-    }).run();
+    })).run();
   }
 
   @Test
@@ -328,9 +326,9 @@ public class ShellServerTest {
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Pty pty = Pty.create();
-    job.setTty(pty.slave()).terminateHandler(status -> {
+    job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
       endLatch.countDown();
-    }).run();
+    })).run();
     runningLatch.awaitSuccess(10000);
     shell.close();
     endLatch.awaitSuccess(10000);

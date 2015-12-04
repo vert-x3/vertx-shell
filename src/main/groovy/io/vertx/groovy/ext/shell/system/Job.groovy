@@ -19,6 +19,7 @@ import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.shell.system.ExecStatus
+import io.vertx.ext.shell.system.ProcessStatus
 import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.term.Tty
 /**
@@ -90,8 +91,12 @@ public class Job {
    * @param handler the terminate handler
    * @return this object
    */
-  public Job terminateHandler(Handler<Integer> handler) {
-    this.delegate.terminateHandler(handler);
+  public Job statusUpdateHandler(Handler<Map<String, Object>> handler) {
+    this.delegate.statusUpdateHandler(new Handler<ProcessStatus>() {
+      public void handle(ProcessStatus event) {
+        handler.handle((Map<String, Object>)InternalHelper.wrapObject(event?.toJson()));
+      }
+    });
     return this;
   }
   /**

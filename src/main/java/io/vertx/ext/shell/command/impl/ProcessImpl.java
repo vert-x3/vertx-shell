@@ -68,7 +68,7 @@ public class ProcessImpl implements Process {
   private Handler<Void> endHandler;
   private Handler<Void> backgroundHandler;
   private Handler<Void> foregroundHandler;
-  private Handler<Integer> terminateHandler;
+  private Handler<ProcessStatus> statusUpdateHandler;
   private ExecStatus status;
   private boolean foreground;
   private Stream stdin;
@@ -112,8 +112,8 @@ public class ProcessImpl implements Process {
   }
 
   @Override
-  public Process terminateHandler(Handler<Integer> handler) {
-    terminateHandler = handler;
+  public synchronized Process statusUpdateHandler(Handler<ProcessStatus> handler) {
+    statusUpdateHandler = handler;
     return this;
   }
 
@@ -141,55 +141,24 @@ public class ProcessImpl implements Process {
   @Override
   public synchronized void resume(boolean fg, Handler<Void> completionHandler) {
     if (status == ExecStatus.STOPPED) {
-      status = ExecStatus.RUNNING;
-      foreground = fg;
-      Handler<Void> handler = resumeHandler;
-      if (fg) {
-        if (stdin != null) {
-          tty.setStdin(stdin);
-        }
-        if (resizeHandler != null) {
-          tty.resizehandler(resizeHandler);
-        }
-      }
-      context.runOnContext(v -> {
-        try {
-          if (handler != null) {
-            handler.handle(null);
-          }
-        } finally {
-          if (completionHandler != null) {
-            processContext.runOnContext(completionHandler);
-          }
-        }
-      });
+      updateStatus(
+          new ProcessStatus().setExecStatus(ExecStatus.RUNNING).setForeground(fg),
+          resumeHandler,
+          statusUpdateHandler,
+          completionHandler);
     } else {
       throw new IllegalStateException("Cannot resume process in " + status + " state");
     }
   }
 
   @Override
-  public void suspend(Handler<Void> completionHandler) {
+  public synchronized void suspend(Handler<Void> completionHandler) {
     if (status == ExecStatus.RUNNING) {
-      status = ExecStatus.STOPPED;
-      if (foreground) {
-        foreground = false;
-        if (tty != null) {
-          tty.setStdin(null);
-        }
-      }
-      Handler<Void> handler = suspendHandler;
-      context.runOnContext(v -> {
-        try {
-          if (handler != null) {
-            handler.handle(null);
-          }
-        } finally {
-          if (completionHandler != null) {
-            processContext.runOnContext(completionHandler);
-          }
-        }
-      });
+      updateStatus(
+          new ProcessStatus().setExecStatus(ExecStatus.STOPPED),
+          suspendHandler,
+          statusUpdateHandler,
+          completionHandler);
     } else {
       throw new IllegalStateException("Cannot suspend process in " + status + " state");
     }
@@ -197,43 +166,31 @@ public class ProcessImpl implements Process {
 
   @Override
   public void toBackground(Handler<Void> completionHandler) {
-    setForeground(false, completionHandler);
+    if (status == ExecStatus.RUNNING) {
+      if (foreground) {
+        updateStatus(
+            new ProcessStatus().setExecStatus(ExecStatus.RUNNING),
+            backgroundHandler,
+            statusUpdateHandler,
+            completionHandler);
+      }
+    } else {
+      throw new IllegalStateException("Cannot set to background a process in " + status + " state");
+    }
   }
 
   @Override
   public void toForeground(Handler<Void> completionHandler) {
-    setForeground(true, completionHandler);
-  }
-
-  private void setForeground(boolean fg, Handler<Void> completionHandler) {
     if (status == ExecStatus.RUNNING) {
-      if (foreground != fg) {
-        foreground = fg;
-        if (fg) {
-          if (stdin != null) {
-            tty.setStdin(stdin);
-          }
-          if (resizeHandler != null) {
-            tty.resizehandler(resizeHandler);
-          }
-        } else {
-          throw new UnsupportedOperationException();
-        }
-        Handler<Void> handler = fg ? foregroundHandler : backgroundHandler;
-        context.runOnContext(v -> {
-          try {
-            if (handler != null) {
-              handler.handle(null);
-            }
-          } finally {
-            if (completionHandler != null) {
-              processContext.runOnContext(completionHandler);
-            }
-          }
-        });
+      if (!foreground) {
+        updateStatus(
+            new ProcessStatus().setExecStatus(ExecStatus.RUNNING).setForeground(true),
+            foregroundHandler,
+            statusUpdateHandler,
+            completionHandler);
       }
     } else {
-      throw new IllegalStateException("Cannot set to " + (fg ? "foreground" : "background") + " a process in " + status + " state");
+      throw new IllegalStateException("Cannot set to foreground a process in " + status + " state");
     }
   }
 
@@ -244,34 +201,57 @@ public class ProcessImpl implements Process {
     }
   }
 
-  private synchronized boolean terminate(int statusCode, Handler<Void> completionHandler) {
+  private synchronized boolean terminate(int exitCode, Handler<Void> completionHandler) {
     if (status != ExecStatus.TERMINATED) {
-      status = ExecStatus.TERMINATED;
-      if (foreground) {
-        foreground = false;
-        if (tty != null) {
-          tty.setStdin(null);
-        }
-      }
-      Handler<Integer> terminateHandler = this.terminateHandler;
-      Handler<Void> handler = endHandler;
-      context.runOnContext(v1 -> {
-        try {
-          if (handler != null) {
-            handler.handle(null);
-          }
-        } finally {
-          if (terminateHandler != null) {
-            processContext.runOnContext(v2 -> terminateHandler.handle(statusCode));
-          }
-          if (completionHandler != null) {
-            processContext.runOnContext(completionHandler);
-          }
-        }
-      });
+      updateStatus(
+          new ProcessStatus().setExecStatus(ExecStatus.TERMINATED).setExitCode(exitCode),
+          endHandler,
+          statusUpdateHandler,
+          completionHandler);
       return true;
     } else {
       return false;
+    }
+  }
+
+  private void updateStatus(ProcessStatus update, Handler<Void> handler, Handler<ProcessStatus> updateHandler, Handler<Void> completionHandler) {
+    status = update.getExecStatus();
+    if (!update.isForeground()) {
+      if (foreground) {
+        foreground = false;
+        if (stdin != null) {
+          tty.setStdin(null);
+        }
+        if (resizeHandler != null) {
+          tty.resizehandler(null);
+        }
+      }
+    } else {
+      if (!foreground) {
+        foreground = true;
+        if (stdin != null) {
+          tty.setStdin(stdin);
+        }
+        if (resizeHandler != null) {
+          tty.resizehandler(resizeHandler);
+        }
+      }
+    }
+    context.runOnContext(v -> {
+      try {
+        if (handler != null) {
+          handler.handle(null);
+        }
+      } finally {
+        if (completionHandler != null) {
+          processContext.runOnContext(completionHandler);
+        }
+      }
+    });
+    if (updateHandler != null) {
+      processContext.runOnContext(v -> {
+        updateHandler.handle(update);
+      });
     }
   }
 
