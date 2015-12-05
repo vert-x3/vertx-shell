@@ -19,7 +19,6 @@ import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.shell.system.ExecStatus
-import io.vertx.ext.shell.system.ProcessStatus
 import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.term.Tty
 import io.vertx.groovy.ext.shell.session.Session
@@ -35,8 +34,20 @@ public class Process {
   public Object getDelegate() {
     return delegate;
   }
+  /**
+   * @return the current process status
+   * @return 
+   */
   public ExecStatus status() {
     def ret = this.delegate.status();
+    return ret;
+  }
+  /**
+   * @return the process exit code when the status is  otherwise <code>null</code>
+   * @return 
+   */
+  public Integer exitCode() {
+    def ret = this.delegate.exitCode();
     return ret;
   }
   /**
@@ -82,16 +93,12 @@ public class Process {
     return ret;
   }
   /**
-   * Set an handler for receiving notifications when process status changes.
-   * @param handler the handler getting the notifications
+   * Set an handler for being notified when the process terminates.
+   * @param handler the handler called when the process terminates.
    * @return this object
    */
-  public Process statusUpdateHandler(Handler<Map<String, Object>> handler) {
-    this.delegate.statusUpdateHandler(new Handler<ProcessStatus>() {
-      public void handle(ProcessStatus event) {
-        handler.handle((Map<String, Object>)InternalHelper.wrapObject(event?.toJson()));
-      }
-    });
+  public Process terminatedHandler(Handler<Integer> handler) {
+    this.delegate.terminatedHandler(handler);
     return this;
   }
   /**

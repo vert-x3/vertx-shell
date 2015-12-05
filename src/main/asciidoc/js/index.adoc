@@ -869,7 +869,7 @@ when it's running:
 - uses standard input/output for writing or reading strings
 - resize the terminal
 
-The `link:../../jsdoc/shell-Shell.html#close[close]` closes the shell, it will terminate all jobs in the current shell
+The `link:../../jsdoc/job_controller-JobController.html#close[close]` closes the shell, it will terminate all jobs in the current shell
 session.
 
 == Terminal servers

@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class TtyImpl implements Term {
+public class TermImpl implements Term {
 
   private Vertx vertx;
   private final Readline readline;
@@ -67,7 +67,7 @@ public class TtyImpl implements Term {
   private Session session;
   private boolean inReadline;
 
-  public TtyImpl(Vertx vertx, TtyConnection conn) {
+  public TermImpl(Vertx vertx, TtyConnection conn) {
     this.vertx = vertx;
     InputStream inputrc = Keymap.class.getResourceAsStream("inputrc");
     Keymap keymap = new Keymap(inputrc);
@@ -224,7 +224,7 @@ public class TtyImpl implements Term {
   }
 
   @Override
-  public TtyImpl setStdin(Stream stdin) {
+  public TermImpl setStdin(Stream stdin) {
     if (inReadline) {
       throw new IllegalStateException();
     }
@@ -241,7 +241,7 @@ public class TtyImpl implements Term {
   }
 
   @Override
-  public TtyImpl resizehandler(Handler<Void> handler) {
+  public TermImpl resizehandler(Handler<Void> handler) {
     if (inReadline) {
       throw new IllegalStateException();
     }
@@ -260,12 +260,12 @@ public class TtyImpl implements Term {
     return stdout;
   }
 
-  public TtyImpl interruptHandler(SignalHandler handler) {
+  public TermImpl interruptHandler(SignalHandler handler) {
     interruptHandler = handler;
     return this;
   }
 
-  public TtyImpl suspendHandler(SignalHandler handler) {
+  public TermImpl suspendHandler(SignalHandler handler) {
     suspendHandler = handler;
     return this;
   }
@@ -274,7 +274,7 @@ public class TtyImpl implements Term {
     conn.close();
   }
 
-  public TtyImpl echo(String text) {
+  public TermImpl echo(String text) {
     echo(Helper.toCodePoints(text));
     return this;
   }

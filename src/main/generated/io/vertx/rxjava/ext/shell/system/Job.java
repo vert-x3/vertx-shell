@@ -20,13 +20,12 @@ import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.ext.shell.system.ExecStatus;
-import io.vertx.ext.shell.system.ProcessStatus;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.term.Tty;
 import io.vertx.rxjava.ext.shell.session.Session;
 
 /**
- * A job executed in a , grouping one or several process.<p/>
+ * A job executed in a {@link io.vertx.rxjava.ext.shell.system.JobController}, grouping one or several process.<p/>
  *
  * The job life cycle can be controlled with the {@link io.vertx.rxjava.ext.shell.system.Job#run}, {@link io.vertx.rxjava.ext.shell.system.Job#resume} and {@link io.vertx.rxjava.ext.shell.system.Job#suspend} and {@link io.vertx.rxjava.ext.shell.system.Job#interrupt}
  * methods.
@@ -57,7 +56,7 @@ public class Job {
   }
 
   /**
-   * @return the job status
+   * @return the job exec status
    * @return 
    */
   public ExecStatus status() { 
@@ -84,29 +83,20 @@ public class Job {
   }
 
   /**
-   * @return the current tty this job uses
-   * @return 
-   */
-  public Tty getTty() { 
-    Tty ret= Tty.newInstance(this.delegate.getTty());
-    return ret;
-  }
-
-  /**
    * Set a tty on the job.
    * @param tty the tty to use
-   * @return 
+   * @return this object
    */
   public Job setTty(Tty tty) { 
     this.delegate.setTty((io.vertx.ext.shell.term.Tty) tty.getDelegate());
     return this;
   }
 
-  public Session getSession() { 
-    Session ret= Session.newInstance(this.delegate.getSession());
-    return ret;
-  }
-
+  /**
+   * Set a session on the job.
+   * @param session the session to use
+   * @return this object
+   */
   public Job setSession(Session session) { 
     this.delegate.setSession((io.vertx.ext.shell.session.Session) session.getDelegate());
     return this;
@@ -117,16 +107,18 @@ public class Job {
    * @param handler the terminate handler
    * @return this object
    */
-  public Job statusUpdateHandler(Handler<ProcessStatus> handler) { 
-    this.delegate.statusUpdateHandler(handler);
+  public Job statusUpdateHandler(Handler<ExecStatus> handler) { 
+    this.delegate.statusUpdateHandler(null /* Handler<io.vertx.ext.shell.system.ExecStatus> with kind ENUM not yet implemented */);
     return this;
   }
 
   /**
    * Run the job, before running the job a  must be set.
+   * @return this object
    */
-  public void run() { 
+  public Job run() { 
     this.delegate.run();
+    return this;
   }
 
   /**
@@ -140,32 +132,48 @@ public class Job {
 
   /**
    * Resume the job to foreground.
+   * @return 
    */
-  public void resume() { 
-    this.delegate.resume();
+  public Job resume() { 
+    Job ret= Job.newInstance(this.delegate.resume());
+    return ret;
   }
 
-  public void toBackground() { 
+  /**
+   * Send the job to background.
+   * @return this object
+   */
+  public Job toBackground() { 
     this.delegate.toBackground();
+    return this;
   }
 
-  public void toForeground() { 
+  /**
+   * Send the job to foreground.
+   * @return this object
+   */
+  public Job toForeground() { 
     this.delegate.toForeground();
+    return this;
   }
 
   /**
    * Resume the job.
    * @param foreground true when the job is resumed in foreground
+   * @return 
    */
-  public void resume(boolean foreground) { 
+  public Job resume(boolean foreground) { 
     this.delegate.resume(foreground);
+    return this;
   }
 
   /**
    * Resume the job.
+   * @return this object
    */
-  public void suspend() { 
+  public Job suspend() { 
     this.delegate.suspend();
+    return this;
   }
 
   /**
@@ -175,6 +183,20 @@ public class Job {
     this.delegate.terminate();
   }
 
+  /**
+   * @return the first process in the job
+   * @return 
+   */
+  public Process process() { 
+    if (cached_0 != null) {
+      return cached_0;
+    }
+    Process ret= Process.newInstance(this.delegate.process());
+    cached_0 = ret;
+    return ret;
+  }
+
+  private Process cached_0;
 
   public static Job newInstance(io.vertx.ext.shell.system.Job arg) {
     return arg != null ? new Job(arg) : null;

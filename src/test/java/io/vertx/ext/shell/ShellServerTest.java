@@ -43,7 +43,7 @@ import io.vertx.ext.shell.session.impl.SessionImpl;
 import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.Job;
-import io.vertx.ext.shell.system.Shell;
+import io.vertx.ext.shell.system.JobController;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -90,11 +90,11 @@ public class ShellServerTest {
     commands.add(CommandBuilder.command("foo").processHandler(process -> {
       process.end(3);
     }).build(vertx));
-    Shell session = server.createShell();
-    Job job = session.createJob(CliToken.tokenize("foo"));
+    Shell shell = server.createShell();
+    Job job = shell.createJob(CliToken.tokenize("foo"));
     Async async = context.async();
     job.setTty(Pty.create().slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(code -> {
-      context.assertEquals(3, code);
+      context.assertEquals(3, job.process().exitCode());
       async.complete();
     })).run();
   }
@@ -109,7 +109,7 @@ public class ShellServerTest {
     Async async = context.async();
     Pty pty = Pty.create();
     job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(code -> {
-      context.assertEquals(1, code);
+      context.assertEquals(1, job.process().exitCode());
       async.complete();
     })).run();
   }
@@ -124,13 +124,13 @@ public class ShellServerTest {
       });
       latch.countDown();
     }).build(vertx));
-    Shell session = server.createShell();
-    Job job = session.createJob(CliToken.tokenize("foo"));
+    Shell shell = server.createShell();
+    Job job = shell.createJob(CliToken.tokenize("foo"));
     Async async = context.async();
     Pty pty = Pty.create();
     job.setTty(pty.slave());
     job.statusUpdateHandler(CommandProcessTest.terminateHandler(code -> {
-      context.assertEquals(0, code);
+      context.assertEquals(0, job.process().exitCode());
       async.complete();
     })).run();
     try {
@@ -147,15 +147,15 @@ public class ShellServerTest {
       process.stdout().write("bye_world");
       process.end(0);
     }).build(vertx));
-    Shell session = server.createShell();
-    Job job = session.createJob("foo");
+    Shell shell = server.createShell();
+    Job job = shell.createJob("foo");
     Async async = context.async();
     LinkedList<String> out = new LinkedList<>();
     Pty pty = Pty.create();
     pty.setStdout(out::add);
     job.setTty(pty.slave());
     job.statusUpdateHandler(CommandProcessTest.terminateHandler(code -> {
-      context.assertEquals(0, code);
+      context.assertEquals(0, job.process().exitCode());
       context.assertEquals(Arrays.asList("bye_world"), out);
       async.complete();
     })).run();
@@ -272,7 +272,7 @@ public class ShellServerTest {
     session.put("the_key", "the_value");
     Pty pty = Pty.create();
     job.setSession(session).setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
-      context.assertEquals(0, status);
+      context.assertEquals(0, job.process().exitCode());
       async.complete();
     })).run();
   }
@@ -292,7 +292,7 @@ public class ShellServerTest {
     Pty pty = Pty.create();
     Session session = new SessionImpl();
     job.setSession(session).setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
-      context.assertEquals(0, status);
+      context.assertEquals(0, job.process().exitCode());
       context.assertEquals("the_value", session.get("the_key"));
       async.complete();
     })).run();
@@ -313,7 +313,7 @@ public class ShellServerTest {
     Session session = new SessionImpl();
     session.put("the_key", "the_value");
     job.setSession(session).setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
-      context.assertEquals(0, status);
+      context.assertEquals(0, job.process().exitCode());
       context.assertNull(session.get("the_key"));
       async.complete();
     })).run();
@@ -336,7 +336,7 @@ public class ShellServerTest {
     runningLatch.awaitSuccess(10000);
     shell.close();
     endLatch.awaitSuccess(10000);
-    context.assertEquals(0, shell.jobs().size());
+    context.assertEquals(0, shell.jobController().jobs().size());
   }
 
   // Just some proof of concept, there are issues because we there is a timing

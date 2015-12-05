@@ -1,9 +1,10 @@
+require 'vertx-shell/process'
 require 'vertx-shell/tty'
 require 'vertx-shell/session'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.system.Job
 module VertxShell
-  #  A job executed in a , grouping one or several process.<p/>
+  #  A job executed in a {::VertxShell::JobController}, grouping one or several process.<p/>
   # 
   #  The job life cycle can be controlled with the {::VertxShell::Job#run}, {::VertxShell::Job#resume} and {::VertxShell::Job#suspend} and {::VertxShell::Job#interrupt}
   #  methods.
@@ -26,7 +27,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling id()"
     end
-    #  @return the job status
+    #  @return the job exec status
     # @return [:READY,:RUNNING,:STOPPED,:TERMINATED]
     def status
       if !block_given?
@@ -50,14 +51,6 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling line()"
     end
-    #  @return the current tty this job uses
-    # @return [::VertxShell::Tty]
-    def get_tty
-      if !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:getTty, []).call(),::VertxShell::Tty)
-      end
-      raise ArgumentError, "Invalid arguments when calling get_tty()"
-    end
     #  Set a tty on the job.
     # @param [::VertxShell::Tty] tty the tty to use
     # @return [self]
@@ -68,14 +61,8 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling set_tty(tty)"
     end
-    # @return [::VertxShell::Session]
-    def get_session
-      if !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:getSession, []).call(),::VertxShell::Session)
-      end
-      raise ArgumentError, "Invalid arguments when calling get_session()"
-    end
-    # @param [::VertxShell::Session] session 
+    #  Set a session on the job.
+    # @param [::VertxShell::Session] session the session to use
     # @return [self]
     def set_session(session=nil)
       if session.class.method_defined?(:j_del) && !block_given?
@@ -89,16 +76,17 @@ module VertxShell
     # @return [self]
     def status_update_handler
       if block_given?
-        @j_del.java_method(:statusUpdateHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event != nil ? JSON.parse(event.toJson.encode) : nil) }))
+        @j_del.java_method(:statusUpdateHandler, [Java::IoVertxCore::Handler.java_class]).call(nil)
         return self
       end
       raise ArgumentError, "Invalid arguments when calling status_update_handler()"
     end
     #  Run the job, before running the job a  must be set.
-    # @return [void]
+    # @return [self]
     def run
       if !block_given?
-        return @j_del.java_method(:run, []).call()
+        @j_del.java_method(:run, []).call()
+        return self
       end
       raise ArgumentError, "Invalid arguments when calling run()"
     end
@@ -112,34 +100,40 @@ module VertxShell
     end
     #  Resume the job.
     # @param [true,false] foreground true when the job is resumed in foreground
-    # @return [void]
+    # @return [self]
     def resume(foreground=nil)
       if !block_given? && foreground == nil
-        return @j_del.java_method(:resume, []).call()
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:resume, []).call(),::VertxShell::Job)
       elsif (foreground.class == TrueClass || foreground.class == FalseClass) && !block_given?
-        return @j_del.java_method(:resume, [Java::boolean.java_class]).call(foreground)
+        @j_del.java_method(:resume, [Java::boolean.java_class]).call(foreground)
+        return self
       end
       raise ArgumentError, "Invalid arguments when calling resume(foreground)"
     end
-    # @return [void]
+    #  Send the job to background.
+    # @return [self]
     def to_background
       if !block_given?
-        return @j_del.java_method(:toBackground, []).call()
+        @j_del.java_method(:toBackground, []).call()
+        return self
       end
       raise ArgumentError, "Invalid arguments when calling to_background()"
     end
-    # @return [void]
+    #  Send the job to foreground.
+    # @return [self]
     def to_foreground
       if !block_given?
-        return @j_del.java_method(:toForeground, []).call()
+        @j_del.java_method(:toForeground, []).call()
+        return self
       end
       raise ArgumentError, "Invalid arguments when calling to_foreground()"
     end
     #  Resume the job.
-    # @return [void]
+    # @return [self]
     def suspend
       if !block_given?
-        return @j_del.java_method(:suspend, []).call()
+        @j_del.java_method(:suspend, []).call()
+        return self
       end
       raise ArgumentError, "Invalid arguments when calling suspend()"
     end
@@ -150,6 +144,17 @@ module VertxShell
         return @j_del.java_method(:terminate, []).call()
       end
       raise ArgumentError, "Invalid arguments when calling terminate()"
+    end
+    #  @return the first process in the job
+    # @return [::VertxShell::Process]
+    def process
+      if !block_given?
+        if @cached_process != nil
+          return @cached_process
+        end
+        return @cached_process = ::Vertx::Util::Utils.safe_create(@j_del.java_method(:process, []).call(),::VertxShell::Process)
+      end
+      raise ArgumentError, "Invalid arguments when calling process()"
     end
   end
 end

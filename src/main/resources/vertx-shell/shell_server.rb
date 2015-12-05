@@ -1,7 +1,8 @@
-require 'vertx-shell/shell'
 require 'vertx-shell/term_server'
 require 'vertx/vertx'
+require 'vertx-shell/shell'
 require 'vertx-shell/command_resolver'
+require 'vertx-shell/term'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.ShellServer
 module VertxShell
@@ -58,12 +59,15 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling register_term_server(termServer)"
     end
     #  Create a new shell, the returned shell should be closed explicitely.
+    # @param [::VertxShell::Term] term the shell associated terminal
     # @return [::VertxShell::Shell] the created shell
-    def create_shell
-      if !block_given?
+    def create_shell(term=nil)
+      if !block_given? && term == nil
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:createShell, []).call(),::VertxShell::Shell)
+      elsif term.class.method_defined?(:j_del) && !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:createShell, [Java::IoVertxExtShellTerm::Term.java_class]).call(term.j_del),::VertxShell::Shell)
       end
-      raise ArgumentError, "Invalid arguments when calling create_shell()"
+      raise ArgumentError, "Invalid arguments when calling create_shell(term)"
     end
     #  Start the shell service, this is an asynchronous start.
     # @yield handler for getting notified when service is started

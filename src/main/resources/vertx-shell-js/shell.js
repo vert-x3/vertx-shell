@@ -17,14 +17,16 @@
 /** @module vertx-shell-js/shell */
 var utils = require('vertx-js/util/utils');
 var Job = require('vertx-shell-js/job');
+var JobController = require('vertx-shell-js/job_controller');
 var CliToken = require('vertx-shell-js/cli_token');
+var Session = require('vertx-shell-js/session');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JShell = io.vertx.ext.shell.system.Shell;
+var JShell = io.vertx.ext.shell.Shell;
 
 /**
- An interactive session between a consumer and a shell.<p/>
+ An interactive session between a consumer and a shell.
 
  @class
 */
@@ -32,34 +34,6 @@ var Shell = function(j_val) {
 
   var j_shell = j_val;
   var that = this;
-
-  /**
-   @return the jobs active in this session
-
-   @public
-
-   @return {Array.<Job>}
-   */
-  this.jobs = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      return utils.convReturnListSetVertxGen(j_shell["jobs()"](), Job);
-    } else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-   Returns an active job in this session by its .
-
-   @public
-   @param id {number} the job id 
-   @return {Job} the job of  when not found
-   */
-  this.getJob = function(id) {
-    var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] ==='number') {
-      return utils.convReturnVertxGen(j_shell["getJob(int)"](id), Job);
-    } else throw new TypeError('function invoked with invalid arguments');
-  };
 
   /**
    See {@link Shell#createJob}
@@ -78,17 +52,49 @@ var Shell = function(j_val) {
   };
 
   /**
-   Close the shell session and terminate all the underlying jobs.
+   @return the shell's job controller
 
    @public
-   @param completionHandler {function} 
+
+   @return {JobController}
+   */
+  this.jobController = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      if (that.cachedjobController == null) {
+        that.cachedjobController = utils.convReturnVertxGen(j_shell["jobController()"](), JobController);
+      }
+      return that.cachedjobController;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   @return the current shell session
+
+   @public
+
+   @return {Session}
+   */
+  this.session = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      if (that.cachedsession == null) {
+        that.cachedsession = utils.convReturnVertxGen(j_shell["session()"](), Session);
+      }
+      return that.cachedsession;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Close the shell.
+
+   @public
+
    */
   this.close = function() {
     var __args = arguments;
     if (__args.length === 0) {
       j_shell["close()"]();
-    }  else if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_shell["close(io.vertx.core.Handler)"](__args[0]);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

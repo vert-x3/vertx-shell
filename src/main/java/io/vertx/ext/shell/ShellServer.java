@@ -39,7 +39,8 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.impl.ShellServerImpl;
 import io.vertx.ext.shell.command.CommandResolver;
-import io.vertx.ext.shell.system.Shell;
+import io.vertx.ext.shell.system.JobController;
+import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
 
 /**
@@ -48,10 +49,10 @@ import io.vertx.ext.shell.term.TermServer;
  * A shell server is associated with a collection of {@link TermServer term servers}: the {@link #registerTermServer(TermServer)}
  * method registers a term server. Term servers life cycle are managed by this server.<p/>
  *
- * When a {@link TermServer term server} receives an incoming connection, a {@link Shell} instance is created and
+ * When a {@link TermServer term server} receives an incoming connection, a {@link JobController} instance is created and
  * associated with this connection.<p/>
  *
- * The {@link #createShell()} method can be used to create {@link Shell} instance for testing purposes.
+ * The {@link #createShell()} method can be used to create {@link JobController} instance for testing purposes.
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
@@ -96,6 +97,14 @@ public interface ShellServer {
    */
   @Fluent
   ShellServer registerTermServer(TermServer termServer);
+
+  /**
+   * Create a new shell, the returned shell should be closed explicitely.
+   *
+   * @param term the shell associated terminal
+   * @return the created shell
+   */
+  Shell createShell(Term term);
 
   /**
    * Create a new shell, the returned shell should be closed explicitely.

@@ -33,13 +33,8 @@
 package io.vertx.ext.shell.term.impl;
 
 import io.termd.core.tty.TtyConnection;
-import io.termd.core.util.Helper;
-import io.termd.core.util.Vector;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.io.Stream;
-import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.term.Term;
 
 /**
@@ -57,6 +52,6 @@ class TermConnectionHandler implements Handler<TtyConnection> {
 
   @Override
   public void handle(TtyConnection conn) {
-    handler.handle(new TtyImpl(vertx, conn));
+    handler.handle(new TermImpl(vertx, conn));
   }
 }

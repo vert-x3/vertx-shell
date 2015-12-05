@@ -34,19 +34,18 @@ package io.vertx.ext.shell.impl;
 
 import io.termd.core.util.Helper;
 import io.vertx.core.Future;
+import io.vertx.ext.shell.Shell;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.session.impl.SessionImpl;
+import io.vertx.ext.shell.system.*;
+import io.vertx.ext.shell.system.Process;
 import io.vertx.ext.shell.system.impl.InternalCommandManager;
-import io.vertx.ext.shell.system.impl.ShellImpl;
+import io.vertx.ext.shell.system.impl.JobControllerImpl;
 import io.vertx.ext.shell.cli.CliToken;
-import io.vertx.ext.shell.system.Job;
-import io.vertx.ext.shell.system.ExecStatus;
-import io.vertx.ext.shell.system.Shell;
 import io.vertx.ext.shell.term.Term;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -54,30 +53,56 @@ import java.util.UUID;
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class ShellSession {
+public class ShellImpl implements Shell {
 
   final String id;
   final Future<Void> closedFuture;
-  private final InternalCommandManager manager;
+  private final InternalCommandManager commandManager;
   private final Session session = new SessionImpl();
-  private final Shell shell;
+  private final JobControllerImpl jobController;
   private Term term;
-  private Job foregroundJob; // The currently running job
   private String welcome;
 
-  public ShellSession(Term term, InternalCommandManager commandManager) {
+  public ShellImpl(Term term, InternalCommandManager commandManager) {
 
     session.put("vert.x-command-manager", commandManager);
 
     this.id = UUID.randomUUID().toString();
-    this.shell = new ShellImpl(commandManager);
-    this.manager = commandManager;
+    this.jobController = new JobControllerImpl();
+    this.commandManager = commandManager;
     this.closedFuture = Future.future();
-    this.term = term.setSession(session);
+    this.term = term;
+
+    if (term != null) {
+      term.setSession(session);
+      jobController.foregroundUpdatedHandler(job -> {
+        if (job == null) {
+          readline();
+        }
+      });
+    }
   }
 
-  public Shell getShell() {
-    return shell;
+  public JobController jobController() {
+    return jobController;
+  }
+
+  @Override
+  public synchronized Job createJob(List<CliToken> args) {
+    StringBuilder line = new StringBuilder();
+    args.stream().map(CliToken::raw).forEach(line::append);
+    Process process = commandManager.createProcess(args);
+    return jobController.createJob(process, line.toString());
+  }
+
+  @Override
+  public Job createJob(String line) {
+    return createJob(CliToken.tokenize(line));
+  }
+
+  @Override
+  public Session session() {
+    return session;
   }
 
   public long lastAccessedTime() {
@@ -88,19 +113,20 @@ public class ShellSession {
     this.welcome = welcome;
   }
 
-  public ShellSession init() {
+  public ShellImpl init() {
 
-    term.interruptHandler(key -> foregroundJob.interrupt());
+    term.interruptHandler(key -> jobController().foregroundJob().interrupt());
 
     term.suspendHandler(key -> {
       term.echo(Helper.fromCodePoints(new int[]{key, '\n'}));
-      term.echo(statusLine(foregroundJob) + "\n");
-      foregroundJob.suspend();
+      Job job = jobController.foregroundJob();
+      job.suspend();
+      term.echo(statusLine(job) + "\n");
       return true;
     });
 
     term.closeHandler(v ->
-        shell.close(ar ->
+        jobController.close(ar ->
             closedFuture.complete()
         )
     );
@@ -110,19 +136,7 @@ public class ShellSession {
     return this;
   }
 
-  public Job foregroundJob() {
-    return foregroundJob;
-  }
-
-  public Set<Job> jobs() {
-    return shell.jobs();
-  }
-
-  public Job getJob(int id) {
-    return shell.getJob(id);
-  }
-
-  public String statusLine(Job job) {
+  private String statusLine(Job job) {
     StringBuilder sb = new StringBuilder("[").append(job.id()).append("]");
     if (findJob() == job) {
       sb.append("+");
@@ -133,8 +147,9 @@ public class ShellSession {
   }
 
 
-  Job findJob() {
-    return jobs().
+  private Job findJob() {
+    Job foregroundJob = jobController.foregroundJob();
+    return jobController().jobs().
         stream().
         filter(job -> job != foregroundJob).sorted((j1, j2) -> ((Long) j1.lastStopped()).compareTo(j2.lastStopped())).
         findFirst().orElse(null);
@@ -153,7 +168,7 @@ public class ShellSession {
 
       if (tokens.stream().filter(CliToken::isText).count() == 0) {
         // For now do like this
-        ShellSession.this.readline();
+        ShellImpl.this.readline();
         return;
       }
 
@@ -166,7 +181,7 @@ public class ShellSession {
             term.close();
             return;
           case "jobs":
-            shell.jobs().forEach(job -> {
+            jobController.jobs().forEach(job -> {
               String statusLine = statusLine(job) + "\n";
               term.stdout().write(statusLine);
             });
@@ -190,15 +205,17 @@ public class ShellSession {
             Job job = findJob();
             if (job == null) {
               term.stdout().write("no such job\n");
+              readline();
             } else {
               if (job.status() == ExecStatus.STOPPED) {
                 job.resume(false);
                 term.echo(statusLine(job) + "\n");
+                readline();
               } else {
                 term.stdout().write("job " + job.id() + " already in background\n");
+                readline();
               }
             }
-            readline();
             return;
           }
         }
@@ -206,33 +223,30 @@ public class ShellSession {
 
       Job job;
       try {
-        job = shell.createJob(tokens);
+        job = createJob(tokens);
       } catch (Exception e) {
         term.echo(e.getMessage() + "\n");
         readline();
         return;
       }
-      foregroundJob = job;
       job.setTty(term);
+      job.setSession(session);
       job.statusUpdateHandler(status -> {
-        if (foregroundJob == job && !status.isForeground()) {
-          foregroundJob = null;
-          readline();
-        } else if (status.getExecStatus() == ExecStatus.RUNNING && status.isForeground()) {
-          foregroundJob = job;
+        if (status == ExecStatus.RUNNING && job == jobController.foregroundJob()) {
           term.echo(job.line() + "\n");
-        } else if (foregroundJob == job && status.getExecStatus() == ExecStatus.STOPPED) {
-          foregroundJob = null;
-          readline();
         }
       });
       job.run();
     }, completion -> {
-      manager.complete(completion);
+      commandManager.complete(completion);
     });
   }
 
-  void close() {
-    term.close();
+  public void close() {
+    if (term != null) {
+      term.close();
+    } else {
+      jobController.close(ar -> closedFuture.complete());
+    }
   }
 }

@@ -18,13 +18,13 @@ package io.vertx.groovy.ext.shell;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
-import io.vertx.groovy.ext.shell.system.Shell
 import io.vertx.ext.shell.ShellServerOptions
 import io.vertx.groovy.ext.shell.term.TermServer
 import io.vertx.groovy.core.Vertx
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.command.CommandResolver
+import io.vertx.groovy.ext.shell.term.Term
 /**
  * The shell server.<p/>
  *
@@ -84,10 +84,19 @@ public class ShellServer {
   }
   /**
    * Create a new shell, the returned shell should be closed explicitely.
+   * @param term the shell associated terminal
+   * @return the created shell
+   */
+  public Shell createShell(Term term) {
+    def ret= InternalHelper.safeCreate(this.delegate.createShell((io.vertx.ext.shell.term.Term)term.getDelegate()), io.vertx.groovy.ext.shell.Shell.class);
+    return ret;
+  }
+  /**
+   * Create a new shell, the returned shell should be closed explicitely.
    * @return the created shell
    */
   public Shell createShell() {
-    def ret= InternalHelper.safeCreate(this.delegate.createShell(), io.vertx.groovy.ext.shell.system.Shell.class);
+    def ret= InternalHelper.safeCreate(this.delegate.createShell(), io.vertx.groovy.ext.shell.Shell.class);
     return ret;
   }
   /**

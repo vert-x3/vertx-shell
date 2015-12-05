@@ -524,7 +524,7 @@
  * - uses standard input/output for writing or reading strings
  * - resize the terminal
  *
- * The {@link io.vertx.ext.shell.system.Shell#close} closes the shell, it will terminate all jobs in the current shell
+ * The {@link io.vertx.ext.shell.system.JobController#close} closes the shell, it will terminate all jobs in the current shell
  * session.
  *
  * == Terminal servers

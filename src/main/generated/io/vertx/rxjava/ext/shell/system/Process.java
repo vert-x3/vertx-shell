@@ -20,7 +20,6 @@ import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.ext.shell.system.ExecStatus;
-import io.vertx.ext.shell.system.ProcessStatus;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.term.Tty;
 import io.vertx.rxjava.ext.shell.session.Session;
@@ -44,8 +43,21 @@ public class Process {
     return delegate;
   }
 
+  /**
+   * @return the current process status
+   * @return 
+   */
   public ExecStatus status() { 
     ExecStatus ret = this.delegate.status();
+    return ret;
+  }
+
+  /**
+   * @return the process exit code when the status is  otherwise <code>null</code>
+   * @return 
+   */
+  public Integer exitCode() { 
+    Integer ret = this.delegate.exitCode();
     return ret;
   }
 
@@ -96,12 +108,12 @@ public class Process {
   }
 
   /**
-   * Set an handler for receiving notifications when process status changes.
-   * @param handler the handler getting the notifications
+   * Set an handler for being notified when the process terminates.
+   * @param handler the handler called when the process terminates.
    * @return this object
    */
-  public Process statusUpdateHandler(Handler<ProcessStatus> handler) { 
-    this.delegate.statusUpdateHandler(handler);
+  public Process terminatedHandler(Handler<Integer> handler) { 
+    this.delegate.terminatedHandler(handler);
     return this;
   }
 

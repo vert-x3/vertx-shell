@@ -33,10 +33,9 @@
 package io.vertx.ext.shell.system.impl;
 
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.system.Process;
 import io.vertx.ext.shell.system.Job;
-import io.vertx.ext.shell.system.Shell;
+import io.vertx.ext.shell.system.JobController;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,14 +49,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class ShellImpl implements Shell {
+public class JobControllerImpl implements JobController {
 
-  final InternalCommandManager commandManager;
+  Handler<Job> foregroundUpdatedHandler;
+  Job foregroundJob; // The currently running job
   private final SortedMap<Integer, JobImpl> jobs = new TreeMap<>();
   private boolean closed = false;
 
-  public ShellImpl(InternalCommandManager commandManager) {
-    this.commandManager = commandManager;
+  public JobControllerImpl() {
+  }
+
+  public Job foregroundJob() {
+    return foregroundJob;
   }
 
   public synchronized Set<Job> jobs() {
@@ -72,20 +75,17 @@ public class ShellImpl implements Shell {
     return jobs.remove(id) != null;
   }
 
-  @Override
-  public synchronized Job createJob(List<CliToken> args) {
-    StringBuilder line = new StringBuilder();
-    args.stream().map(CliToken::raw).forEach(line::append);
-    Process process = commandManager.createProcess(args);
-    int id = jobs.isEmpty() ? 1 : jobs.lastKey() + 1;
-    JobImpl job = new JobImpl(id, this, process, line.toString());
-    jobs.put(id, job);
-    return job;
+  public JobController foregroundUpdatedHandler(Handler<Job> handler) {
+    foregroundUpdatedHandler = handler;
+    return this;
   }
 
   @Override
-  public Job createJob(String line) {
-    return createJob(CliToken.tokenize(line));
+  public Job createJob(Process process, String line) {
+    int id = jobs.isEmpty() ? 1 : jobs.lastKey() + 1;
+    JobImpl job = new JobImpl(id, this, process, line);
+    jobs.put(id, job);
+    return job;
   }
 
   @Override

@@ -133,10 +133,10 @@ public class CommandProcessTest {
     }
   }
 
-  public static Handler<ProcessStatus> terminateHandler(Handler<Integer> handler) {
+  public static Handler<ExecStatus> terminateHandler(Handler<Void> handler) {
     return status -> {
-      if (status.getExecStatus() == ExecStatus.TERMINATED) {
-        handler.handle(status.getExitCode());
+      if (status == ExecStatus.TERMINATED) {
+        handler.handle(null);
       }
     };
   }
@@ -147,7 +147,7 @@ public class CommandProcessTest {
     Async terminatedLatch = context.async();
     builder.processHandler(CommandProcess::end);
     Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
-    process.statusUpdateHandler(terminateHandler(status -> terminatedLatch.complete()));
+    process.terminatedHandler(exitCode -> terminatedLatch.complete());
     process.run();
     terminatedLatch.awaitSuccess(10000);
     try {
@@ -218,7 +218,7 @@ public class CommandProcessTest {
     Async terminatedLatch = context.async();
     builder.processHandler(CommandProcess::end);
     Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
-    process.statusUpdateHandler(terminateHandler(status -> terminatedLatch.complete()));
+    process.terminatedHandler(exitCode -> terminatedLatch.complete());
     process.run();
     terminatedLatch.awaitSuccess(10000);
     try {
@@ -291,7 +291,7 @@ public class CommandProcessTest {
     Async terminatedLatch = context.async();
     builder.processHandler(CommandProcess::end);
     Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
-    process.statusUpdateHandler(terminateHandler(status -> terminatedLatch.complete()));
+    process.terminatedHandler(exitCode -> terminatedLatch.complete());
     process.run();
     terminatedLatch.awaitSuccess(10000);
     try {
@@ -373,7 +373,7 @@ public class CommandProcessTest {
     Async terminatedLatch = context.async();
     builder.processHandler(process -> process.end());
     Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
-    process.statusUpdateHandler(terminateHandler(v -> terminatedLatch.complete()));
+    process.terminatedHandler(exitCode -> terminatedLatch.complete());
     process.run();
     terminatedLatch.awaitSuccess(10000);
     try {
@@ -398,7 +398,7 @@ public class CommandProcessTest {
     });
     Context ctx = vertx.getOrCreateContext();
     Process process = createProcessInContext(ctx, builder.build(vertx));
-    process.statusUpdateHandler(terminateHandler(code -> terminatedLatch.countDown()));
+    process.terminatedHandler(exitCode -> terminatedLatch.countDown());
     process.run();
     runningLatch.awaitSuccess(10000);
     process.terminate(v -> {
@@ -425,10 +425,10 @@ public class CommandProcessTest {
     });
     Context ctx = vertx.getOrCreateContext();
     Process process = createProcessInContext(ctx, builder.build(vertx));
-    process.statusUpdateHandler(terminateHandler(code -> {
+    process.terminatedHandler(exitCode -> {
       context.assertEquals(ctx, Vertx.currentContext());
       terminatedLatch.countDown();
-    }));
+    });
     process.run();
     runningLatch.awaitSuccess(10000);
     process.suspend();
@@ -447,10 +447,10 @@ public class CommandProcessTest {
     builder.processHandler(process -> context.fail());
     Context ctx = vertx.getOrCreateContext();
     Process process = createProcessInContext(ctx, builder.build(vertx));
-    process.statusUpdateHandler(terminateHandler(code -> {
+    process.terminatedHandler(exitCode -> {
       context.assertEquals(ctx, Vertx.currentContext());
       terminatedLatch.countDown();
-    }));
+    });
     process.terminate(v -> {
       context.assertEquals(ctx, Vertx.currentContext());
       terminatedLatch.countDown();
@@ -464,7 +464,7 @@ public class CommandProcessTest {
     Async terminatedLatch = context.async();
     builder.processHandler(process -> runningLatch.complete());
     Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
-    process.statusUpdateHandler(terminateHandler(status -> terminatedLatch.complete()));
+    process.terminatedHandler(exitCode -> terminatedLatch.complete());
     process.run();
     runningLatch.awaitSuccess(10000);
     process.terminate();
@@ -487,10 +487,10 @@ public class CommandProcessTest {
     Context ctx = vertx.getOrCreateContext();
     Process process = createProcessInContext(ctx, builder.build(vertx));
     Async terminatedHandler = context.async();
-    process.statusUpdateHandler(terminateHandler(code -> {
+    process.terminatedHandler(exitCode -> {
       context.assertEquals(ctx, Vertx.currentContext());
       terminatedHandler.complete();
-    }));
+    });
     process.run();
   }
 
@@ -509,10 +509,10 @@ public class CommandProcessTest {
     Context ctx = vertx.getOrCreateContext();
     Process process = createProcessInContext(ctx, builder.build(vertx));
     Async terminatedHandler = context.async();
-    process.statusUpdateHandler(terminateHandler(code -> {
+    process.terminatedHandler(exitCode -> {
       context.assertEquals(ctx, Vertx.currentContext());
       terminatedHandler.complete();
-    }));
+    });
     process.run();
     runningLatch.awaitSuccess(10000);
     process.suspend();

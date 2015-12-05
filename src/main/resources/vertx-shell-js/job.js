@@ -16,13 +16,13 @@
 
 /** @module vertx-shell-js/job */
 var utils = require('vertx-js/util/utils');
+var Process = require('vertx-shell-js/process');
 var Tty = require('vertx-shell-js/tty');
 var Session = require('vertx-shell-js/session');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
 var JJob = io.vertx.ext.shell.system.Job;
-var ProcessStatus = io.vertx.ext.shell.system.ProcessStatus;
 
 /**
 
@@ -48,7 +48,7 @@ var Job = function(j_val) {
   };
 
   /**
-   @return the job status
+   @return the job exec status
 
    @public
 
@@ -90,25 +90,11 @@ var Job = function(j_val) {
   };
 
   /**
-   @return the current tty this job uses
-
-   @public
-
-   @return {Tty}
-   */
-  this.getTty = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_job["getTty()"](), Tty);
-    } else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
    Set a tty on the job.
 
    @public
    @param tty {Tty} the tty to use 
-   @return {Job}
+   @return {Job} this object
    */
   this.setTty = function(tty) {
     var __args = arguments;
@@ -119,23 +105,11 @@ var Job = function(j_val) {
   };
 
   /**
+   Set a session on the job.
 
    @public
-
-   @return {Session}
-   */
-  this.getSession = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_job["getSession()"](), Session);
-    } else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-
-   @public
-   @param session {Session} 
-   @return {Job}
+   @param session {Session} the session to use 
+   @return {Job} this object
    */
   this.setSession = function(session) {
     var __args = arguments;
@@ -156,7 +130,7 @@ var Job = function(j_val) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'function') {
       j_job["statusUpdateHandler(io.vertx.core.Handler)"](function(jVal) {
-      handler(utils.convReturnDataObject(jVal));
+      handler(utils.convReturnEnum(jVal));
     });
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
@@ -167,11 +141,13 @@ var Job = function(j_val) {
 
    @public
 
+   @return {Job} this object
    */
   this.run = function() {
     var __args = arguments;
     if (__args.length === 0) {
       j_job["run()"]();
+      return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -194,37 +170,45 @@ var Job = function(j_val) {
 
    @public
    @param foreground {boolean} true when the job is resumed in foreground 
+   @return {Job}
    */
   this.resume = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      j_job["resume()"]();
+      return utils.convReturnVertxGen(j_job["resume()"](), Job);
     }  else if (__args.length === 1 && typeof __args[0] ==='boolean') {
       j_job["resume(boolean)"](__args[0]);
+      return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
+   Send the job to background.
 
    @public
 
+   @return {Job} this object
    */
   this.toBackground = function() {
     var __args = arguments;
     if (__args.length === 0) {
       j_job["toBackground()"]();
+      return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
+   Send the job to foreground.
 
    @public
 
+   @return {Job} this object
    */
   this.toForeground = function() {
     var __args = arguments;
     if (__args.length === 0) {
       j_job["toForeground()"]();
+      return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -233,11 +217,13 @@ var Job = function(j_val) {
 
    @public
 
+   @return {Job} this object
    */
   this.suspend = function() {
     var __args = arguments;
     if (__args.length === 0) {
       j_job["suspend()"]();
+      return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -251,6 +237,23 @@ var Job = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       j_job["terminate()"]();
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   @return the first process in the job
+
+   @public
+
+   @return {Process}
+   */
+  this.process = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      if (that.cachedprocess == null) {
+        that.cachedprocess = utils.convReturnVertxGen(j_job["process()"](), Process);
+      }
+      return that.cachedprocess;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

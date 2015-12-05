@@ -22,7 +22,6 @@ var Session = require('vertx-shell-js/session');
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
 var JProcess = io.vertx.ext.shell.system.Process;
-var ProcessStatus = io.vertx.ext.shell.system.ProcessStatus;
 
 /**
  A process managed by the shell.
@@ -35,6 +34,7 @@ var Process = function(j_val) {
   var that = this;
 
   /**
+   @return the current process status
 
    @public
 
@@ -44,6 +44,20 @@ var Process = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       return utils.convReturnEnum(j_process["status()"]());
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   @return the process exit code when the status is  otherwise <code>null</code>
+
+   @public
+
+   @return {number}
+   */
+  this.exitCode = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return j_process["exitCode()"]();
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -112,17 +126,17 @@ var Process = function(j_val) {
   };
 
   /**
-   Set an handler for receiving notifications when process status changes.
+   Set an handler for being notified when the process terminates.
 
    @public
-   @param handler {function} the handler getting the notifications 
+   @param handler {function} the handler called when the process terminates. 
    @return {Process} this object
    */
-  this.statusUpdateHandler = function(handler) {
+  this.terminatedHandler = function(handler) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_process["statusUpdateHandler(io.vertx.core.Handler)"](function(jVal) {
-      handler(utils.convReturnDataObject(jVal));
+      j_process["terminatedHandler(io.vertx.core.Handler)"](function(jVal) {
+      handler(jVal);
     });
       return that;
     } else throw new TypeError('function invoked with invalid arguments');

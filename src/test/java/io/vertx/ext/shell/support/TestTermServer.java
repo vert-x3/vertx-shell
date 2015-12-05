@@ -40,7 +40,7 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
-import io.vertx.ext.shell.term.impl.TtyImpl;
+import io.vertx.ext.shell.term.impl.TermImpl;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -63,7 +63,7 @@ public class TestTermServer implements TermServer {
   @Override
   public TermServer termHandler(Handler<Term> handler) {
     connectionHandler = conn -> {
-      handler.handle(new TtyImpl(vertx, conn));
+      handler.handle(new TermImpl(vertx, conn));
     };
     return this;
   }

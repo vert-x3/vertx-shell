@@ -233,7 +233,6 @@ public class TestTtyConnection implements TtyConnection {
   public synchronized void assertWritten(String s) {
     String report = checkWritten(s);
     if (report != null) {
-      System.out.println("report = " + report);
       throw new AssertionError(report);
     }
   }

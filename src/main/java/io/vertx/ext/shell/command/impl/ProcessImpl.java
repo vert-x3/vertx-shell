@@ -68,11 +68,12 @@ public class ProcessImpl implements Process {
   private Handler<Void> endHandler;
   private Handler<Void> backgroundHandler;
   private Handler<Void> foregroundHandler;
-  private Handler<ProcessStatus> statusUpdateHandler;
+  private Handler<Integer> terminatedHandler;
   private ExecStatus status;
   private boolean foreground;
   private Stream stdin;
   private Handler<Void> resizeHandler;
+  private Integer exitCode;
 
   public ProcessImpl(Vertx vertx, Context context, Command commandContext, List<CliToken> args, Handler<CommandProcess> handler) {
     this.vertx = vertx;
@@ -82,6 +83,11 @@ public class ProcessImpl implements Process {
     this.args = args;
     processContext = vertx.getOrCreateContext();
     status = ExecStatus.READY;
+  }
+
+  @Override
+  public Integer exitCode() {
+    return exitCode;
   }
 
   @Override
@@ -112,8 +118,8 @@ public class ProcessImpl implements Process {
   }
 
   @Override
-  public synchronized Process statusUpdateHandler(Handler<ProcessStatus> handler) {
-    statusUpdateHandler = handler;
+  public Process terminatedHandler(Handler<Integer> handler) {
+    terminatedHandler = handler;
     return this;
   }
 
@@ -142,9 +148,11 @@ public class ProcessImpl implements Process {
   public synchronized void resume(boolean fg, Handler<Void> completionHandler) {
     if (status == ExecStatus.STOPPED) {
       updateStatus(
-          new ProcessStatus().setExecStatus(ExecStatus.RUNNING).setForeground(fg),
+          ExecStatus.RUNNING,
+          null,
+          fg,
           resumeHandler,
-          statusUpdateHandler,
+          terminatedHandler,
           completionHandler);
     } else {
       throw new IllegalStateException("Cannot resume process in " + status + " state");
@@ -155,9 +163,11 @@ public class ProcessImpl implements Process {
   public synchronized void suspend(Handler<Void> completionHandler) {
     if (status == ExecStatus.RUNNING) {
       updateStatus(
-          new ProcessStatus().setExecStatus(ExecStatus.STOPPED),
+          ExecStatus.STOPPED,
+          null,
+          false,
           suspendHandler,
-          statusUpdateHandler,
+          terminatedHandler,
           completionHandler);
     } else {
       throw new IllegalStateException("Cannot suspend process in " + status + " state");
@@ -169,9 +179,11 @@ public class ProcessImpl implements Process {
     if (status == ExecStatus.RUNNING) {
       if (foreground) {
         updateStatus(
-            new ProcessStatus().setExecStatus(ExecStatus.RUNNING),
+            ExecStatus.RUNNING,
+            null,
+            false,
             backgroundHandler,
-            statusUpdateHandler,
+            terminatedHandler,
             completionHandler);
       }
     } else {
@@ -184,9 +196,11 @@ public class ProcessImpl implements Process {
     if (status == ExecStatus.RUNNING) {
       if (!foreground) {
         updateStatus(
-            new ProcessStatus().setExecStatus(ExecStatus.RUNNING).setForeground(true),
+            ExecStatus.RUNNING,
+            null,
+            true,
             foregroundHandler,
-            statusUpdateHandler,
+            terminatedHandler,
             completionHandler);
       }
     } else {
@@ -204,9 +218,11 @@ public class ProcessImpl implements Process {
   private synchronized boolean terminate(int exitCode, Handler<Void> completionHandler) {
     if (status != ExecStatus.TERMINATED) {
       updateStatus(
-          new ProcessStatus().setExecStatus(ExecStatus.TERMINATED).setExitCode(exitCode),
+          ExecStatus.TERMINATED,
+          exitCode,
+          false,
           endHandler,
-          statusUpdateHandler,
+          terminatedHandler,
           completionHandler);
       return true;
     } else {
@@ -214,9 +230,10 @@ public class ProcessImpl implements Process {
     }
   }
 
-  private void updateStatus(ProcessStatus update, Handler<Void> handler, Handler<ProcessStatus> updateHandler, Handler<Void> completionHandler) {
-    status = update.getExecStatus();
-    if (!update.isForeground()) {
+  private void updateStatus(ExecStatus statusUpdate, Integer exitCodeUpdate, boolean foregroundUpdate, Handler<Void> handler, Handler<Integer> terminatedHandler, Handler<Void> completionHandler) {
+    status = statusUpdate;
+    exitCode = exitCodeUpdate;
+    if (!foregroundUpdate) {
       if (foreground) {
         foreground = false;
         if (stdin != null) {
@@ -248,9 +265,9 @@ public class ProcessImpl implements Process {
         }
       }
     });
-    if (updateHandler != null) {
+    if (terminatedHandler != null && statusUpdate == ExecStatus.TERMINATED) {
       processContext.runOnContext(v -> {
-        updateHandler.handle(update);
+        terminatedHandler.handle(exitCodeUpdate);
       });
     }
   }

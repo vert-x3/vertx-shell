@@ -869,7 +869,7 @@ when it's running:
 - uses standard input/output for writing or reading strings
 - resize the terminal
 
-The `link:../../yardoc/VertxShell/Shell.html#close-instance_method[close]` closes the shell, it will terminate all jobs in the current shell
+The `link:../../yardoc/VertxShell/JobController.html#close-instance_method[close]` closes the shell, it will terminate all jobs in the current shell
 session.
 
 == Terminal servers

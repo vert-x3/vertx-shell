@@ -827,7 +827,7 @@ server.listen()
 
 Besides, the shell server can also be used for creating in process shell session: it provides a programmatic interactive shell.
 
-In process shell session can be created with `link:../../groovydoc/io/vertx/groovy/ext/shell/ShellServer.html#createShell()[createShell]`:
+In process shell session can be created with `link:../../groovydoc/io/vertx/groovy/ext/shell/ShellServer.html#createShell(io.vertx.ext.shell.term.Term)[createShell]`:
 
 [source,groovy]
 ----
@@ -870,7 +870,7 @@ when it's running:
 - uses standard input/output for writing or reading strings
 - resize the terminal
 
-The `link:../../groovydoc/io/vertx/groovy/ext/shell/system/Shell.html#close()[close]` closes the shell, it will terminate all jobs in the current shell
+The `link:../../groovydoc/io/vertx/groovy/ext/shell/system/JobController.html#close(io.vertx.core.Handler)[close]` closes the shell, it will terminate all jobs in the current shell
 session.
 
 == Terminal servers

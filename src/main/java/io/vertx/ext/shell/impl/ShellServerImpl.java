@@ -36,13 +36,12 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.Shell;
 import io.vertx.ext.shell.ShellServer;
 import io.vertx.ext.shell.ShellServerOptions;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.CommandResolver;
 import io.vertx.ext.shell.system.impl.InternalCommandManager;
-import io.vertx.ext.shell.system.Shell;
-import io.vertx.ext.shell.system.impl.ShellImpl;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
 
@@ -65,14 +64,14 @@ public class ShellServerImpl implements ShellServer {
 
   private final Vertx vertx;
   private final CopyOnWriteArrayList<CommandResolver> resolvers;
-  private final InternalCommandManager manager;
+  private final InternalCommandManager commandManager;
   private final List<TermServer> termServers;
   private final long timeoutMillis;
   private final long reaperInterval;
   private String welcomeMessage;
   private boolean closed = true;
   private long timerID = -1;
-  private final Map<String, ShellSession> sessions;
+  private final Map<String, ShellImpl> sessions;
   private final Future<Void> sessionsClosed = Future.future();
 
   public ShellServerImpl(Vertx vertx, ShellServerOptions options) {
@@ -83,7 +82,7 @@ public class ShellServerImpl implements ShellServer {
     this.sessions = new ConcurrentHashMap<>();
     this.reaperInterval = options.getReaperInterval();
     this.resolvers = new CopyOnWriteArrayList<>();
-    this.manager = new InternalCommandManager(resolvers);
+    this.commandManager = new InternalCommandManager(resolvers);
 
     // Register builtin commands so they are listed in help
     resolvers.add(() -> Arrays.asList(
@@ -115,7 +114,7 @@ public class ShellServerImpl implements ShellServer {
         return;
       }
     }
-    ShellSession session = new ShellSession(term, manager);
+    ShellImpl session = createShell(term);
     session.setWelcome(welcomeMessage);
     session.closedFuture.setHandler(ar -> {
       boolean completeSessionClosed;
@@ -176,13 +175,13 @@ public class ShellServerImpl implements ShellServer {
 
   private void evictSessions(long timerID) {
     long now = System.currentTimeMillis();
-    Set<ShellSession> toClose = new HashSet<>();
-    for (ShellSession session: sessions.values()) {
+    Set<ShellImpl> toClose = new HashSet<>();
+    for (ShellImpl session: sessions.values()) {
       if (now - session.lastAccessedTime() > timeoutMillis) {
         toClose.add(session);
       }
     }
-    for (ShellSession session: toClose) {
+    for (ShellImpl session: toClose) {
       session.close();
     }
     setTimer();
@@ -196,16 +195,21 @@ public class ShellServerImpl implements ShellServer {
 
   @Override
   public synchronized Shell createShell() {
+    return createShell(null);
+  }
+
+  @Override
+  public synchronized ShellImpl createShell(Term term) {
     if (closed) {
       throw new IllegalStateException("Closed");
     }
-    return new ShellImpl(manager);
+    return new ShellImpl(term, commandManager);
   }
 
   @Override
   public void close(Handler<AsyncResult<Void>> completionHandler) {
     List<TermServer> toStop;
-    List<ShellSession> toClose;
+    List<ShellImpl> toClose;
     synchronized (this) {
       if (closed) {
         toStop = Collections.emptyList();
@@ -231,7 +235,7 @@ public class ShellServerImpl implements ShellServer {
           completionHandler.handle(Future.succeededFuture());
         }
       };
-      toClose.forEach(ShellSession::close);
+      toClose.forEach(ShellImpl::close);
       toStop.forEach(termServer -> termServer.close(handler));
       sessionsClosed.setHandler(handler);
     }

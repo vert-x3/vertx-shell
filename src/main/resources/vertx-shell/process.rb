@@ -15,12 +15,21 @@ module VertxShell
     def j_del
       @j_del
     end
+    #  @return the current process status
     # @return [:READY,:RUNNING,:STOPPED,:TERMINATED]
     def status
       if !block_given?
         return @j_del.java_method(:status, []).call().name.intern
       end
       raise ArgumentError, "Invalid arguments when calling status()"
+    end
+    #  @return the process exit code when the status is  otherwise <code>null</code>
+    # @return [Fixnum]
+    def exit_code
+      if !block_given?
+        return @j_del.java_method(:exitCode, []).call()
+      end
+      raise ArgumentError, "Invalid arguments when calling exit_code()"
     end
     #  Set the process tty.
     # @param [::VertxShell::Tty] tty the process tty
@@ -64,15 +73,15 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling get_session()"
     end
-    #  Set an handler for receiving notifications when process status changes.
-    # @yield the handler getting the notifications
+    #  Set an handler for being notified when the process terminates.
+    # @yield the handler called when the process terminates.
     # @return [self]
-    def status_update_handler
+    def terminated_handler
       if block_given?
-        @j_del.java_method(:statusUpdateHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event != nil ? JSON.parse(event.toJson.encode) : nil) }))
+        @j_del.java_method(:terminatedHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling status_update_handler()"
+      raise ArgumentError, "Invalid arguments when calling terminated_handler()"
     end
     #  Run the process.
     # @param [true,false] foregraound 

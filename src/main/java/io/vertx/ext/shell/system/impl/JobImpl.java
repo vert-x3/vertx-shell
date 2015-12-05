@@ -37,7 +37,6 @@ import io.vertx.core.Handler;
 
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.Process;
-import io.vertx.ext.shell.system.ProcessStatus;
 import io.vertx.ext.shell.term.Tty;
 import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.ExecStatus;
@@ -48,39 +47,36 @@ import io.vertx.ext.shell.system.ExecStatus;
 public class JobImpl implements Job {
 
   final int id;
-  final ShellImpl shell;
+  final JobControllerImpl controller;
   final Process process;
   final String line;
   private volatile ExecStatus actualStatus; // Used internally for testing only
   volatile long lastStopped; // When the job was last stopped
   volatile Tty tty;
   volatile Session session;
-  volatile Handler<ProcessStatus> statusUpdateHandler;
+  volatile Handler<ExecStatus> statusUpdateHandler;
   final Future<Void> terminateFuture;
 
-  JobImpl(int id, ShellImpl shell, Process process, String line) {
+  JobImpl(int id, JobControllerImpl controller, Process process, String line) {
     this.id = id;
-    this.shell = shell;
+    this.controller = controller;
     this.process = process;
     this.line = line;
     this.terminateFuture = Future.future();
 
-    process.statusUpdateHandler(status -> {
-      if (status.getExecStatus() == ExecStatus.TERMINATED) {
-        shell.removeJob(JobImpl.this.id);
+    process.terminatedHandler(exitCode -> {
+      if (controller.foregroundJob == this) {
+        controller.foregroundJob = null;
+        if (controller.foregroundUpdatedHandler != null) {
+          controller.foregroundUpdatedHandler.handle(null);
+        }
       }
+      controller.removeJob(JobImpl.this.id);
       if (statusUpdateHandler != null) {
-        statusUpdateHandler.handle(status);
+        statusUpdateHandler.handle(ExecStatus.TERMINATED);
       }
-      if (status.getExecStatus() == ExecStatus.TERMINATED) {
-        terminateFuture.complete();
-      }
+      terminateFuture.complete();
     });
-  }
-
-  @Override
-  public Session getSession() {
-    return session;
   }
 
   @Override
@@ -94,7 +90,7 @@ public class JobImpl implements Job {
   }
 
   @Override
-  public Job statusUpdateHandler(Handler<ProcessStatus> handler) {
+  public Job statusUpdateHandler(Handler<ExecStatus> handler) {
     statusUpdateHandler = handler;
     return this;
   }
@@ -105,23 +101,47 @@ public class JobImpl implements Job {
   }
 
   @Override
-  public void resume(boolean foreground) {
+  public Job resume(boolean foreground) {
+    if (controller.foregroundJob != null) {
+      throw new IllegalStateException();
+    }
     try {
       process.resume(foreground, v -> {
         actualStatus = ExecStatus.RUNNING;
       });
     } catch (IllegalStateException ignore) {
     }
+    if (foreground) {
+      controller.foregroundJob = this;
+      if (controller.foregroundUpdatedHandler != null) {
+        controller.foregroundUpdatedHandler.handle(this);
+      }
+    }
+    if (statusUpdateHandler != null) {
+      statusUpdateHandler.handle(process.status());
+    }
+    return this;
   }
 
   @Override
-  public void suspend() {
+  public Job suspend() {
     try {
       process.suspend(v -> {
         actualStatus = ExecStatus.STOPPED;
       });
     } catch (IllegalStateException ignore) {
+      return this;
     }
+    if (controller.foregroundJob == this) {
+      controller.foregroundJob = null;
+      if (controller.foregroundUpdatedHandler != null) {
+        controller.foregroundUpdatedHandler.handle(null);
+      }
+    }
+    if (statusUpdateHandler != null) {
+      statusUpdateHandler.handle(process.status());
+    }
+    return this;
   }
 
   @Override
@@ -131,6 +151,11 @@ public class JobImpl implements Job {
     } catch (IllegalStateException ignore) {
       // Process already terminated, likely by itself
     }
+  }
+
+  @Override
+  public Process process() {
+    return process;
   }
 
   public long lastStopped() {
@@ -146,23 +171,36 @@ public class JobImpl implements Job {
   }
 
   @Override
-  public void toBackground() {
-    process.toBackground();
+  public Job toBackground() {
+    if (controller.foregroundJob == this) {
+      controller.foregroundJob = null;
+      process.toBackground();
+      if (statusUpdateHandler != null) {
+        statusUpdateHandler.handle(process.status());
+      }
+    }
+    return this;
   }
 
   @Override
-  public void toForeground() {
+  public Job toForeground() {
+    if (controller.foregroundJob != null) {
+      throw new IllegalStateException();
+    }
+    controller.foregroundJob = this;
+    if (controller.foregroundUpdatedHandler != null) {
+      controller.foregroundUpdatedHandler.handle(this);
+    }
     process.toForeground();
+    if (statusUpdateHandler != null) {
+      statusUpdateHandler.handle(process.status());
+    }
+    return this;
   }
 
   @Override
   public int id() {
     return id;
-  }
-
-  @Override
-  public Tty getTty() {
-    return tty;
   }
 
   @Override
@@ -172,11 +210,16 @@ public class JobImpl implements Job {
   }
 
   @Override
-  public void run() {
+  public Job run() {
+    controller.foregroundJob = this;
+    if (controller.foregroundUpdatedHandler != null) {
+      controller.foregroundUpdatedHandler.handle(this);
+    }
     process.setTty(tty);
     process.setSession(session);
     process.run(v -> {
       actualStatus = ExecStatus.RUNNING;
     });
+    return this;
   }
 }

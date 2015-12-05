@@ -19,13 +19,13 @@ package io.vertx.rxjava.ext.shell;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
-import io.vertx.rxjava.ext.shell.system.Shell;
 import io.vertx.ext.shell.ShellServerOptions;
 import io.vertx.rxjava.ext.shell.term.TermServer;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.command.CommandResolver;
+import io.vertx.rxjava.ext.shell.term.Term;
 
 /**
  * The shell server.<p/>
@@ -93,6 +93,16 @@ public class ShellServer {
   public ShellServer registerTermServer(TermServer termServer) { 
     this.delegate.registerTermServer((io.vertx.ext.shell.term.TermServer) termServer.getDelegate());
     return this;
+  }
+
+  /**
+   * Create a new shell, the returned shell should be closed explicitely.
+   * @param term the shell associated terminal
+   * @return the created shell
+   */
+  public Shell createShell(Term term) { 
+    Shell ret= Shell.newInstance(this.delegate.createShell((io.vertx.ext.shell.term.Term) term.getDelegate()));
+    return ret;
   }
 
   /**

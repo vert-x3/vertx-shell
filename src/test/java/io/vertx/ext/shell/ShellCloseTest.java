@@ -55,7 +55,7 @@ import java.util.function.Consumer;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @RunWith(VertxUnitRunner.class)
-public class ShellSessionCloseTest {
+public class ShellCloseTest {
 
   Vertx vertx;
   CommandRegistry registry;

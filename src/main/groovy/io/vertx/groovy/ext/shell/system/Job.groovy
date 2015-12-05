@@ -19,12 +19,11 @@ import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.shell.system.ExecStatus
-import io.vertx.ext.shell.system.ProcessStatus
 import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.term.Tty
 import io.vertx.groovy.ext.shell.session.Session
 /**
- * A job executed in a , grouping one or several process.<p/>
+ * A job executed in a {@link io.vertx.groovy.ext.shell.system.JobController}, grouping one or several process.<p/>
  *
  * The job life cycle can be controlled with the {@link io.vertx.groovy.ext.shell.system.Job#run}, {@link io.vertx.groovy.ext.shell.system.Job#resume} and {@link io.vertx.groovy.ext.shell.system.Job#suspend} and {@link io.vertx.groovy.ext.shell.system.Job#interrupt}
  * methods.
@@ -47,7 +46,7 @@ public class Job {
     return ret;
   }
   /**
-   * @return the job status
+   * @return the job exec status
    * @return 
    */
   public ExecStatus status() {
@@ -71,26 +70,19 @@ public class Job {
     return ret;
   }
   /**
-   * @return the current tty this job uses
-   * @return 
-   */
-  public Tty getTty() {
-    def ret= InternalHelper.safeCreate(this.delegate.getTty(), io.vertx.groovy.ext.shell.term.Tty.class);
-    return ret;
-  }
-  /**
    * Set a tty on the job.
    * @param tty the tty to use
-   * @return 
+   * @return this object
    */
   public Job setTty(Tty tty) {
     this.delegate.setTty((io.vertx.ext.shell.term.Tty)tty.getDelegate());
     return this;
   }
-  public Session getSession() {
-    def ret= InternalHelper.safeCreate(this.delegate.getSession(), io.vertx.groovy.ext.shell.session.Session.class);
-    return ret;
-  }
+  /**
+   * Set a session on the job.
+   * @param session the session to use
+   * @return this object
+   */
   public Job setSession(Session session) {
     this.delegate.setSession((io.vertx.ext.shell.session.Session)session.getDelegate());
     return this;
@@ -100,19 +92,17 @@ public class Job {
    * @param handler the terminate handler
    * @return this object
    */
-  public Job statusUpdateHandler(Handler<Map<String, Object>> handler) {
-    this.delegate.statusUpdateHandler(new Handler<ProcessStatus>() {
-      public void handle(ProcessStatus event) {
-        handler.handle((Map<String, Object>)InternalHelper.wrapObject(event?.toJson()));
-      }
-    });
+  public Job statusUpdateHandler(Handler<ExecStatus> handler) {
+    this.delegate.statusUpdateHandler(null /* Handler<io.vertx.ext.shell.system.ExecStatus> with kind ENUM not yet implemented */);
     return this;
   }
   /**
    * Run the job, before running the job a  must be set.
+   * @return this object
    */
-  public void run() {
+  public Job run() {
     this.delegate.run();
+    return this;
   }
   /**
    * Attempt to interrupt the job.
@@ -124,28 +114,44 @@ public class Job {
   }
   /**
    * Resume the job to foreground.
+   * @return 
    */
-  public void resume() {
-    this.delegate.resume();
+  public Job resume() {
+    def ret= InternalHelper.safeCreate(this.delegate.resume(), io.vertx.groovy.ext.shell.system.Job.class);
+    return ret;
   }
-  public void toBackground() {
+  /**
+   * Send the job to background.
+   * @return this object
+   */
+  public Job toBackground() {
     this.delegate.toBackground();
+    return this;
   }
-  public void toForeground() {
+  /**
+   * Send the job to foreground.
+   * @return this object
+   */
+  public Job toForeground() {
     this.delegate.toForeground();
+    return this;
   }
   /**
    * Resume the job.
    * @param foreground true when the job is resumed in foreground
+   * @return 
    */
-  public void resume(boolean foreground) {
+  public Job resume(boolean foreground) {
     this.delegate.resume(foreground);
+    return this;
   }
   /**
    * Resume the job.
+   * @return this object
    */
-  public void suspend() {
+  public Job suspend() {
     this.delegate.suspend();
+    return this;
   }
   /**
    * Terminate the job.
@@ -153,4 +159,17 @@ public class Job {
   public void terminate() {
     this.delegate.terminate();
   }
+  /**
+   * @return the first process in the job
+   * @return 
+   */
+  public Process process() {
+    if (cached_0 != null) {
+      return cached_0;
+    }
+    def ret= InternalHelper.safeCreate(this.delegate.process(), io.vertx.groovy.ext.shell.system.Process.class);
+    cached_0 = ret;
+    return ret;
+  }
+  private Process cached_0;
 }

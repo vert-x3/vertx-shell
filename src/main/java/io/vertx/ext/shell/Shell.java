@@ -30,62 +30,53 @@
  *
  */
 
-package io.vertx.ext.shell.system;
+package io.vertx.ext.shell;
 
-import io.vertx.codegen.annotations.DataObject;
-import io.vertx.core.json.JsonObject;
+import io.vertx.codegen.annotations.CacheReturn;
+import io.vertx.codegen.annotations.VertxGen;
+import io.vertx.ext.shell.cli.CliToken;
+import io.vertx.ext.shell.session.Session;
+import io.vertx.ext.shell.system.Job;
+import io.vertx.ext.shell.system.JobController;
+
+import java.util.List;
 
 /**
+ * An interactive session between a consumer and a shell.
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@DataObject(generateConverter = true)
-public class ProcessStatus {
+@VertxGen
+public interface Shell {
 
-  private ExecStatus execStatus;
-  private boolean foreground;
-  private int exitCode;
+  /**
+   * Create a job, the created job should then be executed with the {@link io.vertx.ext.shell.system.Job#run} method.
+   *
+   * @param line the command line creating this job
+   * @return the created job
+   */
+  Job createJob(List<CliToken> line);
 
-  public ProcessStatus() {
-  }
+  /**
+   * See {@link #createJob(List)}
+   */
+  Job createJob(String line);
 
-  public ProcessStatus(JsonObject json) {
-    // Todo
-  }
+  /**
+   * @return the shell's job controller
+   */
+  @CacheReturn
+  JobController jobController();
 
-  public ProcessStatus(ProcessStatus that) {
-    execStatus = that.execStatus;
-    foreground = that.foreground;
-    exitCode = that.exitCode;
-  }
+  /**
+   * @return the current shell session
+   */
+  @CacheReturn
+  Session session();
 
-  public ExecStatus getExecStatus() {
-    return execStatus;
-  }
+  /**
+   * Close the shell.
+   */
+  void close();
 
-  public ProcessStatus setExecStatus(ExecStatus execStatus) {
-    this.execStatus = execStatus;
-    return this;
-  }
-
-  public boolean isForeground() {
-    return foreground;
-  }
-
-  public ProcessStatus setForeground(boolean foreground) {
-    this.foreground = foreground;
-    return this;
-  }
-
-  public int getExitCode() {
-    return exitCode;
-  }
-
-  public ProcessStatus setExitCode(int exitCode) {
-    this.exitCode = exitCode;
-    return this;
-  }
-
-  public JsonObject toJson() {
-    return null;
-  }
 }

@@ -16,10 +16,11 @@
 
 /** @module vertx-shell-js/shell_server */
 var utils = require('vertx-js/util/utils');
-var Shell = require('vertx-shell-js/shell');
 var TermServer = require('vertx-shell-js/term_server');
 var Vertx = require('vertx-js/vertx');
+var Shell = require('vertx-shell-js/shell');
 var CommandResolver = require('vertx-shell-js/command_resolver');
+var Term = require('vertx-shell-js/term');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
@@ -70,13 +71,15 @@ var ShellServer = function(j_val) {
    Create a new shell, the returned shell should be closed explicitely.
 
    @public
-
+   @param term {Term} the shell associated terminal 
    @return {Shell} the created shell
    */
   this.createShell = function() {
     var __args = arguments;
     if (__args.length === 0) {
       return utils.convReturnVertxGen(j_shellServer["createShell()"](), Shell);
+    }  else if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      return utils.convReturnVertxGen(j_shellServer["createShell(io.vertx.ext.shell.term.Term)"](__args[0]._jdel), Shell);
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

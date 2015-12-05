@@ -19,23 +19,21 @@ package io.vertx.rxjava.ext.shell.system;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
-import java.util.List;
 import java.util.Set;
-import io.vertx.rxjava.ext.shell.cli.CliToken;
 import io.vertx.core.Handler;
 
 /**
- * An interactive session between a consumer and a shell.<p/>
+ * The job controller.<p/>
  *
  * <p/>
- * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.system.Shell original} non RX-ified interface using Vert.x codegen.
+ * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.system.JobController original} non RX-ified interface using Vert.x codegen.
  */
 
-public class Shell {
+public class JobController {
 
-  final io.vertx.ext.shell.system.Shell delegate;
+  final io.vertx.ext.shell.system.JobController delegate;
 
-  public Shell(io.vertx.ext.shell.system.Shell delegate) {
+  public JobController(io.vertx.ext.shell.system.JobController delegate) {
     this.delegate = delegate;
   }
 
@@ -43,8 +41,22 @@ public class Shell {
     return delegate;
   }
 
+  public static JobController create() { 
+    JobController ret= JobController.newInstance(io.vertx.ext.shell.system.JobController.create());
+    return ret;
+  }
+
   /**
-   * @return the jobs active in this session
+   * @return the current foreground job
+   * @return 
+   */
+  public Job foregroundJob() { 
+    Job ret= Job.newInstance(this.delegate.foregroundJob());
+    return ret;
+  }
+
+  /**
+   * @return the active jobs
    * @return 
    */
   public Set<Job> jobs() { 
@@ -63,23 +75,22 @@ public class Shell {
   }
 
   /**
-   * Create a job, the created job should then be executed with the {@link io.vertx.rxjava.ext.shell.system.Job#run} method.
-   * @param line the command line creating this job
+   * Create a job wrapping a process.
+   * @param process the process
+   * @param line the line
    * @return the created job
    */
-  public Job createJob(List<CliToken> line) { 
-    Job ret= Job.newInstance(this.delegate.createJob(line.stream().map(element -> (io.vertx.ext.shell.cli.CliToken)element.getDelegate()).collect(java.util.stream.Collectors.toList())));
+  public Job createJob(Process process, String line) { 
+    Job ret= Job.newInstance(this.delegate.createJob((io.vertx.ext.shell.system.Process) process.getDelegate(), line));
     return ret;
   }
 
   /**
-   * See {@link io.vertx.rxjava.ext.shell.system.Shell#createJob}
-   * @param line 
-   * @return 
+   * Close the controller and terminate all the underlying jobs, a closed controller does not accept anymore jobs.
+   * @param completionHandler 
    */
-  public Job createJob(String line) { 
-    Job ret= Job.newInstance(this.delegate.createJob(line));
-    return ret;
+  public void close(Handler<Void> completionHandler) { 
+    this.delegate.close(completionHandler);
   }
 
   /**
@@ -89,16 +100,8 @@ public class Shell {
     this.delegate.close();
   }
 
-  /**
-   * Close the shell session and terminate all the underlying jobs.
-   * @param completionHandler 
-   */
-  public void close(Handler<Void> completionHandler) { 
-    this.delegate.close(completionHandler);
-  }
 
-
-  public static Shell newInstance(io.vertx.ext.shell.system.Shell arg) {
-    return arg != null ? new Shell(arg) : null;
+  public static JobController newInstance(io.vertx.ext.shell.system.JobController arg) {
+    return arg != null ? new JobController(arg) : null;
   }
 }

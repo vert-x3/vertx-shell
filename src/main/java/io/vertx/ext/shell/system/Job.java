@@ -32,11 +32,14 @@
 
 package io.vertx.ext.shell.system;
 
+import io.vertx.codegen.annotations.CacheReturn;
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.term.Tty;
+
+import java.util.List;
 
 /**
  * A job executed in a {@link JobController}, grouping one or several process.<p/>
@@ -55,7 +58,7 @@ public interface Job {
   int id();
 
   /**
-   * @return the job status
+   * @return the job exec status
    */
   ExecStatus status();
 
@@ -70,20 +73,20 @@ public interface Job {
   String line();
 
   /**
-   * @return the current tty this job uses
-   */
-  Tty getTty();
-
-  /**
    * Set a tty on the job.
    *
    * @param tty the tty to use
+   * @return this object
    */
   @Fluent
   Job setTty(Tty tty);
 
-  Session getSession();
-
+  /**
+   * Set a session on the job.
+   *
+   * @param session the session to use
+   * @return this object
+   */
   @Fluent
   Job setSession(Session session);
 
@@ -94,12 +97,15 @@ public interface Job {
    * @return this object
    */
   @Fluent
-  Job statusUpdateHandler(Handler<ProcessStatus> handler);
+  Job statusUpdateHandler(Handler<ExecStatus> handler);
 
   /**
    * Run the job, before running the job a {@link Tty} must be set.
+   *
+   * @return this object
    */
-  void run();
+  @Fluent
+  Job run();
 
   /**
    * Attempt to interrupt the job.
@@ -111,28 +117,50 @@ public interface Job {
   /**
    * Resume the job to foreground.
    */
-  default void resume() {
-    resume(true);
+  default Job resume() {
+    return resume(true);
   }
 
-  void toBackground();
+  /**
+   * Send the job to background.
+   *
+   * @return this object
+   */
+  @Fluent
+  Job toBackground();
 
-  void toForeground();
+  /**
+   * Send the job to foreground.
+   *
+   * @return this object
+   */
+  @Fluent
+  Job toForeground();
 
   /**
    * Resume the job.
    *
    * @param foreground true when the job is resumed in foreground
    */
-  void resume(boolean foreground);
+  @Fluent
+  Job resume(boolean foreground);
 
   /**
    * Resume the job.
+   *
+   * @return this object
    */
-  void suspend();
+  @Fluent
+  Job suspend();
 
   /**
    * Terminate the job.
    */
   void terminate();
+
+  /**
+   * @return the first process in the job
+   */
+  @CacheReturn
+  Process process();
 }

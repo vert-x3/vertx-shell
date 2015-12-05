@@ -47,7 +47,15 @@ import io.vertx.ext.shell.session.Session;
 @VertxGen
 public interface Process {
 
+  /**
+   * @return the current process status
+   */
   ExecStatus status();
+
+  /**
+   * @return the process exit code when the status is {@link ExecStatus#TERMINATED} otherwise {@code null}
+   */
+  Integer exitCode();
 
   /**
    * Set the process tty.
@@ -80,13 +88,13 @@ public interface Process {
   Session getSession();
 
   /**
-   * Set an handler for receiving notifications when process status changes.
+   * Set an handler for being notified when the process terminates.
    *
-   * @param handler the handler getting the notifications
+   * @param handler the handler called when the process terminates.
    * @return this object
    */
   @Fluent
-  Process statusUpdateHandler(Handler<ProcessStatus> handler);
+  Process terminatedHandler(Handler<Integer> handler);
 
   /**
    * Run the process.

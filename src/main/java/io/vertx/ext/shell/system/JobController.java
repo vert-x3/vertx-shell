@@ -34,21 +34,29 @@ package io.vertx.ext.shell.system;
 
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.cli.CliToken;
+import io.vertx.ext.shell.system.impl.JobControllerImpl;
 
-import java.util.List;
 import java.util.Set;
 
 /**
- * An interactive session between a consumer and a shell.<p/>
+ * The job controller.<p/>
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
-public interface Shell {
+public interface JobController {
+
+  static JobController create() {
+    return new JobControllerImpl();
+  }
 
   /**
-   * @return the jobs active in this session
+   * @return the current foreground job
+   */
+  Job foregroundJob();
+
+  /**
+   * @return the active jobs
    */
   Set<Job> jobs();
 
@@ -61,25 +69,22 @@ public interface Shell {
   Job getJob(int id);
 
   /**
-   * Create a job, the created job should then be executed with the {@link io.vertx.ext.shell.system.Job#run} method.
+   * Create a job wrapping a process.
    *
-   * @param line the command line creating this job
+   * @param process the process
+   * @param line the line
    * @return the created job
    */
-  Job createJob(List<CliToken> line);
+  Job createJob(Process process, String line);
 
   /**
-   * See {@link #createJob(List)}
+   * Close the controller and terminate all the underlying jobs, a closed controller does not accept anymore jobs.
    */
-  Job createJob(String line);
+  void close(Handler<Void> completionHandler);
 
   /**
    * Close the shell session and terminate all the underlying jobs.
    */
   void close();
 
-  /**
-   * Close the shell session and terminate all the underlying jobs.
-   */
-  void close(Handler<Void> completionHandler);
 }
