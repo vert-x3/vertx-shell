@@ -32,11 +32,9 @@
 
 package io.vertx.ext.shell.system;
 
-import io.vertx.codegen.annotations.CacheReturn;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.cli.CliToken;
-import io.vertx.ext.shell.session.Session;
 
 import java.util.List;
 import java.util.Set;
@@ -48,12 +46,6 @@ import java.util.Set;
  */
 @VertxGen
 public interface Shell {
-
-  /**
-   * @return the shell session
-   */
-  @CacheReturn
-  Session session();
 
   /**
    * @return the jobs active in this session

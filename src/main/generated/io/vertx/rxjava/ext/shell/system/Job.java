@@ -23,9 +23,10 @@ import io.vertx.ext.shell.system.ExecStatus;
 import io.vertx.ext.shell.system.ProcessStatus;
 import io.vertx.core.Handler;
 import io.vertx.rxjava.ext.shell.term.Tty;
+import io.vertx.rxjava.ext.shell.session.Session;
 
 /**
- * A job executed in a {@link io.vertx.rxjava.ext.shell.system.Shell}, grouping one or several process.<p/>
+ * A job executed in a , grouping one or several process.<p/>
  *
  * The job life cycle can be controlled with the {@link io.vertx.rxjava.ext.shell.system.Job#run}, {@link io.vertx.rxjava.ext.shell.system.Job#resume} and {@link io.vertx.rxjava.ext.shell.system.Job#suspend} and {@link io.vertx.rxjava.ext.shell.system.Job#interrupt}
  * methods.
@@ -98,6 +99,16 @@ public class Job {
    */
   public Job setTty(Tty tty) { 
     this.delegate.setTty((io.vertx.ext.shell.term.Tty) tty.getDelegate());
+    return this;
+  }
+
+  public Session getSession() { 
+    Session ret= Session.newInstance(this.delegate.getSession());
+    return ret;
+  }
+
+  public Job setSession(Session session) { 
+    this.delegate.setSession((io.vertx.ext.shell.session.Session) session.getDelegate());
     return this;
   }
 

@@ -35,6 +35,7 @@ package io.vertx.ext.shell.system.impl;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 
+import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.Process;
 import io.vertx.ext.shell.system.ProcessStatus;
 import io.vertx.ext.shell.term.Tty;
@@ -53,6 +54,7 @@ public class JobImpl implements Job {
   private volatile ExecStatus actualStatus; // Used internally for testing only
   volatile long lastStopped; // When the job was last stopped
   volatile Tty tty;
+  volatile Session session;
   volatile Handler<ProcessStatus> statusUpdateHandler;
   final Future<Void> terminateFuture;
 
@@ -74,6 +76,17 @@ public class JobImpl implements Job {
         terminateFuture.complete();
       }
     });
+  }
+
+  @Override
+  public Session getSession() {
+    return session;
+  }
+
+  @Override
+  public Job setSession(Session session) {
+    this.session = session;
+    return this;
   }
 
   public ExecStatus actualStatus() {
@@ -161,7 +174,7 @@ public class JobImpl implements Job {
   @Override
   public void run() {
     process.setTty(tty);
-    process.setSession(shell.session);
+    process.setSession(session);
     process.run(v -> {
       actualStatus = ExecStatus.RUNNING;
     });

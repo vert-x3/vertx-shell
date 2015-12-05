@@ -1,8 +1,9 @@
 require 'vertx-shell/tty'
+require 'vertx-shell/session'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.system.Job
 module VertxShell
-  #  A job executed in a {::VertxShell::Shell}, grouping one or several process.<p/>
+  #  A job executed in a , grouping one or several process.<p/>
   # 
   #  The job life cycle can be controlled with the {::VertxShell::Job#run}, {::VertxShell::Job#resume} and {::VertxShell::Job#suspend} and {::VertxShell::Job#interrupt}
   #  methods.
@@ -66,6 +67,22 @@ module VertxShell
         return self
       end
       raise ArgumentError, "Invalid arguments when calling set_tty(tty)"
+    end
+    # @return [::VertxShell::Session]
+    def get_session
+      if !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:getSession, []).call(),::VertxShell::Session)
+      end
+      raise ArgumentError, "Invalid arguments when calling get_session()"
+    end
+    # @param [::VertxShell::Session] session 
+    # @return [self]
+    def set_session(session=nil)
+      if session.class.method_defined?(:j_del) && !block_given?
+        @j_del.java_method(:setSession, [Java::IoVertxExtShellSession::Session.java_class]).call(session.j_del)
+        return self
+      end
+      raise ArgumentError, "Invalid arguments when calling set_session(session)"
     end
     #  Set an handler called when the job terminates.
     # @yield the terminate handler

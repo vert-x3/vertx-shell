@@ -1,6 +1,5 @@
 require 'vertx-shell/job'
 require 'vertx-shell/cli_token'
-require 'vertx-shell/session'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.system.Shell
 module VertxShell
@@ -15,17 +14,6 @@ module VertxShell
     # @return [::VertxShell::Shell] the underlying java delegate
     def j_del
       @j_del
-    end
-    #  @return the shell session
-    # @return [::VertxShell::Session]
-    def session
-      if !block_given?
-        if @cached_session != nil
-          return @cached_session
-        end
-        return @cached_session = ::Vertx::Util::Utils.safe_create(@j_del.java_method(:session, []).call(),::VertxShell::Session)
-      end
-      raise ArgumentError, "Invalid arguments when calling session()"
     end
     #  @return the jobs active in this session
     # @return [Set<::VertxShell::Job>]

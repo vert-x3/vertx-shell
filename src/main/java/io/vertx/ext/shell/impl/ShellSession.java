@@ -34,6 +34,8 @@ package io.vertx.ext.shell.impl;
 
 import io.termd.core.util.Helper;
 import io.vertx.core.Future;
+import io.vertx.ext.shell.session.Session;
+import io.vertx.ext.shell.session.impl.SessionImpl;
 import io.vertx.ext.shell.system.impl.InternalCommandManager;
 import io.vertx.ext.shell.system.impl.ShellImpl;
 import io.vertx.ext.shell.cli.CliToken;
@@ -57,17 +59,21 @@ public class ShellSession {
   final String id;
   final Future<Void> closedFuture;
   private final InternalCommandManager manager;
+  private final Session session = new SessionImpl();
   private final Shell shell;
   private Term term;
   private Job foregroundJob; // The currently running job
   private String welcome;
 
-  public ShellSession(Term term, InternalCommandManager manager) {
+  public ShellSession(Term term, InternalCommandManager commandManager) {
+
+    session.put("vert.x-command-manager", commandManager);
+
     this.id = UUID.randomUUID().toString();
-    this.shell = new ShellImpl(manager);
-    this.manager = manager;
+    this.shell = new ShellImpl(commandManager);
+    this.manager = commandManager;
     this.closedFuture = Future.future();
-    this.term = term.setSession(shell.session());
+    this.term = term.setSession(session);
   }
 
   public Shell getShell() {

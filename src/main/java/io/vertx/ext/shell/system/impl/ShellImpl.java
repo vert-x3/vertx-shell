@@ -34,9 +34,7 @@ package io.vertx.ext.shell.system.impl;
 
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.cli.CliToken;
-import io.vertx.ext.shell.session.impl.SessionImpl;
 import io.vertx.ext.shell.system.Process;
-import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.Shell;
 
@@ -55,14 +53,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ShellImpl implements Shell {
 
   final InternalCommandManager commandManager;
-  final SessionImpl session = new SessionImpl();
   private final SortedMap<Integer, JobImpl> jobs = new TreeMap<>();
   private boolean closed = false;
 
   public ShellImpl(InternalCommandManager commandManager) {
     this.commandManager = commandManager;
-
-    session.put("vert.x-command-manager", commandManager);
   }
 
   public synchronized Set<Job> jobs() {
@@ -71,11 +66,6 @@ public class ShellImpl implements Shell {
 
   public synchronized Job getJob(int id) {
     return jobs.get(id);
-  }
-
-  @Override
-  public Session session() {
-    return session;
   }
 
   synchronized boolean removeJob(int id) {

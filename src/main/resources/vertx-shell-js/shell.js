@@ -18,7 +18,6 @@
 var utils = require('vertx-js/util/utils');
 var Job = require('vertx-shell-js/job');
 var CliToken = require('vertx-shell-js/cli_token');
-var Session = require('vertx-shell-js/session');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
@@ -33,23 +32,6 @@ var Shell = function(j_val) {
 
   var j_shell = j_val;
   var that = this;
-
-  /**
-   @return the shell session
-
-   @public
-
-   @return {Session}
-   */
-  this.session = function() {
-    var __args = arguments;
-    if (__args.length === 0) {
-      if (that.cachedsession == null) {
-        that.cachedsession = utils.convReturnVertxGen(j_shell["session()"](), Session);
-      }
-      return that.cachedsession;
-    } else throw new TypeError('function invoked with invalid arguments');
-  };
 
   /**
    @return the jobs active in this session

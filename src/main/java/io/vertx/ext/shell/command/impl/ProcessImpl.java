@@ -270,11 +270,11 @@ public class ProcessImpl implements Process {
       throw new IllegalStateException("Cannot execute process without a TTY set");
     }
 
-    // Make a local copy
-    Session session = this.session;
-    if (session == null) {
-      throw new IllegalStateException("Cannot execute process without a Session set");
-    }
+//    // Make a local copy
+//    Session session = this.session;
+//    if (session == null) {
+//      throw new IllegalStateException("Cannot execute process without a Session set");
+//    }
 
     CommandLine cl;
     final List<String> args2 = args.stream().filter(CliToken::isText).map(CliToken::value).collect(Collectors.toList());

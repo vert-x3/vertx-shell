@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 import io.vertx.rxjava.ext.shell.cli.CliToken;
 import io.vertx.core.Handler;
-import io.vertx.rxjava.ext.shell.session.Session;
 
 /**
  * An interactive session between a consumer and a shell.<p/>
@@ -42,19 +41,6 @@ public class Shell {
 
   public Object getDelegate() {
     return delegate;
-  }
-
-  /**
-   * @return the shell session
-   * @return 
-   */
-  public Session session() { 
-    if (cached_0 != null) {
-      return cached_0;
-    }
-    Session ret= Session.newInstance(this.delegate.session());
-    cached_0 = ret;
-    return ret;
   }
 
   /**
@@ -111,7 +97,6 @@ public class Shell {
     this.delegate.close(completionHandler);
   }
 
-  private Session cached_0;
 
   public static Shell newInstance(io.vertx.ext.shell.system.Shell arg) {
     return arg != null ? new Shell(arg) : null;

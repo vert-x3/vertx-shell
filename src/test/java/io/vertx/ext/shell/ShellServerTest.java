@@ -39,6 +39,7 @@ import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.CommandProcessTest;
 import io.vertx.ext.shell.command.CommandResolver;
+import io.vertx.ext.shell.session.impl.SessionImpl;
 import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.Job;
@@ -267,9 +268,10 @@ public class ShellServerTest {
     }).build(vertx));
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
-    shell.session().put("the_key", "the_value");
+    Session session = new SessionImpl();
+    session.put("the_key", "the_value");
     Pty pty = Pty.create();
-    job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
+    job.setSession(session).setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
       context.assertEquals(0, status);
       async.complete();
     })).run();
@@ -288,9 +290,10 @@ public class ShellServerTest {
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Pty pty = Pty.create();
-    job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
+    Session session = new SessionImpl();
+    job.setSession(session).setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
       context.assertEquals(0, status);
-      context.assertEquals("the_value", shell.session().get("the_key"));
+      context.assertEquals("the_value", session.get("the_key"));
       async.complete();
     })).run();
   }
@@ -307,10 +310,11 @@ public class ShellServerTest {
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Pty pty = Pty.create();
-    shell.session().put("the_key", "the_value");
-    job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
+    Session session = new SessionImpl();
+    session.put("the_key", "the_value");
+    job.setSession(session).setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
       context.assertEquals(0, status);
-      context.assertNull(shell.session().get("the_key"));
+      context.assertNull(session.get("the_key"));
       async.complete();
     })).run();
   }

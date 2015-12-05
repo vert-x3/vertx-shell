@@ -22,7 +22,6 @@ import java.util.List
 import java.util.Set
 import io.vertx.groovy.ext.shell.cli.CliToken
 import io.vertx.core.Handler
-import io.vertx.groovy.ext.shell.session.Session
 /**
  * An interactive session between a consumer and a shell.<p/>
 */
@@ -34,18 +33,6 @@ public class Shell {
   }
   public Object getDelegate() {
     return delegate;
-  }
-  /**
-   * @return the shell session
-   * @return 
-   */
-  public Session session() {
-    if (cached_0 != null) {
-      return cached_0;
-    }
-    def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.groovy.ext.shell.session.Session.class);
-    cached_0 = ret;
-    return ret;
   }
   /**
    * @return the jobs active in this session
@@ -95,5 +82,4 @@ public class Shell {
   public void close(Handler<Void> completionHandler) {
     this.delegate.close(completionHandler);
   }
-  private Session cached_0;
 }

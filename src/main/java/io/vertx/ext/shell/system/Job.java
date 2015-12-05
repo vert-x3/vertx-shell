@@ -35,10 +35,11 @@ package io.vertx.ext.shell.system;
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
+import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.term.Tty;
 
 /**
- * A job executed in a {@link Shell}, grouping one or several process.<p/>
+ * A job executed in a {@link JobController}, grouping one or several process.<p/>
  *
  * The job life cycle can be controlled with the {@link #run}, {@link #resume} and {@link #suspend} and {@link #interrupt}
  * methods.
@@ -80,6 +81,11 @@ public interface Job {
    */
   @Fluent
   Job setTty(Tty tty);
+
+  Session getSession();
+
+  @Fluent
+  Job setSession(Session session);
 
   /**
    * Set an handler called when the job terminates.

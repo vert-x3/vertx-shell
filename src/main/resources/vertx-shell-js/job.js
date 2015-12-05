@@ -17,6 +17,7 @@
 /** @module vertx-shell-js/job */
 var utils = require('vertx-js/util/utils');
 var Tty = require('vertx-shell-js/tty');
+var Session = require('vertx-shell-js/session');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
@@ -113,6 +114,33 @@ var Job = function(j_val) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
       j_job["setTty(io.vertx.ext.shell.term.Tty)"](tty._jdel);
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+
+   @return {Session}
+   */
+  this.getSession = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return utils.convReturnVertxGen(j_job["getSession()"](), Session);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param session {Session} 
+   @return {Job}
+   */
+  this.setSession = function(session) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
+      j_job["setSession(io.vertx.ext.shell.session.Session)"](session._jdel);
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
