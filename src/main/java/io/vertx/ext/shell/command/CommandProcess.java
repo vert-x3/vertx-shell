@@ -161,11 +161,6 @@ public interface CommandProcess extends Tty {
   void end();
 
   /**
-   * Move the command to background : todo it should trigger readline and that will not work for now.
-   */
-  void toBackground();
-
-  /**
    * End the process.
    *
    * @param status the exit status.

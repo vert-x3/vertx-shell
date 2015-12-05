@@ -463,11 +463,6 @@ public class ProcessImpl implements Process {
         terminate(statusCode, null);
       }
 
-      @Override
-      public void toBackground() {
-//        ProcessImpl.this.toBackground();
-        throw new UnsupportedOperationException();
-      }
     };
 
     //
