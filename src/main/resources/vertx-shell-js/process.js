@@ -72,7 +72,10 @@ var Process = function(j_val) {
   this.getTty = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_process["getTty()"](), Tty);
+      if (that.cachedgetTty == null) {
+        that.cachedgetTty = utils.convReturnVertxGen(j_process["getTty()"](), Tty);
+      }
+      return that.cachedgetTty;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -101,15 +104,19 @@ var Process = function(j_val) {
   this.getSession = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_process["getSession()"](), Session);
+      if (that.cachedgetSession == null) {
+        that.cachedgetSession = utils.convReturnVertxGen(j_process["getSession()"](), Session);
+      }
+      return that.cachedgetSession;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
+   Set an handler for receiving notifications when process status changes.
 
    @public
-   @param handler {function} 
-   @return {Process}
+   @param handler {function} the handler getting the notifications 
+   @return {Process} this object
    */
   this.statusUpdateHandler = function(handler) {
     var __args = arguments;

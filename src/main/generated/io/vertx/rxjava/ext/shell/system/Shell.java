@@ -49,7 +49,11 @@ public class Shell {
    * @return 
    */
   public Session session() { 
+    if (cached_0 != null) {
+      return cached_0;
+    }
     Session ret= Session.newInstance(this.delegate.session());
+    cached_0 = ret;
     return ret;
   }
 
@@ -107,6 +111,7 @@ public class Shell {
     this.delegate.close(completionHandler);
   }
 
+  private Session cached_0;
 
   public static Shell newInstance(io.vertx.ext.shell.system.Shell arg) {
     return arg != null ? new Shell(arg) : null;

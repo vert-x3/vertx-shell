@@ -40,7 +40,11 @@ public class Shell {
    * @return 
    */
   public Session session() {
+    if (cached_0 != null) {
+      return cached_0;
+    }
     def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.groovy.ext.shell.session.Session.class);
+    cached_0 = ret;
     return ret;
   }
   /**
@@ -91,4 +95,5 @@ public class Shell {
   public void close(Handler<Void> completionHandler) {
     this.delegate.close(completionHandler);
   }
+  private Session cached_0;
 }

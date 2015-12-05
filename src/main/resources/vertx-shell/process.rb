@@ -36,7 +36,10 @@ module VertxShell
     # @return [::VertxShell::Tty]
     def get_tty
       if !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:getTty, []).call(),::VertxShell::Tty)
+        if @cached_get_tty != nil
+          return @cached_get_tty
+        end
+        return @cached_get_tty = ::Vertx::Util::Utils.safe_create(@j_del.java_method(:getTty, []).call(),::VertxShell::Tty)
       end
       raise ArgumentError, "Invalid arguments when calling get_tty()"
     end
@@ -54,11 +57,15 @@ module VertxShell
     # @return [::VertxShell::Session]
     def get_session
       if !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:getSession, []).call(),::VertxShell::Session)
+        if @cached_get_session != nil
+          return @cached_get_session
+        end
+        return @cached_get_session = ::Vertx::Util::Utils.safe_create(@j_del.java_method(:getSession, []).call(),::VertxShell::Session)
       end
       raise ArgumentError, "Invalid arguments when calling get_session()"
     end
-    # @yield 
+    #  Set an handler for receiving notifications when process status changes.
+    # @yield the handler getting the notifications
     # @return [self]
     def status_update_handler
       if block_given?

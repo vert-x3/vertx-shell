@@ -171,13 +171,5 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling end(status)"
     end
-    #  Move the command to background : todo it should trigger readline and that will not work for now.
-    # @return [void]
-    def to_background
-      if !block_given?
-        return @j_del.java_method(:toBackground, []).call()
-      end
-      raise ArgumentError, "Invalid arguments when calling to_background()"
-    end
   end
 end

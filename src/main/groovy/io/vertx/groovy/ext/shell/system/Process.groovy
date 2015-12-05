@@ -53,7 +53,11 @@ public class Process {
    * @return 
    */
   public Tty getTty() {
+    if (cached_0 != null) {
+      return cached_0;
+    }
     def ret= InternalHelper.safeCreate(this.delegate.getTty(), io.vertx.groovy.ext.shell.term.Tty.class);
+    cached_0 = ret;
     return ret;
   }
   /**
@@ -70,9 +74,18 @@ public class Process {
    * @return 
    */
   public Session getSession() {
+    if (cached_1 != null) {
+      return cached_1;
+    }
     def ret= InternalHelper.safeCreate(this.delegate.getSession(), io.vertx.groovy.ext.shell.session.Session.class);
+    cached_1 = ret;
     return ret;
   }
+  /**
+   * Set an handler for receiving notifications when process status changes.
+   * @param handler the handler getting the notifications
+   * @return this object
+   */
   public Process statusUpdateHandler(Handler<Map<String, Object>> handler) {
     this.delegate.statusUpdateHandler(new Handler<ProcessStatus>() {
       public void handle(ProcessStatus event) {
@@ -206,4 +219,6 @@ public class Process {
   public void toForeground(Handler<Void> completionHandler) {
     this.delegate.toForeground(completionHandler);
   }
+  private Tty cached_0;
+  private Session cached_1;
 }

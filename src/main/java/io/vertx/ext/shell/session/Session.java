@@ -34,7 +34,7 @@ package io.vertx.ext.shell.session;
 
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.ext.shell.system.impl.SessionImpl;
+import io.vertx.ext.shell.session.impl.SessionImpl;
 
 /**
  * A shell session.

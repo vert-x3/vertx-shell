@@ -64,7 +64,11 @@ public class Process {
    * @return 
    */
   public Tty getTty() { 
+    if (cached_0 != null) {
+      return cached_0;
+    }
     Tty ret= Tty.newInstance(this.delegate.getTty());
+    cached_0 = ret;
     return ret;
   }
 
@@ -83,10 +87,19 @@ public class Process {
    * @return 
    */
   public Session getSession() { 
+    if (cached_1 != null) {
+      return cached_1;
+    }
     Session ret= Session.newInstance(this.delegate.getSession());
+    cached_1 = ret;
     return ret;
   }
 
+  /**
+   * Set an handler for receiving notifications when process status changes.
+   * @param handler the handler getting the notifications
+   * @return this object
+   */
   public Process statusUpdateHandler(Handler<ProcessStatus> handler) { 
     this.delegate.statusUpdateHandler(handler);
     return this;
@@ -235,6 +248,8 @@ public class Process {
     this.delegate.toForeground(completionHandler);
   }
 
+  private Tty cached_0;
+  private Session cached_1;
 
   public static Process newInstance(io.vertx.ext.shell.system.Process arg) {
     return arg != null ? new Process(arg) : null;

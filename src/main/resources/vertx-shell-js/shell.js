@@ -44,7 +44,10 @@ var Shell = function(j_val) {
   this.session = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_shell["session()"](), Session);
+      if (that.cachedsession == null) {
+        that.cachedsession = utils.convReturnVertxGen(j_shell["session()"](), Session);
+      }
+      return that.cachedsession;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

@@ -30,7 +30,7 @@
  *
  */
 
-package io.vertx.ext.shell.system.impl;
+package io.vertx.ext.shell.session.impl;
 
 import io.vertx.ext.shell.session.Session;
 

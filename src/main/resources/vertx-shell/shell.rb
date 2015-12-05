@@ -20,7 +20,10 @@ module VertxShell
     # @return [::VertxShell::Session]
     def session
       if !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:session, []).call(),::VertxShell::Session)
+        if @cached_session != nil
+          return @cached_session
+        end
+        return @cached_session = ::Vertx::Util::Utils.safe_create(@j_del.java_method(:session, []).call(),::VertxShell::Session)
       end
       raise ArgumentError, "Invalid arguments when calling session()"
     end
