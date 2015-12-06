@@ -88,7 +88,7 @@ public abstract class HttpTermServerBase {
     Async async = context.async();
     server = createServer(context, new HttpTermOptions().setPort(8080));
     server.termHandler(term -> {
-      term.stdout().write("hello_from_server");
+      term.write("hello_from_server");
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
@@ -106,7 +106,7 @@ public abstract class HttpTermServerBase {
     Async async = context.async();
     server = createServer(context, new HttpTermOptions().setPort(8080));
     server.termHandler(term -> {
-      term.setStdin(buf -> {
+      term.stdinHandler(buf -> {
         context.assertEquals("hello_from_client", buf);
         async.complete();
       });
@@ -250,7 +250,7 @@ public abstract class HttpTermServerBase {
             setType(ShiroAuthRealmType.PROPERTIES).
             setConfig(new JsonObject().put("properties_path", "classpath:test-auth.properties"))).setPort(8080));
     server.termHandler(term -> {
-      term.stdout().write("hello");
+      term.write("hello");
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
@@ -341,7 +341,7 @@ public abstract class HttpTermServerBase {
     Async async = context.async();
     server = createServer(context, new HttpTermOptions().setPort(8080).setCharset("ISO_8859_1"));
     server.termHandler(term -> {
-      term.stdout().write("\u20AC");
+      term.write("\u20AC");
       term.close();
     });
     server.listen(context.asyncAssertSuccess(server -> {

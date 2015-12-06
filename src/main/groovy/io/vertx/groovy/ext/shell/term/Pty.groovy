@@ -18,7 +18,7 @@ package io.vertx.groovy.ext.shell.term;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
-import io.vertx.groovy.ext.shell.io.Stream
+import io.vertx.core.Handler
 /**
  * A pseudo terminal used for controlling a {@link io.vertx.groovy.ext.shell.term.Tty}. This interface acts as a pseudo
  * terminal master, {@link io.vertx.groovy.ext.shell.term.Pty#slave} returns the assocated slave pseudo terminal.
@@ -50,20 +50,21 @@ public class Pty {
     return ret;
   }
   /**
-   * @return the standard input of the terminal
-   * @return 
-   */
-  public Stream stdin() {
-    def ret= InternalHelper.safeCreate(this.delegate.stdin(), io.vertx.groovy.ext.shell.io.Stream.class);
-    return ret;
-  }
-  /**
-   * Set the standard out of the pseudo terminal.
-   * @param stdout the standard output
+   * Set the standard out handler of the pseudo terminal.
+   * @param handler the standard output
    * @return this current object
    */
-  public Pty setStdout(Stream stdout) {
-    this.delegate.setStdout((io.vertx.ext.shell.io.Stream)stdout.getDelegate());
+  public Pty stdoutHandler(Handler<String> handler) {
+    this.delegate.stdoutHandler(handler);
+    return this;
+  }
+  /**
+   * Write data to the slave standard input of the pseudo terminal.
+   * @param data the data to write
+   * @return this current object
+   */
+  public Pty write(String data) {
+    this.delegate.write(data);
     return this;
   }
   /**

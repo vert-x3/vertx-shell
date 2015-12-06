@@ -21,7 +21,6 @@ import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
 import io.vertx.rxjava.core.cli.CommandLine;
-import io.vertx.rxjava.ext.shell.io.Stream;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.rxjava.ext.shell.cli.CliToken;
 import io.vertx.core.Handler;
@@ -103,8 +102,8 @@ public class CommandProcess extends Tty {
     return ret;
   }
 
-  public CommandProcess setStdin(Stream stdin) { 
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) delegate).setStdin((io.vertx.ext.shell.io.Stream) stdin.getDelegate());
+  public CommandProcess stdinHandler(Handler<String> handler) { 
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) delegate).stdinHandler(handler);
     return this;
   }
 
@@ -154,11 +153,11 @@ public class CommandProcess extends Tty {
 
   /**
    * Write some text to the standard output.
-   * @param text the text
+   * @param data the text
    * @return a reference to this, so the API can be used fluently
    */
-  public CommandProcess write(String text) { 
-    this.delegate.write(text);
+  public CommandProcess write(String data) { 
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) delegate).write(data);
     return this;
   }
 

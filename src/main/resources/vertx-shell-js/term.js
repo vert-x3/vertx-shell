@@ -17,7 +17,6 @@
 /** @module vertx-shell-js/term */
 var utils = require('vertx-js/util/utils');
 var Completion = require('vertx-shell-js/completion');
-var Stream = require('vertx-shell-js/stream');
 var SignalHandler = require('vertx-shell-js/signal_handler');
 var Tty = require('vertx-shell-js/tty');
 var Session = require('vertx-shell-js/session');
@@ -54,13 +53,29 @@ var Term = function(j_val) {
   /**
 
    @public
-   @param stdin {Stream} 
+   @param handler {function} 
    @return {Term}
    */
-  this.setStdin = function(stdin) {
+  this.stdinHandler = function(handler) {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_term["setStdin(io.vertx.ext.shell.io.Stream)"](stdin._jdel);
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_term["stdinHandler(io.vertx.core.Handler)"](function(jVal) {
+      handler(jVal);
+    });
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param data {string} 
+   @return {Term}
+   */
+  this.write = function(data) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'string') {
+      j_term["write(java.lang.String)"](data);
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };

@@ -587,22 +587,22 @@ which is used for interacting with the terminal.
 
 ==== terminal I/O
 
-The `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#setStdin(io.vertx.ext.shell.io.Stream)[setStdin]` handler is used to be notified when the terminal
+The `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#stdinHandler(io.vertx.core.Handler)[stdinHandler]` handler is used to be notified when the terminal
 receives data, e.g the user uses his keyboard:
 
 [source,groovy]
 ----
-tty.setStdin({ data ->
+tty.stdinHandler({ data ->
   println("Received ${data}")
 })
 
 ----
 
-A command can use the `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#stdout()[stdout]` to write to the standard output.
+A command can use the `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#write(java.lang.String)[write]` to write to the standard output.
 
 [source,groovy]
 ----
-tty.stdout().write("Hello World")
+tty.write("Hello World")
 
 ----
 
@@ -613,7 +613,7 @@ The current terminal size can be obtained using `link:../../groovydoc/io/vertx/g
 
 [source,groovy]
 ----
-tty.stdout().write("Current terminal size: (${tty.width()}, ${tty.height()})")
+tty.write("Current terminal size: (${tty.width()}, ${tty.height()})")
 
 ----
 
@@ -852,7 +852,7 @@ def job = shell.createJob("my-command 1234")
 
 // Create a pseudo terminal
 def pty = Pty.create()
-pty.setStdout({ data ->
+pty.stdoutHandler({ data ->
   println("Command wrote ${data}")
 })
 
@@ -898,8 +898,8 @@ def server = TermServer.createSSHTermServer(vertx, [
   host:"localhost"
 ])
 server.termHandler({ term ->
-  term.setStdin({ line ->
-    term.stdout().write(line)
+  term.stdinHandler({ line ->
+    term.write(line)
   })
 })
 server.listen()
@@ -919,8 +919,8 @@ def server = TermServer.createTelnetTermServer(vertx, [
   host:"localhost"
 ])
 server.termHandler({ term ->
-  term.setStdin({ line ->
-    term.stdout().write(line)
+  term.stdinHandler({ line ->
+    term.write(line)
   })
 })
 server.listen()
@@ -940,8 +940,8 @@ def server = TermServer.createHttpTermServer(vertx, [
   host:"localhost"
 ])
 server.termHandler({ term ->
-  term.setStdin({ line ->
-    term.stdout().write(line)
+  term.stdinHandler({ line ->
+    term.write(line)
   })
 })
 server.listen()
@@ -960,8 +960,8 @@ def server = TermServer.createHttpTermServer(vertx, router, [
   host:"localhost"
 ])
 server.termHandler({ term ->
-  term.setStdin({ line ->
-    term.stdout().write(line)
+  term.stdinHandler({ line ->
+    term.write(line)
   })
 })
 server.listen()

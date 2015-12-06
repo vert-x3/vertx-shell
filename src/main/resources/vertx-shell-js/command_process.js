@@ -17,7 +17,6 @@
 /** @module vertx-shell-js/command_process */
 var utils = require('vertx-js/util/utils');
 var CommandLine = require('vertx-js/command_line');
-var Stream = require('vertx-shell-js/stream');
 var Vertx = require('vertx-js/vertx');
 var CliToken = require('vertx-shell-js/cli_token');
 var Tty = require('vertx-shell-js/tty');
@@ -125,13 +124,15 @@ var CommandProcess = function(j_val) {
   /**
 
    @public
-   @param stdin {Stream} 
+   @param handler {function} 
    @return {CommandProcess}
    */
-  this.setStdin = function(stdin) {
+  this.stdinHandler = function(handler) {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_commandProcess["setStdin(io.vertx.ext.shell.io.Stream)"](stdin._jdel);
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_commandProcess["stdinHandler(io.vertx.core.Handler)"](function(jVal) {
+      handler(jVal);
+    });
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
@@ -204,13 +205,13 @@ var CommandProcess = function(j_val) {
    Write some text to the standard output.
 
    @public
-   @param text {string} the text 
+   @param data {string} the text 
    @return {CommandProcess} a reference to this, so the API can be used fluently
    */
-  this.write = function(text) {
+  this.write = function(data) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'string') {
-      j_commandProcess["write(java.lang.String)"](text);
+      j_commandProcess["write(java.lang.String)"](data);
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };

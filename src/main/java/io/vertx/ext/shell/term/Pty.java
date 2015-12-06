@@ -34,7 +34,7 @@ package io.vertx.ext.shell.term;
 
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.ext.shell.io.Stream;
+import io.vertx.core.Handler;
 import io.vertx.ext.shell.term.impl.PtyImpl;
 
 /**
@@ -66,18 +66,22 @@ public interface Pty {
   }
 
   /**
-   * @return the standard input of the terminal
-   */
-  Stream stdin();
-
-  /**
-   * Set the standard out of the pseudo terminal.
+   * Set the standard out handler of the pseudo terminal.
    *
-   * @param stdout the standard output
+   * @param handler the standard output
    * @return this current object
    */
   @Fluent
-  Pty setStdout(Stream stdout);
+  Pty stdoutHandler(Handler<String> handler);
+
+  /**
+   * Write data to the slave standard input of the pseudo terminal.
+   *
+   * @param data the data to write
+   * @return this current object
+   */
+  @Fluent
+  Pty write(String data);
 
   /**
    * Resize the terminal.

@@ -40,7 +40,6 @@ import io.vertx.core.cli.CommandLine;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandProcess;
-import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.*;
 import io.vertx.ext.shell.system.Process;
@@ -71,7 +70,7 @@ public class ProcessImpl implements Process {
   private Handler<Integer> terminatedHandler;
   private ExecStatus status;
   private boolean foreground;
-  private Stream stdin;
+  private Handler<String> stdinHandler;
   private Handler<Void> resizeHandler;
   private Integer exitCode;
 
@@ -236,8 +235,8 @@ public class ProcessImpl implements Process {
     if (!foregroundUpdate) {
       if (foreground) {
         foreground = false;
-        if (stdin != null) {
-          tty.setStdin(null);
+        if (stdinHandler != null) {
+          tty.stdinHandler(null);
         }
         if (resizeHandler != null) {
           tty.resizehandler(null);
@@ -246,8 +245,8 @@ public class ProcessImpl implements Process {
     } else {
       if (!foreground) {
         foreground = true;
-        if (stdin != null) {
-          tty.setStdin(stdin);
+        if (stdinHandler != null) {
+          tty.stdinHandler(stdinHandler);
         }
         if (resizeHandler != null) {
           tty.resizehandler(resizeHandler);
@@ -302,7 +301,7 @@ public class ProcessImpl implements Process {
         StringBuilder usage = new StringBuilder();
         commandContext.cli().usage(usage);
         usage.append('\n');
-        tty.stdout().handle(usage.toString());
+        tty.write(usage.toString());
         terminate();
         return;
       }
@@ -311,7 +310,7 @@ public class ProcessImpl implements Process {
       try {
         cl = commandContext.cli().parse(args2);
       } catch (CLIException e) {
-        tty.stdout().handle(e.getMessage() + "\n");
+        tty.write(e.getMessage() + "\n");
         terminate();
         return;
       }
@@ -320,9 +319,6 @@ public class ProcessImpl implements Process {
     }
 
     CommandProcess process = new CommandProcess() {
-
-      private Stream stdout;
-      private Stream wrappedStdout;
 
       @Override
       public Vertx vertx() {
@@ -370,44 +366,28 @@ public class ProcessImpl implements Process {
       }
 
       @Override
-      public CommandProcess setStdin(Stream stream) {
-        if (stream != null) {
-          stdin = data -> context.runOnContext(v -> stream.handle(data));
+      public CommandProcess stdinHandler(Handler<String> handler) {
+        if (handler != null) {
+          stdinHandler = data -> context.runOnContext(v -> handler.handle(data));
         } else {
-          stdin = null;
+          stdinHandler = null;
         }
-        if (foreground && stdin != null) {
-          tty.setStdin(stdin);
+        if (foreground && stdinHandler != null) {
+          tty.stdinHandler(stdinHandler);
         }
         return this;
       }
 
       @Override
-      public Stream stdout() {
+      public CommandProcess write(String data) {
         synchronized (ProcessImpl.this) {
           if (status != ExecStatus.RUNNING) {
-            return null;
+            throw new IllegalStateException("Cannot write to standard output when " + status().name().toLowerCase());
           }
         }
-        Stream contextStdout = tty.stdout();
-        if (contextStdout != stdout) {
-          if (contextStdout != null) {
-            wrappedStdout = line -> {
-              processContext.runOnContext(v -> {
-                contextStdout.handle(line);
-              });
-            };
-          } else {
-            wrappedStdout = null;
-          }
-          stdout = contextStdout;
-        }
-        return wrappedStdout;
-      }
-
-      @Override
-      public CommandProcess write(String text) {
-        stdout().handle(text);
+        processContext.runOnContext(v -> {
+          tty.write(data);
+        });
         return this;
       }
 

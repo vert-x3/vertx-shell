@@ -521,21 +521,21 @@ which is used for interacting with the terminal.
 
 ==== terminal I/O
 
-The `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#setStdin-io.vertx.ext.shell.io.Stream-[setStdin]` handler is used to be notified when the terminal
+The `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#stdinHandler-io.vertx.core.Handler-[stdinHandler]` handler is used to be notified when the terminal
 receives data, e.g the user uses his keyboard:
 
 [source,java]
 ----
-tty.setStdin(data -> {
+tty.stdinHandler(data -> {
   System.out.println("Received " + data);
 });
 ----
 
-A command can use the `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#stdout--[stdout]` to write to the standard output.
+A command can use the `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#write-java.lang.String-[write]` to write to the standard output.
 
 [source,java]
 ----
-tty.stdout().write("Hello World");
+tty.write("Hello World");
 ----
 
 ==== Terminal size
@@ -545,7 +545,7 @@ The current terminal size can be obtained using `link:../../apidocs/io/vertx/ext
 
 [source,java]
 ----
-tty.stdout().write("Current terminal size: (" + tty.width() + ", " + tty.height() + ")");
+tty.write("Current terminal size: (" + tty.width() + ", " + tty.height() + ")");
 ----
 
 ==== Resize event
@@ -763,7 +763,7 @@ Job job = shell.createJob("my-command 1234");
 
 // Create a pseudo terminal
 Pty pty = Pty.create();
-pty.setStdout(data -> {
+pty.stdoutHandler(data -> {
   System.out.println("Command wrote " + data);
 });
 
@@ -804,8 +804,8 @@ terminal.
 ----
 TermServer server = TermServer.createSSHTermServer(vertx, new SSHTermOptions().setPort(5000).setHost("localhost"));
 server.termHandler(term -> {
-  term.setStdin(line -> {
-    term.stdout().write(line);
+  term.stdinHandler(line -> {
+    term.write(line);
   });
 });
 server.listen();
@@ -820,8 +820,8 @@ how to use the tty.
 ----
 TermServer server = TermServer.createTelnetTermServer(vertx, new TelnetTermOptions().setPort(5000).setHost("localhost"));
 server.termHandler(term -> {
-  term.setStdin(line -> {
-    term.stdout().write(line);
+  term.stdinHandler(line -> {
+    term.write(line);
   });
 });
 server.listen();
@@ -836,8 +836,8 @@ on top of Vert.x Web using the SockJS protocol.
 ----
 TermServer server = TermServer.createHttpTermServer(vertx, new HttpTermOptions().setPort(5000).setHost("localhost"));
 server.termHandler(term -> {
-  term.setStdin(line -> {
-    term.stdout().write(line);
+  term.stdinHandler(line -> {
+    term.write(line);
   });
 });
 server.listen();
@@ -851,8 +851,8 @@ The shell can be found at `/shell.html`.
 ----
 TermServer server = TermServer.createHttpTermServer(vertx, router, new HttpTermOptions().setPort(5000).setHost("localhost"));
 server.termHandler(term -> {
-  term.setStdin(line -> {
-    term.stdout().write(line);
+  term.stdinHandler(line -> {
+    term.write(line);
   });
 });
 server.listen();

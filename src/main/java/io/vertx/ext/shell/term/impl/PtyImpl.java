@@ -34,7 +34,6 @@ package io.vertx.ext.shell.term.impl;
 
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.term.Pty;
-import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.term.Tty;
 
 /**
@@ -44,14 +43,29 @@ public class PtyImpl implements Pty {
 
   private int width = 80;
   private int height = 24;
-  private Stream stdin;
-  private Stream stdout;
+  private Handler<String> stdinHandler;
+  private Handler<String> stdoutHandler;
   private final String terminalType;
   private Handler<Void> resizeHandler;
+
   final Tty slave = new Tty() {
     @Override
     public String type() {
       return terminalType;
+    }
+
+    @Override
+    public Tty stdinHandler(Handler<String> handler) {
+      stdinHandler = handler;
+      return this;
+    }
+
+    @Override
+    public Tty write(String data) {
+      if (stdoutHandler != null) {
+        stdoutHandler.handle(data);
+      }
+      return this;
     }
 
     @Override
@@ -62,17 +76,6 @@ public class PtyImpl implements Pty {
     @Override
     public int height() {
       return height;
-    }
-
-    @Override
-    public Tty setStdin(Stream stdin) {
-      PtyImpl.this.stdin = stdin;
-      return this;
-    }
-
-    @Override
-    public Stream stdout() {
-      return stdout;
     }
 
     @Override
@@ -102,13 +105,16 @@ public class PtyImpl implements Pty {
   }
 
   @Override
-  public Pty setStdout(Stream stdout) {
-    this.stdout = stdout;
+  public Pty stdoutHandler(Handler<String> handler) {
+    stdoutHandler = handler;
     return this;
   }
 
   @Override
-  public Stream stdin() {
-    return stdin;
+  public Pty write(String data) {
+    if (stdinHandler != null) {
+      stdinHandler.handle(data);
+    }
+    return this;
   }
 }

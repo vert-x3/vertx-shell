@@ -78,7 +78,7 @@ public class SSHTermServerTest extends SSHTestBase {
   @Override
   public void before() {
     super.before();
-    termHandler = term -> term.stdout().write("% ");
+    termHandler = term -> term.write("% ");
   }
 
   @After
@@ -113,7 +113,7 @@ public class SSHTermServerTest extends SSHTestBase {
   public void testRead(TestContext context) throws Exception {
     Async async = context.async();
     termHandler = term -> {
-      term.setStdin(s -> {
+      term.stdinHandler(s -> {
         context.assertEquals("hello", s);
         async.complete();
       });
@@ -133,7 +133,7 @@ public class SSHTermServerTest extends SSHTestBase {
   @Test
   public void testWrite() throws Exception {
     termHandler = term -> {
-      term.stdout().write("hello");
+      term.write("hello");
     };
     startShell();
     Session session = createSession("paulo", "secret", false);
@@ -305,7 +305,7 @@ public class SSHTermServerTest extends SSHTestBase {
   @Test
   public void testDifferentCharset(TestContext context) throws Exception {
     termHandler = term -> {
-      term.stdout().write("\u20AC");
+      term.write("\u20AC");
       term.close();
     };
     startShell(new SSHTermOptions().setDefaultCharset("ISO_8859_1").setPort(5000).setHost("localhost").setKeyPairOptions(

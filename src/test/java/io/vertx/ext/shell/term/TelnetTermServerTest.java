@@ -54,9 +54,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.function.Consumer;
 
 /**
@@ -105,7 +103,7 @@ public class TelnetTermServerTest {
   public void testRead(TestContext context) throws IOException {
     Async async = context.async();
     startTelnet(context, term -> {
-      term.setStdin(s -> {
+      term.stdinHandler(s -> {
         context.assertEquals("hello_from_client", s);
         async.complete();
       });
@@ -119,7 +117,7 @@ public class TelnetTermServerTest {
   @Test
   public void testWrite(TestContext context) throws IOException {
     startTelnet(context, term -> {
-      term.stdout().write("hello_from_server");
+      term.write("hello_from_server");
     });
     client.connect("localhost", server.actualPort());
     Reader reader = new InputStreamReader(client.getInputStream());
@@ -223,7 +221,7 @@ public class TelnetTermServerTest {
   @Test
   public void testOutBinaryTrue(TestContext context) throws Exception {
     startTelnet(context, new TelnetTermOptions().setOutBinary(true), term -> {
-      term.stdout().write("\u20AC");
+      term.write("\u20AC");
     });
     client.addOptionHandler(new WindowSizeOptionHandler(10, 20, false, false, true, false));
     client.connect("localhost", server.actualPort());
@@ -237,7 +235,7 @@ public class TelnetTermServerTest {
   public void testOutBinaryFalse(TestContext context) throws Exception {
     byte[] expected = StandardCharsets.US_ASCII.encode("€").array();
     startTelnet(context, new TelnetTermOptions().setOutBinary(false), term -> {
-      term.stdout().write("\u20AC");
+      term.write("\u20AC");
     });
     client.addOptionHandler(new WindowSizeOptionHandler(10, 20, false, false, true, false));
     client.connect("localhost", server.actualPort());
@@ -250,7 +248,7 @@ public class TelnetTermServerTest {
   @Test
   public void testDifferentCharset(TestContext context) throws Exception {
     startTelnet(context, new TelnetTermOptions().setCharset("ISO_8859_1"), term -> {
-      term.stdout().write("\u20AC");
+      term.write("\u20AC");
       term.close();
     });
     client.connect("localhost", server.actualPort());

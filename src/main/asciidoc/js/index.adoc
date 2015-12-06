@@ -586,22 +586,22 @@ which is used for interacting with the terminal.
 
 ==== terminal I/O
 
-The `link:../../jsdoc/tty-Tty.html#setStdin[setStdin]` handler is used to be notified when the terminal
+The `link:../../jsdoc/tty-Tty.html#stdinHandler[stdinHandler]` handler is used to be notified when the terminal
 receives data, e.g the user uses his keyboard:
 
 [source,js]
 ----
-tty.setStdin(function (data) {
+tty.stdinHandler(function (data) {
   console.log("Received " + data);
 });
 
 ----
 
-A command can use the `link:../../jsdoc/tty-Tty.html#stdout[stdout]` to write to the standard output.
+A command can use the `link:../../jsdoc/tty-Tty.html#write[write]` to write to the standard output.
 
 [source,js]
 ----
-tty.stdout().write("Hello World");
+tty.write("Hello World");
 
 ----
 
@@ -612,7 +612,7 @@ The current terminal size can be obtained using `link:../../jsdoc/tty-Tty.html#w
 
 [source,js]
 ----
-tty.stdout().write("Current terminal size: (" + tty.width() + ", " + tty.height() + ")");
+tty.write("Current terminal size: (" + tty.width() + ", " + tty.height() + ")");
 
 ----
 
@@ -851,7 +851,7 @@ var job = shell.createJob("my-command 1234");
 
 // Create a pseudo terminal
 var pty = Pty.create();
-pty.setStdout(function (data) {
+pty.stdoutHandler(function (data) {
   console.log("Command wrote " + data);
 });
 
@@ -897,8 +897,8 @@ var server = TermServer.createSSHTermServer(vertx, {
   "host" : "localhost"
 });
 server.termHandler(function (term) {
-  term.setStdin(function (line) {
-    term.stdout().write(line);
+  term.stdinHandler(function (line) {
+    term.write(line);
   });
 });
 server.listen();
@@ -918,8 +918,8 @@ var server = TermServer.createTelnetTermServer(vertx, {
   "host" : "localhost"
 });
 server.termHandler(function (term) {
-  term.setStdin(function (line) {
-    term.stdout().write(line);
+  term.stdinHandler(function (line) {
+    term.write(line);
   });
 });
 server.listen();
@@ -939,8 +939,8 @@ var server = TermServer.createHttpTermServer(vertx, {
   "host" : "localhost"
 });
 server.termHandler(function (term) {
-  term.setStdin(function (line) {
-    term.stdout().write(line);
+  term.stdinHandler(function (line) {
+    term.write(line);
   });
 });
 server.listen();
@@ -959,8 +959,8 @@ var server = TermServer.createHttpTermServer(vertx, router, {
   "host" : "localhost"
 });
 server.termHandler(function (term) {
-  term.setStdin(function (line) {
-    term.stdout().write(line);
+  term.stdinHandler(function (line) {
+    term.write(line);
   });
 });
 server.listen();

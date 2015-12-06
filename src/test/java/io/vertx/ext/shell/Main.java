@@ -38,7 +38,6 @@ import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.shell.command.CommandBuilder;
-import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.command.CommandRegistry;
@@ -59,9 +58,8 @@ public class Main {
 
     CommandBuilder echoKeyboardCmd = CommandBuilder.command("echo-keyboard");
     echoKeyboardCmd.processHandler(process -> {
-      Stream stdout = process.stdout();
-      process.setStdin(line -> {
-        stdout.write("-> " + line + "\n");
+      process.stdinHandler(line -> {
+        process.write("-> " + line + "\n");
       });
       process.interruptHandler(v -> process.end());
     });

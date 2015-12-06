@@ -43,7 +43,6 @@ import io.vertx.ext.shell.session.impl.SessionImpl;
 import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.Job;
-import io.vertx.ext.shell.system.JobController;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -118,7 +117,7 @@ public class ShellServerTest {
   public void testStdin(TestContext context) {
     CountDownLatch latch = new CountDownLatch(1);
     commands.add(CommandBuilder.command("foo").processHandler(process -> {
-      process.setStdin(data -> {
+      process.stdinHandler(data -> {
         context.assertEquals("hello_world", data);
         process.end(0);
       });
@@ -138,13 +137,13 @@ public class ShellServerTest {
     } catch (InterruptedException e) {
       context.fail(e);
     }
-    pty.stdin().write("hello_world");
+    pty.write("hello_world");
   }
 
   @Test
   public void testStdout(TestContext context) {
     commands.add(CommandBuilder.command("foo").processHandler(process -> {
-      process.stdout().write("bye_world");
+      process.write("bye_world");
       process.end(0);
     }).build(vertx));
     Shell shell = server.createShell();
@@ -152,7 +151,7 @@ public class ShellServerTest {
     Async async = context.async();
     LinkedList<String> out = new LinkedList<>();
     Pty pty = Pty.create();
-    pty.setStdout(out::add);
+    pty.stdoutHandler(out::add);
     job.setTty(pty.slave());
     job.statusUpdateHandler(CommandProcessTest.terminateHandler(code -> {
       context.assertEquals(0, job.process().exitCode());
@@ -166,13 +165,13 @@ public class ShellServerTest {
     Context commandCtx = vertx.getOrCreateContext();
     Context shellCtx = vertx.getOrCreateContext();
     Async async = testContext.async();
-    CountDownLatch latch = new CountDownLatch(1);
+    Async latch = testContext.async();
     commandCtx.runOnContext(v1 -> {
       CommandBuilder cmd = CommandBuilder.command("foo");
       cmd.processHandler(process -> {
         Context currentCtx = Vertx.currentContext();
         testContext.assertTrue(commandCtx == currentCtx);
-        process.setStdin(text -> {
+        process.stdinHandler(text -> {
           testContext.assertTrue(commandCtx == Vertx.currentContext());
           testContext.assertEquals("ping", text);
           process.write("pong");
@@ -189,7 +188,7 @@ public class ShellServerTest {
         Shell shell = server.createShell();
         Job job = shell.createJob("foo");
         Pty pty = Pty.create();
-        pty.setStdout(text -> {
+        pty.stdoutHandler(text -> {
           testContext.assertTrue(shellCtx == Vertx.currentContext());
           testContext.assertEquals("pong", text);
           job.suspend();
@@ -198,12 +197,8 @@ public class ShellServerTest {
           testContext.assertTrue(shellCtx == Vertx.currentContext());
           async.complete();
         })).run();
-        try {
-          latch.await(10, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-          testContext.fail(e);
-        }
-        pty.stdin().write("ping");
+        latch.awaitSuccess(10000);
+        pty.write("ping");
       });
     });
   }
@@ -242,14 +237,14 @@ public class ShellServerTest {
         context.assertEquals(15, process.height());
         process.end(0);
       });
-      process.stdout().write("ping");
+      process.write("ping");
     }).build(vertx));
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Pty pty = Pty.create();
     Async async = context.async();
     pty.setSize(20, 10);
-    pty.setStdout(text -> {
+    pty.stdoutHandler(text -> {
       pty.setSize(25, 15);
     });
     job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {

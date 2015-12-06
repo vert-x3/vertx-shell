@@ -19,7 +19,7 @@ package io.vertx.rxjava.ext.shell.term;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
-import io.vertx.rxjava.ext.shell.io.Stream;
+import io.vertx.core.Handler;
 
 /**
  * A pseudo terminal used for controlling a {@link io.vertx.rxjava.ext.shell.term.Tty}. This interface acts as a pseudo
@@ -61,21 +61,22 @@ public class Pty {
   }
 
   /**
-   * @return the standard input of the terminal
-   * @return 
+   * Set the standard out handler of the pseudo terminal.
+   * @param handler the standard output
+   * @return this current object
    */
-  public Stream stdin() { 
-    Stream ret= Stream.newInstance(this.delegate.stdin());
-    return ret;
+  public Pty stdoutHandler(Handler<String> handler) { 
+    this.delegate.stdoutHandler(handler);
+    return this;
   }
 
   /**
-   * Set the standard out of the pseudo terminal.
-   * @param stdout the standard output
+   * Write data to the slave standard input of the pseudo terminal.
+   * @param data the data to write
    * @return this current object
    */
-  public Pty setStdout(Stream stdout) { 
-    this.delegate.setStdout((io.vertx.ext.shell.io.Stream) stdout.getDelegate());
+  public Pty write(String data) { 
+    this.delegate.write(data);
     return this;
   }
 

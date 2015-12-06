@@ -140,7 +140,7 @@ public class ShellTest {
     });
     registry.registerCommand(CommandBuilder.command("read").processHandler(process -> {
       StringBuilder buffer = new StringBuilder();
-      process.setStdin(line -> {
+      process.stdinHandler(line -> {
         buffer.append(line);
         if (buffer.toString().equals("the_line")) {
           process.end();
@@ -209,11 +209,15 @@ public class ShellTest {
     Async latch2 = context.async();;
     Async latch3 = context.async();;
     registry.registerCommand(CommandBuilder.command("read").processHandler(process -> {
-      process.setStdin(line -> {
+      process.stdinHandler(line -> {
         context.fail("Should not process line " + line);
       });
       process.suspendHandler(v -> {
-        context.assertNull(process.stdout());
+        try {
+          process.write("");
+          context.fail();
+        } catch (IllegalStateException ignore) {
+        }
         latch2.countDown();
       });
       latch1.countDown();
@@ -262,20 +266,24 @@ public class ShellTest {
       process.suspendHandler(v -> {
         context.assertFalse(process.isInForeground());
         context.assertEquals(0L, latch1.getCount());
-        context.assertNull(process.stdout());
+        try {
+          process.write("");
+          context.fail();
+        } catch (IllegalStateException ignore) {
+        }
         latch2.countDown();
       });
       process.resumeHandler(v -> {
         context.assertTrue(process.isInForeground());
         context.assertEquals(0L, latch2.getCount());
         context.assertEquals(ExecStatus.RUNNING, job.status());
-        context.assertNotNull(process.stdout());
+        process.write("");
         context.assertEquals(job, shell.jobController().foregroundJob());
         conn.out().setLength(0);
-        process.stdout().write("resumed");
+        process.write("resumed");
         latch3.countDown();
       });
-      process.setStdin(txt -> {
+      process.stdinHandler(txt -> {
         context.assertEquals(0L, latch3.getCount());
         context.assertEquals("hello", txt);
         latch4.countDown();
@@ -311,19 +319,23 @@ public class ShellTest {
       process.suspendHandler(v -> {
         context.assertFalse(process.isInForeground());
         context.assertEquals(0, latch1.count());
-        context.assertNull(process.stdout());
+        try {
+          process.write("");
+          context.fail();
+        } catch (IllegalStateException ignore) {
+        }
         latch2.countDown();
       });
       process.resumeHandler(v -> {
         context.assertFalse(process.isInForeground());
         context.assertEquals(0, latch2.count());
         context.assertEquals(ExecStatus.RUNNING, job.status());
-        context.assertNotNull(process.stdout());
+        process.write("");
         context.assertNull(shell.jobController().foregroundJob());
         latch3.awaitSuccess(2000);
-        process.stdout().write("resumed");
+        process.write("resumed");
       });
-      process.setStdin(txt -> {
+      process.stdinHandler(txt -> {
         context.fail();
       });
       latch1.countDown();
@@ -370,7 +382,7 @@ public class ShellTest {
         context.assertTrue(process.isInForeground());
         latch3.countDown();
       });
-      process.setStdin(line -> {
+      process.stdinHandler(line -> {
         async.complete();
       });
       latch1.countDown();
@@ -492,7 +504,7 @@ public class ShellTest {
     registry.registerCommand(CommandBuilder.
         command("foo").
         processHandler(process -> {
-          process.setStdin(cp -> {
+          process.stdinHandler(cp -> {
             context.fail();
           });
           process.endHandler(v -> barLatch.complete());
@@ -525,7 +537,7 @@ public class ShellTest {
         CommandBuilder.command("foo").processHandler(process -> {
           process.suspendHandler(v -> fooSusp.complete());
           process.resumeHandler(v -> fooResumed.complete());
-          process.setStdin(line -> {
+          process.stdinHandler(line -> {
             context.assertEquals("foo_msg", line);
             readLatch.complete();
           });
@@ -557,7 +569,7 @@ public class ShellTest {
           process.suspendHandler(v -> fooSusp.complete());
           process.resumeHandler(v -> fooResumed.complete());
           process.foregroundHandler(v -> fooToForeground.complete());
-          process.setStdin(line -> {
+          process.stdinHandler(line -> {
             context.assertEquals("foo_msg", line);
             readLatch.complete();
           });

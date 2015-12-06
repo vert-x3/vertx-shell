@@ -1,4 +1,3 @@
-require 'vertx-shell/stream'
 require 'vertx-shell/tty'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.term.Pty
@@ -27,23 +26,25 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling create(terminalType)"
     end
-    #  @return the standard input of the terminal
-    # @return [::VertxShell::Stream]
-    def stdin
-      if !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:stdin, []).call(),::VertxShell::Stream)
-      end
-      raise ArgumentError, "Invalid arguments when calling stdin()"
-    end
-    #  Set the standard out of the pseudo terminal.
-    # @param [::VertxShell::Stream] stdout the standard output
+    #  Set the standard out handler of the pseudo terminal.
+    # @yield the standard output
     # @return [self]
-    def set_stdout(stdout=nil)
-      if stdout.class.method_defined?(:j_del) && !block_given?
-        @j_del.java_method(:setStdout, [Java::IoVertxExtShellIo::Stream.java_class]).call(stdout.j_del)
+    def stdout_handler
+      if block_given?
+        @j_del.java_method(:stdoutHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling set_stdout(stdout)"
+      raise ArgumentError, "Invalid arguments when calling stdout_handler()"
+    end
+    #  Write data to the slave standard input of the pseudo terminal.
+    # @param [String] data the data to write
+    # @return [self]
+    def write(data=nil)
+      if data.class == String && !block_given?
+        @j_del.java_method(:write, [Java::java.lang.String.java_class]).call(data)
+        return self
+      end
+      raise ArgumentError, "Invalid arguments when calling write(data)"
     end
     #  Resize the terminal.
     # @param [Fixnum] width 

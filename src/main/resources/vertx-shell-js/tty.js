@@ -16,7 +16,6 @@
 
 /** @module vertx-shell-js/tty */
 var utils = require('vertx-js/util/utils');
-var Stream = require('vertx-shell-js/stream');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
@@ -76,31 +75,34 @@ var Tty = function(j_val) {
   };
 
   /**
-   Set a stream on the standard input to read the data.
+   Set a stream handler on the standard input to read the data.
 
    @public
-   @param stdin {Stream} the standard input 
+   @param handler {function} the standard input 
    @return {Tty} this object
    */
-  this.setStdin = function(stdin) {
+  this.stdinHandler = function(handler) {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_tty["setStdin(io.vertx.ext.shell.io.Stream)"](stdin._jdel);
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_tty["stdinHandler(io.vertx.core.Handler)"](function(jVal) {
+      handler(jVal);
+    });
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
-   @return the standard output for emitting data
+   Write data to the standard output.
 
    @public
-
-   @return {Stream}
+   @param data {string} the data to write 
+   @return {Tty} this object
    */
-  this.stdout = function() {
+  this.write = function(data) {
     var __args = arguments;
-    if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_tty["stdout()"](), Stream);
+    if (__args.length === 1 && typeof __args[0] === 'string') {
+      j_tty["write(java.lang.String)"](data);
+      return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

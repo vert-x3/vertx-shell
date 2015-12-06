@@ -35,7 +35,6 @@ package io.vertx.ext.shell.term;
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.io.Stream;
 
 /**
  * Provide interactions with the Shell TTY.
@@ -62,18 +61,22 @@ public interface Tty {
   int height();
 
   /**
-   * Set a stream on the standard input to read the data.
+   * Set a stream handler on the standard input to read the data.
    *
-   * @param stdin the standard input
+   * @param handler the standard input
    * @return this object
    */
   @Fluent
-  Tty setStdin(Stream stdin);
+  Tty stdinHandler(Handler<String> handler);
 
   /**
-   * @return the standard output for emitting data
+   * Write data to the standard output.
+   *
+   * @param data the data to write
+   * @return this object
    */
-  Stream stdout();
+  @Fluent
+  Tty write(String data);
 
   /**
    * Set a resize handler, the handler is called when the tty size changes.

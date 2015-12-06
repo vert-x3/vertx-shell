@@ -20,7 +20,6 @@ import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import java.util.List
 import io.vertx.groovy.core.cli.CommandLine
-import io.vertx.groovy.ext.shell.io.Stream
 import io.vertx.groovy.core.Vertx
 import io.vertx.groovy.ext.shell.cli.CliToken
 import io.vertx.core.Handler
@@ -87,8 +86,8 @@ public class CommandProcess extends Tty {
     def ret = this.delegate.isInForeground();
     return ret;
   }
-  public CommandProcess setStdin(Stream stdin) {
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) this.delegate).setStdin((io.vertx.ext.shell.io.Stream)stdin.getDelegate());
+  public CommandProcess stdinHandler(Handler<String> handler) {
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) this.delegate).stdinHandler(handler);
     return this;
   }
   /**
@@ -133,11 +132,11 @@ public class CommandProcess extends Tty {
   }
   /**
    * Write some text to the standard output.
-   * @param text the text
+   * @param data the text
    * @return a reference to this, so the API can be used fluently
    */
-  public CommandProcess write(String text) {
-    this.delegate.write(text);
+  public CommandProcess write(String data) {
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) this.delegate).write(data);
     return this;
   }
   /**

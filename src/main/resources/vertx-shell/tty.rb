@@ -1,4 +1,3 @@
-require 'vertx-shell/stream'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.term.Tty
 module VertxShell
@@ -39,23 +38,25 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling height()"
     end
-    #  Set a stream on the standard input to read the data.
-    # @param [::VertxShell::Stream] stdin the standard input
+    #  Set a stream handler on the standard input to read the data.
+    # @yield the standard input
     # @return [self]
-    def set_stdin(stdin=nil)
-      if stdin.class.method_defined?(:j_del) && !block_given?
-        @j_del.java_method(:setStdin, [Java::IoVertxExtShellIo::Stream.java_class]).call(stdin.j_del)
+    def stdin_handler
+      if block_given?
+        @j_del.java_method(:stdinHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling set_stdin(stdin)"
+      raise ArgumentError, "Invalid arguments when calling stdin_handler()"
     end
-    #  @return the standard output for emitting data
-    # @return [::VertxShell::Stream]
-    def stdout
-      if !block_given?
-        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:stdout, []).call(),::VertxShell::Stream)
+    #  Write data to the standard output.
+    # @param [String] data the data to write
+    # @return [self]
+    def write(data=nil)
+      if data.class == String && !block_given?
+        @j_del.java_method(:write, [Java::java.lang.String.java_class]).call(data)
+        return self
       end
-      raise ArgumentError, "Invalid arguments when calling stdout()"
+      raise ArgumentError, "Invalid arguments when calling write(data)"
     end
     #  Set a resize handler, the handler is called when the tty size changes.
     # @yield the resize handler

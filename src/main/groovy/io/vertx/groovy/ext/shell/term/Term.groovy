@@ -19,7 +19,6 @@ import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
 import io.vertx.groovy.ext.shell.cli.Completion
-import io.vertx.groovy.ext.shell.io.Stream
 import io.vertx.core.Handler
 import io.vertx.groovy.ext.shell.session.Session
 /**
@@ -39,8 +38,12 @@ public class Term extends Tty {
     ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.term.Term) this.delegate).resizehandler(handler);
     return this;
   }
-  public Term setStdin(Stream stdin) {
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.term.Term) this.delegate).setStdin((io.vertx.ext.shell.io.Stream)stdin.getDelegate());
+  public Term stdinHandler(Handler<String> handler) {
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.term.Term) this.delegate).stdinHandler(handler);
+    return this;
+  }
+  public Term write(String data) {
+    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.term.Term) this.delegate).write(data);
     return this;
   }
   /**

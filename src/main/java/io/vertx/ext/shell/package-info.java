@@ -345,7 +345,7 @@
  *
  * ==== terminal I/O
  *
- * The {@link io.vertx.ext.shell.term.Tty#setStdin} handler is used to be notified when the terminal
+ * The {@link io.vertx.ext.shell.term.Tty#stdinHandler} handler is used to be notified when the terminal
  * receives data, e.g the user uses his keyboard:
  *
  * [source,$lang]
@@ -353,7 +353,7 @@
  * {@link examples.Examples#readStdin}
  * ----
  *
- * A command can use the {@link io.vertx.ext.shell.term.Tty#stdout()} to write to the standard output.
+ * A command can use the {@link io.vertx.ext.shell.term.Tty#write} to write to the standard output.
  *
  * [source,$lang]
  * ----

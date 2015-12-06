@@ -36,7 +36,6 @@ import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.session.Session;
 
 /**
@@ -51,7 +50,10 @@ public interface Term extends Tty {
   Term resizehandler(Handler<Void> handler);
 
   @Override
-  Term setStdin(Stream stdin);
+  Term stdinHandler(Handler<String> handler);
+
+  @Override
+  Term write(String data);
 
   /**
    * @return the last time this term received input

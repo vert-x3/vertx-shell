@@ -1,5 +1,4 @@
 require 'vertx-shell/completion'
-require 'vertx-shell/stream'
 require 'vertx-shell/signal_handler'
 require 'vertx-shell/tty'
 require 'vertx-shell/session'
@@ -28,14 +27,23 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling resizehandler()"
     end
-    # @param [::VertxShell::Stream] stdin 
+    # @yield 
     # @return [self]
-    def set_stdin(stdin=nil)
-      if stdin.class.method_defined?(:j_del) && !block_given?
-        @j_del.java_method(:setStdin, [Java::IoVertxExtShellIo::Stream.java_class]).call(stdin.j_del)
+    def stdin_handler
+      if block_given?
+        @j_del.java_method(:stdinHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling set_stdin(stdin)"
+      raise ArgumentError, "Invalid arguments when calling stdin_handler()"
+    end
+    # @param [String] data 
+    # @return [self]
+    def write(data=nil)
+      if data.class == String && !block_given?
+        @j_del.java_method(:write, [Java::java.lang.String.java_class]).call(data)
+        return self
+      end
+      raise ArgumentError, "Invalid arguments when calling write(data)"
     end
     #  @return the last time this term received input
     # @return [Fixnum]

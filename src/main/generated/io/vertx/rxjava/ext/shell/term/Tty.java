@@ -19,7 +19,6 @@ package io.vertx.rxjava.ext.shell.term;
 import java.util.Map;
 import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
-import io.vertx.rxjava.ext.shell.io.Stream;
 import io.vertx.core.Handler;
 
 /**
@@ -70,22 +69,23 @@ public class Tty {
   }
 
   /**
-   * Set a stream on the standard input to read the data.
-   * @param stdin the standard input
+   * Set a stream handler on the standard input to read the data.
+   * @param handler the standard input
    * @return this object
    */
-  public Tty setStdin(Stream stdin) { 
-    this.delegate.setStdin((io.vertx.ext.shell.io.Stream) stdin.getDelegate());
+  public Tty stdinHandler(Handler<String> handler) { 
+    this.delegate.stdinHandler(handler);
     return this;
   }
 
   /**
-   * @return the standard output for emitting data
-   * @return 
+   * Write data to the standard output.
+   * @param data the data to write
+   * @return this object
    */
-  public Stream stdout() { 
-    Stream ret= Stream.newInstance(this.delegate.stdout());
-    return ret;
+  public Tty write(String data) { 
+    this.delegate.write(data);
+    return this;
   }
 
   /**

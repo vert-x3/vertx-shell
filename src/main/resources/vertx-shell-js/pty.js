@@ -16,7 +16,6 @@
 
 /** @module vertx-shell-js/pty */
 var utils = require('vertx-js/util/utils');
-var Stream = require('vertx-shell-js/stream');
 var Tty = require('vertx-shell-js/tty');
 
 var io = Packages.io;
@@ -33,30 +32,33 @@ var Pty = function(j_val) {
   var that = this;
 
   /**
-   @return the standard input of the terminal
+   Set the standard out handler of the pseudo terminal.
 
    @public
-
-   @return {Stream}
+   @param handler {function} the standard output 
+   @return {Pty} this current object
    */
-  this.stdin = function() {
+  this.stdoutHandler = function(handler) {
     var __args = arguments;
-    if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_pty["stdin()"](), Stream);
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_pty["stdoutHandler(io.vertx.core.Handler)"](function(jVal) {
+      handler(jVal);
+    });
+      return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
-   Set the standard out of the pseudo terminal.
+   Write data to the slave standard input of the pseudo terminal.
 
    @public
-   @param stdout {Stream} the standard output 
+   @param data {string} the data to write 
    @return {Pty} this current object
    */
-  this.setStdout = function(stdout) {
+  this.write = function(data) {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      j_pty["setStdout(io.vertx.ext.shell.io.Stream)"](stdout._jdel);
+    if (__args.length === 1 && typeof __args[0] === 'string') {
+      j_pty["write(java.lang.String)"](data);
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
   };

@@ -586,22 +586,22 @@ which is used for interacting with the terminal.
 
 ==== terminal I/O
 
-The `link:../../yardoc/VertxShell/Tty.html#set_stdin-instance_method[setStdin]` handler is used to be notified when the terminal
+The `link:../../yardoc/VertxShell/Tty.html#stdin_handler-instance_method[stdinHandler]` handler is used to be notified when the terminal
 receives data, e.g the user uses his keyboard:
 
 [source,ruby]
 ----
-tty.set_stdin(lambda { |data|
+tty.stdin_handler() { |data|
   puts "Received #{data}"
-})
+}
 
 ----
 
-A command can use the `link:../../yardoc/VertxShell/Tty.html#stdout-instance_method[stdout]` to write to the standard output.
+A command can use the `link:../../yardoc/VertxShell/Tty.html#write-instance_method[write]` to write to the standard output.
 
 [source,ruby]
 ----
-tty.stdout().write("Hello World")
+tty.write("Hello World")
 
 ----
 
@@ -612,7 +612,7 @@ The current terminal size can be obtained using `link:../../yardoc/VertxShell/Tt
 
 [source,ruby]
 ----
-tty.stdout().write("Current terminal size: (#{tty.width()}, #{tty.height()})")
+tty.write("Current terminal size: (#{tty.width()}, #{tty.height()})")
 
 ----
 
@@ -851,9 +851,9 @@ job = shell.create_job("my-command 1234")
 
 # Create a pseudo terminal
 pty = VertxShell::Pty.create()
-pty.set_stdout(lambda { |data|
+pty.stdout_handler() { |data|
   puts "Command wrote #{data}"
-})
+}
 
 # Run the command
 job.set_tty(pty.slave())
@@ -897,9 +897,9 @@ server = VertxShell::TermServer.create_ssh_term_server(vertx, {
   'host' => "localhost"
 })
 server.term_handler() { |term|
-  term.set_stdin(lambda { |line|
-    term.stdout().write(line)
-  })
+  term.stdin_handler() { |line|
+    term.write(line)
+  }
 }
 server.listen()
 
@@ -918,9 +918,9 @@ server = VertxShell::TermServer.create_telnet_term_server(vertx, {
   'host' => "localhost"
 })
 server.term_handler() { |term|
-  term.set_stdin(lambda { |line|
-    term.stdout().write(line)
-  })
+  term.stdin_handler() { |line|
+    term.write(line)
+  }
 }
 server.listen()
 
@@ -939,9 +939,9 @@ server = VertxShell::TermServer.create_http_term_server(vertx, {
   'host' => "localhost"
 })
 server.term_handler() { |term|
-  term.set_stdin(lambda { |line|
-    term.stdout().write(line)
-  })
+  term.stdin_handler() { |line|
+    term.write(line)
+  }
 }
 server.listen()
 
@@ -959,9 +959,9 @@ server = VertxShell::TermServer.create_http_term_server(vertx, router, {
   'host' => "localhost"
 })
 server.term_handler() { |term|
-  term.set_stdin(lambda { |line|
-    term.stdout().write(line)
-  })
+  term.stdin_handler() { |line|
+    term.write(line)
+  }
 }
 server.listen()
 

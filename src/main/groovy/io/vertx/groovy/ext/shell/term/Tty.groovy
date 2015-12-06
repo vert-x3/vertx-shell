@@ -18,7 +18,6 @@ package io.vertx.groovy.ext.shell.term;
 import groovy.transform.CompileStatic
 import io.vertx.lang.groovy.InternalHelper
 import io.vertx.core.json.JsonObject
-import io.vertx.groovy.ext.shell.io.Stream
 import io.vertx.core.Handler
 /**
  * Provide interactions with the Shell TTY.
@@ -58,21 +57,22 @@ public class Tty {
     return ret;
   }
   /**
-   * Set a stream on the standard input to read the data.
-   * @param stdin the standard input
+   * Set a stream handler on the standard input to read the data.
+   * @param handler the standard input
    * @return this object
    */
-  public Tty setStdin(Stream stdin) {
-    this.delegate.setStdin((io.vertx.ext.shell.io.Stream)stdin.getDelegate());
+  public Tty stdinHandler(Handler<String> handler) {
+    this.delegate.stdinHandler(handler);
     return this;
   }
   /**
-   * @return the standard output for emitting data
-   * @return 
+   * Write data to the standard output.
+   * @param data the data to write
+   * @return this object
    */
-  public Stream stdout() {
-    def ret= InternalHelper.safeCreate(this.delegate.stdout(), io.vertx.groovy.ext.shell.io.Stream.class);
-    return ret;
+  public Tty write(String data) {
+    this.delegate.write(data);
+    return this;
   }
   /**
    * Set a resize handler, the handler is called when the tty size changes.

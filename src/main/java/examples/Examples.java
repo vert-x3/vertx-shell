@@ -51,7 +51,6 @@ import io.vertx.ext.shell.term.HttpTermOptions;
 import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.shell.term.Tty;
 import io.vertx.ext.shell.system.Job;
-import io.vertx.ext.shell.system.JobController;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.ShellService;
@@ -382,17 +381,17 @@ public class Examples {
 
 
   public void readStdin(Tty tty) {
-    tty.setStdin(data -> {
+    tty.stdinHandler(data -> {
       System.out.println("Received " + data);
     });
   }
 
   public void writeStdout(Tty tty) {
-    tty.stdout().write("Hello World");
+    tty.write("Hello World");
   }
 
   public void terminalSize(Tty tty) {
-    tty.stdout().write("Current terminal size: (" + tty.width() + ", " + tty.height() + ")");
+    tty.write("Current terminal size: (" + tty.width() + ", " + tty.height() + ")");
   }
 
   public void resizeHandlerTerminal(Tty tty) {
@@ -463,8 +462,8 @@ public class Examples {
   public void telnetEchoTerminal(Vertx vertx) {
     TermServer server = TermServer.createTelnetTermServer(vertx, new TelnetTermOptions().setPort(5000).setHost("localhost"));
     server.termHandler(term -> {
-      term.setStdin(line -> {
-        term.stdout().write(line);
+      term.stdinHandler(line -> {
+        term.write(line);
       });
     });
     server.listen();
@@ -473,8 +472,8 @@ public class Examples {
   public void sshEchoTerminal(Vertx vertx) {
     TermServer server = TermServer.createSSHTermServer(vertx, new SSHTermOptions().setPort(5000).setHost("localhost"));
     server.termHandler(term -> {
-      term.setStdin(line -> {
-        term.stdout().write(line);
+      term.stdinHandler(line -> {
+        term.write(line);
       });
     });
     server.listen();
@@ -483,8 +482,8 @@ public class Examples {
   public void httpEchoTerminal(Vertx vertx) {
     TermServer server = TermServer.createHttpTermServer(vertx, new HttpTermOptions().setPort(5000).setHost("localhost"));
     server.termHandler(term -> {
-      term.setStdin(line -> {
-        term.stdout().write(line);
+      term.stdinHandler(line -> {
+        term.write(line);
       });
     });
     server.listen();
@@ -493,8 +492,8 @@ public class Examples {
   public void httpEchoTerminalUsingRouter(Vertx vertx, Router router) {
     TermServer server = TermServer.createHttpTermServer(vertx, router, new HttpTermOptions().setPort(5000).setHost("localhost"));
     server.termHandler(term -> {
-      term.setStdin(line -> {
-        term.stdout().write(line);
+      term.stdinHandler(line -> {
+        term.write(line);
       });
     });
     server.listen();
@@ -517,7 +516,7 @@ public class Examples {
 
     // Create a pseudo terminal
     Pty pty = Pty.create();
-    pty.setStdout(data -> {
+    pty.stdoutHandler(data -> {
       System.out.println("Command wrote " + data);
     });
 

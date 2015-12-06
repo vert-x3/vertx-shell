@@ -1,5 +1,4 @@
 require 'vertx/command_line'
-require 'vertx-shell/stream'
 require 'vertx/vertx'
 require 'vertx-shell/cli_token'
 require 'vertx-shell/tty'
@@ -68,14 +67,14 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling in_foreground?()"
     end
-    # @param [::VertxShell::Stream] stdin 
+    # @yield 
     # @return [self]
-    def set_stdin(stdin=nil)
-      if stdin.class.method_defined?(:j_del) && !block_given?
-        @j_del.java_method(:setStdin, [Java::IoVertxExtShellIo::Stream.java_class]).call(stdin.j_del)
+    def stdin_handler
+      if block_given?
+        @j_del.java_method(:stdinHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event) }))
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling set_stdin(stdin)"
+      raise ArgumentError, "Invalid arguments when calling stdin_handler()"
     end
     #  Set an interrupt handler, this handler is called when the command is interrupted, for instance user
     #  press <code>Ctrl-C</code>.
@@ -122,14 +121,14 @@ module VertxShell
       raise ArgumentError, "Invalid arguments when calling end_handler()"
     end
     #  Write some text to the standard output.
-    # @param [String] text the text
+    # @param [String] data the text
     # @return [self]
-    def write(text=nil)
-      if text.class == String && !block_given?
-        @j_del.java_method(:write, [Java::java.lang.String.java_class]).call(text)
+    def write(data=nil)
+      if data.class == String && !block_given?
+        @j_del.java_method(:write, [Java::java.lang.String.java_class]).call(data)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling write(text)"
+      raise ArgumentError, "Invalid arguments when calling write(data)"
     end
     #  Set a background handler, this handler is called when the command is running and put to background.
     # @yield the background handler

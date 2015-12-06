@@ -38,7 +38,6 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.cli.CommandLine;
 import io.vertx.ext.shell.session.Session;
-import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.term.Tty;
 import io.vertx.ext.shell.cli.CliToken;
 
@@ -83,7 +82,7 @@ public interface CommandProcess extends Tty {
   boolean isInForeground();
 
   @Fluent
-  CommandProcess setStdin(Stream stdin);
+  CommandProcess stdinHandler(Handler<String> handler);
 
   /**
    * Set an interrupt handler, this handler is called when the command is interrupted, for instance user
@@ -128,11 +127,11 @@ public interface CommandProcess extends Tty {
   /**
    * Write some text to the standard output.
    *
-   * @param text the text
+   * @param data the text
    * @return a reference to this, so the API can be used fluently
    */
   @Fluent
-  CommandProcess write(String text);
+  CommandProcess write(String data);
 
   /**
    * Set a background handler, this handler is called when the command is running and put to background.

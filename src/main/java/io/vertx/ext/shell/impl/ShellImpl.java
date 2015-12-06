@@ -131,7 +131,7 @@ public class ShellImpl implements Shell {
         )
     );
     if (welcome != null && welcome.length() > 0) {
-      term.stdout().write(welcome);
+      term.write(welcome);
     }
     return this;
   }
@@ -183,14 +183,14 @@ public class ShellImpl implements Shell {
           case "jobs":
             jobController.jobs().forEach(job -> {
               String statusLine = statusLine(job) + "\n";
-              term.stdout().write(statusLine);
+              term.write(statusLine);
             });
             readline();
             return;
           case "fg": {
             Job job = findJob();
             if (job == null) {
-              term.stdout().write("no such job\n");
+              term.write("no such job\n");
               readline();
             } else {
               if (job.status() == ExecStatus.STOPPED) {
@@ -204,7 +204,7 @@ public class ShellImpl implements Shell {
           case "bg": {
             Job job = findJob();
             if (job == null) {
-              term.stdout().write("no such job\n");
+              term.write("no such job\n");
               readline();
             } else {
               if (job.status() == ExecStatus.STOPPED) {
@@ -212,7 +212,7 @@ public class ShellImpl implements Shell {
                 term.echo(statusLine(job) + "\n");
                 readline();
               } else {
-                term.stdout().write("job " + job.id() + " already in background\n");
+                term.write("job " + job.id() + " already in background\n");
                 readline();
               }
             }

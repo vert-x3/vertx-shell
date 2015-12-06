@@ -40,12 +40,10 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.io.Stream;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.term.SignalHandler;
 import io.vertx.ext.shell.term.Term;
 
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -60,8 +58,7 @@ public class TermImpl implements Term {
   private final Readline readline;
   private final Consumer<int[]> echoHandler;
   final TtyConnection conn;
-  final Stream stdout;
-  volatile Stream stdin;
+  volatile Handler<String> stdinHandler;
   private SignalHandler interruptHandler;
   private SignalHandler suspendHandler;
   private Session session;
@@ -69,10 +66,9 @@ public class TermImpl implements Term {
 
   public TermImpl(Vertx vertx, TtyConnection conn) {
     this.vertx = vertx;
-    InputStream inputrc = Keymap.class.getResourceAsStream("inputrc");
+    java.io.InputStream inputrc = Keymap.class.getResourceAsStream("inputrc");
     Keymap keymap = new Keymap(inputrc);
     this.conn = conn;
-    stdout = conn::write;
     readline = new Readline(keymap);
     for (io.termd.core.readline.Function function : Helper.loadServices(Thread.currentThread().getContextClassLoader(), io.termd.core.readline.Function.class)) {
       readline.addFunction(function);
@@ -92,8 +88,8 @@ public class TermImpl implements Term {
           break;
         case EOF:
           // Pseudo signal
-          if (stdin != null) {
-            stdin.handle(Helper.fromCodePoints(new int[]{key}));
+          if (stdinHandler != null) {
+            stdinHandler.handle(Helper.fromCodePoints(new int[]{key}));
           } else {
             echo(key);
             readline.queueEvent(new int[]{key});
@@ -215,29 +211,12 @@ public class TermImpl implements Term {
   }
 
   void checkPending() {
-    if (stdin != null && readline.hasEvent()) {
-      stdin.handle(Helper.fromCodePoints(readline.nextEvent().buffer().array()));
+    if (stdinHandler != null && readline.hasEvent()) {
+      stdinHandler.handle(Helper.fromCodePoints(readline.nextEvent().buffer().array()));
       vertx.runOnContext(v -> {
         checkPending();
       });
     }
-  }
-
-  @Override
-  public TermImpl setStdin(Stream stdin) {
-    if (inReadline) {
-      throw new IllegalStateException();
-    }
-    this.stdin = stdin;
-    if (stdin != null) {
-      conn.setStdinHandler(codePoints -> {
-        stdin.handle(Helper.fromCodePoints(codePoints));
-      });
-      checkPending();
-    } else {
-      conn.setStdinHandler(echoHandler);
-    }
-    return this;
   }
 
   @Override
@@ -256,8 +235,26 @@ public class TermImpl implements Term {
   }
 
   @Override
-  public Stream stdout() {
-    return stdout;
+  public Term stdinHandler(Handler<String> handler) {
+    if (inReadline) {
+      throw new IllegalStateException();
+    }
+    stdinHandler = handler;
+    if (handler != null) {
+      conn.setStdinHandler(codePoints -> {
+        handler.handle(Helper.fromCodePoints(codePoints));
+      });
+      checkPending();
+    } else {
+      conn.setStdinHandler(echoHandler);
+    }
+    return this;
+  }
+
+  @Override
+  public Term write(String data) {
+    conn.write(data);
+    return this;
   }
 
   public TermImpl interruptHandler(SignalHandler handler) {
