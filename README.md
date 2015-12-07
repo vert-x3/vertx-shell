@@ -49,7 +49,6 @@ or with SSH
 - event bus connector : execute shell commands using event bus
 - composite commands _bus send_ instead of _bus-send_
 - http client command
-- JDBC/Mongo auth
 - make telnet configurable with a remote hosts white list
 - make builtin shell commands completable
 - fg/bg with id : fg 3, bg 4
