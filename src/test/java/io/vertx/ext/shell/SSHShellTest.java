@@ -138,7 +138,6 @@ public class SSHShellTest extends SSHTestBase {
     );
     Connection conn = DriverManager.getConnection(config().getString("url"));
     for (String sql : SQL) {
-      System.out.println("Executing: "  + sql);
       conn.createStatement().execute(sql);
     }
     Async async = context.async();

@@ -32,15 +32,15 @@
 
 package io.vertx.ext.shell.support;
 
-import io.termd.core.tty.ReadBuffer;
 import io.termd.core.tty.TtyConnection;
 import io.termd.core.tty.TtyEvent;
 import io.termd.core.util.Helper;
 import io.termd.core.util.Vector;
+import io.vertx.core.Context;
+import io.vertx.core.Vertx;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
@@ -51,7 +51,7 @@ import java.util.function.Consumer;
  */
 public class TestTtyConnection implements TtyConnection {
 
-  private final ReadBuffer readBuffer = new ReadBuffer(this::execute);
+  private final Context context;
   private Consumer<String> terminalTypeHandler;
   private Consumer<Vector> sizeHandler;
   private BiConsumer<TtyEvent, Integer> eventHandler;
@@ -61,6 +61,10 @@ public class TestTtyConnection implements TtyConnection {
   private volatile boolean closed;
   private final CountDownLatch closeLatch = new CountDownLatch(1);
   private volatile long lastAccessedTime;
+
+  public TestTtyConnection(Vertx vertx) {
+    this.context = vertx.getOrCreateContext();
+  }
 
   @Override
   public Charset inputCharset() {
@@ -153,22 +157,15 @@ public class TestTtyConnection implements TtyConnection {
     if (!closed) {
       closed = true;
       if (closeHandler != null) {
-        closeHandler.accept(null);
+        context.runOnContext(v -> closeHandler.accept(null));
       }
       closeLatch.countDown();
     }
   }
 
-  private final ConcurrentLinkedDeque<Runnable> tasks = new ConcurrentLinkedDeque<>();
-  private boolean reading = false;
-
   @Override
   public void execute(Runnable task) {
-    if (reading) {
-      tasks.add(task);
-    } else {
-      task.run();
-    }
+    context.runOnContext(v -> task.run());
   }
 
   @Override
@@ -191,18 +188,16 @@ public class TestTtyConnection implements TtyConnection {
       default:
         throw new AssertionError();
     }
-    eventHandler.accept(event, c);
+    context.runOnContext(v -> {
+      eventHandler.accept(event, c);
+    });
   }
 
   public void read(String s) {
-    reading = true;
     lastAccessedTime = System.currentTimeMillis();
-    stdinHandler.accept(Helper.toCodePoints(s));
-    reading = false;
-    Runnable task;
-    while ((task = tasks.poll()) != null) {
-      task.run();
-    }
+    context.runOnContext(v -> {
+      stdinHandler.accept(Helper.toCodePoints(s));
+    });
   }
 
   public synchronized String checkWritten(String s) {

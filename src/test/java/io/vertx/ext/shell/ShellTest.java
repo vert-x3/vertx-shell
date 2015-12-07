@@ -49,9 +49,12 @@ import io.vertx.ext.shell.system.impl.JobImpl;
 import io.vertx.ext.shell.term.impl.TermImpl;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
+import io.vertx.ext.unit.junit.Repeat;
+import io.vertx.ext.unit.junit.RepeatRule;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -88,7 +91,7 @@ public class ShellTest {
 
   @Test
   public void testVertx(TestContext context) {
-    TestTtyConnection conn = new TestTtyConnection();
+    TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
     shell.init().readline();
     Async registrationLatch = context.async();
@@ -105,7 +108,7 @@ public class ShellTest {
 
   @Test
   public void testExecuteProcess(TestContext context) {
-    TestTtyConnection conn = new TestTtyConnection();
+    TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
     shell.init().readline();
     context.assertNull(shell.jobController().foregroundJob());
@@ -128,7 +131,7 @@ public class ShellTest {
 
   @Test
   public void testHandleReadlineBuffered(TestContext context) {
-    TestTtyConnection conn = new TestTtyConnection();
+    TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
     shell.init().readline();
     Async registrationLatch = context.async(2);
@@ -155,7 +158,7 @@ public class ShellTest {
 
   @Test
   public void testExecuteReadlineBuffered(TestContext context) {
-    TestTtyConnection conn = new TestTtyConnection();
+    TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
     shell.init().readline();
     Async registrationLatch = context.async();
@@ -175,7 +178,7 @@ public class ShellTest {
 
   @Test
   public void testSuspendProcess(TestContext context) throws Exception {
-    TestTtyConnection conn = new TestTtyConnection();
+    TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
     shell.init().readline();
     Async done = context.async();
@@ -200,14 +203,17 @@ public class ShellTest {
 
   @Test
   public void testSuspendedProcessDisconnectedFromTty(TestContext context) throws Exception {
-    TestTtyConnection conn = new TestTtyConnection();
+    TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
     shell.init().readline();
     Async registrationsLatch = context.async(3);
     Async done = context.async();
-    Async latch1 = context.async();;
-    Async latch2 = context.async();;
-    Async latch3 = context.async();;
+    Async latch1 = context.async();
+    ;
+    Async latch2 = context.async();
+    ;
+    Async latch3 = context.async();
+    ;
     registry.registerCommand(CommandBuilder.command("read").processHandler(process -> {
       process.stdinHandler(line -> {
         context.fail("Should not process line " + line);
@@ -252,7 +258,7 @@ public class ShellTest {
 
   @Test
   public void testResumeProcessToForeground(TestContext context) throws Exception {
-    TestTtyConnection conn = new TestTtyConnection();
+    TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
     shell.init().readline();
     Async registrationLatch = context.async();
@@ -306,7 +312,7 @@ public class ShellTest {
 
   @Test
   public void testResumeProcessToBackground(TestContext context) throws Exception {
-    TestTtyConnection conn = new TestTtyConnection();
+    TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
     shell.init().readline();
     Async registrationLatch = context.async();
@@ -358,7 +364,7 @@ public class ShellTest {
 
   @Test
   public void backgroundToForeground(TestContext context) throws Exception {
-    TestTtyConnection conn = new TestTtyConnection();
+    TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
     shell.init().readline();
     Async registrationLatch = context.async();
@@ -406,7 +412,7 @@ public class ShellTest {
 
   @Test
   public void testExecuteBufferedCommand(TestContext context) throws Exception {
-    TestTtyConnection conn = new TestTtyConnection();
+    TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl adapter = new ShellImpl(new TermImpl(vertx, conn), manager);
     adapter.init().readline();
     CountDownLatch latch = new CountDownLatch(1);
@@ -436,7 +442,7 @@ public class ShellTest {
 
   @Test
   public void testEchoCharsDuringExecute(TestContext context) throws Exception {
-    TestTtyConnection conn = new TestTtyConnection();
+    TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
     shell.init().readline();
     Async registrationLatch = context.async();
@@ -466,12 +472,12 @@ public class ShellTest {
     registry.registerCommand(Command.create(vertx, Sleep.class), context.asyncAssertSuccess(v -> regLatch.complete()));
     regLatch.awaitSuccess(2000);
     for (String cmd : Arrays.asList("exit", "logout")) {
-      TestTtyConnection conn = new TestTtyConnection();
+      TestTtyConnection conn = new TestTtyConnection(vertx);
       ShellImpl adapter = new ShellImpl(new TermImpl(vertx, conn), manager);
       adapter.init().readline();
       conn.read("sleep 10000\r");
       long now = System.currentTimeMillis();
-      while (adapter.jobController().jobs().size() == 0 || ((JobImpl)adapter.jobController().jobs().iterator().next()).actualStatus() != ExecStatus.RUNNING) {
+      while (adapter.jobController().jobs().size() == 0 || ((JobImpl) adapter.jobController().jobs().iterator().next()).actualStatus() != ExecStatus.RUNNING) {
         context.assertTrue(System.currentTimeMillis() - now < 2000);
         Thread.sleep(1);
       }
@@ -489,12 +495,15 @@ public class ShellTest {
 
   @Test
   public void testEOF(TestContext context) throws Exception {
-    TestTtyConnection conn = new TestTtyConnection();
+    TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
     shell.init().readline();
     conn.read("\u0004");
-    context.assertTrue(conn.isClosed());
+    context.assertTrue(conn.getCloseLatch().await(2, TimeUnit.SECONDS));
   }
+
+  @Rule
+  public final RepeatRule rule = new RepeatRule();
 
   @Test
   public void testAbc(TestContext context) throws Exception {
@@ -507,18 +516,23 @@ public class ShellTest {
           process.stdinHandler(cp -> {
             context.fail();
           });
-          process.endHandler(v -> barLatch.complete());
+          process.endHandler(v -> {
+                barLatch.complete();
+              }
+          );
           process.end();
         }).
         build(vertx), context.asyncAssertSuccess(v -> regLatch.countDown()));
     registry.registerCommand(CommandBuilder.
         command("bar").
         processHandler(process -> {
-          process.endHandler(v -> endLatch.complete());
+          process.endHandler(v -> {
+            endLatch.complete();
+          });
           process.end();
         }).
         build(vertx), context.asyncAssertSuccess(v -> regLatch.countDown()));
-    TestTtyConnection conn = new TestTtyConnection();
+    TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
     shell.init().readline();
     conn.read("foo\r");
@@ -544,7 +558,7 @@ public class ShellTest {
           fooRunning.complete();
         }).build(vertx), context.asyncAssertSuccess(v -> regLatch.complete())
     );
-    TestTtyConnection conn = new TestTtyConnection();
+    TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
     shell.init().readline();
     conn.read("foo\r");
@@ -576,7 +590,7 @@ public class ShellTest {
           fooRunning.complete();
         }).build(vertx), context.asyncAssertSuccess(v -> regLatch.complete())
     );
-    TestTtyConnection conn = new TestTtyConnection();
+    TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
     shell.init().readline();
     conn.read("foo\r");
@@ -611,7 +625,7 @@ public class ShellTest {
           fooRunning.complete();
         }).build(vertx), context.asyncAssertSuccess(v -> regLatch.complete())
     );
-    TestTtyConnection conn = new TestTtyConnection();
+    TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
     shell.init().readline();
     conn.read("foo\r");

@@ -55,7 +55,7 @@ public class TestTermServer implements TermServer {
   }
 
   public TestTtyConnection openConnection() {
-    TestTtyConnection conn = new TestTtyConnection();
+    TestTtyConnection conn = new TestTtyConnection(vertx);
     connectionHandler.handle(conn);
     return conn;
   }

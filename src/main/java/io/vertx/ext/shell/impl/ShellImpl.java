@@ -120,8 +120,8 @@ public class ShellImpl implements Shell {
     term.suspendHandler(key -> {
       term.echo(Helper.fromCodePoints(new int[]{key, '\n'}));
       Job job = jobController.foregroundJob();
+      term.echo(statusLine(job, ExecStatus.STOPPED) + "\n");
       job.suspend();
-      term.echo(statusLine(job) + "\n");
       return true;
     });
 
@@ -136,16 +136,15 @@ public class ShellImpl implements Shell {
     return this;
   }
 
-  private String statusLine(Job job) {
+  private String statusLine(Job job, ExecStatus status) {
     StringBuilder sb = new StringBuilder("[").append(job.id()).append("]");
     if (findJob() == job) {
       sb.append("+");
     }
-    sb.append(" ").append(Character.toUpperCase(job.status().name().charAt(0))).append(job.status().name().substring(1).toLowerCase());
+    sb.append(" ").append(Character.toUpperCase(status.name().charAt(0))).append(job.status().name().substring(1).toLowerCase());
     sb.append(" ").append(job.line());
     return sb.toString();
   }
-
 
   private Job findJob() {
     Job foregroundJob = jobController.foregroundJob();
@@ -182,7 +181,7 @@ public class ShellImpl implements Shell {
             return;
           case "jobs":
             jobController.jobs().forEach(job -> {
-              String statusLine = statusLine(job) + "\n";
+              String statusLine = statusLine(job, job.status()) + "\n";
               term.write(statusLine);
             });
             readline();
@@ -209,7 +208,7 @@ public class ShellImpl implements Shell {
             } else {
               if (job.status() == ExecStatus.STOPPED) {
                 job.resume(false);
-                term.echo(statusLine(job) + "\n");
+                term.echo(statusLine(job, ExecStatus.RUNNING) + "\n");
                 readline();
               } else {
                 term.write("job " + job.id() + " already in background\n");
