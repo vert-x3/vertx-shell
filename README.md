@@ -43,6 +43,9 @@ or with SSH
 
 ## Roadmap
 
+- todo in termd
+   - switch to a demand scheme for stream
+   - decouple readline from TtyConnection (the callbacks)
 - event bus connector : execute shell commands using event bus
 - composite commands _bus send_ instead of _bus-send_
 - http client command
