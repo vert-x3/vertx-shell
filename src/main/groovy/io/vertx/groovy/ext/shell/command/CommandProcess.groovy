@@ -82,8 +82,8 @@ public class CommandProcess extends Tty {
    * @return true if the command is running in foreground
    * @return 
    */
-  public boolean isInForeground() {
-    def ret = this.delegate.isInForeground();
+  public boolean isForeground() {
+    def ret = this.delegate.isForeground();
     return ret;
   }
   public CommandProcess stdinHandler(Handler<String> handler) {

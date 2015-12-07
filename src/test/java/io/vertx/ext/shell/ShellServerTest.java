@@ -35,11 +35,11 @@ package io.vertx.ext.shell;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.CliToken;
-import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.CommandProcessTest;
 import io.vertx.ext.shell.command.CommandResolver;
 import io.vertx.ext.shell.session.impl.SessionImpl;
+import io.vertx.ext.shell.support.TestCommands;
 import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.Job;
@@ -51,10 +51,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -66,16 +64,16 @@ public class ShellServerTest {
 
   Vertx vertx;
   ShellServer server;
-  List<Command> commands;
+  TestCommands commands;
 
   @Before
   public void before(TestContext context) {
     vertx = Vertx.vertx();
     server = ShellServer.create(vertx);
-    commands = new ArrayList<>();
+    commands = new TestCommands(vertx);
     server.
         registerCommandResolver(CommandResolver.baseCommands(vertx)).
-        registerCommandResolver(() -> commands).
+        registerCommandResolver(commands).
         listen(context.asyncAssertSuccess());
   }
 
@@ -88,7 +86,7 @@ public class ShellServerTest {
   public void testRun(TestContext context) {
     commands.add(CommandBuilder.command("foo").processHandler(process -> {
       process.end(3);
-    }).build(vertx));
+    }));
     Shell shell = server.createShell();
     Job job = shell.createJob(CliToken.tokenize("foo"));
     Async async = context.async();
@@ -102,7 +100,7 @@ public class ShellServerTest {
   public void testThrowExceptionInProcess(TestContext context) {
     commands.add(CommandBuilder.command("foo").processHandler(process -> {
       throw new RuntimeException();
-    }).build(vertx));
+    }));
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Async async = context.async();
@@ -122,7 +120,7 @@ public class ShellServerTest {
         process.end(0);
       });
       latch.countDown();
-    }).build(vertx));
+    }));
     Shell shell = server.createShell();
     Job job = shell.createJob(CliToken.tokenize("foo"));
     Async async = context.async();
@@ -145,7 +143,7 @@ public class ShellServerTest {
     commands.add(CommandBuilder.command("foo").processHandler(process -> {
       process.write("bye_world");
       process.end(0);
-    }).build(vertx));
+    }));
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Async async = context.async();
@@ -182,7 +180,7 @@ public class ShellServerTest {
         });
         latch.countDown();
       });
-      commands.add(cmd.build(vertx));
+      commands.add(cmd);
       shellCtx.runOnContext(v3 -> {
         testContext.assertTrue(shellCtx == Vertx.currentContext());
         Shell shell = server.createShell();
@@ -211,7 +209,7 @@ public class ShellServerTest {
         process.end(0);
       });
       latch.countDown();
-    }).build(vertx));
+    }));
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Async async = context.async();
@@ -238,7 +236,7 @@ public class ShellServerTest {
         process.end(0);
       });
       process.write("ping");
-    }).build(vertx));
+    }));
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Pty pty = Pty.create();
@@ -260,7 +258,7 @@ public class ShellServerTest {
       context.assertNotNull(session);
       context.assertEquals("the_value", session.get("the_key"));
       process.end();
-    }).build(vertx));
+    }));
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Session session = new SessionImpl();
@@ -281,7 +279,7 @@ public class ShellServerTest {
       context.assertNull(session.get("the_key"));
       session.put("the_key", "the_value");
       process.end();
-    }).build(vertx));
+    }));
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Pty pty = Pty.create();
@@ -301,7 +299,7 @@ public class ShellServerTest {
       context.assertNotNull(session);
       context.assertEquals("the_value", session.remove("the_key"));
       process.end();
-    }).build(vertx));
+    }));
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Pty pty = Pty.create();
@@ -321,7 +319,7 @@ public class ShellServerTest {
     commands.add(CommandBuilder.command("foo").processHandler(process -> {
       process.endHandler(v -> endLatch.countDown());
       runningLatch.countDown();
-    }).build(vertx));
+    }));
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Pty pty = Pty.create();

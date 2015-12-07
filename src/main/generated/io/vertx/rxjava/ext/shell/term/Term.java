@@ -68,7 +68,7 @@ public class Term extends Tty {
   }
 
   /**
-   * Echo some text in the terminal.
+   * Echo some text in the terminal, escaped if necessary.<p/>
    * @param text the text to echo
    * @return a reference to this, so the API can be used fluently
    */

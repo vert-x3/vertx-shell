@@ -68,8 +68,13 @@ public class ProcessImpl implements Process {
   private Handler<Void> backgroundHandler;
   private Handler<Void> foregroundHandler;
   private Handler<Integer> terminatedHandler;
-  private ExecStatus status;
+
+  // State exposed to the command, updated on the command context
   private boolean foreground;
+
+  // Internal state used by the process
+  private ExecStatus processStatus;
+  private boolean processForeground;
   private Handler<String> stdinHandler;
   private Handler<Void> resizeHandler;
   private Integer exitCode;
@@ -81,7 +86,7 @@ public class ProcessImpl implements Process {
     this.handler = handler;
     this.args = args;
     processContext = vertx.getOrCreateContext();
-    status = ExecStatus.READY;
+    processStatus = ExecStatus.READY;
   }
 
   @Override
@@ -91,7 +96,7 @@ public class ProcessImpl implements Process {
 
   @Override
   public ExecStatus status() {
-    return status;
+    return processStatus;
   }
 
   @Override
@@ -124,7 +129,7 @@ public class ProcessImpl implements Process {
 
   @Override
   public boolean interrupt(Handler<Void> completionHandler) {
-    if (status == ExecStatus.RUNNING || status == ExecStatus.STOPPED) {
+    if (processStatus == ExecStatus.RUNNING || processStatus == ExecStatus.STOPPED) {
       Handler<Void> handler = interruptHandler;
       processContext.runOnContext(v -> {
         try {
@@ -139,13 +144,13 @@ public class ProcessImpl implements Process {
       });
       return handler != null;
     } else {
-      throw new IllegalStateException("Cannot interrupt process in " + status + " state");
+      throw new IllegalStateException("Cannot interrupt process in " + processStatus + " state");
     }
   }
 
   @Override
   public synchronized void resume(boolean fg, Handler<Void> completionHandler) {
-    if (status == ExecStatus.STOPPED) {
+    if (processStatus == ExecStatus.STOPPED) {
       updateStatus(
           ExecStatus.RUNNING,
           null,
@@ -154,13 +159,13 @@ public class ProcessImpl implements Process {
           terminatedHandler,
           completionHandler);
     } else {
-      throw new IllegalStateException("Cannot resume process in " + status + " state");
+      throw new IllegalStateException("Cannot resume process in " + processStatus + " state");
     }
   }
 
   @Override
   public synchronized void suspend(Handler<Void> completionHandler) {
-    if (status == ExecStatus.RUNNING) {
+    if (processStatus == ExecStatus.RUNNING) {
       updateStatus(
           ExecStatus.STOPPED,
           null,
@@ -169,14 +174,14 @@ public class ProcessImpl implements Process {
           terminatedHandler,
           completionHandler);
     } else {
-      throw new IllegalStateException("Cannot suspend process in " + status + " state");
+      throw new IllegalStateException("Cannot suspend process in " + processStatus + " state");
     }
   }
 
   @Override
   public void toBackground(Handler<Void> completionHandler) {
-    if (status == ExecStatus.RUNNING) {
-      if (foreground) {
+    if (processStatus == ExecStatus.RUNNING) {
+      if (processForeground) {
         updateStatus(
             ExecStatus.RUNNING,
             null,
@@ -186,14 +191,14 @@ public class ProcessImpl implements Process {
             completionHandler);
       }
     } else {
-      throw new IllegalStateException("Cannot set to background a process in " + status + " state");
+      throw new IllegalStateException("Cannot set to background a process in " + processStatus + " state");
     }
   }
 
   @Override
   public void toForeground(Handler<Void> completionHandler) {
-    if (status == ExecStatus.RUNNING) {
-      if (!foreground) {
+    if (processStatus == ExecStatus.RUNNING) {
+      if (!processForeground) {
         updateStatus(
             ExecStatus.RUNNING,
             null,
@@ -203,7 +208,7 @@ public class ProcessImpl implements Process {
             completionHandler);
       }
     } else {
-      throw new IllegalStateException("Cannot set to foreground a process in " + status + " state");
+      throw new IllegalStateException("Cannot set to foreground a process in " + processStatus + " state");
     }
   }
 
@@ -215,7 +220,7 @@ public class ProcessImpl implements Process {
   }
 
   private synchronized boolean terminate(int exitCode, Handler<Void> completionHandler) {
-    if (status != ExecStatus.TERMINATED) {
+    if (processStatus != ExecStatus.TERMINATED) {
       updateStatus(
           ExecStatus.TERMINATED,
           exitCode,
@@ -230,11 +235,11 @@ public class ProcessImpl implements Process {
   }
 
   private void updateStatus(ExecStatus statusUpdate, Integer exitCodeUpdate, boolean foregroundUpdate, Handler<Void> handler, Handler<Integer> terminatedHandler, Handler<Void> completionHandler) {
-    status = statusUpdate;
+    processStatus = statusUpdate;
     exitCode = exitCodeUpdate;
     if (!foregroundUpdate) {
-      if (foreground) {
-        foreground = false;
+      if (processForeground) {
+        processForeground = false;
         if (stdinHandler != null) {
           tty.stdinHandler(null);
         }
@@ -243,8 +248,8 @@ public class ProcessImpl implements Process {
         }
       }
     } else {
-      if (!foreground) {
-        foreground = true;
+      if (!processForeground) {
+        processForeground = true;
         if (stdinHandler != null) {
           tty.stdinHandler(stdinHandler);
         }
@@ -254,6 +259,7 @@ public class ProcessImpl implements Process {
       }
     }
     context.runOnContext(v -> {
+      foreground = foregroundUpdate;
       try {
         if (handler != null) {
           handler.handle(null);
@@ -274,10 +280,11 @@ public class ProcessImpl implements Process {
   @Override
   public synchronized void run(boolean fg, Handler<Void> completionHandler) {
 
-    if (status != ExecStatus.READY) {
-      throw new IllegalStateException("Cannot run proces in " + status + " state");
+    if (processStatus != ExecStatus.READY) {
+      throw new IllegalStateException("Cannot run proces in " + processStatus + " state");
     }
-    status = ExecStatus.RUNNING;
+    processStatus = ExecStatus.RUNNING;
+    processForeground = fg;
     foreground = fg;
 
     // Make a local copy
@@ -285,12 +292,6 @@ public class ProcessImpl implements Process {
     if (tty == null) {
       throw new IllegalStateException("Cannot execute process without a TTY set");
     }
-
-//    // Make a local copy
-//    Session session = this.session;
-//    if (session == null) {
-//      throw new IllegalStateException("Cannot execute process without a Session set");
-//    }
 
     CommandLine cl;
     final List<String> args2 = args.stream().filter(CliToken::isText).map(CliToken::value).collect(Collectors.toList());
@@ -346,7 +347,7 @@ public class ProcessImpl implements Process {
       }
 
       @Override
-      public boolean isInForeground() {
+      public boolean isForeground() {
         return foreground;
       }
 
@@ -372,7 +373,7 @@ public class ProcessImpl implements Process {
         } else {
           stdinHandler = null;
         }
-        if (foreground && stdinHandler != null) {
+        if (processForeground && stdinHandler != null) {
           tty.stdinHandler(stdinHandler);
         }
         return this;
@@ -381,7 +382,7 @@ public class ProcessImpl implements Process {
       @Override
       public CommandProcess write(String data) {
         synchronized (ProcessImpl.this) {
-          if (status != ExecStatus.RUNNING) {
+          if (processStatus != ExecStatus.RUNNING) {
             throw new IllegalStateException("Cannot write to standard output when " + status().name().toLowerCase());
           }
         }

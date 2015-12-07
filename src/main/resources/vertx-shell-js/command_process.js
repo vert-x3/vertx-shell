@@ -114,10 +114,10 @@ var CommandProcess = function(j_val) {
 
    @return {boolean}
    */
-  this.isInForeground = function() {
+  this.isForeground = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return j_commandProcess["isInForeground()"]();
+      return j_commandProcess["isForeground()"]();
     } else throw new TypeError('function invoked with invalid arguments');
   };
 

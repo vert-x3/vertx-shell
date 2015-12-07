@@ -79,7 +79,7 @@ public interface CommandProcess extends Tty {
   /**
    * @return true if the command is running in foreground
    */
-  boolean isInForeground();
+  boolean isForeground();
 
   @Fluent
   CommandProcess stdinHandler(Handler<String> handler);

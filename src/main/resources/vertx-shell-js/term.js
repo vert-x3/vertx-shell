@@ -95,7 +95,7 @@ var Term = function(j_val) {
   };
 
   /**
-   Echo some text in the terminal.
+   Echo some text in the terminal, escaped if necessary.<p/>
 
    @public
    @param text {string} the text to echo 

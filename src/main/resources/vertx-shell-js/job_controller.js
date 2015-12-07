@@ -111,18 +111,5 @@ var JobController = function(j_val) {
   this._jdel = j_jobController;
 };
 
-/**
-
- @memberof module:vertx-shell-js/job_controller
-
- @return {JobController}
- */
-JobController.create = function() {
-  var __args = arguments;
-  if (__args.length === 0) {
-    return utils.convReturnVertxGen(JJobController["create()"](), JobController);
-  } else throw new TypeError('function invoked with invalid arguments');
-};
-
 // We export the Constructor function
 module.exports = JobController;

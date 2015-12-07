@@ -15,13 +15,6 @@ module VertxShell
     def j_del
       @j_del
     end
-    # @return [::VertxShell::JobController]
-    def self.create
-      if !block_given?
-        return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellSystem::JobController.java_method(:create, []).call(),::VertxShell::JobController)
-      end
-      raise ArgumentError, "Invalid arguments when calling create()"
-    end
     #  @return the current foreground job
     # @return [::VertxShell::Job]
     def foreground_job

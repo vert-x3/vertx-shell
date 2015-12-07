@@ -39,7 +39,7 @@ import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.CommandProcess;
 import io.vertx.ext.shell.command.base.Sleep;
-import io.vertx.ext.shell.command.CommandRegistry;
+import io.vertx.ext.shell.support.TestCommands;
 import io.vertx.ext.shell.system.impl.InternalCommandManager;
 import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.ExecStatus;
@@ -72,16 +72,14 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ShellTest {
 
   Vertx vertx;
-  CommandRegistry registry;
-  InternalCommandManager manager;
+  TestCommands commands;
   ShellServer server;
 
   @Before
   public void before() {
     vertx = Vertx.vertx();
-    registry = CommandRegistry.getShared(vertx);
-    server = ShellServer.create(vertx).registerCommandResolver(registry);
-    manager = new InternalCommandManager(registry);
+    commands = new TestCommands(vertx);
+    server = ShellServer.create(vertx).registerCommandResolver(commands);
   }
 
   @After
@@ -89,59 +87,52 @@ public class ShellTest {
     vertx.close(context.asyncAssertSuccess());
   }
 
+  private ShellImpl createShell(TestTtyConnection conn) {
+    return new ShellImpl(new TermImpl(vertx, conn), new InternalCommandManager(commands));
+  }
+
   @Test
   public void testVertx(TestContext context) {
     TestTtyConnection conn = new TestTtyConnection(vertx);
-    ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
+    ShellImpl shell = createShell(conn);
     shell.init().readline();
-    Async registrationLatch = context.async();
     Async done = context.async();
-    registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       context.assertEquals(vertx, process.vertx());
       done.complete();
-    }).build(vertx), context.asyncAssertSuccess(reg -> {
-      registrationLatch.complete();
     }));
-    registrationLatch.awaitSuccess(10000);
     conn.read("foo\r");
   }
 
   @Test
   public void testExecuteProcess(TestContext context) {
     TestTtyConnection conn = new TestTtyConnection(vertx);
-    ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
+    ShellImpl shell = createShell(conn);
     shell.init().readline();
     context.assertNull(shell.jobController().foregroundJob());
     context.assertEquals(Collections.emptySet(), shell.jobController().jobs());
-    Async registrationLatch = context.async();
     Async async = context.async();
-    registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       context.assertEquals(1, shell.jobController().jobs().size());
       Job job = shell.jobController().getJob(1);
       context.assertEquals(job, shell.jobController().foregroundJob());
       context.assertEquals("foo", job.line());
       context.assertEquals(ExecStatus.RUNNING, job.status());
       async.complete();
-    }).build(vertx), reg -> {
-      registrationLatch.complete();
-    });
-    registrationLatch.awaitSuccess(10000);
+    }));
     conn.read("foo\r");
   }
 
   @Test
   public void testHandleReadlineBuffered(TestContext context) {
     TestTtyConnection conn = new TestTtyConnection(vertx);
-    ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
+    ShellImpl shell = createShell(conn);
     shell.init().readline();
-    Async registrationLatch = context.async(2);
     Async async = context.async();
-    registry.registerCommand(CommandBuilder.command("_not_consumed").processHandler(process -> {
+    commands.add(CommandBuilder.command("_not_consumed").processHandler(process -> {
       async.complete();
-    }).build(vertx), reg -> {
-      registrationLatch.countDown();
-    });
-    registry.registerCommand(CommandBuilder.command("read").processHandler(process -> {
+    }));
+    commands.add(CommandBuilder.command("read").processHandler(process -> {
       StringBuilder buffer = new StringBuilder();
       process.stdinHandler(line -> {
         buffer.append(line);
@@ -149,42 +140,34 @@ public class ShellTest {
           process.end();
         }
       });
-    }).build(vertx), context.asyncAssertSuccess(v -> {
-      registrationLatch.countDown();
     }));
-    registrationLatch.awaitSuccess(10000);
     conn.read("read\rthe_line_not_consumed\r");
   }
 
   @Test
   public void testExecuteReadlineBuffered(TestContext context) {
     TestTtyConnection conn = new TestTtyConnection(vertx);
-    ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
+    ShellImpl shell = createShell(conn);
     shell.init().readline();
-    Async registrationLatch = context.async();
     Async async = context.async();
     AtomicInteger count = new AtomicInteger();
-    registry.registerCommand(CommandBuilder.command("read").processHandler(process -> {
+    commands.add(CommandBuilder.command("read").processHandler(process -> {
       if (count.incrementAndGet() == 2) {
         async.complete();
       }
       process.end(0);
-    }).build(vertx), context.asyncAssertSuccess(v -> {
-      registrationLatch.complete();
     }));
-    registrationLatch.awaitSuccess(10000);
     conn.read("read\rread\r");
   }
 
   @Test
   public void testSuspendProcess(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection(vertx);
-    ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
+    ShellImpl shell = createShell(conn);
     shell.init().readline();
     Async done = context.async();
-    Async registrationLatch = context.async();
     Async latch2 = context.async();
-    registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       Job job = shell.jobController().getJob(1);
       process.suspendHandler(v -> {
         context.assertEquals(ExecStatus.STOPPED, job.status());
@@ -192,10 +175,7 @@ public class ShellTest {
         done.complete();
       });
       latch2.complete();
-    }).build(vertx), reg -> {
-      registrationLatch.complete();
-    });
-    registrationLatch.awaitSuccess();
+    }));
     conn.read("foo\r");
     latch2.awaitSuccess(10000);
     conn.sendEvent(TtyEvent.SUSP);
@@ -204,17 +184,13 @@ public class ShellTest {
   @Test
   public void testSuspendedProcessDisconnectedFromTty(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection(vertx);
-    ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
+    ShellImpl shell = createShell(conn);
     shell.init().readline();
-    Async registrationsLatch = context.async(3);
     Async done = context.async();
     Async latch1 = context.async();
-    ;
     Async latch2 = context.async();
-    ;
     Async latch3 = context.async();
-    ;
-    registry.registerCommand(CommandBuilder.command("read").processHandler(process -> {
+    commands.add(CommandBuilder.command("read").processHandler(process -> {
       process.stdinHandler(line -> {
         context.fail("Should not process line " + line);
       });
@@ -227,25 +203,18 @@ public class ShellTest {
         latch2.countDown();
       });
       latch1.countDown();
-    }).build(vertx), ar -> {
-      registrationsLatch.countDown();
-    });
-    registry.registerCommand(CommandBuilder.command("wait").processHandler(process -> {
+    }));
+    commands.add(CommandBuilder.command("wait").processHandler(process -> {
       // Do nothing, this command is used to escape from readline and make
       // sure that the read data is not sent to the stopped command
       latch3.countDown();
       process.suspendHandler(v -> {
         process.end(0);
       });
-    }).build(vertx), ar -> {
-      registrationsLatch.complete();
-    });
-    registry.registerCommand(CommandBuilder.command("end").processHandler(process -> {
+    }));
+    commands.add(CommandBuilder.command("end").processHandler(process -> {
       done.complete();
-    }).build(vertx), ar -> {
-      registrationsLatch.complete();
-    });
-    registrationsLatch.awaitSuccess(10000);
+    }));
     conn.read("read\r");
     latch1.awaitSuccess(10000);
     conn.sendEvent(TtyEvent.SUSP);
@@ -259,18 +228,17 @@ public class ShellTest {
   @Test
   public void testResumeProcessToForeground(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection(vertx);
-    ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
+    ShellImpl shell = createShell(conn);
     shell.init().readline();
-    Async registrationLatch = context.async();
     CountDownLatch latch1 = new CountDownLatch(1);
     CountDownLatch latch2 = new CountDownLatch(1);
     CountDownLatch latch3 = new CountDownLatch(1);
     CountDownLatch latch4 = new CountDownLatch(1);
-    registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       Job job = shell.jobController().getJob(1);
-      context.assertTrue(process.isInForeground());
+      context.assertTrue(process.isForeground());
       process.suspendHandler(v -> {
-        context.assertFalse(process.isInForeground());
+        context.assertFalse(process.isForeground());
         context.assertEquals(0L, latch1.getCount());
         try {
           process.write("");
@@ -280,7 +248,7 @@ public class ShellTest {
         latch2.countDown();
       });
       process.resumeHandler(v -> {
-        context.assertTrue(process.isInForeground());
+        context.assertTrue(process.isForeground());
         context.assertEquals(0L, latch2.getCount());
         context.assertEquals(ExecStatus.RUNNING, job.status());
         process.write("");
@@ -295,10 +263,7 @@ public class ShellTest {
         latch4.countDown();
       });
       latch1.countDown();
-    }).build(vertx), reg -> {
-      registrationLatch.complete();
-    });
-    registrationLatch.awaitSuccess(10000);
+    }));
     conn.read("foo\r");
     latch1.await(10, TimeUnit.SECONDS);
     conn.sendEvent(TtyEvent.SUSP);
@@ -313,17 +278,16 @@ public class ShellTest {
   @Test
   public void testResumeProcessToBackground(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection(vertx);
-    ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
+    ShellImpl shell = createShell(conn);
     shell.init().readline();
-    Async registrationLatch = context.async();
     Async latch1 = context.async();
     Async latch2 = context.async();
     Async latch3 = context.async();
-    registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       Job job = shell.jobController().getJob(1);
-      context.assertTrue(process.isInForeground());
+      context.assertTrue(process.isForeground());
       process.suspendHandler(v -> {
-        context.assertFalse(process.isInForeground());
+        context.assertFalse(process.isForeground());
         context.assertEquals(0, latch1.count());
         try {
           process.write("");
@@ -333,7 +297,7 @@ public class ShellTest {
         latch2.countDown();
       });
       process.resumeHandler(v -> {
-        context.assertFalse(process.isInForeground());
+        context.assertFalse(process.isForeground());
         context.assertEquals(0, latch2.count());
         context.assertEquals(ExecStatus.RUNNING, job.status());
         process.write("");
@@ -345,10 +309,7 @@ public class ShellTest {
         context.fail();
       });
       latch1.countDown();
-    }).build(vertx), reg -> {
-      registrationLatch.complete();
-    });
-    registrationLatch.awaitSuccess(10000);
+    }));
     conn.read("foo\r");
     latch1.awaitSuccess(10000);
     conn.sendEvent(TtyEvent.SUSP);
@@ -365,74 +326,60 @@ public class ShellTest {
   @Test
   public void backgroundToForeground(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection(vertx);
-    ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
+    ShellImpl shell = createShell(conn);
     shell.init().readline();
-    Async registrationLatch = context.async();
-    CountDownLatch latch1 = new CountDownLatch(1);
-    CountDownLatch latch2 = new CountDownLatch(1);
-    CountDownLatch latch3 = new CountDownLatch(1);
-    CountDownLatch latch4 = new CountDownLatch(1);
+    Async latch1 = context.async();
+    Async latch2 = context.async();
+    Async latch3 = context.async();
     Async async = context.async();
-    registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       process.suspendHandler(v -> {
-        context.assertFalse(process.isInForeground());
-        context.assertEquals(1L, latch2.getCount());
+        context.assertFalse(process.isForeground());
+        context.assertEquals(1, latch2.count());
         latch2.countDown();
       });
       process.resumeHandler(v -> {
-        context.assertFalse(process.isInForeground());
-        context.assertEquals(1L, latch4.getCount());
-        latch4.countDown();
+        context.assertFalse(process.isForeground());
       });
       process.foregroundHandler(v -> {
-        context.assertTrue(process.isInForeground());
+        context.assertTrue(process.isForeground());
         latch3.countDown();
       });
       process.stdinHandler(line -> {
         async.complete();
       });
       latch1.countDown();
-    }).build(vertx), reg -> {
-      registrationLatch.complete();
-    });
-    registrationLatch.awaitSuccess(10000);
+    }));
     conn.read("foo\r");
-    latch1.await(10, TimeUnit.SECONDS);
+    latch1.awaitSuccess(2000);
     conn.sendEvent(TtyEvent.SUSP);
-    latch2.await(10, TimeUnit.SECONDS);
+    latch2.awaitSuccess(2000);
     conn.read("bg\r");
     context.assertNull(shell.jobController().foregroundJob());
     conn.read("fg\r");
     latch3.await();
     context.assertNotNull(shell.jobController().foregroundJob());
     context.assertEquals(shell.jobController().getJob(1), shell.jobController().foregroundJob());
-    latch4.await();
     conn.read("whatever");
   }
 
   @Test
   public void testExecuteBufferedCommand(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection(vertx);
-    ShellImpl adapter = new ShellImpl(new TermImpl(vertx, conn), manager);
+    ShellImpl adapter = createShell(conn);
     adapter.init().readline();
     CountDownLatch latch = new CountDownLatch(1);
-    Async registrationLatch = context.async(2);
     Async done = context.async();
-    registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       context.assertEquals(null, conn.checkWritten("% foo\n"));
       conn.read("bar");
       process.end();
       latch.countDown();
-    }).build(vertx), reg -> {
-      registrationLatch.countDown();
-    });
-    registry.registerCommand(CommandBuilder.command("bar").processHandler(process -> {
+    }));
+    commands.add(CommandBuilder.command("bar").processHandler(process -> {
       context.assertEquals(null, conn.checkWritten("\n"));
       done.complete();
-    }).build(vertx), reg2 -> {
-      registrationLatch.countDown();
-    });
-    registrationLatch.awaitSuccess(2000);
+    }));
     conn.read("foo\r");
     latch.await(10, TimeUnit.SECONDS);
     context.assertNull(conn.checkWritten("bar"));
@@ -443,11 +390,10 @@ public class ShellTest {
   @Test
   public void testEchoCharsDuringExecute(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection(vertx);
-    ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
+    ShellImpl shell = createShell(conn);
     shell.init().readline();
-    Async registrationLatch = context.async();
     Async async = context.async();
-    registry.registerCommand(CommandBuilder.command("foo").processHandler(process -> {
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
       context.assertEquals(null, conn.checkWritten("% foo\n"));
       conn.read("\u0007");
       context.assertNull(conn.checkWritten("^G"));
@@ -460,20 +406,15 @@ public class ShellTest {
       conn.read("\004");
       context.assertNull(conn.checkWritten("^D"));
       async.complete();
-    }).build(vertx), reg -> {
-      registrationLatch.complete();
-    });
-    registrationLatch.awaitSuccess(10000);
+    }));
     conn.read("foo\r");
   }
 
   public void testExit(TestContext context) throws Exception {
-    Async regLatch = context.async();
-    registry.registerCommand(Command.create(vertx, Sleep.class), context.asyncAssertSuccess(v -> regLatch.complete()));
-    regLatch.awaitSuccess(2000);
+    commands.add(Command.create(vertx, Sleep.class));
     for (String cmd : Arrays.asList("exit", "logout")) {
       TestTtyConnection conn = new TestTtyConnection(vertx);
-      ShellImpl adapter = new ShellImpl(new TermImpl(vertx, conn), manager);
+      ShellImpl adapter = createShell(conn);
       adapter.init().readline();
       conn.read("sleep 10000\r");
       long now = System.currentTimeMillis();
@@ -496,21 +437,17 @@ public class ShellTest {
   @Test
   public void testEOF(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection(vertx);
-    ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
+    ShellImpl shell = createShell(conn);
     shell.init().readline();
     conn.read("\u0004");
     context.assertTrue(conn.getCloseLatch().await(2, TimeUnit.SECONDS));
   }
 
-  @Rule
-  public final RepeatRule rule = new RepeatRule();
-
   @Test
   public void testAbc(TestContext context) throws Exception {
-    Async regLatch = context.async(2);
     Async barLatch = context.async();
     Async endLatch = context.async();
-    registry.registerCommand(CommandBuilder.
+    commands.add(CommandBuilder.
         command("foo").
         processHandler(process -> {
           process.stdinHandler(cp -> {
@@ -522,8 +459,8 @@ public class ShellTest {
           );
           process.end();
         }).
-        build(vertx), context.asyncAssertSuccess(v -> regLatch.countDown()));
-    registry.registerCommand(CommandBuilder.
+        build(vertx));
+    commands.add(CommandBuilder.
         command("bar").
         processHandler(process -> {
           process.endHandler(v -> {
@@ -531,9 +468,9 @@ public class ShellTest {
           });
           process.end();
         }).
-        build(vertx), context.asyncAssertSuccess(v -> regLatch.countDown()));
+        build(vertx));
     TestTtyConnection conn = new TestTtyConnection(vertx);
-    ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
+    ShellImpl shell = createShell(conn);
     shell.init().readline();
     conn.read("foo\r");
     barLatch.awaitSuccess(2000);
@@ -542,12 +479,11 @@ public class ShellTest {
 
   @Test
   public void testSetStdinOnResumeToForeground(TestContext context) throws Exception {
-    Async regLatch = context.async();
     Async fooRunning = context.async();
     Async fooSusp = context.async();
     Async fooResumed = context.async();
     Async readLatch = context.async();
-    registry.registerCommand(
+    commands.add(
         CommandBuilder.command("foo").processHandler(process -> {
           process.suspendHandler(v -> fooSusp.complete());
           process.resumeHandler(v -> fooResumed.complete());
@@ -556,10 +492,9 @@ public class ShellTest {
             readLatch.complete();
           });
           fooRunning.complete();
-        }).build(vertx), context.asyncAssertSuccess(v -> regLatch.complete())
-    );
+        }));
     TestTtyConnection conn = new TestTtyConnection(vertx);
-    ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
+    ShellImpl shell = createShell(conn);
     shell.init().readline();
     conn.read("foo\r");
     fooRunning.awaitSuccess(2000);
@@ -572,13 +507,12 @@ public class ShellTest {
 
   @Test
   public void testSetStdinOnBackgroundToForeground(TestContext context) throws Exception {
-    Async regLatch = context.async();
     Async fooRunning = context.async();
     Async fooSusp = context.async();
     Async fooResumed = context.async();
     Async fooToForeground = context.async();
     Async readLatch = context.async();
-    registry.registerCommand(
+    commands.add(
         CommandBuilder.command("foo").processHandler(process -> {
           process.suspendHandler(v -> fooSusp.complete());
           process.resumeHandler(v -> fooResumed.complete());
@@ -588,10 +522,9 @@ public class ShellTest {
             readLatch.complete();
           });
           fooRunning.complete();
-        }).build(vertx), context.asyncAssertSuccess(v -> regLatch.complete())
-    );
+        }));
     TestTtyConnection conn = new TestTtyConnection(vertx);
-    ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
+    ShellImpl shell = createShell(conn);
     shell.init().readline();
     conn.read("foo\r");
     fooRunning.awaitSuccess(2000);
@@ -606,14 +539,13 @@ public class ShellTest {
 
   @Test
   public void testEndInBackground(TestContext context) throws Exception {
-    Async regLatch = context.async();
     Async fooRunning = context.async();
     Async fooSusp = context.async();
     Async fooResumed = context.async();
     Async endLatch = context.async();
     AtomicReference<CommandProcess> cmdProcess = new AtomicReference<>();
     AtomicReference<Context> cmdContext = new AtomicReference<>();
-    registry.registerCommand(
+    commands.add(
         CommandBuilder.command("foo").processHandler(process -> {
           cmdProcess.set(process);
           cmdContext.set(Vertx.currentContext());
@@ -623,10 +555,9 @@ public class ShellTest {
             endLatch.complete();
           });
           fooRunning.complete();
-        }).build(vertx), context.asyncAssertSuccess(v -> regLatch.complete())
-    );
+        }));
     TestTtyConnection conn = new TestTtyConnection(vertx);
-    ShellImpl shell = new ShellImpl(new TermImpl(vertx, conn), manager);
+    ShellImpl shell = createShell(conn);
     shell.init().readline();
     conn.read("foo\r");
     fooRunning.awaitSuccess(2000);

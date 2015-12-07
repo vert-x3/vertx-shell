@@ -35,8 +35,7 @@ package io.vertx.ext.shell;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.CommandBuilder;
-import io.vertx.ext.shell.command.CommandProcess;
-import io.vertx.ext.shell.command.CommandRegistry;
+import io.vertx.ext.shell.support.TestCommands;
 import io.vertx.ext.shell.support.TestTermServer;
 import io.vertx.ext.shell.support.TestTtyConnection;
 import io.vertx.ext.unit.Async;
@@ -58,20 +57,21 @@ import java.util.function.Consumer;
 public class ShellCloseTest {
 
   Vertx vertx;
-  CommandRegistry registry;
+  TestCommands registry;
   TestTermServer termServer;
   ShellServer shellServer;
 
   @Before
   public void before(TestContext context) {
     vertx = Vertx.vertx();
-    registry = CommandRegistry.getShared(vertx);
+    registry = new TestCommands(vertx);
     termServer = new TestTermServer(vertx);
   }
 
   @After
   public void after(TestContext context) {
     vertx.close(context.asyncAssertSuccess());
+    shellServer = null;
   }
 
   private void startShellServer(TestContext context, long sessionTimeout, long reaperInterval) {
@@ -89,13 +89,11 @@ public class ShellCloseTest {
   @Test
   public void testSessionExpires(TestContext context) throws Exception {
     Async ended = context.async();
-    Async registered = context.async();
-    registry.registerCommand(CommandBuilder.command("cmd").processHandler(process -> {
+    registry.add(CommandBuilder.command("cmd").processHandler(process -> {
       process.endHandler(v -> {
         ended.complete();
       });
-    }).build(vertx), context.asyncAssertSuccess(v -> registered.complete()));
-    registered.awaitSuccess(2000);
+    }));
     startShellServer(context, 100, 100);
     long now = System.currentTimeMillis();
     TestTtyConnection conn = termServer.openConnection();
@@ -139,14 +137,12 @@ public class ShellCloseTest {
   public void testClose(TestContext context, Consumer<TestTtyConnection> closer) throws Exception {
     Async processEnded = context.async();
     Async processStarted = context.async();
-    Async registered = context.async();
-    registry.registerCommand(CommandBuilder.command("cmd").processHandler(process -> {
+    registry.add(CommandBuilder.command("cmd").processHandler(process -> {
       process.endHandler(v -> {
         processEnded.complete();
       });
       processStarted.complete();
-    }).build(vertx), context.asyncAssertSuccess(v -> registered.complete()));
-    registered.awaitSuccess(2000);
+    }));
     startShellServer(context, 30000, 100);
     TestTtyConnection conn = termServer.openConnection();
     conn.read("cmd\r");
@@ -159,12 +155,11 @@ public class ShellCloseTest {
   @Test
   public void testCloseWhileEnding(TestContext context) throws Exception {
     Async processStarted = context.async();
-    Async registered = context.async();
     Async processEnding = context.async();
     Async processEnd = context.async();
     Async closed = context.async();
     AtomicReference<Runnable> end = new AtomicReference<>();
-    registry.registerCommand(CommandBuilder.command("cmd").processHandler(process -> {
+    registry.add(CommandBuilder.command("cmd").processHandler(process -> {
       process.endHandler(v -> {
         processEnding.complete();
         processEnd.awaitSuccess(2000);
@@ -176,8 +171,7 @@ public class ShellCloseTest {
         });
       });
       processStarted.complete();
-    }).build(vertx), context.asyncAssertSuccess(v -> registered.complete()));
-    registered.awaitSuccess(2000);
+    }));
     startShellServer(context, 30000, 100);
     TestTtyConnection conn = termServer.openConnection();
     conn.read("cmd\r");

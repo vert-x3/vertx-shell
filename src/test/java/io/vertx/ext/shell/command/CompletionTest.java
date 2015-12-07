@@ -30,7 +30,7 @@
  *
  */
 
-package io.vertx.ext.shell.registry;
+package io.vertx.ext.shell.command;
 
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.CommandBuilder;

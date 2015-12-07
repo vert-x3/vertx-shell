@@ -30,57 +30,44 @@
  *
  */
 
-package io.vertx.ext.shell.system;
+package io.vertx.ext.shell.support;
 
-import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.core.Handler;
-import io.vertx.ext.shell.system.impl.JobControllerImpl;
+import io.vertx.core.Vertx;
+import io.vertx.ext.shell.command.Command;
+import io.vertx.ext.shell.command.CommandBuilder;
+import io.vertx.ext.shell.command.CommandResolver;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * The job controller.<p/>
- *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@VertxGen
-public interface JobController {
+public class TestCommands implements CommandResolver {
 
-  /**
-   * @return the current foreground job
-   */
-  Job foregroundJob();
+  private final Vertx vertx;
+  private Map<String, Command> commands = new ConcurrentHashMap<>();
 
-  /**
-   * @return the active jobs
-   */
-  Set<Job> jobs();
+  public TestCommands(Vertx vertx) {
+    this.vertx = vertx;
+  }
 
-  /**
-   * Returns an active job in this session by its {@literal id}.
-   *
-   * @param id the job id
-   * @return the job of {@literal null} when not found
-   */
-  Job getJob(int id);
+  public void add(CommandBuilder builder) {
+    add(builder.build(vertx));
+  }
 
-  /**
-   * Create a job wrapping a process.
-   *
-   * @param process the process
-   * @param line the line
-   * @return the created job
-   */
-  Job createJob(Process process, String line);
+  public void add(Command command) {
+    commands.put(command.name(), command);
+  }
 
-  /**
-   * Close the controller and terminate all the underlying jobs, a closed controller does not accept anymore jobs.
-   */
-  void close(Handler<Void> completionHandler);
+  @Override
+  public List<Command> commands() {
+    return new ArrayList<>(commands.values());
+  }
 
-  /**
-   * Close the shell session and terminate all the underlying jobs.
-   */
-  void close();
-
+  public void clear() {
+    commands.clear();
+  }
 }

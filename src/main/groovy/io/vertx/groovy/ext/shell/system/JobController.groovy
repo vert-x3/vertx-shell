@@ -32,10 +32,6 @@ public class JobController {
   public Object getDelegate() {
     return delegate;
   }
-  public static JobController create() {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.system.JobController.create(), io.vertx.groovy.ext.shell.system.JobController.class);
-    return ret;
-  }
   /**
    * @return the current foreground job
    * @return 

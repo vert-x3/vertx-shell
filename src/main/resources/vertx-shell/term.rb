@@ -53,7 +53,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling last_accessed_time()"
     end
-    #  Echo some text in the terminal.
+    #  Echo some text in the terminal, escaped if necessary.<p/>
     # @param [String] text the text to echo
     # @return [self]
     def echo(text=nil)

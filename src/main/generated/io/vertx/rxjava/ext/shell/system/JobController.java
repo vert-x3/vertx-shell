@@ -41,11 +41,6 @@ public class JobController {
     return delegate;
   }
 
-  public static JobController create() { 
-    JobController ret= JobController.newInstance(io.vertx.ext.shell.system.JobController.create());
-    return ret;
-  }
-
   /**
    * @return the current foreground job
    * @return 

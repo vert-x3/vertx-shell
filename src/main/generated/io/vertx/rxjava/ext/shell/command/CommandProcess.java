@@ -97,8 +97,8 @@ public class CommandProcess extends Tty {
    * @return true if the command is running in foreground
    * @return 
    */
-  public boolean isInForeground() { 
-    boolean ret = this.delegate.isInForeground();
+  public boolean isForeground() { 
+    boolean ret = this.delegate.isForeground();
     return ret;
   }
 

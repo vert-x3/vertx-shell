@@ -61,11 +61,11 @@ module VertxShell
     end
     #  @return true if the command is running in foreground
     # @return [true,false]
-    def in_foreground?
+    def foreground?
       if !block_given?
-        return @j_del.java_method(:isInForeground, []).call()
+        return @j_del.java_method(:isForeground, []).call()
       end
-      raise ArgumentError, "Invalid arguments when calling in_foreground?()"
+      raise ArgumentError, "Invalid arguments when calling foreground?()"
     end
     # @yield 
     # @return [self]
