@@ -297,18 +297,18 @@ public class ProcessImpl implements Process {
     final List<String> args2 = args.stream().filter(CliToken::isText).map(CliToken::value).collect(Collectors.toList());
     if (commandContext.cli() != null) {
 
-      // Build to skip validation problems
-      if (commandContext.cli().parse(args2, false).isAskingForHelp()) {
-        StringBuilder usage = new StringBuilder();
-        commandContext.cli().usage(usage);
-        usage.append('\n');
-        tty.write(usage.toString());
-        terminate();
-        return;
-      }
-
       //
       try {
+        // Build to skip validation problems
+        if (commandContext.cli().parse(args2, false).isAskingForHelp()) {
+          StringBuilder usage = new StringBuilder();
+          commandContext.cli().usage(usage);
+          usage.append('\n');
+          tty.write(usage.toString());
+          terminate();
+          return;
+        }
+
         cl = commandContext.cli().parse(args2);
       } catch (CLIException e) {
         tty.write(e.getMessage() + "\n");

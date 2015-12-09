@@ -31,6 +31,7 @@ Set the charset used for encoding / decoding text data from/to SockJS
 |[[host]]`host`|`String`|-
 |[[idleTimeout]]`idleTimeout`|`Number (int)`|-
 |[[keyStoreOptions]]`keyStoreOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|-
+|[[maxChunkSize]]`maxChunkSize`|`Number (int)`|-
 |[[maxWebsocketFrameSize]]`maxWebsocketFrameSize`|`Number (int)`|-
 |[[pemKeyCertOptions]]`pemKeyCertOptions`|`link:dataobjects.html#PemKeyCertOptions[PemKeyCertOptions]`|-
 |[[pemTrustOptions]]`pemTrustOptions`|`link:dataobjects.html#PemTrustOptions[PemTrustOptions]`|-

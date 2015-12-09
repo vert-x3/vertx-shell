@@ -219,6 +219,9 @@ public class JobImpl implements Job {
     process.setSession(session);
     process.run(v -> {
       actualStatus = ExecStatus.RUNNING;
+      if (statusUpdateHandler != null) {
+        statusUpdateHandler.handle(process.status());
+      }
     });
     return this;
   }

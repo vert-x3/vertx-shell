@@ -63,6 +63,7 @@ public class BaseCommandPack implements CommandResolver {
     list.add(LocalMapGet.class);
     list.add(LocalMapPut.class);
     list.add(LocalMapRm.class);
+    list.add(BusPublish.class);
     list.add(BusSend.class);
     list.add(BusTail.class);
     list.add(VerticleLs.class);

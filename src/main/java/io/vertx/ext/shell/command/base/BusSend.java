@@ -32,11 +32,12 @@
 
 package io.vertx.ext.shell.command.base;
 
-import io.vertx.core.cli.annotations.Argument;
+import io.vertx.core.MultiMap;
 import io.vertx.core.cli.annotations.Description;
 import io.vertx.core.cli.annotations.Name;
+import io.vertx.core.cli.annotations.Option;
 import io.vertx.core.cli.annotations.Summary;
-import io.vertx.ext.shell.command.AnnotatedCommand;
+import io.vertx.core.eventbus.Message;
 import io.vertx.ext.shell.command.CommandProcess;
 
 /**
@@ -44,26 +45,46 @@ import io.vertx.ext.shell.command.CommandProcess;
  */
 @Name("bus-send")
 @Summary("Send a message to the event bus")
-public class BusSend extends AnnotatedCommand {
+public class BusSend extends BusPublish {
 
-  private String address;
-  private String message;
+  private boolean reply;
 
-  @Argument(index =  0, argName = "address")
-  @Description("the bus address destination")
-  public void setAddress(String address) {
-    this.address = address;
+  @Option(longName = "timeout")
+  @Description("the send timeout")
+  public void setTimeout(long timeout) {
+    options.setSendTimeout(timeout);
   }
 
-  @Argument(index =  1, argName = "message")
-  @Description("the message to send")
-  public void setMessage(String message) {
-    this.message = message;
+  @Option(longName = "reply", flag = true)
+  @Description("wait for a reply and print it on the console")
+  public void setReply(boolean reply) {
+    this.reply = reply;
   }
 
   @Override
   public void process(CommandProcess process) {
-    process.vertx().eventBus().send(address, message);
-    process.end();
+    Object body = parseBody();
+    if (reply) {
+      process.vertx().eventBus().send(address, body, options, ar -> {
+        if (ar.succeeded()) {
+          Message<Object> reply = ar.result();
+          if (verbose) {
+            process.write("Reply address: " + reply.replyAddress() + "\n");
+            MultiMap headers = reply.headers();
+            for (String header : headers.names()) {
+              process.write("Reply header " + header + ":" + headers.getAll(header) + "\n");
+            }
+          }
+          process.write("Reply: <");
+          process.write(String.valueOf(reply.body())).write(">\n");
+        } else {
+          process.write("Error: " + ar.cause().getMessage() + "\n");
+        }
+        process.end();
+      });
+    } else {
+      process.vertx().eventBus().send(address, body, options);
+      process.end();
+    }
   }
 }
