@@ -648,6 +648,25 @@
  *
  * This is only valid for the {@link io.vertx.ext.shell.ShellService}. {@link io.vertx.ext.shell.ShellServer}
  * don't use this mechanism.
+ *
+ * == Command pack
+ *
+ * A command pack is a jar that provides new Vert.x Shell commands.
+ *
+ * Such jar just need to be present on the classpath and it is discovered by Vertx. Shell.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.pack.CommandPackExample}
+ * ----
+ *
+ * The command pack uses command discovery mechanism, so it needs the descriptor:
+ *
+ * .`META-INF/services/io.vertx.ext.shell.spi.CommandResolverFactory` descriptor
+ * [source]
+ * ----
+ * examples.pack.CommandPackExample
+ * ----
  */
 @ModuleGen(name = "vertx-shell", groupPackage = "io.vertx")
 @Document(fileName = "index.adoc")
