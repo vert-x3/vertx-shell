@@ -54,6 +54,8 @@ import java.util.stream.Collectors;
  */
 public class TermImpl implements Term {
 
+  private static final List<io.termd.core.readline.Function> readlineFunctions = Helper.loadServices(Thread.currentThread().getContextClassLoader(), io.termd.core.readline.Function.class);
+
   private Vertx vertx;
   private final Readline readline;
   private final Consumer<int[]> echoHandler;
@@ -72,9 +74,7 @@ public class TermImpl implements Term {
     this.vertx = vertx;
     this.conn = conn;
     readline = new Readline(keymap);
-    for (io.termd.core.readline.Function function : Helper.loadServices(Thread.currentThread().getContextClassLoader(), io.termd.core.readline.Function.class)) {
-      readline.addFunction(function);
-    }
+    readlineFunctions.forEach(readline::addFunction);
     echoHandler = codePoints -> {
       // Echo
       echo(codePoints);
