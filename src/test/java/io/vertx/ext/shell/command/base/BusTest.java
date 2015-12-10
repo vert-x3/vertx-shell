@@ -49,6 +49,7 @@ import io.vertx.ext.shell.term.Pty;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -70,6 +71,11 @@ public class BusTest {
   public void before(TestContext context) throws Exception {
     vertx = Vertx.vertx();
     server = ShellServer.create(vertx).registerCommandResolver(new BaseCommandPack(vertx)).listen(context.asyncAssertSuccess());
+  }
+
+  @After
+  public void after(TestContext context) {
+    vertx.close(context.asyncAssertSuccess());
   }
 
   @Test
