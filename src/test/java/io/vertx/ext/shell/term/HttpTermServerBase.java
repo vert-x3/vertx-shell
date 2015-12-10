@@ -51,6 +51,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -350,6 +352,27 @@ public abstract class HttpTermServerBase {
         ws.handler(buf -> {
           context.assertTrue(Arrays.equals(new byte[]{63}, buf.getBytes()));
           async.complete();
+        });
+      }, err -> {
+        context.fail();
+      });
+    }));
+  }
+
+  @Test
+  public void testKeymapFromFilesystem(TestContext context) throws Exception {
+    URL url = TermServer.class.getResource(SSHTermOptions.DEFAULT_INPUTRC);
+    File f = new File(url.toURI());
+    Async async = context.async();
+    server = createServer(context, new HttpTermOptions().setPort(8080).setIntputrc(f.getAbsolutePath()));
+    server.termHandler(term -> {
+      term.close();
+      async.complete();
+    });
+    server.listen(context.asyncAssertSuccess(server -> {
+      HttpClient client = vertx.createHttpClient();
+      client.websocket(8080, "localhost", basePath + "/shell/websocket", new CaseInsensitiveHeaders().add("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes())), ws -> {
+        ws.handler(buf -> {
         });
       }, err -> {
         context.fail();

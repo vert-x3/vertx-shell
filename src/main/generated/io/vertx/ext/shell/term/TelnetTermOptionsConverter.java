@@ -33,6 +33,9 @@ public class TelnetTermOptionsConverter {
     if (json.getValue("inBinary") instanceof Boolean) {
       obj.setInBinary((Boolean)json.getValue("inBinary"));
     }
+    if (json.getValue("intputrc") instanceof String) {
+      obj.setIntputrc((String)json.getValue("intputrc"));
+    }
     if (json.getValue("outBinary") instanceof Boolean) {
       obj.setOutBinary((Boolean)json.getValue("outBinary"));
     }
@@ -43,6 +46,9 @@ public class TelnetTermOptionsConverter {
       json.put("charset", obj.getCharset());
     }
     json.put("inBinary", obj.getInBinary());
+    if (obj.getIntputrc() != null) {
+      json.put("intputrc", obj.getIntputrc());
+    }
     json.put("outBinary", obj.getOutBinary());
   }
 }

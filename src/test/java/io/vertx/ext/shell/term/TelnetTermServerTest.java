@@ -47,6 +47,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -54,6 +55,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 
@@ -255,5 +257,13 @@ public class TelnetTermServerTest {
     InputStream in = client.getInputStream();
     int b = in.read();
     context.assertEquals(63, b);
+  }
+
+  @Test
+  public void testKeymapFromFilesystem(TestContext context) throws Exception {
+    URL url = TermServer.class.getResource(SSHTermOptions.DEFAULT_INPUTRC);
+    File f = new File(url.toURI());
+    startTelnet(context, new TelnetTermOptions().setIntputrc(f.getAbsolutePath()), Term::close);
+    client.connect("localhost", server.actualPort());
   }
 }

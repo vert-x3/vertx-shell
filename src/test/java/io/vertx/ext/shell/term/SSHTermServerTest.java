@@ -51,10 +51,12 @@ import io.vertx.ext.unit.TestContext;
 import org.junit.After;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -319,5 +321,20 @@ public class SSHTermServerTest extends SSHTestBase {
     InputStream in = channel.getInputStream();
     int b = in.read();
     context.assertEquals(63, b);
+  }
+
+  @Test
+  public void testKeymapFromFilesystem() throws Exception {
+    URL url = TermServer.class.getResource(SSHTermOptions.DEFAULT_INPUTRC);
+    File f = new File(url.toURI());
+    termHandler = Term::close;
+    startShell(new SSHTermOptions().setIntputrc(f.getAbsolutePath()).setPort(5000).setHost("localhost").setKeyPairOptions(
+        new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
+        setAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
+            new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
+    Session session = createSession("paulo", "secret", false);
+    session.connect();
+    Channel channel = session.openChannel("shell");
+    channel.connect();
   }
 }

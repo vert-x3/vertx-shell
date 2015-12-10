@@ -36,6 +36,7 @@ import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.ext.shell.term.impl.Helper;
 import io.vertx.ext.shell.term.impl.SockJSTermHandlerImpl;
 import io.vertx.ext.web.handler.sockjs.SockJSSocket;
 
@@ -48,7 +49,7 @@ import java.nio.charset.Charset;
 public interface SockJSTermHandler extends Handler<SockJSSocket> {
 
   static SockJSTermHandler create(Vertx vertx, String charset) {
-    return new SockJSTermHandlerImpl(vertx, Charset.forName(charset));
+    return new SockJSTermHandlerImpl(vertx, Charset.forName(charset), Helper.defaultKeymap());
   }
 
   @Fluent

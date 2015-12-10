@@ -32,6 +32,7 @@
 
 package io.vertx.ext.shell;
 
+import io.termd.core.readline.Keymap;
 import io.termd.core.tty.TtyEvent;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;

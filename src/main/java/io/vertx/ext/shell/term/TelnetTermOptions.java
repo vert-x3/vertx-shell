@@ -44,7 +44,7 @@ import io.vertx.core.net.PfxOptions;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Telnet options configuration, extends {@link io.vertx.core.net.NetServerOptions}.
+ * Telnet terminal options configuration, extends {@link io.vertx.core.net.NetServerOptions}.
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
@@ -54,10 +54,12 @@ public class TelnetTermOptions extends NetServerOptions {
   public static final boolean DEFAULT_IN_BINARY = true;
   public static final boolean DEFAULT_OUT_BINARY = true;
   public static final String DEFAULT_CHARSET = StandardCharsets.UTF_8.name();
+  public static final String DEFAULT_INPUTRC = "/io/vertx/ext/shell/inputrc";
 
   private boolean outBinary;
   private boolean inBinary;
   private String charset;
+  private String intputrc;
 
   public TelnetTermOptions() {
     init();
@@ -68,6 +70,7 @@ public class TelnetTermOptions extends NetServerOptions {
     outBinary = other.outBinary;
     inBinary = other.inBinary;
     charset = other.charset;
+    intputrc = other.intputrc;
   }
 
   public TelnetTermOptions(JsonObject json) {
@@ -80,6 +83,7 @@ public class TelnetTermOptions extends NetServerOptions {
     this.outBinary = DEFAULT_OUT_BINARY;
     this.inBinary = DEFAULT_IN_BINARY;
     this.charset = DEFAULT_CHARSET;
+    this.intputrc = DEFAULT_INPUTRC;
   }
 
   @Override
@@ -241,6 +245,24 @@ public class TelnetTermOptions extends NetServerOptions {
    */
   public TelnetTermOptions setCharset(String charset) {
     this.charset = charset;
+    return this;
+  }
+
+  /**
+   * @return the current path of the inputrc config
+   */
+  public String getIntputrc() {
+    return intputrc;
+  }
+
+  /**
+   * The path of the <i>inputrc</i> config.
+   *
+   * @param intputrc the path of the inputrc config
+   * @return a reference to this, so the API can be used fluently
+   */
+  public TelnetTermOptions setIntputrc(String intputrc) {
+    this.intputrc = intputrc;
     return this;
   }
 }

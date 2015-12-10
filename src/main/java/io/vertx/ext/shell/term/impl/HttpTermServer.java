@@ -32,7 +32,7 @@
 
 package io.vertx.ext.shell.term.impl;
 
-import io.termd.core.tty.TtyConnection;
+import io.termd.core.readline.Keymap;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -48,9 +48,7 @@ import io.vertx.ext.web.handler.AuthHandler;
 import io.vertx.ext.web.handler.BasicAuthHandler;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
+import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 
 /**
@@ -58,30 +56,9 @@ import java.nio.charset.Charset;
  */
 public class HttpTermServer implements TermServer {
 
-  public static Buffer loadResource(String path) {
-    URL resource = HttpTermServer.class.getResource(path);
-    if (resource != null) {
-      try {
-        byte[] tmp = new byte[512];
-        InputStream in = resource.openStream();
-        Buffer buffer = Buffer.buffer();
-        while (true) {
-          int l = in.read(tmp);
-          if (l == -1) {
-            break;
-          }
-          buffer.appendBytes(tmp, 0, l);
-        }
-        return buffer;
-      } catch (IOException ignore) {
-      }
-    }
-    return null;
-  }
-
   private final Vertx vertx;
   private HttpTermOptions options;
-  private Handler<TtyConnection> connectionHandler;
+  private Handler<Term> termHandler;
   private HttpServer server;
   private Router router;
   private AuthProvider authProvider;
@@ -99,11 +76,7 @@ public class HttpTermServer implements TermServer {
 
   @Override
   public TermServer termHandler(Handler<Term> handler) {
-    if (handler != null) {
-      connectionHandler = new TermConnectionHandler(vertx, handler);
-    } else {
-      connectionHandler = null;
-    }
+    termHandler = handler;
     return this;
   }
 
@@ -133,8 +106,15 @@ public class HttpTermServer implements TermServer {
         AuthHandler basicAuthHandler = BasicAuthHandler.create(authProvider);
         router.route(options.getSockJSPath()).handler(basicAuthHandler);
       }
+
+      Buffer inputrc = Helper.loadResource(vertx.fileSystem(), options.getIntputrc());
+      if (inputrc == null) {
+        listenHandler.handle(Future.failedFuture("Could not load inputrc from " + options.getIntputrc()));
+        return this;
+      }
+      Keymap keymap = new Keymap(new ByteArrayInputStream(inputrc.getBytes()));
       SockJSHandler sockJSHandler = SockJSHandler.create(vertx, options.getSockJSHandlerOptions());
-      sockJSHandler.socketHandler(new SockJSTermHandlerImpl(vertx, charset).connectionHandler(connectionHandler::handle));
+      sockJSHandler.socketHandler(new SockJSTermHandlerImpl(vertx, charset, keymap).termHandler(termHandler));
       router.route(options.getSockJSPath()).handler(sockJSHandler);
     }
 

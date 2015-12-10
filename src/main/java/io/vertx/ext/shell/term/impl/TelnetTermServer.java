@@ -32,18 +32,20 @@
 
 package io.vertx.ext.shell.term.impl;
 
+import io.termd.core.readline.Keymap;
 import io.termd.core.telnet.TelnetTtyConnection;
-import io.termd.core.tty.TtyConnection;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetServer;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.Term;
 
+import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 
 /**
@@ -55,7 +57,7 @@ public class TelnetTermServer implements TermServer {
 
   private final Vertx vertx;
   private final TelnetTermOptions options;
-  private Handler<TtyConnection> connectionHandler;
+  private Handler<Term> termHandler;
   private NetServer server;
 
   public TelnetTermServer(Vertx vertx, TelnetTermOptions options) {
@@ -70,11 +72,7 @@ public class TelnetTermServer implements TermServer {
 
   @Override
   public TermServer termHandler(Handler<Term> handler) {
-    if (handler != null) {
-      connectionHandler = new TermConnectionHandler(vertx, handler);
-    } else {
-      connectionHandler = null;
-    }
+    termHandler = handler;
     return this;
   }
 
@@ -83,6 +81,13 @@ public class TelnetTermServer implements TermServer {
     Charset charset = Charset.forName(options.getCharset());
     if (server == null) {
       server = vertx.createNetServer(options);
+      Buffer inputrc = Helper.loadResource(vertx.fileSystem(), options.getIntputrc());
+      if (inputrc == null) {
+        listenHandler.handle(Future.failedFuture("Could not load inputrc from " + options.getIntputrc()));
+        return this;
+      }
+      Keymap keymap = new Keymap(new ByteArrayInputStream(inputrc.getBytes()));
+      TermConnectionHandler connectionHandler = new TermConnectionHandler(vertx, keymap, termHandler);
       server.connectHandler(new TelnetSocketHandler(vertx, () -> {
         return new TelnetTtyConnection(options.getInBinary(), options.getOutBinary(), charset, connectionHandler::handle);
       }));

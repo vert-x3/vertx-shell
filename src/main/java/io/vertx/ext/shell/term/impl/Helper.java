@@ -33,51 +33,51 @@
 package io.vertx.ext.shell.term.impl;
 
 import io.termd.core.readline.Keymap;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
-import io.vertx.ext.shell.term.SockJSTermHandler;
-import io.vertx.ext.shell.term.Term;
-import io.vertx.ext.web.handler.sockjs.SockJSSocket;
+import io.vertx.core.buffer.Buffer;
+import io.vertx.core.file.FileSystem;
+import io.vertx.ext.shell.term.TelnetTermOptions;
 
-import java.nio.charset.Charset;
-import java.util.function.Consumer;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class SockJSTermHandlerImpl implements SockJSTermHandler {
+public class Helper {
 
-  final Charset charset;
-  final Vertx vertx;
-  private Handler<Term> termHandler;
-  private final Keymap keymap;
-
-  public SockJSTermHandlerImpl(Vertx vertx, Charset charset, Keymap keymap) {
-    this.charset = charset;
-    this.vertx = vertx;
-    this.keymap = keymap;
+  public static Keymap defaultKeymap() {
+    Buffer buffer = Helper.loadResource(TelnetTermOptions.DEFAULT_INPUTRC);
+    return new Keymap(new ByteArrayInputStream(buffer.getBytes()));
   }
 
-  @Override
-  public SockJSTermHandler termHandler(Handler<Term> handler) {
-    termHandler = handler;
-    return this;
-  }
-
-  @Override
-  public void handle(SockJSSocket socket) {
-    if (termHandler != null) {
-      SockJSTtyConnection conn = new SockJSTtyConnection(charset, vertx.getOrCreateContext(), socket);
-      socket.handler(buf -> conn.writeToDecoder(buf.toString()));
-      socket.endHandler(v -> {
-        Consumer<Void> closeHandler = conn.getCloseHandler();
-        if (closeHandler != null) {
-          closeHandler.accept(null);
-        }
-      });
-      termHandler.handle(new TermImpl(vertx, keymap, conn));
-    } else {
-      socket.close();
+  public static Buffer loadResource(FileSystem fs, String path) {
+    try {
+      return fs.readFileBlocking(path);
+    } catch (Exception e) {
+      return loadResource(path);
     }
+  }
+
+  public static Buffer loadResource(String path) {
+    URL resource = HttpTermServer.class.getResource(path);
+    if (resource != null) {
+      try {
+        byte[] tmp = new byte[512];
+        InputStream in = resource.openStream();
+        Buffer buffer = Buffer.buffer();
+        while (true) {
+          int l = in.read(tmp);
+          if (l == -1) {
+            break;
+          }
+          buffer.appendBytes(tmp, 0, l);
+        }
+        return buffer;
+      } catch (IOException ignore) {
+      }
+    }
+    return null;
   }
 }

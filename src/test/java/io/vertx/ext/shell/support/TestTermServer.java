@@ -32,6 +32,7 @@
 
 package io.vertx.ext.shell.support;
 
+import io.termd.core.readline.Keymap;
 import io.termd.core.tty.TtyConnection;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;

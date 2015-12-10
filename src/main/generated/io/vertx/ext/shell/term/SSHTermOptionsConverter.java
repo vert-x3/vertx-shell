@@ -33,6 +33,9 @@ public class SSHTermOptionsConverter {
     if (json.getValue("host") instanceof String) {
       obj.setHost((String)json.getValue("host"));
     }
+    if (json.getValue("intputrc") instanceof String) {
+      obj.setIntputrc((String)json.getValue("intputrc"));
+    }
     if (json.getValue("keyPairOptions") instanceof JsonObject) {
       obj.setKeyPairOptions(new io.vertx.core.net.JksOptions((JsonObject)json.getValue("keyPairOptions")));
     }
@@ -53,6 +56,9 @@ public class SSHTermOptionsConverter {
     }
     if (obj.getHost() != null) {
       json.put("host", obj.getHost());
+    }
+    if (obj.getIntputrc() != null) {
+      json.put("intputrc", obj.getIntputrc());
     }
     json.put("port", obj.getPort());
   }

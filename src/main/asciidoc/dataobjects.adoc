@@ -30,6 +30,10 @@ Set the charset used for encoding / decoding text data from/to SockJS
 |[[handle100ContinueAutomatically]]`handle100ContinueAutomatically`|`Boolean`|-
 |[[host]]`host`|`String`|-
 |[[idleTimeout]]`idleTimeout`|`Number (int)`|-
+|[[intputrc]]`intputrc`|`String`|
++++
+The path of the <i>inputrc</i> config.
++++
 |[[keyStoreOptions]]`keyStoreOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|-
 |[[maxChunkSize]]`maxChunkSize`|`Number (int)`|-
 |[[maxWebsocketFrameSize]]`maxWebsocketFrameSize`|`Number (int)`|-
@@ -75,7 +79,7 @@ Set <code>vertxshell.js</code> resource to use.
 == TelnetTermOptions
 
 ++++
- Telnet options configuration, extends link.
+ Telnet terminal options configuration, extends link.
 ++++
 '''
 
@@ -99,6 +103,10 @@ Set the charset to use when binary mode is active, see link and link.
 +++
 Set the telnet connection to negociate binary data format when receiving from the client, the default value is true. This
  allows to send data in 8 bit format and thus charset like UTF-8.
++++
+|[[intputrc]]`intputrc`|`String`|
++++
+The path of the <i>inputrc</i> config.
 +++
 |[[keyStoreOptions]]`keyStoreOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|-
 |[[outBinary]]`outBinary`|`Boolean`|
@@ -208,6 +216,10 @@ Set the default charset to use when the client does not specifies one.
 |[[host]]`host`|`String`|
 +++
 Set the host
++++
+|[[intputrc]]`intputrc`|`String`|
++++
+The path of the <i>inputrc</i> config.
 +++
 |[[keyPairOptions]]`keyPairOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|
 +++

@@ -65,9 +65,11 @@ public class TermImpl implements Term {
   private boolean inReadline;
 
   public TermImpl(Vertx vertx, TtyConnection conn) {
+    this(vertx, io.vertx.ext.shell.term.impl.Helper.defaultKeymap(), conn);
+  }
+
+  public TermImpl(Vertx vertx, Keymap keymap, TtyConnection conn) {
     this.vertx = vertx;
-    java.io.InputStream inputrc = Keymap.class.getResourceAsStream("inputrc");
-    Keymap keymap = new Keymap(inputrc);
     this.conn = conn;
     readline = new Readline(keymap);
     for (io.termd.core.readline.Function function : Helper.loadServices(Thread.currentThread().getContextClassLoader(), io.termd.core.readline.Function.class)) {

@@ -57,17 +57,20 @@ public class SSHTermOptions {
   public static final String DEFAULT_HOST = NetServerOptions.DEFAULT_HOST;
   public static final int DEFAULT_PORT = NetServerOptions.DEFAULT_PORT;
   public static final String DEFAULT_DEFAULT_CHARSET = StandardCharsets.UTF_8.name();
+  public static final String DEFAULT_INPUTRC = "/io/vertx/ext/shell/inputrc";
 
   private String host;
   private int port;
   private KeyCertOptions keyPairOptions;
   private AuthOptions authOptions;
   private String defaultCharset;
+  private String intputrc;
 
   public SSHTermOptions() {
     host = DEFAULT_HOST;
     port = DEFAULT_PORT;
     defaultCharset = DEFAULT_DEFAULT_CHARSET;
+    intputrc = DEFAULT_INPUTRC;
   }
 
   public SSHTermOptions(SSHTermOptions that) {
@@ -76,6 +79,7 @@ public class SSHTermOptions {
     this.keyPairOptions = that.keyPairOptions != null ? that.keyPairOptions.clone() : null;
     this.authOptions = that.authOptions != null ? that.authOptions.clone() : null;
     this.defaultCharset = that.defaultCharset;
+    this.intputrc = that.intputrc;
   }
 
   public SSHTermOptions(JsonObject json) {
@@ -187,6 +191,24 @@ public class SSHTermOptions {
    */
   public SSHTermOptions setDefaultCharset(String defaultCharset) {
     this.defaultCharset = defaultCharset;
+    return this;
+  }
+
+  /**
+   * @return the current path of the inputrc config
+   */
+  public String getIntputrc() {
+    return intputrc;
+  }
+
+  /**
+   * The path of the <i>inputrc</i> config.
+   *
+   * @param intputrc the path of the inputrc config
+   * @return a reference to this, so the API can be used fluently
+   */
+  public SSHTermOptions setIntputrc(String intputrc) {
+    this.intputrc = intputrc;
     return this;
   }
 

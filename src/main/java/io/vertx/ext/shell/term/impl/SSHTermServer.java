@@ -32,17 +32,18 @@
 
 package io.vertx.ext.shell.term.impl;
 
+import io.termd.core.readline.Keymap;
 import io.termd.core.ssh.TtyCommand;
 import io.termd.core.ssh.netty.AsyncAuth;
 import io.termd.core.ssh.netty.AsyncUserAuthServiceFactory;
 import io.termd.core.ssh.netty.NettyIoServiceFactoryFactory;
-import io.termd.core.tty.TtyConnection;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxException;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.impl.ContextInternal;
 import io.vertx.core.impl.VertxInternal;
 import io.vertx.core.json.JsonObject;
@@ -59,6 +60,7 @@ import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.session.ServerConnectionServiceFactory;
 
+import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 import java.security.Key;
 import java.security.KeyPair;
@@ -83,7 +85,7 @@ public class SSHTermServer implements TermServer {
 
   private final Vertx vertx;
   private final SSHTermOptions options;
-  private Handler<TtyConnection> connectionHandler;
+  private Handler<Term> termHandler;
   private SshServer nativeServer;
   private final AtomicInteger status = new AtomicInteger(STATUS_STOPPED);
   private ContextInternal listenContext;
@@ -107,11 +109,7 @@ public class SSHTermServer implements TermServer {
 
   @Override
   public TermServer termHandler(Handler<Term> handler) {
-    if (handler != null) {
-      connectionHandler = new TermConnectionHandler(vertx, handler);
-    } else {
-      connectionHandler = null;
-    }
+    termHandler = handler;
     return this;
   }
 
@@ -164,6 +162,13 @@ public class SSHTermServer implements TermServer {
             return keyPairs;
           }
         };
+
+        Buffer inputrc = Helper.loadResource(vertx.fileSystem(), options.getIntputrc());
+        if (inputrc == null) {
+          throw new VertxException("Could not load inputrc from " + options.getIntputrc());
+        }
+        Keymap keymap = new Keymap(new ByteArrayInputStream(inputrc.getBytes()));
+        TermConnectionHandler connectionHandler = new TermConnectionHandler(vertx, keymap, termHandler);
 
         nativeServer = SshServer.setUpDefaultServer();
         nativeServer.setShellFactory(() -> new TtyCommand(defaultCharset, connectionHandler::handle));

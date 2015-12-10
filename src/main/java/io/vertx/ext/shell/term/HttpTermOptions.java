@@ -43,7 +43,7 @@ import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.core.net.PemTrustOptions;
 import io.vertx.core.net.PfxOptions;
 import io.vertx.ext.auth.AuthOptions;
-import io.vertx.ext.shell.term.impl.HttpTermServer;
+import io.vertx.ext.shell.term.impl.Helper;
 import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
 
 import java.nio.charset.StandardCharsets;
@@ -57,26 +57,27 @@ import java.nio.charset.StandardCharsets;
 public class HttpTermOptions extends HttpServerOptions {
 
   public static final String DEFAULT_CHARSET = StandardCharsets.UTF_8.name();
+  public static final String DEFAULT_INPUTRC = "/io/vertx/ext/shell/inputrc";
 
   /**
    * @return the {@code vertxshell.js} default resource as a buffer
    */
   public static Buffer defaultVertxShellJsResource() {
-    return HttpTermServer.loadResource("/io/vertx/ext/shell/vertxshell.js");
+    return Helper.loadResource("/io/vertx/ext/shell/vertxshell.js");
   }
 
   /**
    * @return the {@code term.js} default resource as a buffer
    */
   public static Buffer defaultTermJsResource() {
-    return HttpTermServer.loadResource("/io/vertx/ext/shell/term.js");
+    return Helper.loadResource("/io/vertx/ext/shell/term.js");
   }
 
   /**
    * @return the {@code shell.html} default resource as a buffer
    */
   public static Buffer defaultShellHtmlResource() {
-    return HttpTermServer.loadResource("/io/vertx/ext/shell/shell.html");
+    return Helper.loadResource("/io/vertx/ext/shell/shell.html");
   }
 
   private static final String DEFAULT_SOCKJSPATH = "/shell/*";
@@ -88,6 +89,7 @@ public class HttpTermOptions extends HttpServerOptions {
   private Buffer termJsResource;
   private Buffer shellHtmlResource;
   private String charset;
+  private String intputrc;
 
   public HttpTermOptions() {
     init();
@@ -107,6 +109,7 @@ public class HttpTermOptions extends HttpServerOptions {
     termJsResource = that.termJsResource != null ? that.termJsResource.copy() : null;
     shellHtmlResource = that.shellHtmlResource != null ? that.shellHtmlResource.copy() : null;
     charset = that.charset;
+    intputrc = that.intputrc;
   }
 
   private void init() {
@@ -116,6 +119,7 @@ public class HttpTermOptions extends HttpServerOptions {
     termJsResource = defaultTermJsResource();
     shellHtmlResource = defaultShellHtmlResource();
     charset = DEFAULT_CHARSET;
+    intputrc = DEFAULT_INPUTRC;
   }
 
   /**
@@ -367,6 +371,24 @@ public class HttpTermOptions extends HttpServerOptions {
    */
   public HttpTermOptions setCharset(String charset) {
     this.charset = charset;
+    return this;
+  }
+
+  /**
+   * @return the current path of the inputrc config
+   */
+  public String getIntputrc() {
+    return intputrc;
+  }
+
+  /**
+   * The path of the <i>inputrc</i> config.
+   *
+   * @param intputrc the path of the inputrc config
+   * @return a reference to this, so the API can be used fluently
+   */
+  public HttpTermOptions setIntputrc(String intputrc) {
+    this.intputrc = intputrc;
     return this;
   }
 }
