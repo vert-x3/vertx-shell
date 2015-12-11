@@ -33,7 +33,7 @@
 
   <properties>
     <stack.version>3.2.0-SNAPSHOT</stack.version>
-    <termd.version>1.0.1-SNAPSHOT</termd.version>
+    <termd.version>1.0.1</termd.version>
   </properties>
 
   <dependencyManagement>
