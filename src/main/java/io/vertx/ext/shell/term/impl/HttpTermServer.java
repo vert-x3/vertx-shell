@@ -109,7 +109,9 @@ public class HttpTermServer implements TermServer {
 
       Buffer inputrc = Helper.loadResource(vertx.fileSystem(), options.getIntputrc());
       if (inputrc == null) {
-        listenHandler.handle(Future.failedFuture("Could not load inputrc from " + options.getIntputrc()));
+        if (listenHandler != null) {
+          listenHandler.handle(Future.failedFuture("Could not load inputrc from " + options.getIntputrc()));
+        }
         return this;
       }
       Keymap keymap = new Keymap(new ByteArrayInputStream(inputrc.getBytes()));
@@ -132,14 +134,18 @@ public class HttpTermServer implements TermServer {
       server = vertx.createHttpServer(options);
       server.requestHandler(router::accept);
       server.listen(ar -> {
-        if (ar.succeeded()) {
-          listenHandler.handle(Future.succeededFuture(this));
-        } else {
-          listenHandler.handle(Future.failedFuture(ar.cause()));
+        if (listenHandler != null) {
+          if (ar.succeeded()) {
+            listenHandler.handle(Future.succeededFuture(this));
+          } else {
+            listenHandler.handle(Future.failedFuture(ar.cause()));
+          }
         }
       });
     } else {
-      listenHandler.handle(Future.succeededFuture(this));
+      if (listenHandler != null) {
+        listenHandler.handle(Future.succeededFuture(this));
+      }
     }
     return this;
   }
