@@ -92,6 +92,8 @@ The path of the <i>inputrc</i> config.
 +++
 |[[keyStoreOptions]]`keyStoreOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|-
 |[[maxChunkSize]]`maxChunkSize`|`Number (int)`|-
+|[[maxHeaderSize]]`maxHeaderSize`|`Number (int)`|-
+|[[maxInitialLineLength]]`maxInitialLineLength`|`Number (int)`|-
 |[[maxWebsocketFrameSize]]`maxWebsocketFrameSize`|`Number (int)`|-
 |[[pemKeyCertOptions]]`pemKeyCertOptions`|`link:dataobjects.html#PemKeyCertOptions[PemKeyCertOptions]`|-
 |[[pemTrustOptions]]`pemTrustOptions`|`link:dataobjects.html#PemTrustOptions[PemTrustOptions]`|-
