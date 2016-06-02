@@ -168,7 +168,7 @@ public class SSHShellTest extends SSHTestBase {
   public void testDeployServiceWithMongoAuthOptions(TestContext context) throws Exception {
     Async mongo = context.async();
     vertx.deployVerticle("service:io.vertx.vertx-mongo-embedded-db", context.asyncAssertSuccess(v -> mongo.complete()));
-    mongo.awaitSuccess(2000);
+    mongo.awaitSuccess(120 * 1000); // Enough time for downloading the db
     JsonObject config = new JsonObject().put("connection_string", "mongodb://localhost:27018");
     MongoClient client = MongoClient.createNonShared(vertx, config);
     MongoAuth auth = MongoAuth.create(client, new JsonObject());
