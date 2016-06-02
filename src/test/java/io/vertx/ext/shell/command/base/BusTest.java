@@ -127,7 +127,7 @@ public class BusTest {
       context.assertEquals("the_message", msg.body());
       consumerAsync.complete();
     });
-    context.assertEquals("Error: Timed out waiting for a reply\n", result);
+    context.assertEquals("Error: Timed out after waiting 50(ms) for a reply. address: 1\n", result);
   }
 
   @Test
