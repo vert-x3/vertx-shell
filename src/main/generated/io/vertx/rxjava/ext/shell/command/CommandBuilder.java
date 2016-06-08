@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell.command;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.rxjava.ext.shell.cli.Completion;
 import io.vertx.rxjava.core.cli.CLI;
@@ -50,7 +49,7 @@ public class CommandBuilder {
    * @return the command
    */
   public static CommandBuilder command(String name) { 
-    CommandBuilder ret= CommandBuilder.newInstance(io.vertx.ext.shell.command.CommandBuilder.command(name));
+    CommandBuilder ret = CommandBuilder.newInstance(io.vertx.ext.shell.command.CommandBuilder.command(name));
     return ret;
   }
 
@@ -61,7 +60,7 @@ public class CommandBuilder {
    * @return the command
    */
   public static CommandBuilder command(CLI cli) { 
-    CommandBuilder ret= CommandBuilder.newInstance(io.vertx.ext.shell.command.CommandBuilder.command((io.vertx.core.cli.CLI) cli.getDelegate()));
+    CommandBuilder ret = CommandBuilder.newInstance(io.vertx.ext.shell.command.CommandBuilder.command((io.vertx.core.cli.CLI)cli.getDelegate()));
     return ret;
   }
 
@@ -71,9 +70,9 @@ public class CommandBuilder {
    * @return this command object
    */
   public CommandBuilder processHandler(Handler<CommandProcess> handler) { 
-    this.delegate.processHandler(new Handler<io.vertx.ext.shell.command.CommandProcess>() {
+    delegate.processHandler(new Handler<io.vertx.ext.shell.command.CommandProcess>() {
       public void handle(io.vertx.ext.shell.command.CommandProcess event) {
-        handler.handle(new CommandProcess(event));
+        handler.handle(CommandProcess.newInstance(event));
       }
     });
     return this;
@@ -86,9 +85,9 @@ public class CommandBuilder {
    * @return this command object
    */
   public CommandBuilder completionHandler(Handler<Completion> handler) { 
-    this.delegate.completionHandler(new Handler<io.vertx.ext.shell.cli.Completion>() {
+    delegate.completionHandler(new Handler<io.vertx.ext.shell.cli.Completion>() {
       public void handle(io.vertx.ext.shell.cli.Completion event) {
-        handler.handle(new Completion(event));
+        handler.handle(Completion.newInstance(event));
       }
     });
     return this;
@@ -100,7 +99,7 @@ public class CommandBuilder {
    * @return the built command
    */
   public Command build(Vertx vertx) { 
-    Command ret= Command.newInstance(this.delegate.build((io.vertx.core.Vertx) vertx.getDelegate()));
+    Command ret = Command.newInstance(delegate.build((io.vertx.core.Vertx)vertx.getDelegate()));
     return ret;
   }
 

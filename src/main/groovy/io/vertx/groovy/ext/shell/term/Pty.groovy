@@ -37,7 +37,7 @@ public class Pty {
    * @return 
    */
   public static Pty create() {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.Pty.create(), io.vertx.groovy.ext.shell.term.Pty.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.Pty.create(), io.vertx.groovy.ext.shell.term.Pty.class);
     return ret;
   }
   /**
@@ -46,7 +46,7 @@ public class Pty {
    * @return the created pseudo terminal
    */
   public static Pty create(String terminalType) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.Pty.create(terminalType), io.vertx.groovy.ext.shell.term.Pty.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.Pty.create(terminalType), io.vertx.groovy.ext.shell.term.Pty.class);
     return ret;
   }
   /**
@@ -55,7 +55,7 @@ public class Pty {
    * @return this current object
    */
   public Pty stdoutHandler(Handler<String> handler) {
-    this.delegate.stdoutHandler(handler);
+    delegate.stdoutHandler(handler);
     return this;
   }
   /**
@@ -64,7 +64,7 @@ public class Pty {
    * @return this current object
    */
   public Pty write(String data) {
-    this.delegate.write(data);
+    delegate.write(data);
     return this;
   }
   /**
@@ -74,7 +74,7 @@ public class Pty {
    * @return this current object
    */
   public Pty setSize(int width, int height) {
-    this.delegate.setSize(width, height);
+    delegate.setSize(width, height);
     return this;
   }
   /**
@@ -82,7 +82,7 @@ public class Pty {
    * @return 
    */
   public Tty slave() {
-    def ret= InternalHelper.safeCreate(this.delegate.slave(), io.vertx.groovy.ext.shell.term.Tty.class);
+    def ret = InternalHelper.safeCreate(delegate.slave(), io.vertx.groovy.ext.shell.term.Tty.class);
     return ret;
   }
 }

@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell.system;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.ext.shell.system.ExecStatus;
 import io.vertx.core.Handler;
@@ -51,7 +50,7 @@ public class Job {
    * @return 
    */
   public int id() { 
-    int ret = this.delegate.id();
+    int ret = delegate.id();
     return ret;
   }
 
@@ -60,7 +59,7 @@ public class Job {
    * @return 
    */
   public ExecStatus status() { 
-    ExecStatus ret = this.delegate.status();
+    ExecStatus ret = delegate.status();
     return ret;
   }
 
@@ -69,7 +68,7 @@ public class Job {
    * @return 
    */
   public long lastStopped() { 
-    long ret = this.delegate.lastStopped();
+    long ret = delegate.lastStopped();
     return ret;
   }
 
@@ -78,7 +77,7 @@ public class Job {
    * @return 
    */
   public String line() { 
-    String ret = this.delegate.line();
+    String ret = delegate.line();
     return ret;
   }
 
@@ -88,7 +87,7 @@ public class Job {
    * @return this object
    */
   public Job setTty(Tty tty) { 
-    this.delegate.setTty((io.vertx.ext.shell.term.Tty) tty.getDelegate());
+    delegate.setTty((io.vertx.ext.shell.term.Tty)tty.getDelegate());
     return this;
   }
 
@@ -98,7 +97,7 @@ public class Job {
    * @return this object
    */
   public Job setSession(Session session) { 
-    this.delegate.setSession((io.vertx.ext.shell.session.Session) session.getDelegate());
+    delegate.setSession((io.vertx.ext.shell.session.Session)session.getDelegate());
     return this;
   }
 
@@ -108,7 +107,7 @@ public class Job {
    * @return this object
    */
   public Job statusUpdateHandler(Handler<ExecStatus> handler) { 
-    this.delegate.statusUpdateHandler(null /* Handler<io.vertx.ext.shell.system.ExecStatus> with kind ENUM not yet implemented */);
+    delegate.statusUpdateHandler(handler);
     return this;
   }
 
@@ -117,7 +116,7 @@ public class Job {
    * @return this object
    */
   public Job run() { 
-    this.delegate.run();
+    delegate.run();
     return this;
   }
 
@@ -126,7 +125,7 @@ public class Job {
    * @return true if the job is actually interrupted
    */
   public boolean interrupt() { 
-    boolean ret = this.delegate.interrupt();
+    boolean ret = delegate.interrupt();
     return ret;
   }
 
@@ -135,7 +134,7 @@ public class Job {
    * @return 
    */
   public Job resume() { 
-    Job ret= Job.newInstance(this.delegate.resume());
+    Job ret = Job.newInstance(delegate.resume());
     return ret;
   }
 
@@ -144,7 +143,7 @@ public class Job {
    * @return this object
    */
   public Job toBackground() { 
-    this.delegate.toBackground();
+    delegate.toBackground();
     return this;
   }
 
@@ -153,7 +152,7 @@ public class Job {
    * @return this object
    */
   public Job toForeground() { 
-    this.delegate.toForeground();
+    delegate.toForeground();
     return this;
   }
 
@@ -163,7 +162,7 @@ public class Job {
    * @return 
    */
   public Job resume(boolean foreground) { 
-    this.delegate.resume(foreground);
+    delegate.resume(foreground);
     return this;
   }
 
@@ -172,7 +171,7 @@ public class Job {
    * @return this object
    */
   public Job suspend() { 
-    this.delegate.suspend();
+    delegate.suspend();
     return this;
   }
 
@@ -180,7 +179,7 @@ public class Job {
    * Terminate the job.
    */
   public void terminate() { 
-    this.delegate.terminate();
+    delegate.terminate();
   }
 
   /**
@@ -191,7 +190,7 @@ public class Job {
     if (cached_0 != null) {
       return cached_0;
     }
-    Process ret= Process.newInstance(this.delegate.process());
+    Process ret = Process.newInstance(delegate.process());
     cached_0 = ret;
     return ret;
   }

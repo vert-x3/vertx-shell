@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell.term;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.rxjava.ext.web.handler.sockjs.SockJSSocket;
 import io.vertx.rxjava.core.Vertx;
@@ -43,18 +42,18 @@ public class SockJSTermHandler implements Handler<SockJSSocket> {
   }
 
   public void handle(SockJSSocket arg0) { 
-    this.delegate.handle((io.vertx.ext.web.handler.sockjs.SockJSSocket) arg0.getDelegate());
+    delegate.handle((io.vertx.ext.web.handler.sockjs.SockJSSocket)arg0.getDelegate());
   }
 
   public static SockJSTermHandler create(Vertx vertx, String charset) { 
-    SockJSTermHandler ret= SockJSTermHandler.newInstance(io.vertx.ext.shell.term.SockJSTermHandler.create((io.vertx.core.Vertx) vertx.getDelegate(), charset));
+    SockJSTermHandler ret = SockJSTermHandler.newInstance(io.vertx.ext.shell.term.SockJSTermHandler.create((io.vertx.core.Vertx)vertx.getDelegate(), charset));
     return ret;
   }
 
   public SockJSTermHandler termHandler(Handler<Term> handler) { 
-    this.delegate.termHandler(new Handler<io.vertx.ext.shell.term.Term>() {
+    delegate.termHandler(new Handler<io.vertx.ext.shell.term.Term>() {
       public void handle(io.vertx.ext.shell.term.Term event) {
-        handler.handle(new Term(event));
+        handler.handle(Term.newInstance(event));
       }
     });
     return this;

@@ -31,7 +31,7 @@ public class SignalHandler {
     return delegate;
   }
   public boolean deliver(int key) {
-    def ret = this.delegate.deliver(key);
+    def ret = delegate.deliver(key);
     return ret;
   }
 }

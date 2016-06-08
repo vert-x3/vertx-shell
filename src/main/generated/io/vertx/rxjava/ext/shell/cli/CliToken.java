@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell.cli;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
 
@@ -46,7 +45,7 @@ public class CliToken {
    * @return the token
    */
   public static CliToken createText(String text) { 
-    CliToken ret= CliToken.newInstance(io.vertx.ext.shell.cli.CliToken.createText(text));
+    CliToken ret = CliToken.newInstance(io.vertx.ext.shell.cli.CliToken.createText(text));
     return ret;
   }
 
@@ -56,7 +55,7 @@ public class CliToken {
    * @return the token
    */
   public static CliToken createBlank(String blank) { 
-    CliToken ret= CliToken.newInstance(io.vertx.ext.shell.cli.CliToken.createBlank(blank));
+    CliToken ret = CliToken.newInstance(io.vertx.ext.shell.cli.CliToken.createBlank(blank));
     return ret;
   }
 
@@ -65,7 +64,7 @@ public class CliToken {
    * @return 
    */
   public String value() { 
-    String ret = this.delegate.value();
+    String ret = delegate.value();
     return ret;
   }
 
@@ -74,7 +73,7 @@ public class CliToken {
    * @return 
    */
   public String raw() { 
-    String ret = this.delegate.raw();
+    String ret = delegate.raw();
     return ret;
   }
 
@@ -83,7 +82,7 @@ public class CliToken {
    * @return 
    */
   public boolean isText() { 
-    boolean ret = this.delegate.isText();
+    boolean ret = delegate.isText();
     return ret;
   }
 
@@ -92,7 +91,7 @@ public class CliToken {
    * @return 
    */
   public boolean isBlank() { 
-    boolean ret = this.delegate.isBlank();
+    boolean ret = delegate.isBlank();
     return ret;
   }
 
@@ -102,7 +101,7 @@ public class CliToken {
    * @return the tokens
    */
   public static List<CliToken> tokenize(String s) { 
-    List<CliToken> ret = io.vertx.ext.shell.cli.CliToken.tokenize(s).stream().map(CliToken::newInstance).collect(java.util.stream.Collectors.toList());
+    List<CliToken> ret = io.vertx.ext.shell.cli.CliToken.tokenize(s).stream().map(elt -> CliToken.newInstance(elt)).collect(java.util.stream.Collectors.toList());
     return ret;
   }
 

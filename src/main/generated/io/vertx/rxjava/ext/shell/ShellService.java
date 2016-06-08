@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.ext.shell.ShellServiceOptions;
 import io.vertx.rxjava.core.Vertx;
@@ -53,7 +52,7 @@ public class ShellService {
    * @return 
    */
   public static ShellService create(Vertx vertx) { 
-    ShellService ret= ShellService.newInstance(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx) vertx.getDelegate()));
+    ShellService ret = ShellService.newInstance(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx)vertx.getDelegate()));
     return ret;
   }
 
@@ -64,7 +63,7 @@ public class ShellService {
    * @return the shell service
    */
   public static ShellService create(Vertx vertx, ShellServiceOptions options) { 
-    ShellService ret= ShellService.newInstance(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx) vertx.getDelegate(), options));
+    ShellService ret = ShellService.newInstance(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx)vertx.getDelegate(), options));
     return ret;
   }
 
@@ -72,7 +71,7 @@ public class ShellService {
    * Start the shell service, this is an asynchronous start.
    */
   public void start() { 
-    this.delegate.start();
+    delegate.start();
   }
 
   /**
@@ -80,7 +79,15 @@ public class ShellService {
    * @param startHandler handler for getting notified when service is started
    */
   public void start(Handler<AsyncResult<Void>> startHandler) { 
-    this.delegate.start(startHandler);
+    delegate.start(new Handler<AsyncResult<java.lang.Void>>() {
+      public void handle(AsyncResult<java.lang.Void> ar) {
+        if (ar.succeeded()) {
+          startHandler.handle(io.vertx.core.Future.succeededFuture(ar.result()));
+        } else {
+          startHandler.handle(io.vertx.core.Future.failedFuture(ar.cause()));
+        }
+      }
+    });
   }
 
   /**
@@ -98,7 +105,7 @@ public class ShellService {
    * @return 
    */
   public ShellServer server() { 
-    ShellServer ret= ShellServer.newInstance(this.delegate.server());
+    ShellServer ret = ShellServer.newInstance(delegate.server());
     return ret;
   }
 
@@ -106,7 +113,7 @@ public class ShellService {
    * Stop the shell service, this is an asynchronous stop.
    */
   public void stop() { 
-    this.delegate.stop();
+    delegate.stop();
   }
 
   /**
@@ -114,7 +121,15 @@ public class ShellService {
    * @param stopHandler handler for getting notified when service is stopped
    */
   public void stop(Handler<AsyncResult<Void>> stopHandler) { 
-    this.delegate.stop(stopHandler);
+    delegate.stop(new Handler<AsyncResult<java.lang.Void>>() {
+      public void handle(AsyncResult<java.lang.Void> ar) {
+        if (ar.succeeded()) {
+          stopHandler.handle(io.vertx.core.Future.succeededFuture(ar.result()));
+        } else {
+          stopHandler.handle(io.vertx.core.Future.failedFuture(ar.cause()));
+        }
+      }
+    });
   }
 
   /**

@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell.session;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 
 /**
@@ -44,7 +43,7 @@ public class Session {
    * @return the created session
    */
   public static Session create() { 
-    Session ret= Session.newInstance(io.vertx.ext.shell.session.Session.create());
+    Session ret = Session.newInstance(io.vertx.ext.shell.session.Session.create());
     return ret;
   }
 
@@ -55,7 +54,7 @@ public class Session {
    * @return a reference to this, so the API can be used fluently
    */
   public Session put(String key, Object obj) { 
-    this.delegate.put(key, obj);
+    delegate.put(key, obj);
     return this;
   }
 
@@ -65,7 +64,7 @@ public class Session {
    * @return the data
    */
   public <T> T get(String key) { 
-    T ret = (T) this.delegate.get(key);
+    T ret = (T) delegate.get(key);
     return ret;
   }
 
@@ -75,7 +74,7 @@ public class Session {
    * @return the data that was there or null if none there
    */
   public <T> T remove(String key) { 
-    T ret = (T) this.delegate.remove(key);
+    T ret = (T) delegate.remove(key);
     return ret;
   }
 

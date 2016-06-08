@@ -39,7 +39,7 @@ public class Process {
    * @return 
    */
   public ExecStatus status() {
-    def ret = this.delegate.status();
+    def ret = delegate.status();
     return ret;
   }
   /**
@@ -47,7 +47,7 @@ public class Process {
    * @return 
    */
   public Integer exitCode() {
-    def ret = this.delegate.exitCode();
+    def ret = delegate.exitCode();
     return ret;
   }
   /**
@@ -56,7 +56,7 @@ public class Process {
    * @return this object
    */
   public Process setTty(Tty tty) {
-    this.delegate.setTty((io.vertx.ext.shell.term.Tty)tty.getDelegate());
+    delegate.setTty(tty != null ? (io.vertx.ext.shell.term.Tty)tty.getDelegate() : null);
     return this;
   }
   /**
@@ -67,7 +67,7 @@ public class Process {
     if (cached_0 != null) {
       return cached_0;
     }
-    def ret= InternalHelper.safeCreate(this.delegate.getTty(), io.vertx.groovy.ext.shell.term.Tty.class);
+    def ret = InternalHelper.safeCreate(delegate.getTty(), io.vertx.groovy.ext.shell.term.Tty.class);
     cached_0 = ret;
     return ret;
   }
@@ -77,7 +77,7 @@ public class Process {
    * @return this object
    */
   public Process setSession(Session session) {
-    this.delegate.setSession((io.vertx.ext.shell.session.Session)session.getDelegate());
+    delegate.setSession(session != null ? (io.vertx.ext.shell.session.Session)session.getDelegate() : null);
     return this;
   }
   /**
@@ -88,7 +88,7 @@ public class Process {
     if (cached_1 != null) {
       return cached_1;
     }
-    def ret= InternalHelper.safeCreate(this.delegate.getSession(), io.vertx.groovy.ext.shell.session.Session.class);
+    def ret = InternalHelper.safeCreate(delegate.getSession(), io.vertx.groovy.ext.shell.session.Session.class);
     cached_1 = ret;
     return ret;
   }
@@ -98,28 +98,28 @@ public class Process {
    * @return this object
    */
   public Process terminatedHandler(Handler<Integer> handler) {
-    this.delegate.terminatedHandler(handler);
+    delegate.terminatedHandler(handler);
     return this;
   }
   /**
    * Run the process.
    */
   public void run() {
-    this.delegate.run();
+    delegate.run();
   }
   /**
    * Run the process.
    * @param foreground 
    */
   public void run(boolean foreground) {
-    this.delegate.run(foreground);
+    delegate.run(foreground);
   }
   /**
    * Run the process.
    * @param completionHandler handler called after process callback
    */
   public void run(Handler<Void> completionHandler) {
-    this.delegate.run(completionHandler);
+    delegate.run(completionHandler);
   }
   /**
    * Run the process.
@@ -127,14 +127,14 @@ public class Process {
    * @param completionHandler handler called after process callback
    */
   public void run(boolean foregraound, Handler<Void> completionHandler) {
-    this.delegate.run(foregraound, completionHandler);
+    delegate.run(foregraound, completionHandler);
   }
   /**
    * Attempt to interrupt the process.
    * @return true if the process caught the signal
    */
   public boolean interrupt() {
-    def ret = this.delegate.interrupt();
+    def ret = delegate.interrupt();
     return ret;
   }
   /**
@@ -143,28 +143,28 @@ public class Process {
    * @return true if the process caught the signal
    */
   public boolean interrupt(Handler<Void> completionHandler) {
-    def ret = this.delegate.interrupt(completionHandler);
+    def ret = delegate.interrupt(completionHandler);
     return ret;
   }
   /**
    * Suspend the process.
    */
   public void resume() {
-    this.delegate.resume();
+    delegate.resume();
   }
   /**
    * Suspend the process.
    * @param foreground 
    */
   public void resume(boolean foreground) {
-    this.delegate.resume(foreground);
+    delegate.resume(foreground);
   }
   /**
    * Suspend the process.
    * @param completionHandler handler called after resume callback
    */
   public void resume(Handler<Void> completionHandler) {
-    this.delegate.resume(completionHandler);
+    delegate.resume(completionHandler);
   }
   /**
    * Suspend the process.
@@ -172,59 +172,59 @@ public class Process {
    * @param completionHandler handler called after resume callback
    */
   public void resume(boolean foreground, Handler<Void> completionHandler) {
-    this.delegate.resume(foreground, completionHandler);
+    delegate.resume(foreground, completionHandler);
   }
   /**
    * Resume the process.
    */
   public void suspend() {
-    this.delegate.suspend();
+    delegate.suspend();
   }
   /**
    * Resume the process.
    * @param completionHandler handler called after suspend callback
    */
   public void suspend(Handler<Void> completionHandler) {
-    this.delegate.suspend(completionHandler);
+    delegate.suspend(completionHandler);
   }
   /**
    * Terminate the process.
    */
   public void terminate() {
-    this.delegate.terminate();
+    delegate.terminate();
   }
   /**
    * Terminate the process.
    * @param completionHandler handler called after end callback
    */
   public void terminate(Handler<Void> completionHandler) {
-    this.delegate.terminate(completionHandler);
+    delegate.terminate(completionHandler);
   }
   /**
    * Set the process in background.
    */
   public void toBackground() {
-    this.delegate.toBackground();
+    delegate.toBackground();
   }
   /**
    * Set the process in background.
    * @param completionHandler handler called after background callback
    */
   public void toBackground(Handler<Void> completionHandler) {
-    this.delegate.toBackground(completionHandler);
+    delegate.toBackground(completionHandler);
   }
   /**
    * Set the process in foreground.
    */
   public void toForeground() {
-    this.delegate.toForeground();
+    delegate.toForeground();
   }
   /**
    * Set the process in foreground.
    * @param completionHandler handler called after foreground callback
    */
   public void toForeground(Handler<Void> completionHandler) {
-    this.delegate.toForeground(completionHandler);
+    delegate.toForeground(completionHandler);
   }
   private Tty cached_0;
   private Session cached_1;

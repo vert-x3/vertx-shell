@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell.system;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.ext.shell.system.ExecStatus;
 import io.vertx.core.Handler;
@@ -48,7 +47,7 @@ public class Process {
    * @return 
    */
   public ExecStatus status() { 
-    ExecStatus ret = this.delegate.status();
+    ExecStatus ret = delegate.status();
     return ret;
   }
 
@@ -57,7 +56,7 @@ public class Process {
    * @return 
    */
   public Integer exitCode() { 
-    Integer ret = this.delegate.exitCode();
+    Integer ret = delegate.exitCode();
     return ret;
   }
 
@@ -67,7 +66,7 @@ public class Process {
    * @return this object
    */
   public Process setTty(Tty tty) { 
-    this.delegate.setTty((io.vertx.ext.shell.term.Tty) tty.getDelegate());
+    delegate.setTty((io.vertx.ext.shell.term.Tty)tty.getDelegate());
     return this;
   }
 
@@ -79,7 +78,7 @@ public class Process {
     if (cached_0 != null) {
       return cached_0;
     }
-    Tty ret= Tty.newInstance(this.delegate.getTty());
+    Tty ret = Tty.newInstance(delegate.getTty());
     cached_0 = ret;
     return ret;
   }
@@ -90,7 +89,7 @@ public class Process {
    * @return this object
    */
   public Process setSession(Session session) { 
-    this.delegate.setSession((io.vertx.ext.shell.session.Session) session.getDelegate());
+    delegate.setSession((io.vertx.ext.shell.session.Session)session.getDelegate());
     return this;
   }
 
@@ -102,7 +101,7 @@ public class Process {
     if (cached_1 != null) {
       return cached_1;
     }
-    Session ret= Session.newInstance(this.delegate.getSession());
+    Session ret = Session.newInstance(delegate.getSession());
     cached_1 = ret;
     return ret;
   }
@@ -113,7 +112,7 @@ public class Process {
    * @return this object
    */
   public Process terminatedHandler(Handler<Integer> handler) { 
-    this.delegate.terminatedHandler(handler);
+    delegate.terminatedHandler(handler);
     return this;
   }
 
@@ -121,7 +120,7 @@ public class Process {
    * Run the process.
    */
   public void run() { 
-    this.delegate.run();
+    delegate.run();
   }
 
   /**
@@ -129,7 +128,7 @@ public class Process {
    * @param foreground 
    */
   public void run(boolean foreground) { 
-    this.delegate.run(foreground);
+    delegate.run(foreground);
   }
 
   /**
@@ -137,7 +136,11 @@ public class Process {
    * @param completionHandler handler called after process callback
    */
   public void run(Handler<Void> completionHandler) { 
-    this.delegate.run(completionHandler);
+    delegate.run(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        completionHandler.handle(event);
+      }
+    });
   }
 
   /**
@@ -146,7 +149,11 @@ public class Process {
    * @param completionHandler handler called after process callback
    */
   public void run(boolean foregraound, Handler<Void> completionHandler) { 
-    this.delegate.run(foregraound, completionHandler);
+    delegate.run(foregraound, new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        completionHandler.handle(event);
+      }
+    });
   }
 
   /**
@@ -154,7 +161,7 @@ public class Process {
    * @return true if the process caught the signal
    */
   public boolean interrupt() { 
-    boolean ret = this.delegate.interrupt();
+    boolean ret = delegate.interrupt();
     return ret;
   }
 
@@ -164,7 +171,11 @@ public class Process {
    * @return true if the process caught the signal
    */
   public boolean interrupt(Handler<Void> completionHandler) { 
-    boolean ret = this.delegate.interrupt(completionHandler);
+    boolean ret = delegate.interrupt(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        completionHandler.handle(event);
+      }
+    });
     return ret;
   }
 
@@ -172,7 +183,7 @@ public class Process {
    * Suspend the process.
    */
   public void resume() { 
-    this.delegate.resume();
+    delegate.resume();
   }
 
   /**
@@ -180,7 +191,7 @@ public class Process {
    * @param foreground 
    */
   public void resume(boolean foreground) { 
-    this.delegate.resume(foreground);
+    delegate.resume(foreground);
   }
 
   /**
@@ -188,7 +199,11 @@ public class Process {
    * @param completionHandler handler called after resume callback
    */
   public void resume(Handler<Void> completionHandler) { 
-    this.delegate.resume(completionHandler);
+    delegate.resume(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        completionHandler.handle(event);
+      }
+    });
   }
 
   /**
@@ -197,14 +212,18 @@ public class Process {
    * @param completionHandler handler called after resume callback
    */
   public void resume(boolean foreground, Handler<Void> completionHandler) { 
-    this.delegate.resume(foreground, completionHandler);
+    delegate.resume(foreground, new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        completionHandler.handle(event);
+      }
+    });
   }
 
   /**
    * Resume the process.
    */
   public void suspend() { 
-    this.delegate.suspend();
+    delegate.suspend();
   }
 
   /**
@@ -212,14 +231,18 @@ public class Process {
    * @param completionHandler handler called after suspend callback
    */
   public void suspend(Handler<Void> completionHandler) { 
-    this.delegate.suspend(completionHandler);
+    delegate.suspend(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        completionHandler.handle(event);
+      }
+    });
   }
 
   /**
    * Terminate the process.
    */
   public void terminate() { 
-    this.delegate.terminate();
+    delegate.terminate();
   }
 
   /**
@@ -227,14 +250,18 @@ public class Process {
    * @param completionHandler handler called after end callback
    */
   public void terminate(Handler<Void> completionHandler) { 
-    this.delegate.terminate(completionHandler);
+    delegate.terminate(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        completionHandler.handle(event);
+      }
+    });
   }
 
   /**
    * Set the process in background.
    */
   public void toBackground() { 
-    this.delegate.toBackground();
+    delegate.toBackground();
   }
 
   /**
@@ -242,14 +269,18 @@ public class Process {
    * @param completionHandler handler called after background callback
    */
   public void toBackground(Handler<Void> completionHandler) { 
-    this.delegate.toBackground(completionHandler);
+    delegate.toBackground(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        completionHandler.handle(event);
+      }
+    });
   }
 
   /**
    * Set the process in foreground.
    */
   public void toForeground() { 
-    this.delegate.toForeground();
+    delegate.toForeground();
   }
 
   /**
@@ -257,7 +288,11 @@ public class Process {
    * @param completionHandler handler called after foreground callback
    */
   public void toForeground(Handler<Void> completionHandler) { 
-    this.delegate.toForeground(completionHandler);
+    delegate.toForeground(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        completionHandler.handle(event);
+      }
+    });
   }
 
   private Tty cached_0;

@@ -44,7 +44,7 @@ public class ShellService {
    * @return 
    */
   public static ShellService create(Vertx vertx) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.ShellService.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.ShellService.create(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null), io.vertx.groovy.ext.shell.ShellService.class);
     return ret;
   }
   /**
@@ -54,41 +54,41 @@ public class ShellService {
    * @return the shell service
    */
   public static ShellService create(Vertx vertx, Map<String, Object> options) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.ShellService.create((io.vertx.core.Vertx)vertx.getDelegate(), options != null ? new io.vertx.ext.shell.ShellServiceOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.ShellService.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.ShellService.create(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, options != null ? new io.vertx.ext.shell.ShellServiceOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.ShellService.class);
     return ret;
   }
   /**
    * Start the shell service, this is an asynchronous start.
    */
   public void start() {
-    this.delegate.start();
+    delegate.start();
   }
   /**
    * Start the shell service, this is an asynchronous start.
    * @param startHandler handler for getting notified when service is started
    */
   public void start(Handler<AsyncResult<Void>> startHandler) {
-    this.delegate.start(startHandler);
+    delegate.start(startHandler);
   }
   /**
    * @return the shell server
    * @return 
    */
   public ShellServer server() {
-    def ret= InternalHelper.safeCreate(this.delegate.server(), io.vertx.groovy.ext.shell.ShellServer.class);
+    def ret = InternalHelper.safeCreate(delegate.server(), io.vertx.groovy.ext.shell.ShellServer.class);
     return ret;
   }
   /**
    * Stop the shell service, this is an asynchronous stop.
    */
   public void stop() {
-    this.delegate.stop();
+    delegate.stop();
   }
   /**
    * Stop the shell service, this is an asynchronous start.
    * @param stopHandler handler for getting notified when service is stopped
    */
   public void stop(Handler<AsyncResult<Void>> stopHandler) {
-    this.delegate.stop(stopHandler);
+    delegate.stop(stopHandler);
   }
 }

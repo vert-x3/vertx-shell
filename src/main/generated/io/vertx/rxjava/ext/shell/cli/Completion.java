@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell.cli;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
 import io.vertx.rxjava.core.Vertx;
@@ -47,7 +46,7 @@ public class Completion {
    * @return 
    */
   public Vertx vertx() { 
-    Vertx ret= Vertx.newInstance(this.delegate.vertx());
+    Vertx ret = Vertx.newInstance(delegate.vertx());
     return ret;
   }
 
@@ -56,7 +55,7 @@ public class Completion {
    * @return 
    */
   public Session session() { 
-    Session ret= Session.newInstance(this.delegate.session());
+    Session ret = Session.newInstance(delegate.session());
     return ret;
   }
 
@@ -65,7 +64,7 @@ public class Completion {
    * @return 
    */
   public String rawLine() { 
-    String ret = this.delegate.rawLine();
+    String ret = delegate.rawLine();
     return ret;
   }
 
@@ -74,7 +73,7 @@ public class Completion {
    * @return 
    */
   public List<CliToken> lineTokens() { 
-    List<CliToken> ret = this.delegate.lineTokens().stream().map(CliToken::newInstance).collect(java.util.stream.Collectors.toList());
+    List<CliToken> ret = delegate.lineTokens().stream().map(elt -> CliToken.newInstance(elt)).collect(java.util.stream.Collectors.toList());
     return ret;
   }
 
@@ -83,7 +82,7 @@ public class Completion {
    * @param candidates the candidates
    */
   public void complete(List<String> candidates) { 
-    this.delegate.complete(candidates);
+    delegate.complete(candidates);
   }
 
   /**
@@ -92,7 +91,7 @@ public class Completion {
    * @param terminal true if the value is terminal, i.e can be further completed
    */
   public void complete(String value, boolean terminal) { 
-    this.delegate.complete(value, terminal);
+    delegate.complete(value, terminal);
   }
 
 

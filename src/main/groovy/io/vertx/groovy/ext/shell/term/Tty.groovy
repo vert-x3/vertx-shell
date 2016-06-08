@@ -37,7 +37,7 @@ public class Tty {
    * @return 
    */
   public String type() {
-    def ret = this.delegate.type();
+    def ret = delegate.type();
     return ret;
   }
   /**
@@ -45,7 +45,7 @@ public class Tty {
    * @return 
    */
   public int width() {
-    def ret = this.delegate.width();
+    def ret = delegate.width();
     return ret;
   }
   /**
@@ -53,7 +53,7 @@ public class Tty {
    * @return 
    */
   public int height() {
-    def ret = this.delegate.height();
+    def ret = delegate.height();
     return ret;
   }
   /**
@@ -62,7 +62,7 @@ public class Tty {
    * @return this object
    */
   public Tty stdinHandler(Handler<String> handler) {
-    this.delegate.stdinHandler(handler);
+    delegate.stdinHandler(handler);
     return this;
   }
   /**
@@ -71,7 +71,7 @@ public class Tty {
    * @return this object
    */
   public Tty write(String data) {
-    this.delegate.write(data);
+    delegate.write(data);
     return this;
   }
   /**
@@ -80,7 +80,7 @@ public class Tty {
    * @return this object
    */
   public Tty resizehandler(Handler<Void> handler) {
-    this.delegate.resizehandler(handler);
+    delegate.resizehandler(handler);
     return this;
   }
 }

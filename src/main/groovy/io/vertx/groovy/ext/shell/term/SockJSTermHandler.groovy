@@ -34,18 +34,18 @@ public class SockJSTermHandler implements Handler<SockJSSocket> {
     return delegate;
   }
   public void handle(SockJSSocket arg0) {
-    ((io.vertx.core.Handler) this.delegate).handle((io.vertx.ext.web.handler.sockjs.SockJSSocket)arg0.getDelegate());
+    ((io.vertx.core.Handler) delegate).handle(arg0 != null ? (io.vertx.ext.web.handler.sockjs.SockJSSocket)arg0.getDelegate() : null);
   }
   public static SockJSTermHandler create(Vertx vertx, String charset) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.SockJSTermHandler.create((io.vertx.core.Vertx)vertx.getDelegate(), charset), io.vertx.groovy.ext.shell.term.SockJSTermHandler.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.SockJSTermHandler.create(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, charset), io.vertx.groovy.ext.shell.term.SockJSTermHandler.class);
     return ret;
   }
   public SockJSTermHandler termHandler(Handler<Term> handler) {
-    this.delegate.termHandler(new Handler<io.vertx.ext.shell.term.Term>() {
+    delegate.termHandler(handler != null ? new Handler<io.vertx.ext.shell.term.Term>(){
       public void handle(io.vertx.ext.shell.term.Term event) {
-        handler.handle(new io.vertx.groovy.ext.shell.term.Term(event));
+        handler.handle(InternalHelper.safeCreate(event, io.vertx.groovy.ext.shell.term.Term.class));
       }
-    });
+    } : null);
     return this;
   }
 }

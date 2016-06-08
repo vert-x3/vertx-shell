@@ -44,7 +44,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createSSHTermServer(Vertx vertx) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createSSHTermServer((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.term.TermServer.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createSSHTermServer(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null), io.vertx.groovy.ext.shell.term.TermServer.class);
     return ret;
   }
   /**
@@ -54,7 +54,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createSSHTermServer(Vertx vertx, Map<String, Object> options) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createSSHTermServer((io.vertx.core.Vertx)vertx.getDelegate(), options != null ? new io.vertx.ext.shell.term.SSHTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createSSHTermServer(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, options != null ? new io.vertx.ext.shell.term.SSHTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
     return ret;
   }
   /**
@@ -63,7 +63,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createTelnetTermServer(Vertx vertx) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createTelnetTermServer((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.term.TermServer.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createTelnetTermServer(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null), io.vertx.groovy.ext.shell.term.TermServer.class);
     return ret;
   }
   /**
@@ -73,7 +73,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createTelnetTermServer(Vertx vertx, Map<String, Object> options) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createTelnetTermServer((io.vertx.core.Vertx)vertx.getDelegate(), options != null ? new io.vertx.ext.shell.term.TelnetTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createTelnetTermServer(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, options != null ? new io.vertx.ext.shell.term.TelnetTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
     return ret;
   }
   /**
@@ -82,7 +82,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createHttpTermServer(Vertx vertx) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.term.TermServer.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createHttpTermServer(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null), io.vertx.groovy.ext.shell.term.TermServer.class);
     return ret;
   }
   /**
@@ -92,7 +92,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createHttpTermServer(Vertx vertx, Map<String, Object> options) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx)vertx.getDelegate(), options != null ? new io.vertx.ext.shell.term.HttpTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createHttpTermServer(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, options != null ? new io.vertx.ext.shell.term.HttpTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
     return ret;
   }
   /**
@@ -102,7 +102,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createHttpTermServer(Vertx vertx, Router router) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx)vertx.getDelegate(), (io.vertx.ext.web.Router)router.getDelegate()), io.vertx.groovy.ext.shell.term.TermServer.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createHttpTermServer(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, router != null ? (io.vertx.ext.web.Router)router.getDelegate() : null), io.vertx.groovy.ext.shell.term.TermServer.class);
     return ret;
   }
   /**
@@ -113,7 +113,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createHttpTermServer(Vertx vertx, Router router, Map<String, Object> options) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx)vertx.getDelegate(), (io.vertx.ext.web.Router)router.getDelegate(), options != null ? new io.vertx.ext.shell.term.HttpTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createHttpTermServer(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, router != null ? (io.vertx.ext.web.Router)router.getDelegate() : null, options != null ? new io.vertx.ext.shell.term.HttpTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
     return ret;
   }
   /**
@@ -124,11 +124,11 @@ public class TermServer {
    * @return this object
    */
   public TermServer termHandler(Handler<Term> handler) {
-    this.delegate.termHandler(new Handler<io.vertx.ext.shell.term.Term>() {
+    delegate.termHandler(handler != null ? new Handler<io.vertx.ext.shell.term.Term>(){
       public void handle(io.vertx.ext.shell.term.Term event) {
-        handler.handle(new io.vertx.groovy.ext.shell.term.Term(event));
+        handler.handle(InternalHelper.safeCreate(event, io.vertx.groovy.ext.shell.term.Term.class));
       }
-    });
+    } : null);
     return this;
   }
   /**
@@ -138,7 +138,7 @@ public class TermServer {
    * @return this object
    */
   public TermServer authProvider(AuthProvider provider) {
-    this.delegate.authProvider((io.vertx.ext.auth.AuthProvider)provider.getDelegate());
+    delegate.authProvider(provider != null ? (io.vertx.ext.auth.AuthProvider)provider.getDelegate() : null);
     return this;
   }
   /**
@@ -146,7 +146,7 @@ public class TermServer {
    * @return this object
    */
   public TermServer listen() {
-    this.delegate.listen();
+    delegate.listen();
     return this;
   }
   /**
@@ -155,17 +155,15 @@ public class TermServer {
    * @return this object
    */
   public TermServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
-    this.delegate.listen(new Handler<AsyncResult<io.vertx.ext.shell.term.TermServer>>() {
-      public void handle(AsyncResult<io.vertx.ext.shell.term.TermServer> event) {
-        AsyncResult<TermServer> f
-        if (event.succeeded()) {
-          f = InternalHelper.<TermServer>result(new TermServer(event.result()))
+    delegate.listen(listenHandler != null ? new Handler<AsyncResult<io.vertx.ext.shell.term.TermServer>>() {
+      public void handle(AsyncResult<io.vertx.ext.shell.term.TermServer> ar) {
+        if (ar.succeeded()) {
+          listenHandler.handle(io.vertx.core.Future.succeededFuture(InternalHelper.safeCreate(ar.result(), io.vertx.groovy.ext.shell.term.TermServer.class)));
         } else {
-          f = InternalHelper.<TermServer>failure(event.cause())
+          listenHandler.handle(io.vertx.core.Future.failedFuture(ar.cause()));
         }
-        listenHandler.handle(f)
       }
-    });
+    } : null);
     return this;
   }
   /**
@@ -174,7 +172,7 @@ public class TermServer {
    * @return the actual port the server is listening on.
    */
   public int actualPort() {
-    def ret = this.delegate.actualPort();
+    def ret = delegate.actualPort();
     return ret;
   }
   /**
@@ -182,13 +180,13 @@ public class TermServer {
    * method has returned.
    */
   public void close() {
-    this.delegate.close();
+    delegate.close();
   }
   /**
    * Like {@link io.vertx.groovy.ext.shell.term.TermServer#close} but supplying a handler that will be notified when close is complete.
    * @param completionHandler the handler to be notified when the term server is closed
    */
   public void close(Handler<AsyncResult<Void>> completionHandler) {
-    this.delegate.close(completionHandler);
+    delegate.close(completionHandler);
   }
 }

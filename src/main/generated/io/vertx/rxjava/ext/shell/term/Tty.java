@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell.term;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.core.Handler;
 
@@ -46,7 +45,7 @@ public class Tty {
    * @return 
    */
   public String type() { 
-    String ret = this.delegate.type();
+    String ret = delegate.type();
     return ret;
   }
 
@@ -55,7 +54,7 @@ public class Tty {
    * @return 
    */
   public int width() { 
-    int ret = this.delegate.width();
+    int ret = delegate.width();
     return ret;
   }
 
@@ -64,7 +63,7 @@ public class Tty {
    * @return 
    */
   public int height() { 
-    int ret = this.delegate.height();
+    int ret = delegate.height();
     return ret;
   }
 
@@ -74,7 +73,7 @@ public class Tty {
    * @return this object
    */
   public Tty stdinHandler(Handler<String> handler) { 
-    this.delegate.stdinHandler(handler);
+    delegate.stdinHandler(handler);
     return this;
   }
 
@@ -84,7 +83,7 @@ public class Tty {
    * @return this object
    */
   public Tty write(String data) { 
-    this.delegate.write(data);
+    delegate.write(data);
     return this;
   }
 
@@ -94,7 +93,11 @@ public class Tty {
    * @return this object
    */
   public Tty resizehandler(Handler<Void> handler) { 
-    this.delegate.resizehandler(handler);
+    delegate.resizehandler(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        handler.handle(event);
+      }
+    });
     return this;
   }
 

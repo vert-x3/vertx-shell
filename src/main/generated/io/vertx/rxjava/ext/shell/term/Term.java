@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell.term;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.rxjava.ext.shell.cli.Completion;
 import io.vertx.core.Handler;
@@ -44,17 +43,21 @@ public class Term extends Tty {
   }
 
   public Term resizehandler(Handler<Void> handler) { 
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.term.Term) delegate).resizehandler(handler);
+    ((io.vertx.ext.shell.term.Term) delegate).resizehandler(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        handler.handle(event);
+      }
+    });
     return this;
   }
 
   public Term stdinHandler(Handler<String> handler) { 
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.term.Term) delegate).stdinHandler(handler);
+    ((io.vertx.ext.shell.term.Term) delegate).stdinHandler(handler);
     return this;
   }
 
   public Term write(String data) { 
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.term.Term) delegate).write(data);
+    ((io.vertx.ext.shell.term.Term) delegate).write(data);
     return this;
   }
 
@@ -63,7 +66,7 @@ public class Term extends Tty {
    * @return 
    */
   public long lastAccessedTime() { 
-    long ret = this.delegate.lastAccessedTime();
+    long ret = delegate.lastAccessedTime();
     return ret;
   }
 
@@ -73,7 +76,7 @@ public class Term extends Tty {
    * @return a reference to this, so the API can be used fluently
    */
   public Term echo(String text) { 
-    this.delegate.echo(text);
+    delegate.echo(text);
     return this;
   }
 
@@ -83,7 +86,7 @@ public class Term extends Tty {
    * @return a reference to this, so the API can be used fluently
    */
   public Term setSession(Session session) { 
-    Term ret= Term.newInstance(this.delegate.setSession((io.vertx.ext.shell.session.Session) session.getDelegate()));
+    Term ret = Term.newInstance(delegate.setSession((io.vertx.ext.shell.session.Session)session.getDelegate()));
     return ret;
   }
 
@@ -93,7 +96,7 @@ public class Term extends Tty {
    * @return a reference to this, so the API can be used fluently
    */
   public Term interruptHandler(SignalHandler handler) { 
-    this.delegate.interruptHandler((io.vertx.ext.shell.term.SignalHandler) handler.getDelegate());
+    delegate.interruptHandler((io.vertx.ext.shell.term.SignalHandler)handler.getDelegate());
     return this;
   }
 
@@ -103,7 +106,7 @@ public class Term extends Tty {
    * @return a reference to this, so the API can be used fluently
    */
   public Term suspendHandler(SignalHandler handler) { 
-    this.delegate.suspendHandler((io.vertx.ext.shell.term.SignalHandler) handler.getDelegate());
+    delegate.suspendHandler((io.vertx.ext.shell.term.SignalHandler)handler.getDelegate());
     return this;
   }
 
@@ -113,7 +116,7 @@ public class Term extends Tty {
    * @param lineHandler the line handler called with the line
    */
   public void readline(String prompt, Handler<String> lineHandler) { 
-    this.delegate.readline(prompt, lineHandler);
+    delegate.readline(prompt, lineHandler);
   }
 
   /**
@@ -123,9 +126,9 @@ public class Term extends Tty {
    * @param completionHandler the completion handler
    */
   public void readline(String prompt, Handler<String> lineHandler, Handler<Completion> completionHandler) { 
-    this.delegate.readline(prompt, lineHandler, new Handler<io.vertx.ext.shell.cli.Completion>() {
+    delegate.readline(prompt, lineHandler, new Handler<io.vertx.ext.shell.cli.Completion>() {
       public void handle(io.vertx.ext.shell.cli.Completion event) {
-        completionHandler.handle(new Completion(event));
+        completionHandler.handle(Completion.newInstance(event));
       }
     });
   }
@@ -136,7 +139,11 @@ public class Term extends Tty {
    * @return a reference to this, so the API can be used fluently
    */
   public Term closeHandler(Handler<Void> handler) { 
-    this.delegate.closeHandler(handler);
+    delegate.closeHandler(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        handler.handle(event);
+      }
+    });
     return this;
   }
 
@@ -144,7 +151,7 @@ public class Term extends Tty {
    * Close the connection to terminal.
    */
   public void close() { 
-    this.delegate.close();
+    delegate.close();
   }
 
 

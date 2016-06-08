@@ -38,7 +38,7 @@ public class Completion {
    * @return 
    */
   public Vertx vertx() {
-    def ret= InternalHelper.safeCreate(this.delegate.vertx(), io.vertx.groovy.core.Vertx.class);
+    def ret = InternalHelper.safeCreate(delegate.vertx(), io.vertx.groovy.core.Vertx.class);
     return ret;
   }
   /**
@@ -46,7 +46,7 @@ public class Completion {
    * @return 
    */
   public Session session() {
-    def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.groovy.ext.shell.session.Session.class);
+    def ret = InternalHelper.safeCreate(delegate.session(), io.vertx.groovy.ext.shell.session.Session.class);
     return ret;
   }
   /**
@@ -54,7 +54,7 @@ public class Completion {
    * @return 
    */
   public String rawLine() {
-    def ret = this.delegate.rawLine();
+    def ret = delegate.rawLine();
     return ret;
   }
   /**
@@ -62,15 +62,15 @@ public class Completion {
    * @return 
    */
   public List<CliToken> lineTokens() {
-    def ret = this.delegate.lineTokens()?.collect({underpants -> new io.vertx.groovy.ext.shell.cli.CliToken(underpants)});
-      return ret;
+    def ret = (List)delegate.lineTokens()?.collect({InternalHelper.safeCreate(it, io.vertx.groovy.ext.shell.cli.CliToken.class)});
+    return ret;
   }
   /**
    * End the completion with a list of candidates, these candidates will be displayed by the shell on the console.
    * @param candidates the candidates
    */
   public void complete(List<String> candidates) {
-    this.delegate.complete(candidates);
+    delegate.complete(candidates != null ? (List)candidates.collect({it}) : null);
   }
   /**
    * End the completion with a value that will be inserted to complete the line.
@@ -78,6 +78,6 @@ public class Completion {
    * @param terminal true if the value is terminal, i.e can be further completed
    */
   public void complete(String value, boolean terminal) {
-    this.delegate.complete(value, terminal);
+    delegate.complete(value, terminal);
   }
 }

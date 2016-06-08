@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell.term;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.core.Handler;
 
@@ -46,7 +45,7 @@ public class Pty {
    * @return 
    */
   public static Pty create() { 
-    Pty ret= Pty.newInstance(io.vertx.ext.shell.term.Pty.create());
+    Pty ret = Pty.newInstance(io.vertx.ext.shell.term.Pty.create());
     return ret;
   }
 
@@ -56,7 +55,7 @@ public class Pty {
    * @return the created pseudo terminal
    */
   public static Pty create(String terminalType) { 
-    Pty ret= Pty.newInstance(io.vertx.ext.shell.term.Pty.create(terminalType));
+    Pty ret = Pty.newInstance(io.vertx.ext.shell.term.Pty.create(terminalType));
     return ret;
   }
 
@@ -66,7 +65,7 @@ public class Pty {
    * @return this current object
    */
   public Pty stdoutHandler(Handler<String> handler) { 
-    this.delegate.stdoutHandler(handler);
+    delegate.stdoutHandler(handler);
     return this;
   }
 
@@ -76,7 +75,7 @@ public class Pty {
    * @return this current object
    */
   public Pty write(String data) { 
-    this.delegate.write(data);
+    delegate.write(data);
     return this;
   }
 
@@ -87,7 +86,7 @@ public class Pty {
    * @return this current object
    */
   public Pty setSize(int width, int height) { 
-    this.delegate.setSize(width, height);
+    delegate.setSize(width, height);
     return this;
   }
 
@@ -96,7 +95,7 @@ public class Pty {
    * @return 
    */
   public Tty slave() { 
-    Tty ret= Tty.newInstance(this.delegate.slave());
+    Tty ret = Tty.newInstance(delegate.slave());
     return ret;
   }
 

@@ -35,7 +35,7 @@ public class Session {
    * @return the created session
    */
   public static Session create() {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.session.Session.create(), io.vertx.groovy.ext.shell.session.Session.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.session.Session.create(), io.vertx.groovy.ext.shell.session.Session.class);
     return ret;
   }
   /**
@@ -45,7 +45,7 @@ public class Session {
    * @return a reference to this, so the API can be used fluently
    */
   public Session put(String key, Object obj) {
-    this.delegate.put(key, InternalHelper.unwrapObject(obj));
+    delegate.put(key, obj != null ? InternalHelper.unwrapObject(obj) : null);
     return this;
   }
   /**
@@ -54,8 +54,7 @@ public class Session {
    * @return the data
    */
   public <T> T get(String key) {
-    // This cast is cleary flawed
-    def ret = (T) InternalHelper.wrapObject(this.delegate.get(key));
+    def ret = (T) InternalHelper.wrapObject(delegate.get(key));
     return ret;
   }
   /**
@@ -64,8 +63,7 @@ public class Session {
    * @return the data that was there or null if none there
    */
   public <T> T remove(String key) {
-    // This cast is cleary flawed
-    def ret = (T) InternalHelper.wrapObject(this.delegate.remove(key));
+    def ret = (T) InternalHelper.wrapObject(delegate.remove(key));
     return ret;
   }
 }

@@ -37,7 +37,7 @@ public class JobController {
    * @return 
    */
   public Job foregroundJob() {
-    def ret= InternalHelper.safeCreate(this.delegate.foregroundJob(), io.vertx.groovy.ext.shell.system.Job.class);
+    def ret = InternalHelper.safeCreate(delegate.foregroundJob(), io.vertx.groovy.ext.shell.system.Job.class);
     return ret;
   }
   /**
@@ -45,7 +45,7 @@ public class JobController {
    * @return 
    */
   public Set<Job> jobs() {
-    def ret = this.delegate.jobs()?.collect({underpants -> new io.vertx.groovy.ext.shell.system.Job(underpants)}) as Set;
+    def ret = (Set)delegate.jobs()?.collect({InternalHelper.safeCreate(it, io.vertx.groovy.ext.shell.system.Job.class)}) as Set;
     return ret;
   }
   /**
@@ -54,7 +54,7 @@ public class JobController {
    * @return the job of  when not found
    */
   public Job getJob(int id) {
-    def ret= InternalHelper.safeCreate(this.delegate.getJob(id), io.vertx.groovy.ext.shell.system.Job.class);
+    def ret = InternalHelper.safeCreate(delegate.getJob(id), io.vertx.groovy.ext.shell.system.Job.class);
     return ret;
   }
   /**
@@ -64,7 +64,7 @@ public class JobController {
    * @return the created job
    */
   public Job createJob(Process process, String line) {
-    def ret= InternalHelper.safeCreate(this.delegate.createJob((io.vertx.ext.shell.system.Process)process.getDelegate(), line), io.vertx.groovy.ext.shell.system.Job.class);
+    def ret = InternalHelper.safeCreate(delegate.createJob(process != null ? (io.vertx.ext.shell.system.Process)process.getDelegate() : null, line), io.vertx.groovy.ext.shell.system.Job.class);
     return ret;
   }
   /**
@@ -72,12 +72,12 @@ public class JobController {
    * @param completionHandler 
    */
   public void close(Handler<Void> completionHandler) {
-    this.delegate.close(completionHandler);
+    delegate.close(completionHandler);
   }
   /**
    * Close the shell session and terminate all the underlying jobs.
    */
   public void close() {
-    this.delegate.close();
+    delegate.close();
   }
 }

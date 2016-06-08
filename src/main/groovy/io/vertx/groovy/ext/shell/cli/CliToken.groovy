@@ -37,7 +37,7 @@ public class CliToken {
    * @return the token
    */
   public static CliToken createText(String text) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.cli.CliToken.createText(text), io.vertx.groovy.ext.shell.cli.CliToken.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.cli.CliToken.createText(text), io.vertx.groovy.ext.shell.cli.CliToken.class);
     return ret;
   }
   /**
@@ -46,7 +46,7 @@ public class CliToken {
    * @return the token
    */
   public static CliToken createBlank(String blank) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.cli.CliToken.createBlank(blank), io.vertx.groovy.ext.shell.cli.CliToken.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.cli.CliToken.createBlank(blank), io.vertx.groovy.ext.shell.cli.CliToken.class);
     return ret;
   }
   /**
@@ -54,7 +54,7 @@ public class CliToken {
    * @return 
    */
   public String value() {
-    def ret = this.delegate.value();
+    def ret = delegate.value();
     return ret;
   }
   /**
@@ -62,7 +62,7 @@ public class CliToken {
    * @return 
    */
   public String raw() {
-    def ret = this.delegate.raw();
+    def ret = delegate.raw();
     return ret;
   }
   /**
@@ -70,7 +70,7 @@ public class CliToken {
    * @return 
    */
   public boolean isText() {
-    def ret = this.delegate.isText();
+    def ret = delegate.isText();
     return ret;
   }
   /**
@@ -78,7 +78,7 @@ public class CliToken {
    * @return 
    */
   public boolean isBlank() {
-    def ret = this.delegate.isBlank();
+    def ret = delegate.isBlank();
     return ret;
   }
   /**
@@ -87,7 +87,7 @@ public class CliToken {
    * @return the tokens
    */
   public static List<CliToken> tokenize(String s) {
-    def ret = io.vertx.ext.shell.cli.CliToken.tokenize(s)?.collect({underpants -> new io.vertx.groovy.ext.shell.cli.CliToken(underpants)});
-      return ret;
+    def ret = (List)io.vertx.ext.shell.cli.CliToken.tokenize(s)?.collect({InternalHelper.safeCreate(it, io.vertx.groovy.ext.shell.cli.CliToken.class)});
+    return ret;
   }
 }

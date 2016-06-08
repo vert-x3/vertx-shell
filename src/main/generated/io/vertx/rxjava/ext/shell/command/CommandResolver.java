@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell.command;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
 import io.vertx.rxjava.core.Vertx;
@@ -47,7 +46,7 @@ public class CommandResolver {
    * @return 
    */
   public static CommandResolver baseCommands(Vertx vertx) { 
-    CommandResolver ret= CommandResolver.newInstance(io.vertx.ext.shell.command.CommandResolver.baseCommands((io.vertx.core.Vertx) vertx.getDelegate()));
+    CommandResolver ret = CommandResolver.newInstance(io.vertx.ext.shell.command.CommandResolver.baseCommands((io.vertx.core.Vertx)vertx.getDelegate()));
     return ret;
   }
 
@@ -56,7 +55,7 @@ public class CommandResolver {
    * @return 
    */
   public List<Command> commands() { 
-    List<Command> ret = this.delegate.commands().stream().map(Command::newInstance).collect(java.util.stream.Collectors.toList());
+    List<Command> ret = delegate.commands().stream().map(elt -> Command.newInstance(elt)).collect(java.util.stream.Collectors.toList());
     return ret;
   }
 
@@ -66,7 +65,7 @@ public class CommandResolver {
    * @return the commad or null
    */
   public Command getCommand(String name) { 
-    Command ret= Command.newInstance(this.delegate.getCommand(name));
+    Command ret = Command.newInstance(delegate.getCommand(name));
     return ret;
   }
 

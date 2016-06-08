@@ -41,7 +41,7 @@ public class Command {
    * @return 
    */
   public String name() {
-    def ret = this.delegate.name();
+    def ret = delegate.name();
     return ret;
   }
   /**
@@ -49,7 +49,7 @@ public class Command {
    * @return 
    */
   public CLI cli() {
-    def ret= InternalHelper.safeCreate(this.delegate.cli(), io.vertx.groovy.core.cli.CLI.class);
+    def ret = InternalHelper.safeCreate(delegate.cli(), io.vertx.groovy.core.cli.CLI.class);
     return ret;
   }
   /**
@@ -57,7 +57,7 @@ public class Command {
    * @return the process
    */
   public Process createProcess() {
-    def ret= InternalHelper.safeCreate(this.delegate.createProcess(), io.vertx.groovy.ext.shell.system.Process.class);
+    def ret = InternalHelper.safeCreate(delegate.createProcess(), io.vertx.groovy.ext.shell.system.Process.class);
     return ret;
   }
   /**
@@ -66,7 +66,7 @@ public class Command {
    * @return the process
    */
   public Process createProcess(List<CliToken> args) {
-    def ret= InternalHelper.safeCreate(this.delegate.createProcess((List<io.vertx.ext.shell.cli.CliToken>)(args.collect({underpants -> underpants.getDelegate()}))), io.vertx.groovy.ext.shell.system.Process.class);
+    def ret = InternalHelper.safeCreate(delegate.createProcess(args != null ? (List)args.collect({(io.vertx.ext.shell.cli.CliToken)it.getDelegate()}) : null), io.vertx.groovy.ext.shell.system.Process.class);
     return ret;
   }
   /**
@@ -75,6 +75,6 @@ public class Command {
    * @param completion the completion object
    */
   public void complete(Completion completion) {
-    this.delegate.complete((io.vertx.ext.shell.cli.Completion)completion.getDelegate());
+    delegate.complete(completion != null ? (io.vertx.ext.shell.cli.Completion)completion.getDelegate() : null);
   }
 }

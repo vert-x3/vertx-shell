@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell.term;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 
 /**
@@ -40,7 +39,7 @@ public class SignalHandler {
   }
 
   public boolean deliver(int key) { 
-    boolean ret = this.delegate.deliver(key);
+    boolean ret = delegate.deliver(key);
     return ret;
   }
 

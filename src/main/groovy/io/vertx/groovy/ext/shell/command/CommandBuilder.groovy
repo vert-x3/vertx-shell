@@ -41,7 +41,7 @@ public class CommandBuilder {
    * @return the command
    */
   public static CommandBuilder command(String name) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandBuilder.command(name), io.vertx.groovy.ext.shell.command.CommandBuilder.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandBuilder.command(name), io.vertx.groovy.ext.shell.command.CommandBuilder.class);
     return ret;
   }
   /**
@@ -51,7 +51,7 @@ public class CommandBuilder {
    * @return the command
    */
   public static CommandBuilder command(CLI cli) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandBuilder.command((io.vertx.core.cli.CLI)cli.getDelegate()), io.vertx.groovy.ext.shell.command.CommandBuilder.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandBuilder.command(cli != null ? (io.vertx.core.cli.CLI)cli.getDelegate() : null), io.vertx.groovy.ext.shell.command.CommandBuilder.class);
     return ret;
   }
   /**
@@ -60,11 +60,11 @@ public class CommandBuilder {
    * @return this command object
    */
   public CommandBuilder processHandler(Handler<CommandProcess> handler) {
-    this.delegate.processHandler(new Handler<io.vertx.ext.shell.command.CommandProcess>() {
+    delegate.processHandler(handler != null ? new Handler<io.vertx.ext.shell.command.CommandProcess>(){
       public void handle(io.vertx.ext.shell.command.CommandProcess event) {
-        handler.handle(new io.vertx.groovy.ext.shell.command.CommandProcess(event));
+        handler.handle(InternalHelper.safeCreate(event, io.vertx.groovy.ext.shell.command.CommandProcess.class));
       }
-    });
+    } : null);
     return this;
   }
   /**
@@ -74,11 +74,11 @@ public class CommandBuilder {
    * @return this command object
    */
   public CommandBuilder completionHandler(Handler<Completion> handler) {
-    this.delegate.completionHandler(new Handler<io.vertx.ext.shell.cli.Completion>() {
+    delegate.completionHandler(handler != null ? new Handler<io.vertx.ext.shell.cli.Completion>(){
       public void handle(io.vertx.ext.shell.cli.Completion event) {
-        handler.handle(new io.vertx.groovy.ext.shell.cli.Completion(event));
+        handler.handle(InternalHelper.safeCreate(event, io.vertx.groovy.ext.shell.cli.Completion.class));
       }
-    });
+    } : null);
     return this;
   }
   /**
@@ -87,7 +87,7 @@ public class CommandBuilder {
    * @return the built command
    */
   public Command build(Vertx vertx) {
-    def ret= InternalHelper.safeCreate(this.delegate.build((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.command.Command.class);
+    def ret = InternalHelper.safeCreate(delegate.build(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null), io.vertx.groovy.ext.shell.command.Command.class);
     return ret;
   }
 }

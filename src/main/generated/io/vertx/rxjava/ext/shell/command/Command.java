@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell.command;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
 import io.vertx.rxjava.ext.shell.cli.Completion;
@@ -50,7 +49,7 @@ public class Command {
    * @return 
    */
   public String name() { 
-    String ret = this.delegate.name();
+    String ret = delegate.name();
     return ret;
   }
 
@@ -59,7 +58,7 @@ public class Command {
    * @return 
    */
   public CLI cli() { 
-    CLI ret= CLI.newInstance(this.delegate.cli());
+    CLI ret = CLI.newInstance(delegate.cli());
     return ret;
   }
 
@@ -68,7 +67,7 @@ public class Command {
    * @return the process
    */
   public Process createProcess() { 
-    Process ret= Process.newInstance(this.delegate.createProcess());
+    Process ret = Process.newInstance(delegate.createProcess());
     return ret;
   }
 
@@ -78,7 +77,7 @@ public class Command {
    * @return the process
    */
   public Process createProcess(List<CliToken> args) { 
-    Process ret= Process.newInstance(this.delegate.createProcess(args.stream().map(element -> (io.vertx.ext.shell.cli.CliToken)element.getDelegate()).collect(java.util.stream.Collectors.toList())));
+    Process ret = Process.newInstance(delegate.createProcess(args.stream().map(elt -> (io.vertx.ext.shell.cli.CliToken)elt.getDelegate()).collect(java.util.stream.Collectors.toList())));
     return ret;
   }
 
@@ -88,7 +87,7 @@ public class Command {
    * @param completion the completion object
    */
   public void complete(Completion completion) { 
-    this.delegate.complete((io.vertx.ext.shell.cli.Completion) completion.getDelegate());
+    delegate.complete((io.vertx.ext.shell.cli.Completion)completion.getDelegate());
   }
 
 

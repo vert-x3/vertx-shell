@@ -42,7 +42,7 @@ public class Job {
    * @return 
    */
   public int id() {
-    def ret = this.delegate.id();
+    def ret = delegate.id();
     return ret;
   }
   /**
@@ -50,7 +50,7 @@ public class Job {
    * @return 
    */
   public ExecStatus status() {
-    def ret = this.delegate.status();
+    def ret = delegate.status();
     return ret;
   }
   /**
@@ -58,7 +58,7 @@ public class Job {
    * @return 
    */
   public long lastStopped() {
-    def ret = this.delegate.lastStopped();
+    def ret = delegate.lastStopped();
     return ret;
   }
   /**
@@ -66,7 +66,7 @@ public class Job {
    * @return 
    */
   public String line() {
-    def ret = this.delegate.line();
+    def ret = delegate.line();
     return ret;
   }
   /**
@@ -75,7 +75,7 @@ public class Job {
    * @return this object
    */
   public Job setTty(Tty tty) {
-    this.delegate.setTty((io.vertx.ext.shell.term.Tty)tty.getDelegate());
+    delegate.setTty(tty != null ? (io.vertx.ext.shell.term.Tty)tty.getDelegate() : null);
     return this;
   }
   /**
@@ -84,7 +84,7 @@ public class Job {
    * @return this object
    */
   public Job setSession(Session session) {
-    this.delegate.setSession((io.vertx.ext.shell.session.Session)session.getDelegate());
+    delegate.setSession(session != null ? (io.vertx.ext.shell.session.Session)session.getDelegate() : null);
     return this;
   }
   /**
@@ -93,7 +93,7 @@ public class Job {
    * @return this object
    */
   public Job statusUpdateHandler(Handler<ExecStatus> handler) {
-    this.delegate.statusUpdateHandler(null /* Handler<io.vertx.ext.shell.system.ExecStatus> with kind ENUM not yet implemented */);
+    delegate.statusUpdateHandler(handler);
     return this;
   }
   /**
@@ -101,7 +101,7 @@ public class Job {
    * @return this object
    */
   public Job run() {
-    this.delegate.run();
+    delegate.run();
     return this;
   }
   /**
@@ -109,7 +109,7 @@ public class Job {
    * @return true if the job is actually interrupted
    */
   public boolean interrupt() {
-    def ret = this.delegate.interrupt();
+    def ret = delegate.interrupt();
     return ret;
   }
   /**
@@ -117,7 +117,7 @@ public class Job {
    * @return 
    */
   public Job resume() {
-    def ret= InternalHelper.safeCreate(this.delegate.resume(), io.vertx.groovy.ext.shell.system.Job.class);
+    def ret = InternalHelper.safeCreate(delegate.resume(), io.vertx.groovy.ext.shell.system.Job.class);
     return ret;
   }
   /**
@@ -125,7 +125,7 @@ public class Job {
    * @return this object
    */
   public Job toBackground() {
-    this.delegate.toBackground();
+    delegate.toBackground();
     return this;
   }
   /**
@@ -133,7 +133,7 @@ public class Job {
    * @return this object
    */
   public Job toForeground() {
-    this.delegate.toForeground();
+    delegate.toForeground();
     return this;
   }
   /**
@@ -142,7 +142,7 @@ public class Job {
    * @return 
    */
   public Job resume(boolean foreground) {
-    this.delegate.resume(foreground);
+    delegate.resume(foreground);
     return this;
   }
   /**
@@ -150,14 +150,14 @@ public class Job {
    * @return this object
    */
   public Job suspend() {
-    this.delegate.suspend();
+    delegate.suspend();
     return this;
   }
   /**
    * Terminate the job.
    */
   public void terminate() {
-    this.delegate.terminate();
+    delegate.terminate();
   }
   /**
    * @return the first process in the job
@@ -167,7 +167,7 @@ public class Job {
     if (cached_0 != null) {
       return cached_0;
     }
-    def ret= InternalHelper.safeCreate(this.delegate.process(), io.vertx.groovy.ext.shell.system.Process.class);
+    def ret = InternalHelper.safeCreate(delegate.process(), io.vertx.groovy.ext.shell.system.Process.class);
     cached_0 = ret;
     return ret;
   }

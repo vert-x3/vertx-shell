@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell.command;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
 import io.vertx.rxjava.core.Vertx;
@@ -52,7 +51,7 @@ public class CommandRegistry extends CommandResolver {
    * @return the shared registry
    */
   public static CommandRegistry getShared(Vertx vertx) { 
-    CommandRegistry ret= CommandRegistry.newInstance(io.vertx.ext.shell.command.CommandRegistry.getShared((io.vertx.core.Vertx) vertx.getDelegate()));
+    CommandRegistry ret = CommandRegistry.newInstance(io.vertx.ext.shell.command.CommandRegistry.getShared((io.vertx.core.Vertx)vertx.getDelegate()));
     return ret;
   }
 
@@ -62,7 +61,7 @@ public class CommandRegistry extends CommandResolver {
    * @return the created registry
    */
   public static CommandRegistry create(Vertx vertx) { 
-    CommandRegistry ret= CommandRegistry.newInstance(io.vertx.ext.shell.command.CommandRegistry.create((io.vertx.core.Vertx) vertx.getDelegate()));
+    CommandRegistry ret = CommandRegistry.newInstance(io.vertx.ext.shell.command.CommandRegistry.create((io.vertx.core.Vertx)vertx.getDelegate()));
     return ret;
   }
 
@@ -72,7 +71,7 @@ public class CommandRegistry extends CommandResolver {
    * @return 
    */
   public CommandRegistry registerCommand(Command command) { 
-    this.delegate.registerCommand((io.vertx.ext.shell.command.Command) command.getDelegate());
+    delegate.registerCommand((io.vertx.ext.shell.command.Command)command.getDelegate());
     return this;
   }
 
@@ -83,15 +82,13 @@ public class CommandRegistry extends CommandResolver {
    * @return a reference to this, so the API can be used fluently
    */
   public CommandRegistry registerCommand(Command command, Handler<AsyncResult<Command>> completionHandler) { 
-    this.delegate.registerCommand((io.vertx.ext.shell.command.Command) command.getDelegate(), new Handler<AsyncResult<io.vertx.ext.shell.command.Command>>() {
-      public void handle(AsyncResult<io.vertx.ext.shell.command.Command> event) {
-        AsyncResult<Command> f;
-        if (event.succeeded()) {
-          f = InternalHelper.<Command>result(new Command(event.result()));
+    delegate.registerCommand((io.vertx.ext.shell.command.Command)command.getDelegate(), new Handler<AsyncResult<io.vertx.ext.shell.command.Command>>() {
+      public void handle(AsyncResult<io.vertx.ext.shell.command.Command> ar) {
+        if (ar.succeeded()) {
+          completionHandler.handle(io.vertx.core.Future.succeededFuture(Command.newInstance(ar.result())));
         } else {
-          f = InternalHelper.<Command>failure(event.cause());
+          completionHandler.handle(io.vertx.core.Future.failedFuture(ar.cause()));
         }
-        completionHandler.handle(f);
       }
     });
     return this;
@@ -109,12 +106,12 @@ public class CommandRegistry extends CommandResolver {
   }
 
   /**
-   * Like {@link io.vertx.ext.shell.command.CommandRegistry}, without a completion handler.
+   * Like {@link io.vertx.rxjava.ext.shell.command.CommandRegistry#registerCommands}, without a completion handler.
    * @param commands 
    * @return 
    */
   public CommandRegistry registerCommands(List<Command> commands) { 
-    this.delegate.registerCommands(commands.stream().map(element -> (io.vertx.ext.shell.command.Command)element.getDelegate()).collect(java.util.stream.Collectors.toList()));
+    delegate.registerCommands(commands.stream().map(elt -> (io.vertx.ext.shell.command.Command)elt.getDelegate()).collect(java.util.stream.Collectors.toList()));
     return this;
   }
 
@@ -125,15 +122,13 @@ public class CommandRegistry extends CommandResolver {
    * @return a reference to this, so the API can be used fluently
    */
   public CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<List<Command>>> completionHandler) { 
-    this.delegate.registerCommands(commands.stream().map(element -> (io.vertx.ext.shell.command.Command)element.getDelegate()).collect(java.util.stream.Collectors.toList()), new Handler<AsyncResult<List<io.vertx.ext.shell.command.Command>>>() {
-      public void handle(AsyncResult<List<io.vertx.ext.shell.command.Command>> event) {
-        AsyncResult<List<Command>> f;
-        if (event.succeeded()) {
-          f = InternalHelper.<List<Command>>result(event.result().stream().map(Command::newInstance).collect(java.util.stream.Collectors.toList()));
+    delegate.registerCommands(commands.stream().map(elt -> (io.vertx.ext.shell.command.Command)elt.getDelegate()).collect(java.util.stream.Collectors.toList()), new Handler<AsyncResult<java.util.List<io.vertx.ext.shell.command.Command>>>() {
+      public void handle(AsyncResult<java.util.List<io.vertx.ext.shell.command.Command>> ar) {
+        if (ar.succeeded()) {
+          completionHandler.handle(io.vertx.core.Future.succeededFuture(ar.result().stream().map(elt -> Command.newInstance(elt)).collect(java.util.stream.Collectors.toList())));
         } else {
-          f = InternalHelper.<List<Command>>failure(event.cause());
+          completionHandler.handle(io.vertx.core.Future.failedFuture(ar.cause()));
         }
-        completionHandler.handle(f);
       }
     });
     return this;
@@ -151,12 +146,12 @@ public class CommandRegistry extends CommandResolver {
   }
 
   /**
-   * Like {@link io.vertx.ext.shell.command.CommandRegistry}, without a completion handler.
+   * Like {@link io.vertx.rxjava.ext.shell.command.CommandRegistry#unregisterCommand}, without a completion handler.
    * @param commandName 
    * @return 
    */
   public CommandRegistry unregisterCommand(String commandName) { 
-    this.delegate.unregisterCommand(commandName);
+    delegate.unregisterCommand(commandName);
     return this;
   }
 
@@ -167,7 +162,15 @@ public class CommandRegistry extends CommandResolver {
    * @return a reference to this, so the API can be used fluently
    */
   public CommandRegistry unregisterCommand(String commandName, Handler<AsyncResult<Void>> completionHandler) { 
-    this.delegate.unregisterCommand(commandName, completionHandler);
+    delegate.unregisterCommand(commandName, new Handler<AsyncResult<java.lang.Void>>() {
+      public void handle(AsyncResult<java.lang.Void> ar) {
+        if (ar.succeeded()) {
+          completionHandler.handle(io.vertx.core.Future.succeededFuture(ar.result()));
+        } else {
+          completionHandler.handle(io.vertx.core.Future.failedFuture(ar.cause()));
+        }
+      }
+    });
     return this;
   }
 

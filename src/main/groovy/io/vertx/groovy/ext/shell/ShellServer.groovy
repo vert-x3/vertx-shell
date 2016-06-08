@@ -52,7 +52,7 @@ public class ShellServer {
    * @return the created shell server
    */
   public static ShellServer create(Vertx vertx, Map<String, Object> options) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.ShellServer.create((io.vertx.core.Vertx)vertx.getDelegate(), options != null ? new io.vertx.ext.shell.ShellServerOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.ShellServer.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.ShellServer.create(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, options != null ? new io.vertx.ext.shell.ShellServerOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.ShellServer.class);
     return ret;
   }
   /**
@@ -61,7 +61,7 @@ public class ShellServer {
    * @return the created shell server
    */
   public static ShellServer create(Vertx vertx) {
-    def ret= InternalHelper.safeCreate(io.vertx.ext.shell.ShellServer.create((io.vertx.core.Vertx)vertx.getDelegate()), io.vertx.groovy.ext.shell.ShellServer.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.ShellServer.create(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null), io.vertx.groovy.ext.shell.ShellServer.class);
     return ret;
   }
   /**
@@ -70,7 +70,7 @@ public class ShellServer {
    * @return a reference to this, so the API can be used fluently
    */
   public ShellServer registerCommandResolver(CommandResolver resolver) {
-    this.delegate.registerCommandResolver((io.vertx.ext.shell.command.CommandResolver)resolver.getDelegate());
+    delegate.registerCommandResolver(resolver != null ? (io.vertx.ext.shell.command.CommandResolver)resolver.getDelegate() : null);
     return this;
   }
   /**
@@ -79,7 +79,7 @@ public class ShellServer {
    * @return a reference to this, so the API can be used fluently
    */
   public ShellServer registerTermServer(TermServer termServer) {
-    this.delegate.registerTermServer((io.vertx.ext.shell.term.TermServer)termServer.getDelegate());
+    delegate.registerTermServer(termServer != null ? (io.vertx.ext.shell.term.TermServer)termServer.getDelegate() : null);
     return this;
   }
   /**
@@ -88,7 +88,7 @@ public class ShellServer {
    * @return the created shell
    */
   public Shell createShell(Term term) {
-    def ret= InternalHelper.safeCreate(this.delegate.createShell((io.vertx.ext.shell.term.Term)term.getDelegate()), io.vertx.groovy.ext.shell.Shell.class);
+    def ret = InternalHelper.safeCreate(delegate.createShell(term != null ? (io.vertx.ext.shell.term.Term)term.getDelegate() : null), io.vertx.groovy.ext.shell.Shell.class);
     return ret;
   }
   /**
@@ -96,7 +96,7 @@ public class ShellServer {
    * @return the created shell
    */
   public Shell createShell() {
-    def ret= InternalHelper.safeCreate(this.delegate.createShell(), io.vertx.groovy.ext.shell.Shell.class);
+    def ret = InternalHelper.safeCreate(delegate.createShell(), io.vertx.groovy.ext.shell.Shell.class);
     return ret;
   }
   /**
@@ -104,7 +104,7 @@ public class ShellServer {
    * @return 
    */
   public ShellServer listen() {
-    this.delegate.listen();
+    delegate.listen();
     return this;
   }
   /**
@@ -113,20 +113,20 @@ public class ShellServer {
    * @return 
    */
   public ShellServer listen(Handler<AsyncResult<Void>> listenHandler) {
-    this.delegate.listen(listenHandler);
+    delegate.listen(listenHandler);
     return this;
   }
   /**
    * Close the shell server, this is an asynchronous close.
    */
   public void close() {
-    this.delegate.close();
+    delegate.close();
   }
   /**
    * Close the shell server, this is an asynchronous close.
    * @param completionHandler handler for getting notified when service is stopped
    */
   public void close(Handler<AsyncResult<Void>> completionHandler) {
-    this.delegate.close(completionHandler);
+    delegate.close(completionHandler);
   }
 }

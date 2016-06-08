@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.ext.shell.ShellServerOptions;
 import io.vertx.rxjava.ext.shell.term.TermServer;
@@ -61,7 +60,7 @@ public class ShellServer {
    * @return the created shell server
    */
   public static ShellServer create(Vertx vertx, ShellServerOptions options) { 
-    ShellServer ret= ShellServer.newInstance(io.vertx.ext.shell.ShellServer.create((io.vertx.core.Vertx) vertx.getDelegate(), options));
+    ShellServer ret = ShellServer.newInstance(io.vertx.ext.shell.ShellServer.create((io.vertx.core.Vertx)vertx.getDelegate(), options));
     return ret;
   }
 
@@ -71,7 +70,7 @@ public class ShellServer {
    * @return the created shell server
    */
   public static ShellServer create(Vertx vertx) { 
-    ShellServer ret= ShellServer.newInstance(io.vertx.ext.shell.ShellServer.create((io.vertx.core.Vertx) vertx.getDelegate()));
+    ShellServer ret = ShellServer.newInstance(io.vertx.ext.shell.ShellServer.create((io.vertx.core.Vertx)vertx.getDelegate()));
     return ret;
   }
 
@@ -81,7 +80,7 @@ public class ShellServer {
    * @return a reference to this, so the API can be used fluently
    */
   public ShellServer registerCommandResolver(CommandResolver resolver) { 
-    this.delegate.registerCommandResolver((io.vertx.ext.shell.command.CommandResolver) resolver.getDelegate());
+    delegate.registerCommandResolver((io.vertx.ext.shell.command.CommandResolver)resolver.getDelegate());
     return this;
   }
 
@@ -91,7 +90,7 @@ public class ShellServer {
    * @return a reference to this, so the API can be used fluently
    */
   public ShellServer registerTermServer(TermServer termServer) { 
-    this.delegate.registerTermServer((io.vertx.ext.shell.term.TermServer) termServer.getDelegate());
+    delegate.registerTermServer((io.vertx.ext.shell.term.TermServer)termServer.getDelegate());
     return this;
   }
 
@@ -101,7 +100,7 @@ public class ShellServer {
    * @return the created shell
    */
   public Shell createShell(Term term) { 
-    Shell ret= Shell.newInstance(this.delegate.createShell((io.vertx.ext.shell.term.Term) term.getDelegate()));
+    Shell ret = Shell.newInstance(delegate.createShell((io.vertx.ext.shell.term.Term)term.getDelegate()));
     return ret;
   }
 
@@ -110,7 +109,7 @@ public class ShellServer {
    * @return the created shell
    */
   public Shell createShell() { 
-    Shell ret= Shell.newInstance(this.delegate.createShell());
+    Shell ret = Shell.newInstance(delegate.createShell());
     return ret;
   }
 
@@ -119,7 +118,7 @@ public class ShellServer {
    * @return 
    */
   public ShellServer listen() { 
-    this.delegate.listen();
+    delegate.listen();
     return this;
   }
 
@@ -129,7 +128,15 @@ public class ShellServer {
    * @return 
    */
   public ShellServer listen(Handler<AsyncResult<Void>> listenHandler) { 
-    this.delegate.listen(listenHandler);
+    delegate.listen(new Handler<AsyncResult<java.lang.Void>>() {
+      public void handle(AsyncResult<java.lang.Void> ar) {
+        if (ar.succeeded()) {
+          listenHandler.handle(io.vertx.core.Future.succeededFuture(ar.result()));
+        } else {
+          listenHandler.handle(io.vertx.core.Future.failedFuture(ar.cause()));
+        }
+      }
+    });
     return this;
   }
 
@@ -147,7 +154,7 @@ public class ShellServer {
    * Close the shell server, this is an asynchronous close.
    */
   public void close() { 
-    this.delegate.close();
+    delegate.close();
   }
 
   /**
@@ -155,7 +162,15 @@ public class ShellServer {
    * @param completionHandler handler for getting notified when service is stopped
    */
   public void close(Handler<AsyncResult<Void>> completionHandler) { 
-    this.delegate.close(completionHandler);
+    delegate.close(new Handler<AsyncResult<java.lang.Void>>() {
+      public void handle(AsyncResult<java.lang.Void> ar) {
+        if (ar.succeeded()) {
+          completionHandler.handle(io.vertx.core.Future.succeededFuture(ar.result()));
+        } else {
+          completionHandler.handle(io.vertx.core.Future.failedFuture(ar.cause()));
+        }
+      }
+    });
   }
 
   /**

@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell.system;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.Set;
 import io.vertx.core.Handler;
@@ -46,7 +45,7 @@ public class JobController {
    * @return 
    */
   public Job foregroundJob() { 
-    Job ret= Job.newInstance(this.delegate.foregroundJob());
+    Job ret = Job.newInstance(delegate.foregroundJob());
     return ret;
   }
 
@@ -55,7 +54,7 @@ public class JobController {
    * @return 
    */
   public Set<Job> jobs() { 
-    Set<Job> ret = this.delegate.jobs().stream().map(Job::newInstance).collect(java.util.stream.Collectors.toSet());
+    Set<Job> ret = delegate.jobs().stream().map(elt -> Job.newInstance(elt)).collect(java.util.stream.Collectors.toSet());
     return ret;
   }
 
@@ -65,7 +64,7 @@ public class JobController {
    * @return the job of  when not found
    */
   public Job getJob(int id) { 
-    Job ret= Job.newInstance(this.delegate.getJob(id));
+    Job ret = Job.newInstance(delegate.getJob(id));
     return ret;
   }
 
@@ -76,7 +75,7 @@ public class JobController {
    * @return the created job
    */
   public Job createJob(Process process, String line) { 
-    Job ret= Job.newInstance(this.delegate.createJob((io.vertx.ext.shell.system.Process) process.getDelegate(), line));
+    Job ret = Job.newInstance(delegate.createJob((io.vertx.ext.shell.system.Process)process.getDelegate(), line));
     return ret;
   }
 
@@ -85,14 +84,18 @@ public class JobController {
    * @param completionHandler 
    */
   public void close(Handler<Void> completionHandler) { 
-    this.delegate.close(completionHandler);
+    delegate.close(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        completionHandler.handle(event);
+      }
+    });
   }
 
   /**
    * Close the shell session and terminate all the underlying jobs.
    */
   public void close() { 
-    this.delegate.close();
+    delegate.close();
   }
 
 

@@ -100,7 +100,7 @@ var Completion = function(j_val) {
   this.complete = function() {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0] instanceof Array) {
-      j_completion["complete(java.util.List)"](__args[0]);
+      j_completion["complete(java.util.List)"](utils.convParamListBasicOther(__args[0]));
     }  else if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] ==='boolean') {
       j_completion["complete(java.lang.String,boolean)"](__args[0], __args[1]);
     } else throw new TypeError('function invoked with invalid arguments');

@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell.term;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.term.HttpTermOptions;
@@ -53,7 +52,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createSSHTermServer(Vertx vertx) { 
-    TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createSSHTermServer((io.vertx.core.Vertx) vertx.getDelegate()));
+    TermServer ret = TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createSSHTermServer((io.vertx.core.Vertx)vertx.getDelegate()));
     return ret;
   }
 
@@ -64,7 +63,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createSSHTermServer(Vertx vertx, SSHTermOptions options) { 
-    TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createSSHTermServer((io.vertx.core.Vertx) vertx.getDelegate(), options));
+    TermServer ret = TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createSSHTermServer((io.vertx.core.Vertx)vertx.getDelegate(), options));
     return ret;
   }
 
@@ -74,7 +73,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createTelnetTermServer(Vertx vertx) { 
-    TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createTelnetTermServer((io.vertx.core.Vertx) vertx.getDelegate()));
+    TermServer ret = TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createTelnetTermServer((io.vertx.core.Vertx)vertx.getDelegate()));
     return ret;
   }
 
@@ -85,7 +84,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createTelnetTermServer(Vertx vertx, TelnetTermOptions options) { 
-    TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createTelnetTermServer((io.vertx.core.Vertx) vertx.getDelegate(), options));
+    TermServer ret = TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createTelnetTermServer((io.vertx.core.Vertx)vertx.getDelegate(), options));
     return ret;
   }
 
@@ -95,7 +94,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createHttpTermServer(Vertx vertx) { 
-    TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx) vertx.getDelegate()));
+    TermServer ret = TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx)vertx.getDelegate()));
     return ret;
   }
 
@@ -106,7 +105,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createHttpTermServer(Vertx vertx, HttpTermOptions options) { 
-    TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx) vertx.getDelegate(), options));
+    TermServer ret = TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx)vertx.getDelegate(), options));
     return ret;
   }
 
@@ -117,7 +116,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createHttpTermServer(Vertx vertx, Router router) { 
-    TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx) vertx.getDelegate(), (io.vertx.ext.web.Router) router.getDelegate()));
+    TermServer ret = TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx)vertx.getDelegate(), (io.vertx.ext.web.Router)router.getDelegate()));
     return ret;
   }
 
@@ -129,7 +128,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createHttpTermServer(Vertx vertx, Router router, HttpTermOptions options) { 
-    TermServer ret= TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx) vertx.getDelegate(), (io.vertx.ext.web.Router) router.getDelegate(), options));
+    TermServer ret = TermServer.newInstance(io.vertx.ext.shell.term.TermServer.createHttpTermServer((io.vertx.core.Vertx)vertx.getDelegate(), (io.vertx.ext.web.Router)router.getDelegate(), options));
     return ret;
   }
 
@@ -141,9 +140,9 @@ public class TermServer {
    * @return this object
    */
   public TermServer termHandler(Handler<Term> handler) { 
-    this.delegate.termHandler(new Handler<io.vertx.ext.shell.term.Term>() {
+    delegate.termHandler(new Handler<io.vertx.ext.shell.term.Term>() {
       public void handle(io.vertx.ext.shell.term.Term event) {
-        handler.handle(new Term(event));
+        handler.handle(Term.newInstance(event));
       }
     });
     return this;
@@ -156,7 +155,7 @@ public class TermServer {
    * @return this object
    */
   public TermServer authProvider(AuthProvider provider) { 
-    this.delegate.authProvider((io.vertx.ext.auth.AuthProvider) provider.getDelegate());
+    delegate.authProvider((io.vertx.ext.auth.AuthProvider)provider.getDelegate());
     return this;
   }
 
@@ -165,7 +164,7 @@ public class TermServer {
    * @return this object
    */
   public TermServer listen() { 
-    this.delegate.listen();
+    delegate.listen();
     return this;
   }
 
@@ -175,15 +174,13 @@ public class TermServer {
    * @return this object
    */
   public TermServer listen(Handler<AsyncResult<TermServer>> listenHandler) { 
-    this.delegate.listen(new Handler<AsyncResult<io.vertx.ext.shell.term.TermServer>>() {
-      public void handle(AsyncResult<io.vertx.ext.shell.term.TermServer> event) {
-        AsyncResult<TermServer> f;
-        if (event.succeeded()) {
-          f = InternalHelper.<TermServer>result(new TermServer(event.result()));
+    delegate.listen(new Handler<AsyncResult<io.vertx.ext.shell.term.TermServer>>() {
+      public void handle(AsyncResult<io.vertx.ext.shell.term.TermServer> ar) {
+        if (ar.succeeded()) {
+          listenHandler.handle(io.vertx.core.Future.succeededFuture(TermServer.newInstance(ar.result())));
         } else {
-          f = InternalHelper.<TermServer>failure(event.cause());
+          listenHandler.handle(io.vertx.core.Future.failedFuture(ar.cause()));
         }
-        listenHandler.handle(f);
       }
     });
     return this;
@@ -205,7 +202,7 @@ public class TermServer {
    * @return the actual port the server is listening on.
    */
   public int actualPort() { 
-    int ret = this.delegate.actualPort();
+    int ret = delegate.actualPort();
     return ret;
   }
 
@@ -214,19 +211,27 @@ public class TermServer {
    * method has returned.
    */
   public void close() { 
-    this.delegate.close();
+    delegate.close();
   }
 
   /**
-   * Like {@link io.vertx.ext.shell.term.TermServer} but supplying a handler that will be notified when close is complete.
+   * Like {@link io.vertx.rxjava.ext.shell.term.TermServer#close} but supplying a handler that will be notified when close is complete.
    * @param completionHandler the handler to be notified when the term server is closed
    */
   public void close(Handler<AsyncResult<Void>> completionHandler) { 
-    this.delegate.close(completionHandler);
+    delegate.close(new Handler<AsyncResult<java.lang.Void>>() {
+      public void handle(AsyncResult<java.lang.Void> ar) {
+        if (ar.succeeded()) {
+          completionHandler.handle(io.vertx.core.Future.succeededFuture(ar.result()));
+        } else {
+          completionHandler.handle(io.vertx.core.Future.failedFuture(ar.cause()));
+        }
+      }
+    });
   }
 
   /**
-   * Like {@link io.vertx.ext.shell.term.TermServer} but supplying a handler that will be notified when close is complete.
+   * Like {@link io.vertx.rxjava.ext.shell.term.TermServer#close} but supplying a handler that will be notified when close is complete.
    * @return 
    */
   public Observable<Void> closeObservable() { 

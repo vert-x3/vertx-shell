@@ -35,15 +35,15 @@ public class Term extends Tty {
     return delegate;
   }
   public Term resizehandler(Handler<Void> handler) {
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.term.Term) this.delegate).resizehandler(handler);
+    ((io.vertx.ext.shell.term.Term) delegate).resizehandler(handler);
     return this;
   }
   public Term stdinHandler(Handler<String> handler) {
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.term.Term) this.delegate).stdinHandler(handler);
+    ((io.vertx.ext.shell.term.Term) delegate).stdinHandler(handler);
     return this;
   }
   public Term write(String data) {
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.term.Term) this.delegate).write(data);
+    ((io.vertx.ext.shell.term.Term) delegate).write(data);
     return this;
   }
   /**
@@ -51,7 +51,7 @@ public class Term extends Tty {
    * @return 
    */
   public long lastAccessedTime() {
-    def ret = this.delegate.lastAccessedTime();
+    def ret = delegate.lastAccessedTime();
     return ret;
   }
   /**
@@ -60,7 +60,7 @@ public class Term extends Tty {
    * @return a reference to this, so the API can be used fluently
    */
   public Term echo(String text) {
-    this.delegate.echo(text);
+    delegate.echo(text);
     return this;
   }
   /**
@@ -69,7 +69,7 @@ public class Term extends Tty {
    * @return a reference to this, so the API can be used fluently
    */
   public Term setSession(Session session) {
-    def ret= InternalHelper.safeCreate(this.delegate.setSession((io.vertx.ext.shell.session.Session)session.getDelegate()), io.vertx.groovy.ext.shell.term.Term.class);
+    def ret = InternalHelper.safeCreate(delegate.setSession(session != null ? (io.vertx.ext.shell.session.Session)session.getDelegate() : null), io.vertx.groovy.ext.shell.term.Term.class);
     return ret;
   }
   /**
@@ -78,7 +78,7 @@ public class Term extends Tty {
    * @return a reference to this, so the API can be used fluently
    */
   public Term interruptHandler(SignalHandler handler) {
-    this.delegate.interruptHandler((io.vertx.ext.shell.term.SignalHandler)handler.getDelegate());
+    delegate.interruptHandler(handler != null ? (io.vertx.ext.shell.term.SignalHandler)handler.getDelegate() : null);
     return this;
   }
   /**
@@ -87,7 +87,7 @@ public class Term extends Tty {
    * @return a reference to this, so the API can be used fluently
    */
   public Term suspendHandler(SignalHandler handler) {
-    this.delegate.suspendHandler((io.vertx.ext.shell.term.SignalHandler)handler.getDelegate());
+    delegate.suspendHandler(handler != null ? (io.vertx.ext.shell.term.SignalHandler)handler.getDelegate() : null);
     return this;
   }
   /**
@@ -96,7 +96,7 @@ public class Term extends Tty {
    * @param lineHandler the line handler called with the line
    */
   public void readline(String prompt, Handler<String> lineHandler) {
-    this.delegate.readline(prompt, lineHandler);
+    delegate.readline(prompt, lineHandler);
   }
   /**
    * Prompt the user a line of text, providing a completion handler to handle user's completion.
@@ -105,11 +105,11 @@ public class Term extends Tty {
    * @param completionHandler the completion handler
    */
   public void readline(String prompt, Handler<String> lineHandler, Handler<Completion> completionHandler) {
-    this.delegate.readline(prompt, lineHandler, new Handler<io.vertx.ext.shell.cli.Completion>() {
+    delegate.readline(prompt, lineHandler, completionHandler != null ? new Handler<io.vertx.ext.shell.cli.Completion>(){
       public void handle(io.vertx.ext.shell.cli.Completion event) {
-        completionHandler.handle(new io.vertx.groovy.ext.shell.cli.Completion(event));
+        completionHandler.handle(InternalHelper.safeCreate(event, io.vertx.groovy.ext.shell.cli.Completion.class));
       }
-    });
+    } : null);
   }
   /**
    * Set a handler that will be called when the terminal is closed.
@@ -117,13 +117,13 @@ public class Term extends Tty {
    * @return a reference to this, so the API can be used fluently
    */
   public Term closeHandler(Handler<Void> handler) {
-    this.delegate.closeHandler(handler);
+    delegate.closeHandler(handler);
     return this;
   }
   /**
    * Close the connection to terminal.
    */
   public void close() {
-    this.delegate.close();
+    delegate.close();
   }
 }

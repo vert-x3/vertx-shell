@@ -76,7 +76,7 @@ module VertxShell
     # @return [self]
     def status_update_handler
       if block_given?
-        @j_del.java_method(:statusUpdateHandler, [Java::IoVertxCore::Handler.java_class]).call(nil)
+        @j_del.java_method(:statusUpdateHandler, [Java::IoVertxCore::Handler.java_class]).call((Proc.new { |event| yield(event.name.intern) }))
         return self
       end
       raise ArgumentError, "Invalid arguments when calling status_update_handler()"

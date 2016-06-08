@@ -41,7 +41,7 @@ public class Shell {
    * @return the created job
    */
   public Job createJob(List<CliToken> line) {
-    def ret= InternalHelper.safeCreate(this.delegate.createJob((List<io.vertx.ext.shell.cli.CliToken>)(line.collect({underpants -> underpants.getDelegate()}))), io.vertx.groovy.ext.shell.system.Job.class);
+    def ret = InternalHelper.safeCreate(delegate.createJob(line != null ? (List)line.collect({(io.vertx.ext.shell.cli.CliToken)it.getDelegate()}) : null), io.vertx.groovy.ext.shell.system.Job.class);
     return ret;
   }
   /**
@@ -50,7 +50,7 @@ public class Shell {
    * @return 
    */
   public Job createJob(String line) {
-    def ret= InternalHelper.safeCreate(this.delegate.createJob(line), io.vertx.groovy.ext.shell.system.Job.class);
+    def ret = InternalHelper.safeCreate(delegate.createJob(line), io.vertx.groovy.ext.shell.system.Job.class);
     return ret;
   }
   /**
@@ -61,7 +61,7 @@ public class Shell {
     if (cached_0 != null) {
       return cached_0;
     }
-    def ret= InternalHelper.safeCreate(this.delegate.jobController(), io.vertx.groovy.ext.shell.system.JobController.class);
+    def ret = InternalHelper.safeCreate(delegate.jobController(), io.vertx.groovy.ext.shell.system.JobController.class);
     cached_0 = ret;
     return ret;
   }
@@ -73,7 +73,7 @@ public class Shell {
     if (cached_1 != null) {
       return cached_1;
     }
-    def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.groovy.ext.shell.session.Session.class);
+    def ret = InternalHelper.safeCreate(delegate.session(), io.vertx.groovy.ext.shell.session.Session.class);
     cached_1 = ret;
     return ret;
   }
@@ -81,7 +81,7 @@ public class Shell {
    * Close the shell.
    */
   public void close() {
-    this.delegate.close();
+    delegate.close();
   }
   private JobController cached_0;
   private Session cached_1;

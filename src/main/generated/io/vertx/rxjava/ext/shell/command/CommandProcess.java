@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell.command;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
 import io.vertx.rxjava.core.cli.CommandLine;
@@ -52,7 +51,7 @@ public class CommandProcess extends Tty {
    * @return 
    */
   public Vertx vertx() { 
-    Vertx ret= Vertx.newInstance(this.delegate.vertx());
+    Vertx ret = Vertx.newInstance(delegate.vertx());
     return ret;
   }
 
@@ -61,7 +60,7 @@ public class CommandProcess extends Tty {
    * @return 
    */
   public List<CliToken> argsTokens() { 
-    List<CliToken> ret = this.delegate.argsTokens().stream().map(CliToken::newInstance).collect(java.util.stream.Collectors.toList());
+    List<CliToken> ret = delegate.argsTokens().stream().map(elt -> CliToken.newInstance(elt)).collect(java.util.stream.Collectors.toList());
     return ret;
   }
 
@@ -70,8 +69,7 @@ public class CommandProcess extends Tty {
    * @return 
    */
   public List<String> args() { 
-    List<String> ret = this.delegate.args();
-;
+    List<String> ret = delegate.args();
     return ret;
   }
 
@@ -80,7 +78,7 @@ public class CommandProcess extends Tty {
    * @return 
    */
   public CommandLine commandLine() { 
-    CommandLine ret= CommandLine.newInstance(this.delegate.commandLine());
+    CommandLine ret = CommandLine.newInstance(delegate.commandLine());
     return ret;
   }
 
@@ -89,7 +87,7 @@ public class CommandProcess extends Tty {
    * @return 
    */
   public Session session() { 
-    Session ret= Session.newInstance(this.delegate.session());
+    Session ret = Session.newInstance(delegate.session());
     return ret;
   }
 
@@ -98,12 +96,12 @@ public class CommandProcess extends Tty {
    * @return 
    */
   public boolean isForeground() { 
-    boolean ret = this.delegate.isForeground();
+    boolean ret = delegate.isForeground();
     return ret;
   }
 
   public CommandProcess stdinHandler(Handler<String> handler) { 
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) delegate).stdinHandler(handler);
+    ((io.vertx.ext.shell.command.CommandProcess) delegate).stdinHandler(handler);
     return this;
   }
 
@@ -114,7 +112,11 @@ public class CommandProcess extends Tty {
    * @return this command
    */
   public CommandProcess interruptHandler(Handler<Void> handler) { 
-    this.delegate.interruptHandler(handler);
+    delegate.interruptHandler(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        handler.handle(event);
+      }
+    });
     return this;
   }
 
@@ -125,7 +127,11 @@ public class CommandProcess extends Tty {
    * @return this command
    */
   public CommandProcess suspendHandler(Handler<Void> handler) { 
-    this.delegate.suspendHandler(handler);
+    delegate.suspendHandler(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        handler.handle(event);
+      }
+    });
     return this;
   }
 
@@ -136,7 +142,11 @@ public class CommandProcess extends Tty {
    * @return this command
    */
   public CommandProcess resumeHandler(Handler<Void> handler) { 
-    this.delegate.resumeHandler(handler);
+    delegate.resumeHandler(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        handler.handle(event);
+      }
+    });
     return this;
   }
 
@@ -147,7 +157,11 @@ public class CommandProcess extends Tty {
    * @return a reference to this, so the API can be used fluently
    */
   public CommandProcess endHandler(Handler<Void> handler) { 
-    this.delegate.endHandler(handler);
+    delegate.endHandler(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        handler.handle(event);
+      }
+    });
     return this;
   }
 
@@ -157,7 +171,7 @@ public class CommandProcess extends Tty {
    * @return a reference to this, so the API can be used fluently
    */
   public CommandProcess write(String data) { 
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) delegate).write(data);
+    ((io.vertx.ext.shell.command.CommandProcess) delegate).write(data);
     return this;
   }
 
@@ -167,7 +181,11 @@ public class CommandProcess extends Tty {
    * @return this command
    */
   public CommandProcess backgroundHandler(Handler<Void> handler) { 
-    this.delegate.backgroundHandler(handler);
+    delegate.backgroundHandler(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        handler.handle(event);
+      }
+    });
     return this;
   }
 
@@ -177,12 +195,20 @@ public class CommandProcess extends Tty {
    * @return this command
    */
   public CommandProcess foregroundHandler(Handler<Void> handler) { 
-    this.delegate.foregroundHandler(handler);
+    delegate.foregroundHandler(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        handler.handle(event);
+      }
+    });
     return this;
   }
 
   public CommandProcess resizehandler(Handler<Void> handler) { 
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) delegate).resizehandler(handler);
+    ((io.vertx.ext.shell.command.CommandProcess) delegate).resizehandler(new Handler<java.lang.Void>() {
+      public void handle(java.lang.Void event) {
+        handler.handle(event);
+      }
+    });
     return this;
   }
 
@@ -190,7 +216,7 @@ public class CommandProcess extends Tty {
    * End the process with the exit status 
    */
   public void end() { 
-    this.delegate.end();
+    delegate.end();
   }
 
   /**
@@ -198,7 +224,7 @@ public class CommandProcess extends Tty {
    * @param status the exit status.
    */
   public void end(int status) { 
-    this.delegate.end(status);
+    delegate.end(status);
   }
 
 

@@ -17,7 +17,6 @@
 package io.vertx.rxjava.ext.shell;
 
 import java.util.Map;
-import io.vertx.lang.rxjava.InternalHelper;
 import rx.Observable;
 import java.util.List;
 import io.vertx.rxjava.ext.shell.system.Job;
@@ -50,7 +49,7 @@ public class Shell {
    * @return the created job
    */
   public Job createJob(List<CliToken> line) { 
-    Job ret= Job.newInstance(this.delegate.createJob(line.stream().map(element -> (io.vertx.ext.shell.cli.CliToken)element.getDelegate()).collect(java.util.stream.Collectors.toList())));
+    Job ret = Job.newInstance(delegate.createJob(line.stream().map(elt -> (io.vertx.ext.shell.cli.CliToken)elt.getDelegate()).collect(java.util.stream.Collectors.toList())));
     return ret;
   }
 
@@ -60,7 +59,7 @@ public class Shell {
    * @return 
    */
   public Job createJob(String line) { 
-    Job ret= Job.newInstance(this.delegate.createJob(line));
+    Job ret = Job.newInstance(delegate.createJob(line));
     return ret;
   }
 
@@ -72,7 +71,7 @@ public class Shell {
     if (cached_0 != null) {
       return cached_0;
     }
-    JobController ret= JobController.newInstance(this.delegate.jobController());
+    JobController ret = JobController.newInstance(delegate.jobController());
     cached_0 = ret;
     return ret;
   }
@@ -85,7 +84,7 @@ public class Shell {
     if (cached_1 != null) {
       return cached_1;
     }
-    Session ret= Session.newInstance(this.delegate.session());
+    Session ret = Session.newInstance(delegate.session());
     cached_1 = ret;
     return ret;
   }
@@ -94,7 +93,7 @@ public class Shell {
    * Close the shell.
    */
   public void close() { 
-    this.delegate.close();
+    delegate.close();
   }
 
   private JobController cached_0;

@@ -43,7 +43,7 @@ public class CommandProcess extends Tty {
    * @return 
    */
   public Vertx vertx() {
-    def ret= InternalHelper.safeCreate(this.delegate.vertx(), io.vertx.groovy.core.Vertx.class);
+    def ret = InternalHelper.safeCreate(delegate.vertx(), io.vertx.groovy.core.Vertx.class);
     return ret;
   }
   /**
@@ -51,15 +51,15 @@ public class CommandProcess extends Tty {
    * @return 
    */
   public List<CliToken> argsTokens() {
-    def ret = this.delegate.argsTokens()?.collect({underpants -> new io.vertx.groovy.ext.shell.cli.CliToken(underpants)});
-      return ret;
+    def ret = (List)delegate.argsTokens()?.collect({InternalHelper.safeCreate(it, io.vertx.groovy.ext.shell.cli.CliToken.class)});
+    return ret;
   }
   /**
    * @return the actual string arguments of the command
    * @return 
    */
   public List<String> args() {
-    def ret = this.delegate.args();
+    def ret = delegate.args();
     return ret;
   }
   /**
@@ -67,7 +67,7 @@ public class CommandProcess extends Tty {
    * @return 
    */
   public CommandLine commandLine() {
-    def ret= InternalHelper.safeCreate(this.delegate.commandLine(), io.vertx.groovy.core.cli.CommandLine.class);
+    def ret = InternalHelper.safeCreate(delegate.commandLine(), io.vertx.groovy.core.cli.CommandLine.class);
     return ret;
   }
   /**
@@ -75,7 +75,7 @@ public class CommandProcess extends Tty {
    * @return 
    */
   public Session session() {
-    def ret= InternalHelper.safeCreate(this.delegate.session(), io.vertx.groovy.ext.shell.session.Session.class);
+    def ret = InternalHelper.safeCreate(delegate.session(), io.vertx.groovy.ext.shell.session.Session.class);
     return ret;
   }
   /**
@@ -83,11 +83,11 @@ public class CommandProcess extends Tty {
    * @return 
    */
   public boolean isForeground() {
-    def ret = this.delegate.isForeground();
+    def ret = delegate.isForeground();
     return ret;
   }
   public CommandProcess stdinHandler(Handler<String> handler) {
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) this.delegate).stdinHandler(handler);
+    ((io.vertx.ext.shell.command.CommandProcess) delegate).stdinHandler(handler);
     return this;
   }
   /**
@@ -97,7 +97,7 @@ public class CommandProcess extends Tty {
    * @return this command
    */
   public CommandProcess interruptHandler(Handler<Void> handler) {
-    this.delegate.interruptHandler(handler);
+    delegate.interruptHandler(handler);
     return this;
   }
   /**
@@ -107,7 +107,7 @@ public class CommandProcess extends Tty {
    * @return this command
    */
   public CommandProcess suspendHandler(Handler<Void> handler) {
-    this.delegate.suspendHandler(handler);
+    delegate.suspendHandler(handler);
     return this;
   }
   /**
@@ -117,7 +117,7 @@ public class CommandProcess extends Tty {
    * @return this command
    */
   public CommandProcess resumeHandler(Handler<Void> handler) {
-    this.delegate.resumeHandler(handler);
+    delegate.resumeHandler(handler);
     return this;
   }
   /**
@@ -127,7 +127,7 @@ public class CommandProcess extends Tty {
    * @return a reference to this, so the API can be used fluently
    */
   public CommandProcess endHandler(Handler<Void> handler) {
-    this.delegate.endHandler(handler);
+    delegate.endHandler(handler);
     return this;
   }
   /**
@@ -136,7 +136,7 @@ public class CommandProcess extends Tty {
    * @return a reference to this, so the API can be used fluently
    */
   public CommandProcess write(String data) {
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) this.delegate).write(data);
+    ((io.vertx.ext.shell.command.CommandProcess) delegate).write(data);
     return this;
   }
   /**
@@ -145,7 +145,7 @@ public class CommandProcess extends Tty {
    * @return this command
    */
   public CommandProcess backgroundHandler(Handler<Void> handler) {
-    this.delegate.backgroundHandler(handler);
+    delegate.backgroundHandler(handler);
     return this;
   }
   /**
@@ -154,24 +154,24 @@ public class CommandProcess extends Tty {
    * @return this command
    */
   public CommandProcess foregroundHandler(Handler<Void> handler) {
-    this.delegate.foregroundHandler(handler);
+    delegate.foregroundHandler(handler);
     return this;
   }
   public CommandProcess resizehandler(Handler<Void> handler) {
-    ( /* Work around for https://jira.codehaus.org/browse/GROOVY-6970 */ (io.vertx.ext.shell.command.CommandProcess) this.delegate).resizehandler(handler);
+    ((io.vertx.ext.shell.command.CommandProcess) delegate).resizehandler(handler);
     return this;
   }
   /**
    * End the process with the exit status 
    */
   public void end() {
-    this.delegate.end();
+    delegate.end();
   }
   /**
    * End the process.
    * @param status the exit status.
    */
   public void end(int status) {
-    this.delegate.end(status);
+    delegate.end(status);
   }
 }
