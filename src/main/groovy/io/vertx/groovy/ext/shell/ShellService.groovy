@@ -54,7 +54,7 @@ public class ShellService {
    * @return the shell service
    */
   public static ShellService create(Vertx vertx, Map<String, Object> options) {
-    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.ShellService.create(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, options != null ? new io.vertx.ext.shell.ShellServiceOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.ShellService.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.ShellService.create(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, options != null ? new io.vertx.ext.shell.ShellServiceOptions(io.vertx.lang.groovy.InternalHelper.toJsonObject(options)) : null), io.vertx.groovy.ext.shell.ShellService.class);
     return ret;
   }
   /**

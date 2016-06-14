@@ -9,7 +9,7 @@ Vert.x Shell can be extended with custom commands in any language supported by V
 
 == Using Vert.x Shell
 
-Vert.x Shell is a Vert.x Service and can be started programmatically via the `link:../../jsdoc/shell_service-ShellService.html[ShellService]`
+Vert.x Shell is a Vert.x Service and can be started programmatically via the `link:../../jsdoc/module-vertx-shell-js_shell_service-ShellService.html[ShellService]`
 or deployed as a service.
 
 === Shell service
@@ -19,7 +19,7 @@ The shell can be started as a service directly either from the command line or a
 .Starting a shell service available via Telnet
 [source,subs="+attributes"]
 ----
-vertx run -conf '{"telnetOptions":{"port":5000}}' maven:io.vertx:vertx-shell:3.3.0-SNAPSHOT
+vertx run -conf '{"telnetOptions":{"port":5000}}' maven:io.vertx:vertx-shell:3.3.0.CR2
 ----
 
 or
@@ -32,7 +32,7 @@ keytool -genkey -keyalg RSA -keystore ssh.jks -keysize 2048 -validity 1095 -dnam
 # create the auth config
 echo user.admin=password > auth.properties
 # start the shell
-vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","password":"secret"},"authOptions":{"provider":"shiro","config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.3.0-SNAPSHOT
+vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","password":"secret"},"authOptions":{"provider":"shiro","config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.3.0.CR2
 ----
 
 or
@@ -44,7 +44,7 @@ or
 keytool -genkey -keyalg RSA -keystore keystore.jks -keysize 2048 -validity 1095 -dname CN=localhost -keypass secret -storepass secret
 # create the auth config
 echo user.admin=password > auth.properties
-vertx run -conf '{"httpOptions":{"port":8080,"ssl":true,"keyStoreOptions":{"path":"keystore.jks","password":"secret"},"authOptions":{"provider":""shiro,"config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.3.0-SNAPSHOT
+vertx run -conf '{"httpOptions":{"port":8080,"ssl":true,"keyStoreOptions":{"path":"keystore.jks","password":"secret"},"authOptions":{"provider":""shiro,"config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:3.3.0.CR2
 ----
 
 You can also deploy this service inside your own verticle:
@@ -114,11 +114,11 @@ vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
 ----
 
 NOTE: when Vert.x Shell is already on your classpath you can use `service:io.vertx.ext.shell` instead
-or `maven:io.vertx:vertx-shell:3.3.0-SNAPSHOT`
+or `maven:io.vertx:vertx-shell:3.3.0.CR2`
 
 === Programmatic service
 
-The `link:../../jsdoc/shell_service-ShellService.html[ShellService]` takes care of starting an instance of Vert.x Shell.
+The `link:../../jsdoc/module-vertx-shell-js_shell_service-ShellService.html[ShellService]` takes care of starting an instance of Vert.x Shell.
 
 Starting a shell service available via SSH:
 
@@ -134,7 +134,7 @@ var service = ShellService.create(vertx, {
       "password" : "wibble"
     },
     "authOptions" : {
-      "type" : 'PROPERTIES',
+      "type" : "PROPERTIES",
       "config" : {
         "properties_path" : "file:/path/to/my/auth.properties"
       }
@@ -508,8 +508,8 @@ Vert.x Shell, for instance Dropwizard Metrics.
 
 Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
 
-A command is created by the `link:../../jsdoc/command_builder-CommandBuilder.html#command[CommandBuilder.command]` method: the command process handler is called
-by the shell when the command is executed, this handler can be set with the `link:../../jsdoc/command_builder-CommandBuilder.html#processHandler[processHandler]`
+A command is created by the `link:../../jsdoc/module-vertx-shell-js_command_builder-CommandBuilder.html#command[CommandBuilder.command]` method: the command process handler is called
+by the shell when the command is executed, this handler can be set with the `link:../../jsdoc/module-vertx-shell-js_command_builder-CommandBuilder.html#processHandler[processHandler]`
 method:
 
 [source,js]
@@ -533,20 +533,20 @@ registry.registerCommand(builder.build(vertx));
 
 ----
 
-After a command is created, it needs to be registed to a `link:../../jsdoc/command_registry-CommandRegistry.html[CommandRegistry]`. The
+After a command is created, it needs to be registed to a `link:../../jsdoc/module-vertx-shell-js_command_registry-CommandRegistry.html[CommandRegistry]`. The
 command registry holds all the commands for a Vert.x instance.
 
-A command is registered until it is unregistered with the `link:../../jsdoc/command_registry-CommandRegistry.html#unregisterCommand[unregisterCommand]`.
+A command is registered until it is unregistered with the `link:../../jsdoc/module-vertx-shell-js_command_registry-CommandRegistry.html#unregisterCommand[unregisterCommand]`.
 When a command is registered from a Verticle, this command is unregistered when this verticle is undeployed.
 
 NOTE: Command callbacks are invoked in the `io.vertx.core.Context` when the command is registered in the
 registry. Keep this in mind if you maintain state in a command.
 
-The `link:../../jsdoc/command_process-CommandProcess.html[CommandProcess]` object can be used for interacting with the shell.
+The `link:../../jsdoc/module-vertx-shell-js_command_process-CommandProcess.html[CommandProcess]` object can be used for interacting with the shell.
 
 === Command arguments
 
-The `link:../../jsdoc/command_process-CommandProcess.html#args[args]` returns the command arguments:
+The `link:../../jsdoc/module-vertx-shell-js_command_process-CommandProcess.html#args[args]` returns the command arguments:
 
 [source,js]
 ----
@@ -562,7 +562,7 @@ command.processHandler(function (process) {
 
 ----
 
-Besides it is also possible to create commands using `link:../../jsdoc/cli-CLI.html[Vert.x CLI]`: it makes easier to
+Besides it is also possible to create commands using `link:../../jsdoc/module-vertx-js_cli-CLI.html[Vert.x CLI]`: it makes easier to
 write command line argument parsing:
 
 - _option_ and _argument_ parsing
@@ -614,15 +614,15 @@ command.processHandler(function (process) {
 
 ----
 
-When the command executes the `link:../../jsdoc/command_process-CommandProcess.html[process]` is provided for interacting
-with the shell. A `link:../../jsdoc/command_process-CommandProcess.html[CommandProcess]` extends `link:../../jsdoc/tty-Tty.html[Tty]`
+When the command executes the `link:../../jsdoc/module-vertx-shell-js_command_process-CommandProcess.html[process]` is provided for interacting
+with the shell. A `link:../../jsdoc/module-vertx-shell-js_command_process-CommandProcess.html[CommandProcess]` extends `link:../../jsdoc/module-vertx-shell-js_tty-Tty.html[Tty]`
 which is used for interacting with the terminal.
 
 === Terminal usage
 
 ==== terminal I/O
 
-The `link:../../jsdoc/tty-Tty.html#stdinHandler[stdinHandler]` handler is used to be notified when the terminal
+The `link:../../jsdoc/module-vertx-shell-js_tty-Tty.html#stdinHandler[stdinHandler]` handler is used to be notified when the terminal
 receives data, e.g the user uses his keyboard:
 
 [source,js]
@@ -633,7 +633,7 @@ tty.stdinHandler(function (data) {
 
 ----
 
-A command can use the `link:../../jsdoc/tty-Tty.html#write[write]` to write to the standard output.
+A command can use the `link:../../jsdoc/module-vertx-shell-js_tty-Tty.html#write[write]` to write to the standard output.
 
 [source,js]
 ----
@@ -643,8 +643,8 @@ tty.write("Hello World");
 
 ==== Terminal size
 
-The current terminal size can be obtained using `link:../../jsdoc/tty-Tty.html#width[width]` and
-`link:../../jsdoc/tty-Tty.html#height[height]`.
+The current terminal size can be obtained using `link:../../jsdoc/module-vertx-shell-js_tty-Tty.html#width[width]` and
+`link:../../jsdoc/module-vertx-shell-js_tty-Tty.html#height[height]`.
 
 [source,js]
 ----
@@ -654,9 +654,9 @@ tty.write("Current terminal size: (" + tty.width() + ", " + tty.height() + ")");
 
 ==== Resize event
 
-When the size of the terminal changes the `link:../../jsdoc/tty-Tty.html#resizehandler[resizehandler]`
-is called, the new terminal size can be obtained with `link:../../jsdoc/tty-Tty.html#width[width]` and
-`link:../../jsdoc/tty-Tty.html#height[height]`.
+When the size of the terminal changes the `link:../../jsdoc/module-vertx-shell-js_tty-Tty.html#resizehandler[resizehandler]`
+is called, the new terminal size can be obtained with `link:../../jsdoc/module-vertx-shell-js_tty-Tty.html#width[width]` and
+`link:../../jsdoc/module-vertx-shell-js_tty-Tty.html#height[height]`.
 
 [source,js]
 ----
@@ -668,7 +668,7 @@ tty.resizehandler(function (v) {
 
 ==== Terminal type
 
-The terminal type is useful for sending escape codes to the remote terminal: `link:../../jsdoc/tty-Tty.html#type[type]`
+The terminal type is useful for sending escape codes to the remote terminal: `link:../../jsdoc/module-vertx-shell-js_tty-Tty.html#type[type]`
 returns the current terminal type, it can be null if the terminal has not advertised the value.
 
 [source,js]
@@ -680,7 +680,7 @@ console.log("terminal type : " + tty.type());
 === Shell session
 
 The shell is a connected service that naturally maintains a session with the client, this session can be
-used in commands to scope data. A command can get the session with `link:../../jsdoc/command_process-CommandProcess.html#session[session]`:
+used in commands to scope data. A command can get the session with `link:../../jsdoc/module-vertx-shell-js_command_process-CommandProcess.html#session[session]`:
 
 [source,js]
 ----
@@ -699,7 +699,7 @@ command.processHandler(function (process) {
 
 === Process termination
 
-Calling `link:../../jsdoc/command_process-CommandProcess.html#end[end]` ends the current process. It can be called directly
+Calling `link:../../jsdoc/module-vertx-shell-js_command_process-CommandProcess.html#end[end]` ends the current process. It can be called directly
 in the invocation of the command handler or any time later:
 
 [source,js]
@@ -723,7 +723,7 @@ A command can subscribe to a few process events.
 
 ==== Interrupt event
 
-The `link:../../jsdoc/command_process-CommandProcess.html#interruptHandler[interruptHandler]` is called when the process
+The `link:../../jsdoc/module-vertx-shell-js_command_process-CommandProcess.html#interruptHandler[interruptHandler]` is called when the process
 is interrupted, this event is fired when the user press _Ctrl+C_ during the execution of a command. This handler can
 be used for interrupting commands _blocking_ the CLI and gracefully ending the command process:
 
@@ -751,7 +751,7 @@ will be delayed and will likely be handled by the shell, like printing a new lin
 
 ==== Suspend/resume events
 
-The `link:../../jsdoc/command_process-CommandProcess.html#suspendHandler[suspendHandler]` is called when the process
+The `link:../../jsdoc/module-vertx-shell-js_command_process-CommandProcess.html#suspendHandler[suspendHandler]` is called when the process
 is running and the user press _Ctrl+Z_, the command is _suspended_:
 
 - the command can receive the suspend event when it has registered an handler for this event
@@ -759,7 +759,7 @@ is running and the user press _Ctrl+Z_, the command is _suspended_:
 - the shell prompt the user for input
 - the command can receive interrupts event or end events
 
-The `link:../../jsdoc/command_process-CommandProcess.html#resumeHandler[resumeHandler]` is called when the process
+The `link:../../jsdoc/module-vertx-shell-js_command_process-CommandProcess.html#resumeHandler[resumeHandler]` is called when the process
 is resumed, usually when the user types _fg_:
 
 - the command can receive the resume event when it has registered an handler for this event
@@ -784,7 +784,7 @@ command.processHandler(function (process) {
 
 ==== End events
 
-The `link:../../jsdoc/command_process-CommandProcess.html#endHandler[endHandler]` (io.vertx.core.Handler)} is
+The `link:../../jsdoc/module-vertx-shell-js_command_process-CommandProcess.html#endHandler[endHandler]` (io.vertx.core.Handler)} is
 called when the process is running or suspended and the command terminates, for instance the shell session is closed,
 the command is _terminated_.
 
@@ -800,7 +800,7 @@ command.processHandler(function (process) {
 
 ----
 
-The end handler is called even when the command invokes `link:../../jsdoc/command_process-CommandProcess.html#end[end]`.
+The end handler is called even when the command invokes `link:../../jsdoc/module-vertx-shell-js_command_process-CommandProcess.html#end[end]`.
 
 This handler is useful for cleaning up resources upon command termination, for instance closing a client or a timer.
 
@@ -808,22 +808,22 @@ This handler is useful for cleaning up resources upon command termination, for i
 
 A command can provide a completion handler when it wants to provide contextual command line interface completion.
 
-Like the process handler, the `link:../../jsdoc/command_builder-CommandBuilder.html#completionHandler[completion
+Like the process handler, the `link:../../jsdoc/module-vertx-shell-js_command_builder-CommandBuilder.html#completionHandler[completion
 handler]` is non blocking because the implementation may use Vert.x services, e.g the file system.
 
-The `link:../../jsdoc/completion-Completion.html#lineTokens[lineTokens]` returns a list of `link:../../jsdoc/cli_token-CliToken.html[tokens]`
+The `link:../../jsdoc/module-vertx-shell-js_completion-Completion.html#lineTokens[lineTokens]` returns a list of `link:../../jsdoc/module-vertx-shell-js_cli_token-CliToken.html[tokens]`
 from the beginning of the line to the cursor position. The list can be empty if the cursor when the cursor is at the
 beginning of the line.
 
-The `link:../../jsdoc/completion-Completion.html#rawLine[rawLine]` returns the current completed from the beginning
+The `link:../../jsdoc/module-vertx-shell-js_completion-Completion.html#rawLine[rawLine]` returns the current completed from the beginning
 of the line to the cursor position, in raw format, i.e without any char escape performed.
 
-Completion ends with a call to `link:../../jsdoc/completion-Completion.html#complete[complete]`.
+Completion ends with a call to `link:../../jsdoc/module-vertx-shell-js_completion-Completion.html#complete[complete]`.
 
 == Shell server
 
 The Shell service is a convenient facade for starting a preconfigured shell either programmatically or as a Vert.x service.
-When more flexibility is needed, a `link:../../jsdoc/shell_server-ShellServer.html[ShellServer]` can be used instead of the service.
+When more flexibility is needed, a `link:../../jsdoc/module-vertx-shell-js_shell_server-ShellServer.html[ShellServer]` can be used instead of the service.
 
 For instance the shell http term can be configured to use an existing router instead of starting its own http server.
 
@@ -862,7 +862,7 @@ server.listen();
 
 Besides, the shell server can also be used for creating in process shell session: it provides a programmatic interactive shell.
 
-In process shell session can be created with `link:../../jsdoc/shell_server-ShellServer.html#createShell[createShell]`:
+In process shell session can be created with `link:../../jsdoc/module-vertx-shell-js_shell_server-ShellServer.html#createShell[createShell]`:
 
 [source,js]
 ----
@@ -899,30 +899,30 @@ job.statusUpdateHandler(function (status) {
 
 ----
 
-The `link:../../jsdoc/pty-Pty.html[Pty]` pseudo terminal is the main interface for interacting with the command
+The `link:../../jsdoc/module-vertx-shell-js_pty-Pty.html[Pty]` pseudo terminal is the main interface for interacting with the command
 when it's running:
 
 - uses standard input/output for writing or reading strings
 - resize the terminal
 
-The `link:../../jsdoc/job_controller-JobController.html#close[close]` closes the shell, it will terminate all jobs in the current shell
+The `link:../../jsdoc/module-vertx-shell-js_job_controller-JobController.html#close[close]` closes the shell, it will terminate all jobs in the current shell
 session.
 
 == Terminal servers
 
 Vert.x Shell also provides bare terminal servers for those who need to write pure terminal applications.
 
-A `link:../../jsdoc/term-Term.html[Term]` handler must be set on a term server before starting it. This handler will
+A `link:../../jsdoc/module-vertx-shell-js_term-Term.html[Term]` handler must be set on a term server before starting it. This handler will
 handle each term when the user connects.
 
 An `link:../../vertx-auth-common/dataobjects.html#AuthOptions[AuthOptions]` can be set on `link:../dataobjects.html#SSHTermOptions[SSHTermOptions]` and `link:../dataobjects.html#HttpTermOptions[HttpTermOptions]`.
-Alternatively, an `link:../../jsdoc/auth_provider-AuthProvider.html[AuthProvider]` can be `link:../../jsdoc/term_server-TermServer.html#authProvider[set]`
+Alternatively, an `link:../../jsdoc/module-vertx-auth-common-js_auth_provider-AuthProvider.html[AuthProvider]` can be `link:../../jsdoc/module-vertx-shell-js_term_server-TermServer.html#authProvider[set]`
 directly on the term server before starting it.
 
 === SSH term
 
-The terminal server `link:../../jsdoc/term-Term.html[Term]` handler accepts incoming terminal connections.
-When a remote terminal connects, the `link:../../jsdoc/term-Term.html[Term]` can be used to interact with connected
+The terminal server `link:../../jsdoc/module-vertx-shell-js_term-Term.html[Term]` handler accepts incoming terminal connections.
+When a remote terminal connects, the `link:../../jsdoc/module-vertx-shell-js_term-Term.html[Term]` can be used to interact with connected
 terminal.
 
 [source,js]
@@ -941,7 +941,7 @@ server.listen();
 
 ----
 
-The `link:../../jsdoc/term-Term.html[Term]` is also a `link:../../jsdoc/tty-Tty.html[Tty]`, this section explains
+The `link:../../jsdoc/module-vertx-shell-js_term-Term.html[Term]` is also a `link:../../jsdoc/module-vertx-shell-js_tty-Tty.html[Tty]`, this section explains
 how to use the tty.
 
 === Telnet term
@@ -964,7 +964,7 @@ server.listen();
 
 === HTTP term
 
-The `link:../../jsdoc/term_server-TermServer.html#createHttpTermServer[TermServer.createHttpTermServer]` method creates an HTTP term server, built
+The `link:../../jsdoc/module-vertx-shell-js_term_server-TermServer.html#createHttpTermServer[TermServer.createHttpTermServer]` method creates an HTTP term server, built
 on top of Vert.x Web using the SockJS protocol.
 
 [source,js]
@@ -983,7 +983,7 @@ server.listen();
 
 ----
 
-An HTTP term can start its own HTTP server, or it can reuse an existing Vert.x Web `link:../../jsdoc/router-Router.html[Router]`.
+An HTTP term can start its own HTTP server, or it can reuse an existing Vert.x Web `link:../../jsdoc/module-vertx-web-js_router-Router.html[Router]`.
 
 The shell can be found at `/shell.html`.
 
@@ -1071,7 +1071,7 @@ The shell service discovery using the service loader mechanism:
 my.CustomCommands
 ----
 
-This is only valid for the `link:../../jsdoc/shell_service-ShellService.html[ShellService]`. `link:../../jsdoc/shell_server-ShellServer.html[ShellServer]`
+This is only valid for the `link:../../jsdoc/module-vertx-shell-js_shell_service-ShellService.html[ShellService]`. `link:../../jsdoc/module-vertx-shell-js_shell_server-ShellServer.html[ShellServer]`
 don't use this mechanism.
 
 == Command pack

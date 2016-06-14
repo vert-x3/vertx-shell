@@ -54,7 +54,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createSSHTermServer(Vertx vertx, Map<String, Object> options) {
-    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createSSHTermServer(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, options != null ? new io.vertx.ext.shell.term.SSHTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createSSHTermServer(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, options != null ? new io.vertx.ext.shell.term.SSHTermOptions(io.vertx.lang.groovy.InternalHelper.toJsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
     return ret;
   }
   /**
@@ -73,7 +73,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createTelnetTermServer(Vertx vertx, Map<String, Object> options) {
-    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createTelnetTermServer(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, options != null ? new io.vertx.ext.shell.term.TelnetTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createTelnetTermServer(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, options != null ? new io.vertx.ext.shell.term.TelnetTermOptions(io.vertx.lang.groovy.InternalHelper.toJsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
     return ret;
   }
   /**
@@ -92,7 +92,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createHttpTermServer(Vertx vertx, Map<String, Object> options) {
-    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createHttpTermServer(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, options != null ? new io.vertx.ext.shell.term.HttpTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createHttpTermServer(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, options != null ? new io.vertx.ext.shell.term.HttpTermOptions(io.vertx.lang.groovy.InternalHelper.toJsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
     return ret;
   }
   /**
@@ -113,7 +113,7 @@ public class TermServer {
    * @return the term server
    */
   public static TermServer createHttpTermServer(Vertx vertx, Router router, Map<String, Object> options) {
-    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createHttpTermServer(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, router != null ? (io.vertx.ext.web.Router)router.getDelegate() : null, options != null ? new io.vertx.ext.shell.term.HttpTermOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.term.TermServer.createHttpTermServer(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, router != null ? (io.vertx.ext.web.Router)router.getDelegate() : null, options != null ? new io.vertx.ext.shell.term.HttpTermOptions(io.vertx.lang.groovy.InternalHelper.toJsonObject(options)) : null), io.vertx.groovy.ext.shell.term.TermServer.class);
     return ret;
   }
   /**

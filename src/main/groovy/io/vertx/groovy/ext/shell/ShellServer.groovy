@@ -52,7 +52,7 @@ public class ShellServer {
    * @return the created shell server
    */
   public static ShellServer create(Vertx vertx, Map<String, Object> options) {
-    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.ShellServer.create(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, options != null ? new io.vertx.ext.shell.ShellServerOptions(new io.vertx.core.json.JsonObject(options)) : null), io.vertx.groovy.ext.shell.ShellServer.class);
+    def ret = InternalHelper.safeCreate(io.vertx.ext.shell.ShellServer.create(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null, options != null ? new io.vertx.ext.shell.ShellServerOptions(io.vertx.lang.groovy.InternalHelper.toJsonObject(options)) : null), io.vertx.groovy.ext.shell.ShellServer.class);
     return ret;
   }
   /**
