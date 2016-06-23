@@ -93,11 +93,7 @@ public class Tty {
    * @return this object
    */
   public Tty resizehandler(Handler<Void> handler) { 
-    delegate.resizehandler(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        handler.handle(event);
-      }
-    });
+    delegate.resizehandler(handler);
     return this;
   }
 

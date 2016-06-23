@@ -43,11 +43,7 @@ public class Term extends Tty {
   }
 
   public Term resizehandler(Handler<Void> handler) { 
-    ((io.vertx.ext.shell.term.Term) delegate).resizehandler(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        handler.handle(event);
-      }
-    });
+    ((io.vertx.ext.shell.term.Term) delegate).resizehandler(handler);
     return this;
   }
 
@@ -139,11 +135,7 @@ public class Term extends Tty {
    * @return a reference to this, so the API can be used fluently
    */
   public Term closeHandler(Handler<Void> handler) { 
-    delegate.closeHandler(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        handler.handle(event);
-      }
-    });
+    delegate.closeHandler(handler);
     return this;
   }
 

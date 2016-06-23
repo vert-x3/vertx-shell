@@ -128,15 +128,7 @@ public class ShellServer {
    * @return 
    */
   public ShellServer listen(Handler<AsyncResult<Void>> listenHandler) { 
-    delegate.listen(new Handler<AsyncResult<java.lang.Void>>() {
-      public void handle(AsyncResult<java.lang.Void> ar) {
-        if (ar.succeeded()) {
-          listenHandler.handle(io.vertx.core.Future.succeededFuture(ar.result()));
-        } else {
-          listenHandler.handle(io.vertx.core.Future.failedFuture(ar.cause()));
-        }
-      }
-    });
+    delegate.listen(listenHandler);
     return this;
   }
 
@@ -162,15 +154,7 @@ public class ShellServer {
    * @param completionHandler handler for getting notified when service is stopped
    */
   public void close(Handler<AsyncResult<Void>> completionHandler) { 
-    delegate.close(new Handler<AsyncResult<java.lang.Void>>() {
-      public void handle(AsyncResult<java.lang.Void> ar) {
-        if (ar.succeeded()) {
-          completionHandler.handle(io.vertx.core.Future.succeededFuture(ar.result()));
-        } else {
-          completionHandler.handle(io.vertx.core.Future.failedFuture(ar.cause()));
-        }
-      }
-    });
+    delegate.close(completionHandler);
   }
 
   /**

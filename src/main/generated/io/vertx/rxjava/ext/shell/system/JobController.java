@@ -84,11 +84,7 @@ public class JobController {
    * @param completionHandler 
    */
   public void close(Handler<Void> completionHandler) { 
-    delegate.close(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        completionHandler.handle(event);
-      }
-    });
+    delegate.close(completionHandler);
   }
 
   /**

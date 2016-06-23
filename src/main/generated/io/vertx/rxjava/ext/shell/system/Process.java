@@ -136,11 +136,7 @@ public class Process {
    * @param completionHandler handler called after process callback
    */
   public void run(Handler<Void> completionHandler) { 
-    delegate.run(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        completionHandler.handle(event);
-      }
-    });
+    delegate.run(completionHandler);
   }
 
   /**
@@ -149,11 +145,7 @@ public class Process {
    * @param completionHandler handler called after process callback
    */
   public void run(boolean foregraound, Handler<Void> completionHandler) { 
-    delegate.run(foregraound, new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        completionHandler.handle(event);
-      }
-    });
+    delegate.run(foregraound, completionHandler);
   }
 
   /**
@@ -171,11 +163,7 @@ public class Process {
    * @return true if the process caught the signal
    */
   public boolean interrupt(Handler<Void> completionHandler) { 
-    boolean ret = delegate.interrupt(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        completionHandler.handle(event);
-      }
-    });
+    boolean ret = delegate.interrupt(completionHandler);
     return ret;
   }
 
@@ -199,11 +187,7 @@ public class Process {
    * @param completionHandler handler called after resume callback
    */
   public void resume(Handler<Void> completionHandler) { 
-    delegate.resume(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        completionHandler.handle(event);
-      }
-    });
+    delegate.resume(completionHandler);
   }
 
   /**
@@ -212,11 +196,7 @@ public class Process {
    * @param completionHandler handler called after resume callback
    */
   public void resume(boolean foreground, Handler<Void> completionHandler) { 
-    delegate.resume(foreground, new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        completionHandler.handle(event);
-      }
-    });
+    delegate.resume(foreground, completionHandler);
   }
 
   /**
@@ -231,11 +211,7 @@ public class Process {
    * @param completionHandler handler called after suspend callback
    */
   public void suspend(Handler<Void> completionHandler) { 
-    delegate.suspend(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        completionHandler.handle(event);
-      }
-    });
+    delegate.suspend(completionHandler);
   }
 
   /**
@@ -250,11 +226,7 @@ public class Process {
    * @param completionHandler handler called after end callback
    */
   public void terminate(Handler<Void> completionHandler) { 
-    delegate.terminate(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        completionHandler.handle(event);
-      }
-    });
+    delegate.terminate(completionHandler);
   }
 
   /**
@@ -269,11 +241,7 @@ public class Process {
    * @param completionHandler handler called after background callback
    */
   public void toBackground(Handler<Void> completionHandler) { 
-    delegate.toBackground(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        completionHandler.handle(event);
-      }
-    });
+    delegate.toBackground(completionHandler);
   }
 
   /**
@@ -288,11 +256,7 @@ public class Process {
    * @param completionHandler handler called after foreground callback
    */
   public void toForeground(Handler<Void> completionHandler) { 
-    delegate.toForeground(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        completionHandler.handle(event);
-      }
-    });
+    delegate.toForeground(completionHandler);
   }
 
   private Tty cached_0;

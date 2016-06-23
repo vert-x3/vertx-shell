@@ -162,15 +162,7 @@ public class CommandRegistry extends CommandResolver {
    * @return a reference to this, so the API can be used fluently
    */
   public CommandRegistry unregisterCommand(String commandName, Handler<AsyncResult<Void>> completionHandler) { 
-    delegate.unregisterCommand(commandName, new Handler<AsyncResult<java.lang.Void>>() {
-      public void handle(AsyncResult<java.lang.Void> ar) {
-        if (ar.succeeded()) {
-          completionHandler.handle(io.vertx.core.Future.succeededFuture(ar.result()));
-        } else {
-          completionHandler.handle(io.vertx.core.Future.failedFuture(ar.cause()));
-        }
-      }
-    });
+    delegate.unregisterCommand(commandName, completionHandler);
     return this;
   }
 

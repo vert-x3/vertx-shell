@@ -112,11 +112,7 @@ public class CommandProcess extends Tty {
    * @return this command
    */
   public CommandProcess interruptHandler(Handler<Void> handler) { 
-    delegate.interruptHandler(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        handler.handle(event);
-      }
-    });
+    delegate.interruptHandler(handler);
     return this;
   }
 
@@ -127,11 +123,7 @@ public class CommandProcess extends Tty {
    * @return this command
    */
   public CommandProcess suspendHandler(Handler<Void> handler) { 
-    delegate.suspendHandler(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        handler.handle(event);
-      }
-    });
+    delegate.suspendHandler(handler);
     return this;
   }
 
@@ -142,11 +134,7 @@ public class CommandProcess extends Tty {
    * @return this command
    */
   public CommandProcess resumeHandler(Handler<Void> handler) { 
-    delegate.resumeHandler(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        handler.handle(event);
-      }
-    });
+    delegate.resumeHandler(handler);
     return this;
   }
 
@@ -157,11 +145,7 @@ public class CommandProcess extends Tty {
    * @return a reference to this, so the API can be used fluently
    */
   public CommandProcess endHandler(Handler<Void> handler) { 
-    delegate.endHandler(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        handler.handle(event);
-      }
-    });
+    delegate.endHandler(handler);
     return this;
   }
 
@@ -181,11 +165,7 @@ public class CommandProcess extends Tty {
    * @return this command
    */
   public CommandProcess backgroundHandler(Handler<Void> handler) { 
-    delegate.backgroundHandler(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        handler.handle(event);
-      }
-    });
+    delegate.backgroundHandler(handler);
     return this;
   }
 
@@ -195,20 +175,12 @@ public class CommandProcess extends Tty {
    * @return this command
    */
   public CommandProcess foregroundHandler(Handler<Void> handler) { 
-    delegate.foregroundHandler(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        handler.handle(event);
-      }
-    });
+    delegate.foregroundHandler(handler);
     return this;
   }
 
   public CommandProcess resizehandler(Handler<Void> handler) { 
-    ((io.vertx.ext.shell.command.CommandProcess) delegate).resizehandler(new Handler<java.lang.Void>() {
-      public void handle(java.lang.Void event) {
-        handler.handle(event);
-      }
-    });
+    ((io.vertx.ext.shell.command.CommandProcess) delegate).resizehandler(handler);
     return this;
   }
 

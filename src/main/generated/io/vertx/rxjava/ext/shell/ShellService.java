@@ -79,15 +79,7 @@ public class ShellService {
    * @param startHandler handler for getting notified when service is started
    */
   public void start(Handler<AsyncResult<Void>> startHandler) { 
-    delegate.start(new Handler<AsyncResult<java.lang.Void>>() {
-      public void handle(AsyncResult<java.lang.Void> ar) {
-        if (ar.succeeded()) {
-          startHandler.handle(io.vertx.core.Future.succeededFuture(ar.result()));
-        } else {
-          startHandler.handle(io.vertx.core.Future.failedFuture(ar.cause()));
-        }
-      }
-    });
+    delegate.start(startHandler);
   }
 
   /**
@@ -121,15 +113,7 @@ public class ShellService {
    * @param stopHandler handler for getting notified when service is stopped
    */
   public void stop(Handler<AsyncResult<Void>> stopHandler) { 
-    delegate.stop(new Handler<AsyncResult<java.lang.Void>>() {
-      public void handle(AsyncResult<java.lang.Void> ar) {
-        if (ar.succeeded()) {
-          stopHandler.handle(io.vertx.core.Future.succeededFuture(ar.result()));
-        } else {
-          stopHandler.handle(io.vertx.core.Future.failedFuture(ar.cause()));
-        }
-      }
-    });
+    delegate.stop(stopHandler);
   }
 
   /**

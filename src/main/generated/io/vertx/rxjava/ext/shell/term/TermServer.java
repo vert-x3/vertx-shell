@@ -219,15 +219,7 @@ public class TermServer {
    * @param completionHandler the handler to be notified when the term server is closed
    */
   public void close(Handler<AsyncResult<Void>> completionHandler) { 
-    delegate.close(new Handler<AsyncResult<java.lang.Void>>() {
-      public void handle(AsyncResult<java.lang.Void> ar) {
-        if (ar.succeeded()) {
-          completionHandler.handle(io.vertx.core.Future.succeededFuture(ar.result()));
-        } else {
-          completionHandler.handle(io.vertx.core.Future.failedFuture(ar.cause()));
-        }
-      }
-    });
+    delegate.close(completionHandler);
   }
 
   /**
