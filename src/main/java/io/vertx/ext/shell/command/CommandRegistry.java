@@ -38,6 +38,7 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.impl.VertxInternal;
 import io.vertx.ext.shell.command.impl.CommandRegistryImpl;
 
 import java.util.List;
@@ -70,7 +71,7 @@ public interface CommandRegistry extends CommandResolver {
    * @return the created registry
    */
   static CommandRegistry create(Vertx vertx) {
-    return new CommandRegistryImpl(vertx);
+    return new CommandRegistryImpl((VertxInternal) vertx);
   }
 
   /**

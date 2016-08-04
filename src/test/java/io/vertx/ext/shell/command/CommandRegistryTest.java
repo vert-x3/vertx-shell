@@ -35,9 +35,6 @@ package io.vertx.ext.shell.command;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.command.Command;
-import io.vertx.ext.shell.command.CommandBuilder;
-import io.vertx.ext.shell.command.CommandRegistry;
 import io.vertx.ext.shell.command.impl.CommandRegistryImpl;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
@@ -63,14 +60,9 @@ public class CommandRegistryTest {
   CommandRegistry registry;
 
   @Before
-  public void before(TestContext context) throws Exception {
+  public void before() throws Exception {
     vertx = Vertx.vertx();
     registry = CommandRegistry.getShared(vertx);
-    long now = System.currentTimeMillis();
-    while (vertx.deploymentIDs().size() == 0) {
-      context.assertTrue(System.currentTimeMillis() - now < 2000);
-      Thread.sleep(1);
-    }
   }
 
   @After
@@ -105,15 +97,7 @@ public class CommandRegistryTest {
   @Test
   public void testCloseRegistryOnVertxClose(TestContext context) {
     Vertx vertx = Vertx.vertx();
-    int size = vertx.deploymentIDs().size();
     CommandRegistryImpl registry = (CommandRegistryImpl) CommandRegistry.getShared(vertx);
-    while (vertx.deploymentIDs().size() < size + 1) {
-      try {
-        Thread.sleep(10);
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-      }
-    }
     context.assertFalse(registry.isClosed());
     vertx.close(context.asyncAssertSuccess(v -> {
       context.assertTrue(registry.isClosed());
@@ -152,13 +136,12 @@ public class CommandRegistryTest {
   @Test
   public void testUndeployCommands(TestContext context) throws Exception {
     Async async = context.async();
-    Set<String> beforeIds = new HashSet<>(vertx.deploymentIDs());
     registry.registerCommands(
         Arrays.asList(CommandBuilder.command("a").build(vertx), CommandBuilder.command("b").build(vertx)),
         context.asyncAssertSuccess(list -> async.complete()));
     async.awaitSuccess(2000);
     Set<String> afterIds = new HashSet<>(vertx.deploymentIDs());
-    context.assertTrue(afterIds.removeAll(beforeIds));
+    System.out.println(afterIds);
     context.assertEquals(1, afterIds.size());
     String deploymentId = afterIds.iterator().next();
     Async async2 = context.async();

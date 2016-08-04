@@ -34,9 +34,11 @@ package io.vertx.ext.shell.command.impl;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
+import io.vertx.core.Closeable;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.impl.VertxInternal;
 import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandRegistry;
@@ -57,37 +59,30 @@ public class CommandRegistryImpl implements CommandRegistry {
   private static Map<Vertx, CommandRegistryImpl> registries = new ConcurrentHashMap<>();
 
   public static CommandRegistry get(Vertx vertx) {
-    return registries.computeIfAbsent(vertx, v -> {
-      CommandRegistryImpl commandRegistry = new CommandRegistryImpl(vertx);
-      // Static registry should be closed when Vert.x closes
-      vertx.deployVerticle(new AbstractVerticle() {
-        @Override
-        public void start() throws Exception {
-          super.start();
-        }
-        @Override
-        public void stop() throws Exception {
-          commandRegistry.close();
-          registries.remove(vertx);
-        }
-      }, ar -> {
-        if (!ar.succeeded()) {
-          registries.remove(vertx);
-        }
-      });
-      return commandRegistry;
-    });
+    return registries.computeIfAbsent(vertx, v -> new CommandRegistryImpl((VertxInternal) vertx));
   }
 
-  final Vertx vertx;
+  final VertxInternal vertx;
   final ConcurrentHashMap<String, CommandRegistration> commandMap = new ConcurrentHashMap<>();
+  final Closeable hook;
   private volatile boolean closed;
 
-  public CommandRegistryImpl(Vertx vertx) {
+  public CommandRegistryImpl(VertxInternal vertx) {
     this.vertx = vertx;
+    hook = completionHandler -> {
+      try {
+        doClose();
+        registries.remove(vertx);
+      } catch (Exception e) {
+        completionHandler.handle(Future.failedFuture(e));
+        return;
+      }
+      completionHandler.handle(Future.succeededFuture());
+    };
+    vertx.addCloseHook(hook);
   }
 
-  public void close() {
+  private void doClose() {
     closed = true;
   }
 
