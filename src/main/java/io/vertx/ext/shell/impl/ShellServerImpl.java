@@ -41,9 +41,12 @@ import io.vertx.ext.shell.ShellServer;
 import io.vertx.ext.shell.ShellServerOptions;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.CommandResolver;
+import io.vertx.ext.shell.system.Process;
 import io.vertx.ext.shell.system.impl.InternalCommandManager;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
+import io.vertx.ext.shell.term.Tty;
+import io.vertx.ext.shell.term.impl.SSHServer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -167,6 +170,39 @@ public class ShellServerImpl implements ShellServer {
       }
     };
     toStart.forEach(termServer -> {
+      if (termServer instanceof SSHServer) {
+        ((SSHServer)termServer).setExecHandler(exec -> {
+          Process process = commandManager.createProcess(exec.command());
+          process.setTty(new Tty() {
+            @Override
+            public String type() {
+              return null;
+            }
+            @Override
+            public int width() {
+              return -1;
+            }
+            @Override
+            public int height() {
+              return -1;
+            }
+            @Override
+            public Tty stdinHandler(Handler<String> handler) {
+              return this;
+            }
+            @Override
+            public Tty write(String data) {
+              return this;
+            }
+            @Override
+            public Tty resizehandler(Handler<Void> handler) {
+              return null;
+            }
+          });
+          process.terminatedHandler(exec::end);
+          process.run(false, done -> {});
+        });
+      }
       termServer.termHandler(this::handleTerm);
       termServer.listen(handler);
     });
