@@ -183,10 +183,9 @@ public class SSHTermServer implements TermServer {
           throw new VertxException("No authenticator");
         }
 
-        Context context = vertx.getOrCreateContext();
         nativeServer.setPasswordAuthenticator((username, userpass, session) -> {
           AsyncAuth auth = new AsyncAuth();
-          context.runOnContext(v -> {
+          listenContext.runOnContext(v -> {
             authProvider.authenticate(new JsonObject().put("username", username).put("password", userpass), ar -> {
               auth.setAuthed(ar.succeeded());
             });
