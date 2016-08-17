@@ -34,7 +34,6 @@ public class JobController {
   }
   /**
    * @return the current foreground job
-   * @return 
    */
   public Job foregroundJob() {
     def ret = InternalHelper.safeCreate(delegate.foregroundJob(), io.vertx.groovy.ext.shell.system.Job.class);
@@ -42,7 +41,6 @@ public class JobController {
   }
   /**
    * @return the active jobs
-   * @return 
    */
   public Set<Job> jobs() {
     def ret = (Set)delegate.jobs()?.collect({InternalHelper.safeCreate(it, io.vertx.groovy.ext.shell.system.Job.class)}) as Set;

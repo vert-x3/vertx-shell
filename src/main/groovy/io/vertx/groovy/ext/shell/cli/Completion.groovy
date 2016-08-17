@@ -35,7 +35,6 @@ public class Completion {
   }
   /**
    * @return the current Vert.x instance
-   * @return 
    */
   public Vertx vertx() {
     def ret = InternalHelper.safeCreate(delegate.vertx(), io.vertx.groovy.core.Vertx.class);
@@ -43,7 +42,6 @@ public class Completion {
   }
   /**
    * @return the shell current session, useful for accessing data like the current path for file completion, etc...
-   * @return 
    */
   public Session session() {
     def ret = InternalHelper.safeCreate(delegate.session(), io.vertx.groovy.ext.shell.session.Session.class);
@@ -51,7 +49,6 @@ public class Completion {
   }
   /**
    * @return the current line being completed in raw format, i.e without any char escape performed
-   * @return 
    */
   public String rawLine() {
     def ret = delegate.rawLine();
@@ -59,7 +56,6 @@ public class Completion {
   }
   /**
    * @return the current line being completed as preparsed tokens
-   * @return 
    */
   public List<CliToken> lineTokens() {
     def ret = (List)delegate.lineTokens()?.collect({InternalHelper.safeCreate(it, io.vertx.groovy.ext.shell.cli.CliToken.class)});

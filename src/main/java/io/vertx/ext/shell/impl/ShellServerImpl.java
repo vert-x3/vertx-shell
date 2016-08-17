@@ -173,34 +173,9 @@ public class ShellServerImpl implements ShellServer {
       if (termServer instanceof SSHServer) {
         ((SSHServer)termServer).setExecHandler(exec -> {
           Process process = commandManager.createProcess(exec.command());
-          process.setTty(new Tty() {
-            @Override
-            public String type() {
-              return null;
-            }
-            @Override
-            public int width() {
-              return -1;
-            }
-            @Override
-            public int height() {
-              return -1;
-            }
-            @Override
-            public Tty stdinHandler(Handler<String> handler) {
-              return this;
-            }
-            @Override
-            public Tty write(String data) {
-              return this;
-            }
-            @Override
-            public Tty resizehandler(Handler<Void> handler) {
-              return null;
-            }
-          });
+          process.setTty(exec);
           process.terminatedHandler(exec::end);
-          process.run(false, done -> {});
+          process.run(true, done -> {});
         });
       }
       termServer.termHandler(this::handleTerm);

@@ -52,11 +52,10 @@ var Shell = function(j_val) {
   };
 
   /**
-   @return the shell's job controller
 
    @public
 
-   @return {JobController}
+   @return {JobController} the shell's job controller
    */
   this.jobController = function() {
     var __args = arguments;
@@ -69,11 +68,10 @@ var Shell = function(j_val) {
   };
 
   /**
-   @return the current shell session
 
    @public
 
-   @return {Session}
+   @return {Session} the current shell session
    */
   this.session = function() {
     var __args = arguments;

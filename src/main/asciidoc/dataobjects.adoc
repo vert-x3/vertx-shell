@@ -16,7 +16,7 @@
 |[[alpnVersions]]`alpnVersions`|`Array of link:enums.html#HttpVersion[HttpVersion]`|-
 |[[authOptions]]`authOptions`|`link:dataobjects.html#AuthOptions[AuthOptions]`|
 +++
-@return the auth options
+
 +++
 |[[charset]]`charset`|`String`|
 +++
@@ -99,7 +99,7 @@ Set <code>vertxshell.js</code> resource to use.
 ^|Name | Type ^| Description
 |[[authOptions]]`authOptions`|`link:dataobjects.html#AuthOptions[AuthOptions]`|
 +++
-@return the auth options
+
 +++
 |[[defaultCharset]]`defaultCharset`|`String`|
 +++

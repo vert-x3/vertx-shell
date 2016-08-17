@@ -34,11 +34,10 @@ var Job = function(j_val) {
   var that = this;
 
   /**
-   @return the job id
 
    @public
 
-   @return {number}
+   @return {number} the job id
    */
   this.id = function() {
     var __args = arguments;
@@ -48,11 +47,10 @@ var Job = function(j_val) {
   };
 
   /**
-   @return the job exec status
 
    @public
 
-   @return {Object}
+   @return {Object} the job exec status
    */
   this.status = function() {
     var __args = arguments;
@@ -62,11 +60,10 @@ var Job = function(j_val) {
   };
 
   /**
-   @return when the job was last stopped
 
    @public
 
-   @return {number}
+   @return {number} when the job was last stopped
    */
   this.lastStopped = function() {
     var __args = arguments;
@@ -76,11 +73,10 @@ var Job = function(j_val) {
   };
 
   /**
-   @return the execution line of the job, i.e the shell command line that launched this job
 
    @public
 
-   @return {string}
+   @return {string} the execution line of the job, i.e the shell command line that launched this job
    */
   this.line = function() {
     var __args = arguments;
@@ -241,11 +237,10 @@ var Job = function(j_val) {
   };
 
   /**
-   @return the first process in the job
 
    @public
 
-   @return {Process}
+   @return {Process} the first process in the job
    */
   this.process = function() {
     var __args = arguments;

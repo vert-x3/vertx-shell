@@ -1,7 +1,6 @@
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.term.SignalHandler
 module VertxShell
-  #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
   class SignalHandler
     # @private
     # @param j_del [::VertxShell::SignalHandler] the java delegate

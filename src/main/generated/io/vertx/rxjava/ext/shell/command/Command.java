@@ -46,7 +46,6 @@ public class Command {
 
   /**
    * @return the command name
-   * @return 
    */
   public String name() { 
     String ret = delegate.name();
@@ -55,7 +54,6 @@ public class Command {
 
   /**
    * @return the command line interface, can be null
-   * @return 
    */
   public CLI cli() { 
     CLI ret = CLI.newInstance(delegate.cli());

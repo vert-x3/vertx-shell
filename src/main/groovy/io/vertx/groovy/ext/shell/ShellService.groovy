@@ -72,7 +72,6 @@ public class ShellService {
   }
   /**
    * @return the shell server
-   * @return 
    */
   public ShellServer server() {
     def ret = InternalHelper.safeCreate(delegate.server(), io.vertx.groovy.ext.shell.ShellServer.class);

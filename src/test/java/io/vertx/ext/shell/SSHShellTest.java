@@ -213,10 +213,15 @@ public class SSHShellTest extends SSHTestBase {
       context.assertEquals(-1, process.width());
       context.assertEquals(-1, process.height());
       context.assertEquals(Arrays.asList("arg1", "arg2"), process.args());
-      context.assertFalse(process.isForeground());
-      process.vertx().setTimer(10, id -> {
-        process.end(2);
+      context.assertTrue(process.isForeground());
+      StringBuilder input = new StringBuilder();
+      process.stdinHandler(data -> {
+        input.append(data);
+        if (input.toString().equals("the_input")) {
+          process.end(2);
+        }
       });
+      process.write("the_output");
     }).build(vertx));
     super.testExec(context);
     assertEquals(execCommand.get(), vertx);

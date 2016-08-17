@@ -48,7 +48,6 @@ public class CommandProcess extends Tty {
 
   /**
    * @return the current Vert.x instance
-   * @return 
    */
   public Vertx vertx() { 
     Vertx ret = Vertx.newInstance(delegate.vertx());
@@ -57,7 +56,6 @@ public class CommandProcess extends Tty {
 
   /**
    * @return the unparsed arguments tokens
-   * @return 
    */
   public List<CliToken> argsTokens() { 
     List<CliToken> ret = delegate.argsTokens().stream().map(elt -> CliToken.newInstance(elt)).collect(java.util.stream.Collectors.toList());
@@ -66,7 +64,6 @@ public class CommandProcess extends Tty {
 
   /**
    * @return the actual string arguments of the command
-   * @return 
    */
   public List<String> args() { 
     List<String> ret = delegate.args();
@@ -75,7 +72,6 @@ public class CommandProcess extends Tty {
 
   /**
    * @return the command line object or null
-   * @return 
    */
   public CommandLine commandLine() { 
     CommandLine ret = CommandLine.newInstance(delegate.commandLine());
@@ -84,7 +80,6 @@ public class CommandProcess extends Tty {
 
   /**
    * @return the shell session
-   * @return 
    */
   public Session session() { 
     Session ret = Session.newInstance(delegate.session());
@@ -93,7 +88,6 @@ public class CommandProcess extends Tty {
 
   /**
    * @return true if the command is running in foreground
-   * @return 
    */
   public boolean isForeground() { 
     boolean ret = delegate.isForeground();

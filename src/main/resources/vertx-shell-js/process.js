@@ -34,11 +34,10 @@ var Process = function(j_val) {
   var that = this;
 
   /**
-   @return the current process status
 
    @public
 
-   @return {Object}
+   @return {Object} the current process status
    */
   this.status = function() {
     var __args = arguments;
@@ -48,11 +47,10 @@ var Process = function(j_val) {
   };
 
   /**
-   @return the process exit code when the status is  otherwise <code>null</code>
 
    @public
 
-   @return {number}
+   @return {number} the process exit code when the status is  otherwise <code>null</code>
    */
   this.exitCode = function() {
     var __args = arguments;
@@ -77,11 +75,10 @@ var Process = function(j_val) {
   };
 
   /**
-   @return the process tty
 
    @public
 
-   @return {Tty}
+   @return {Tty} the process tty
    */
   this.getTty = function() {
     var __args = arguments;
@@ -109,11 +106,10 @@ var Process = function(j_val) {
   };
 
   /**
-   @return the process session
 
    @public
 
-   @return {Session}
+   @return {Session} the process session
    */
   this.getSession = function() {
     var __args = arguments;

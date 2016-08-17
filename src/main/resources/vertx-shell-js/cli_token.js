@@ -32,11 +32,10 @@ var CliToken = function(j_val) {
   var that = this;
 
   /**
-   @return the token value
 
    @public
 
-   @return {string}
+   @return {string} the token value
    */
   this.value = function() {
     var __args = arguments;
@@ -46,11 +45,10 @@ var CliToken = function(j_val) {
   };
 
   /**
-   @return the raw token value, that may contain unescaped chars, for instance 
 
    @public
 
-   @return {string}
+   @return {string} the raw token value, that may contain unescaped chars, for instance 
    */
   this.raw = function() {
     var __args = arguments;
@@ -60,11 +58,10 @@ var CliToken = function(j_val) {
   };
 
   /**
-   @return true when it's a text token
 
    @public
 
-   @return {boolean}
+   @return {boolean} true when it's a text token
    */
   this.isText = function() {
     var __args = arguments;
@@ -74,11 +71,10 @@ var CliToken = function(j_val) {
   };
 
   /**
-   @return true when it's a blank token
 
    @public
 
-   @return {boolean}
+   @return {boolean} true when it's a blank token
    */
   this.isBlank = function() {
     var __args = arguments;

@@ -34,11 +34,10 @@ var CommandResolver = function(j_val) {
   var that = this;
 
   /**
-   @return the current commands
 
    @public
 
-   @return {Array.<Command>}
+   @return {Array.<Command>} the current commands
    */
   this.commands = function() {
     var __args = arguments;
@@ -68,11 +67,10 @@ var CommandResolver = function(j_val) {
 };
 
 /**
- @return the base commands of Vert.x Shell.
 
  @memberof module:vertx-shell-js/command_resolver
  @param vertx {Vertx} 
- @return {CommandResolver}
+ @return {CommandResolver} the base commands of Vert.x Shell.
  */
 CommandResolver.baseCommands = function(vertx) {
   var __args = arguments;

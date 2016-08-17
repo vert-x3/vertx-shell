@@ -32,13 +32,15 @@
 
 package io.vertx.ext.shell.term.impl;
 
+import io.vertx.ext.shell.term.Tty;
+
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public interface SSHExec {
+public interface SSHExec extends Tty {
 
   String command();
 
-  void end(int status);
+  void end(int exit);
 
 }

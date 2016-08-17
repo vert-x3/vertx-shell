@@ -32,12 +32,10 @@ var Tty = function(j_val) {
   var that = this;
 
   /**
-   @return the declared tty type, for instance , ,  etc... it can be null
-   when the tty does not have declared its type.
 
    @public
 
-   @return {string}
+   @return {string} the declared tty type, for instance , , etc... it can be null when the tty does not have declared its type.
    */
   this.type = function() {
     var __args = arguments;
@@ -47,11 +45,10 @@ var Tty = function(j_val) {
   };
 
   /**
-   @return the current width, i.e the number of rows or  if unknown
 
    @public
 
-   @return {number}
+   @return {number} the current width, i.e the number of rows or  if unknown
    */
   this.width = function() {
     var __args = arguments;
@@ -61,11 +58,10 @@ var Tty = function(j_val) {
   };
 
   /**
-   @return the current height, i.e the number of columns or  if unknown
 
    @public
 
-   @return {number}
+   @return {number} the current height, i.e the number of columns or  if unknown
    */
   this.height = function() {
     var __args = arguments;

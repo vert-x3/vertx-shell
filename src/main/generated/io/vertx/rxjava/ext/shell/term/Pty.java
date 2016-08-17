@@ -92,7 +92,6 @@ public class Pty {
 
   /**
    * @return the pseudo terminal slave
-   * @return 
    */
   public Tty slave() { 
     Tty ret = Tty.newInstance(delegate.slave());

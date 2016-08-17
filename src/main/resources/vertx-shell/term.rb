@@ -45,8 +45,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling write(data)"
     end
-    #  @return the last time this term received input
-    # @return [Fixnum]
+    # @return [Fixnum] the last time this term received input
     def last_accessed_time
       if !block_given?
         return @j_del.java_method(:lastAccessedTime, []).call()

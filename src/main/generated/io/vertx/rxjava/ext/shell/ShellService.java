@@ -94,7 +94,6 @@ public class ShellService {
 
   /**
    * @return the shell server
-   * @return 
    */
   public ShellServer server() { 
     ShellServer ret = ShellServer.newInstance(delegate.server());

@@ -348,8 +348,15 @@ public class SSHServerTest extends SSHTestBase {
     execHandler = exec -> {
       context.assertNotNull(Vertx.currentContext());
       context.assertEquals("the-command arg1 arg2", exec.command());
-      vertx.setTimer(10, id -> {
-        exec.end(2);
+      exec.write("the_output");
+      StringBuilder input = new StringBuilder();
+      context.assertEquals(-1, exec.width());
+      context.assertEquals(-1, exec.height());
+      exec.stdinHandler(data -> {
+        input.append(data);
+        if (input.toString().equals("the_input")) {
+          exec.end(2);
+        }
       });
     };
     super.testExec(context);

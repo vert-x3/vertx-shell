@@ -15,16 +15,14 @@ module VertxShell
     def j_del
       @j_del
     end
-    #  @return the current foreground job
-    # @return [::VertxShell::Job]
+    # @return [::VertxShell::Job] the current foreground job
     def foreground_job
       if !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:foregroundJob, []).call(),::VertxShell::Job)
       end
       raise ArgumentError, "Invalid arguments when calling foreground_job()"
     end
-    #  @return the active jobs
-    # @return [Set<::VertxShell::Job>]
+    # @return [Set<::VertxShell::Job>] the active jobs
     def jobs
       if !block_given?
         return ::Vertx::Util::Utils.to_set(@j_del.java_method(:jobs, []).call()).map! { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::Job) }

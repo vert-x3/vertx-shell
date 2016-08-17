@@ -57,8 +57,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling set_size(width,height)"
     end
-    #  @return the pseudo terminal slave
-    # @return [::VertxShell::Tty]
+    # @return [::VertxShell::Tty] the pseudo terminal slave
     def slave
       if !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:slave, []).call(),::VertxShell::Tty)

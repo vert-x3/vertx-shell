@@ -41,9 +41,8 @@ public class CommandResolver {
   }
 
   /**
-   * @return the base commands of Vert.x Shell.
    * @param vertx 
-   * @return 
+   * @return the base commands of Vert.x Shell.
    */
   public static CommandResolver baseCommands(Vertx vertx) { 
     CommandResolver ret = CommandResolver.newInstance(io.vertx.ext.shell.command.CommandResolver.baseCommands((io.vertx.core.Vertx)vertx.getDelegate()));
@@ -52,7 +51,6 @@ public class CommandResolver {
 
   /**
    * @return the current commands
-   * @return 
    */
   public List<Command> commands() { 
     List<Command> ret = delegate.commands().stream().map(elt -> Command.newInstance(elt)).collect(java.util.stream.Collectors.toList());

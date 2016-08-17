@@ -32,38 +32,21 @@
 
 package io.vertx.ext.shell.term.impl;
 
+import io.termd.core.tty.TtyConnection;
 import io.vertx.core.Handler;
-import org.apache.sshd.server.Command;
-import org.apache.sshd.server.Environment;
-import org.apache.sshd.server.ExitCallback;
-import org.apache.sshd.server.SessionAware;
-import org.apache.sshd.server.session.ServerSession;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import io.vertx.ext.shell.term.Tty;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class ExecCommand implements Command, SessionAware, SSHExec {
+public class SSHExecImpl implements SSHExec {
 
   private final String command;
-  private final Handler<SSHExec> handler;
-  private ExitCallback exitCallback;
+  private final TtyConnection conn;
 
-  public ExecCommand(Handler<SSHExec> handler, String command) {
-    this.handler = handler;
+  public SSHExecImpl(String command, TtyConnection conn) {
     this.command = command;
-  }
-
-  @Override
-  public void start(Environment env) throws IOException {
-    if (handler != null) {
-      handler.handle(this);
-    } else {
-      exitCallback.onExit(0);
-    }
+    this.conn = conn;
   }
 
   @Override
@@ -72,18 +55,52 @@ public class ExecCommand implements Command, SessionAware, SSHExec {
   }
 
   @Override
-  public void end(int status) {
-    exitCallback.onExit(status);
+  public void end(int exit) {
+    conn.close(exit);
   }
 
-  @Override public void setExitCallback(ExitCallback callback) {
-    this.exitCallback = callback;
+  @Override
+  public String type() {
+    return conn.terminalType();
   }
 
-  @Override public void setInputStream(InputStream in) {}
-  @Override public void setOutputStream(OutputStream out) {}
-  @Override public void setErrorStream(OutputStream err) {}
-  @Override public void destroy() throws Exception {}
-  @Override public void setSession(ServerSession session) {}
+  @Override
+  public int width() {
+    return conn.size() != null ? conn.size().x() : -1;
+  }
 
+  @Override
+  public int height() {
+    return conn.size() != null ? conn.size().y() : -1;
+  }
+
+  @Override
+  public Tty stdinHandler(Handler<String> handler) {
+    if (handler != null) {
+      conn.setStdinHandler(codePoints -> {
+        handler.handle(io.termd.core.util.Helper.fromCodePoints(codePoints));
+      });
+    } else {
+      conn.setStdinHandler(null);
+    }
+    return null;
+  }
+
+  @Override
+  public Tty write(String data) {
+    conn.write(data);
+    return this;
+  }
+
+  @Override
+  public Tty resizehandler(Handler<Void> handler) {
+    if (handler != null) {
+      conn.setSizeHandler(resize -> {
+        handler.handle(null);
+      });
+    } else {
+      conn.setSizeHandler(null);
+    }
+    return this;
+  }
 }

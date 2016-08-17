@@ -112,8 +112,9 @@ public class SSHServer implements TermServer {
     return execHandler;
   }
 
-  public void setExecHandler(Handler<SSHExec> execHandler) {
+  public TermServer setExecHandler(Handler<SSHExec> execHandler) {
     this.execHandler = execHandler;
+    return this;
   }
 
   @Override
@@ -181,7 +182,12 @@ public class SSHServer implements TermServer {
 
         nativeServer = SshServer.setUpDefaultServer();
         nativeServer.setShellFactory(() -> new TtyCommand(defaultCharset, connectionHandler::handle));
-        nativeServer.setCommandFactory(command -> new ExecCommand(execHandler, command));
+        Handler<SSHExec> execHandler = this.execHandler;
+        if (execHandler != null) {
+          nativeServer.setCommandFactory(command -> new TtyCommand(defaultCharset, conn -> {
+            execHandler.handle(new SSHExecImpl(command, conn));
+          }));
+        }
         nativeServer.setHost(options.getHost());
         nativeServer.setPort(options.getPort());
         nativeServer.setKeyPairProvider(provider);

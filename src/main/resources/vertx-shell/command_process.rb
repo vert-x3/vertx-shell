@@ -19,48 +19,42 @@ module VertxShell
     def j_del
       @j_del
     end
-    #  @return the current Vert.x instance
-    # @return [::Vertx::Vertx]
+    # @return [::Vertx::Vertx] the current Vert.x instance
     def vertx
       if !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:vertx, []).call(),::Vertx::Vertx)
       end
       raise ArgumentError, "Invalid arguments when calling vertx()"
     end
-    #  @return the unparsed arguments tokens
-    # @return [Array<::VertxShell::CliToken>]
+    # @return [Array<::VertxShell::CliToken>] the unparsed arguments tokens
     def args_tokens
       if !block_given?
         return @j_del.java_method(:argsTokens, []).call().to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::CliToken) }
       end
       raise ArgumentError, "Invalid arguments when calling args_tokens()"
     end
-    #  @return the actual string arguments of the command
-    # @return [Array<String>]
+    # @return [Array<String>] the actual string arguments of the command
     def args
       if !block_given?
         return @j_del.java_method(:args, []).call().to_a.map { |elt| elt }
       end
       raise ArgumentError, "Invalid arguments when calling args()"
     end
-    #  @return the command line object or null
-    # @return [::Vertx::CommandLine]
+    # @return [::Vertx::CommandLine] the command line object or null
     def command_line
       if !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:commandLine, []).call(),::Vertx::CommandLine)
       end
       raise ArgumentError, "Invalid arguments when calling command_line()"
     end
-    #  @return the shell session
-    # @return [::VertxShell::Session]
+    # @return [::VertxShell::Session] the shell session
     def session
       if !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:session, []).call(),::VertxShell::Session)
       end
       raise ArgumentError, "Invalid arguments when calling session()"
     end
-    #  @return true if the command is running in foreground
-    # @return [true,false]
+    # @return [true,false] true if the command is running in foreground
     def foreground?
       if !block_given?
         return @j_del.java_method(:isForeground, []).call()

@@ -55,6 +55,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -194,7 +195,7 @@ public abstract class SSHTestBase {
     }
   }
 
-  @Test
+  @Test(timeout = 5000)
   public void testExec(TestContext context) throws Exception {
     startShell();
     Session session = createSession("paulo", "secret", false);
@@ -202,6 +203,18 @@ public abstract class SSHTestBase {
     ChannelExec channel = (ChannelExec) session.openChannel("exec");
     channel.setCommand("the-command arg1 arg2");
     channel.connect();
+    InputStream in = channel.getInputStream();
+    StringBuilder input = new StringBuilder();
+    while (!input.toString().equals("the_output")) {
+      int a = in.read();
+      if (a == -1) {
+        break;
+      }
+      input.append((char)a);
+    }
+    OutputStream out = channel.getOutputStream();
+    out.write("the_input".getBytes());
+    out.flush();
     while (channel.isConnected()) {
       Thread.sleep(1);
     }

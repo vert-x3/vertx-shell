@@ -35,11 +35,10 @@ var Completion = function(j_val) {
   var that = this;
 
   /**
-   @return the current Vert.x instance
 
    @public
 
-   @return {Vertx}
+   @return {Vertx} the current Vert.x instance
    */
   this.vertx = function() {
     var __args = arguments;
@@ -49,11 +48,10 @@ var Completion = function(j_val) {
   };
 
   /**
-   @return the shell current session, useful for accessing data like the current path for file completion, etc...
 
    @public
 
-   @return {Session}
+   @return {Session} the shell current session, useful for accessing data like the current path for file completion, etc...
    */
   this.session = function() {
     var __args = arguments;
@@ -63,11 +61,10 @@ var Completion = function(j_val) {
   };
 
   /**
-   @return the current line being completed in raw format, i.e without any char escape performed
 
    @public
 
-   @return {string}
+   @return {string} the current line being completed in raw format, i.e without any char escape performed
    */
   this.rawLine = function() {
     var __args = arguments;
@@ -77,11 +74,10 @@ var Completion = function(j_val) {
   };
 
   /**
-   @return the current line being completed as preparsed tokens
 
    @public
 
-   @return {Array.<CliToken>}
+   @return {Array.<CliToken>} the current line being completed as preparsed tokens
    */
   this.lineTokens = function() {
     var __args = arguments;

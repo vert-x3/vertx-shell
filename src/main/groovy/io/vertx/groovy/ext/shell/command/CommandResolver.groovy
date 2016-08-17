@@ -33,9 +33,8 @@ public class CommandResolver {
     return delegate;
   }
   /**
-   * @return the base commands of Vert.x Shell.
    * @param vertx 
-   * @return 
+   * @return the base commands of Vert.x Shell.
    */
   public static CommandResolver baseCommands(Vertx vertx) {
     def ret = InternalHelper.safeCreate(io.vertx.ext.shell.command.CommandResolver.baseCommands(vertx != null ? (io.vertx.core.Vertx)vertx.getDelegate() : null), io.vertx.groovy.ext.shell.command.CommandResolver.class);
@@ -43,7 +42,6 @@ public class CommandResolver {
   }
   /**
    * @return the current commands
-   * @return 
    */
   public List<Command> commands() {
     def ret = (List)delegate.commands()?.collect({InternalHelper.safeCreate(it, io.vertx.groovy.ext.shell.command.Command.class)});

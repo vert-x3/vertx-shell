@@ -42,7 +42,6 @@ public class JobController {
 
   /**
    * @return the current foreground job
-   * @return 
    */
   public Job foregroundJob() { 
     Job ret = Job.newInstance(delegate.foregroundJob());
@@ -51,7 +50,6 @@ public class JobController {
 
   /**
    * @return the active jobs
-   * @return 
    */
   public Set<Job> jobs() { 
     Set<Job> ret = delegate.jobs().stream().map(elt -> Job.newInstance(elt)).collect(java.util.stream.Collectors.toSet());

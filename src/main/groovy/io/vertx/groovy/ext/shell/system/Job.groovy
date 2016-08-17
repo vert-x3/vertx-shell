@@ -39,7 +39,6 @@ public class Job {
   }
   /**
    * @return the job id
-   * @return 
    */
   public int id() {
     def ret = delegate.id();
@@ -47,7 +46,6 @@ public class Job {
   }
   /**
    * @return the job exec status
-   * @return 
    */
   public ExecStatus status() {
     def ret = delegate.status();
@@ -55,7 +53,6 @@ public class Job {
   }
   /**
    * @return when the job was last stopped
-   * @return 
    */
   public long lastStopped() {
     def ret = delegate.lastStopped();
@@ -63,7 +60,6 @@ public class Job {
   }
   /**
    * @return the execution line of the job, i.e the shell command line that launched this job
-   * @return 
    */
   public String line() {
     def ret = delegate.line();
@@ -161,7 +157,6 @@ public class Job {
   }
   /**
    * @return the first process in the job
-   * @return 
    */
   public Process process() {
     if (cached_0 != null) {
