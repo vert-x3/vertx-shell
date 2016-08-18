@@ -41,6 +41,7 @@ import io.vertx.ext.shell.ShellServer;
 import io.vertx.ext.shell.ShellServerOptions;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.CommandResolver;
+import io.vertx.ext.shell.session.impl.SessionImpl;
 import io.vertx.ext.shell.system.Process;
 import io.vertx.ext.shell.system.impl.InternalCommandManager;
 import io.vertx.ext.shell.term.Term;
@@ -173,6 +174,7 @@ public class ShellServerImpl implements ShellServer {
       if (termServer instanceof SSHServer) {
         ((SSHServer)termServer).setExecHandler(exec -> {
           Process process = commandManager.createProcess(exec.command());
+          process.setSession(new SessionImpl());
           process.setTty(exec);
           process.terminatedHandler(exec::end);
           process.run(true, done -> {});

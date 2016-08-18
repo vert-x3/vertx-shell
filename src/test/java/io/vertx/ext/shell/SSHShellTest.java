@@ -209,7 +209,7 @@ public class SSHShellTest extends SSHTestBase {
     CommandRegistry registry = CommandRegistry.getShared(vertx);
     registry.registerCommand(CommandBuilder.command("the-command").processHandler(process -> {
       context.assertNotNull(Vertx.currentContext());
-      context.assertNull(process.session());
+      context.assertNotNull(process.session());
       execCommand.set(process.vertx());
       context.assertEquals(-1, process.width());
       context.assertEquals(-1, process.height());
