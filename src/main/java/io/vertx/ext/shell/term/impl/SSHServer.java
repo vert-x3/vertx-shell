@@ -38,7 +38,6 @@ import io.termd.core.ssh.netty.AsyncAuth;
 import io.termd.core.ssh.netty.AsyncUserAuthServiceFactory;
 import io.termd.core.ssh.netty.NettyIoServiceFactoryFactory;
 import io.vertx.core.AsyncResult;
-import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -185,7 +184,7 @@ public class SSHServer implements TermServer {
         Handler<SSHExec> execHandler = this.execHandler;
         if (execHandler != null) {
           nativeServer.setCommandFactory(command -> new TtyCommand(defaultCharset, conn -> {
-            execHandler.handle(new SSHExecImpl(command, conn));
+            execHandler.handle(new SSHExec(command, conn));
           }));
         }
         nativeServer.setHost(options.getHost());

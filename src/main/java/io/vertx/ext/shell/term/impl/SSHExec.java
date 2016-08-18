@@ -32,15 +32,73 @@
 
 package io.vertx.ext.shell.term.impl;
 
+import io.termd.core.tty.TtyConnection;
+import io.vertx.core.Handler;
 import io.vertx.ext.shell.term.Tty;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public interface SSHExec extends Tty {
+public class SSHExec implements Tty {
 
-  String command();
+  private final String command;
+  private final TtyConnection conn;
 
-  void end(int exit);
+  SSHExec(String command, TtyConnection conn) {
+    this.command = command;
+    this.conn = conn;
+  }
 
+  public String command() {
+    return command;
+  }
+
+  public void end(int exit) {
+    conn.close(exit);
+  }
+
+  @Override
+  public String type() {
+    return conn.terminalType();
+  }
+
+  @Override
+  public int width() {
+    return conn.size() != null ? conn.size().x() : -1;
+  }
+
+  @Override
+  public int height() {
+    return conn.size() != null ? conn.size().y() : -1;
+  }
+
+  @Override
+  public Tty stdinHandler(Handler<String> handler) {
+    if (handler != null) {
+      conn.setStdinHandler(codePoints -> {
+        handler.handle(io.termd.core.util.Helper.fromCodePoints(codePoints));
+      });
+    } else {
+      conn.setStdinHandler(null);
+    }
+    return this;
+  }
+
+  @Override
+  public Tty write(String data) {
+    conn.write(data);
+    return this;
+  }
+
+  @Override
+  public Tty resizehandler(Handler<Void> handler) {
+    if (handler != null) {
+      conn.setSizeHandler(resize -> {
+        handler.handle(null);
+      });
+    } else {
+      conn.setSizeHandler(null);
+    }
+    return this;
+  }
 }
