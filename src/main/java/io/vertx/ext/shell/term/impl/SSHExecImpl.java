@@ -83,7 +83,7 @@ public class SSHExecImpl implements SSHExec {
     } else {
       conn.setStdinHandler(null);
     }
-    return null;
+    return this;
   }
 
   @Override
