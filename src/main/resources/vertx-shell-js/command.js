@@ -35,11 +35,10 @@ var Command = function(j_val) {
   var that = this;
 
   /**
-   @return the command name
 
    @public
 
-   @return {string}
+   @return {string} the command name
    */
   this.name = function() {
     var __args = arguments;
@@ -49,11 +48,10 @@ var Command = function(j_val) {
   };
 
   /**
-   @return the command line interface, can be null
 
    @public
 
-   @return {CLI}
+   @return {CLI} the command line interface, can be null
    */
   this.cli = function() {
     var __args = arguments;

@@ -23,7 +23,6 @@ import io.vertx.rxjava.core.Vertx;
 import io.vertx.core.Handler;
 
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  *
  * <p/>
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.term.SockJSTermHandler original} non RX-ified interface using Vert.x codegen.

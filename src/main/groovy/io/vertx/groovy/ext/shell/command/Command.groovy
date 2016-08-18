@@ -38,7 +38,6 @@ public class Command {
   }
   /**
    * @return the command name
-   * @return 
    */
   public String name() {
     def ret = delegate.name();
@@ -46,7 +45,6 @@ public class Command {
   }
   /**
    * @return the command line interface, can be null
-   * @return 
    */
   public CLI cli() {
     def ret = InternalHelper.safeCreate(delegate.cli(), io.vertx.groovy.core.cli.CLI.class);

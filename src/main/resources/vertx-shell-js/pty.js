@@ -80,11 +80,10 @@ var Pty = function(j_val) {
   };
 
   /**
-   @return the pseudo terminal slave
 
    @public
 
-   @return {Tty}
+   @return {Tty} the pseudo terminal slave
    */
   this.slave = function() {
     var __args = arguments;

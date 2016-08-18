@@ -46,7 +46,7 @@ import io.vertx.ext.shell.ShellService;
 import io.vertx.ext.shell.ShellServiceOptions;
 import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.term.HttpTermOptions;
-import io.vertx.ext.shell.term.impl.SSHTermServer;
+import io.vertx.ext.shell.term.impl.SSHServer;
 import io.vertx.ext.shell.term.impl.TelnetTermServer;
 import io.vertx.ext.shell.term.impl.HttpTermServer;
 
@@ -125,7 +125,7 @@ public class ShellServiceImpl implements ShellService {
       server.registerTermServer(new TelnetTermServer(vertx, telnetOptions));
     }
     if (sshOptions != null) {
-      server.registerTermServer(new SSHTermServer(vertx, sshOptions));
+      server.registerTermServer(new SSHServer(vertx, sshOptions));
     }
     if (webOptions != null) {
       server.registerTermServer(new HttpTermServer(vertx, webOptions));

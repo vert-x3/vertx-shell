@@ -18,16 +18,14 @@ module VertxShell
     def j_del
       @j_del
     end
-    #  @return the command name
-    # @return [String]
+    # @return [String] the command name
     def name
       if !block_given?
         return @j_del.java_method(:name, []).call()
       end
       raise ArgumentError, "Invalid arguments when calling name()"
     end
-    #  @return the command line interface, can be null
-    # @return [::Vertx::CLI]
+    # @return [::Vertx::CLI] the command line interface, can be null
     def cli
       if !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:cli, []).call(),::Vertx::CLI)

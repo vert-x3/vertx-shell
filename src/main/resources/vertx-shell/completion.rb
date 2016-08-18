@@ -16,32 +16,28 @@ module VertxShell
     def j_del
       @j_del
     end
-    #  @return the current Vert.x instance
-    # @return [::Vertx::Vertx]
+    # @return [::Vertx::Vertx] the current Vert.x instance
     def vertx
       if !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:vertx, []).call(),::Vertx::Vertx)
       end
       raise ArgumentError, "Invalid arguments when calling vertx()"
     end
-    #  @return the shell current session, useful for accessing data like the current path for file completion, etc...
-    # @return [::VertxShell::Session]
+    # @return [::VertxShell::Session] the shell current session, useful for accessing data like the current path for file completion, etc...
     def session
       if !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:session, []).call(),::VertxShell::Session)
       end
       raise ArgumentError, "Invalid arguments when calling session()"
     end
-    #  @return the current line being completed in raw format, i.e without any char escape performed
-    # @return [String]
+    # @return [String] the current line being completed in raw format, i.e without any char escape performed
     def raw_line
       if !block_given?
         return @j_del.java_method(:rawLine, []).call()
       end
       raise ArgumentError, "Invalid arguments when calling raw_line()"
     end
-    #  @return the current line being completed as preparsed tokens
-    # @return [Array<::VertxShell::CliToken>]
+    # @return [Array<::VertxShell::CliToken>] the current line being completed as preparsed tokens
     def line_tokens
       if !block_given?
         return @j_del.java_method(:lineTokens, []).call().to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::CliToken) }

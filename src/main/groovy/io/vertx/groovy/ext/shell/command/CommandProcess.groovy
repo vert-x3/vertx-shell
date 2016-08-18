@@ -40,7 +40,6 @@ public class CommandProcess extends Tty {
   }
   /**
    * @return the current Vert.x instance
-   * @return 
    */
   public Vertx vertx() {
     def ret = InternalHelper.safeCreate(delegate.vertx(), io.vertx.groovy.core.Vertx.class);
@@ -48,7 +47,6 @@ public class CommandProcess extends Tty {
   }
   /**
    * @return the unparsed arguments tokens
-   * @return 
    */
   public List<CliToken> argsTokens() {
     def ret = (List)delegate.argsTokens()?.collect({InternalHelper.safeCreate(it, io.vertx.groovy.ext.shell.cli.CliToken.class)});
@@ -56,7 +54,6 @@ public class CommandProcess extends Tty {
   }
   /**
    * @return the actual string arguments of the command
-   * @return 
    */
   public List<String> args() {
     def ret = delegate.args();
@@ -64,7 +61,6 @@ public class CommandProcess extends Tty {
   }
   /**
    * @return the command line object or null
-   * @return 
    */
   public CommandLine commandLine() {
     def ret = InternalHelper.safeCreate(delegate.commandLine(), io.vertx.groovy.core.cli.CommandLine.class);
@@ -72,7 +68,6 @@ public class CommandProcess extends Tty {
   }
   /**
    * @return the shell session
-   * @return 
    */
   public Session session() {
     def ret = InternalHelper.safeCreate(delegate.session(), io.vertx.groovy.ext.shell.session.Session.class);
@@ -80,7 +75,6 @@ public class CommandProcess extends Tty {
   }
   /**
    * @return true if the command is running in foreground
-   * @return 
    */
   public boolean isForeground() {
     def ret = delegate.isForeground();

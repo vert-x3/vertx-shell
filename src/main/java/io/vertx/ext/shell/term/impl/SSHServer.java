@@ -38,7 +38,6 @@ import io.termd.core.ssh.netty.AsyncAuth;
 import io.termd.core.ssh.netty.AsyncUserAuthServiceFactory;
 import io.termd.core.ssh.netty.NettyIoServiceFactoryFactory;
 import io.vertx.core.AsyncResult;
-import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -79,7 +78,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class SSHTermServer implements TermServer {
+public class SSHServer implements TermServer {
 
   private static final int STATUS_STOPPED = 0, STATUS_STARTING = 1, STATUS_STARTED = 2, STATUS_STOPPING = 3;
 
@@ -90,8 +89,9 @@ public class SSHTermServer implements TermServer {
   private final AtomicInteger status = new AtomicInteger(STATUS_STOPPED);
   private ContextInternal listenContext;
   private AuthProvider authProvider;
+  private Handler<SSHExec> execHandler;
 
-  public SSHTermServer(Vertx vertx, SSHTermOptions options) {
+  public SSHServer(Vertx vertx, SSHTermOptions options) {
     this.vertx = vertx;
     this.options = new SSHTermOptions(options);
   }
@@ -107,6 +107,15 @@ public class SSHTermServer implements TermServer {
     return nativeServer;
   }
 
+  public Handler<SSHExec> getExecHandler() {
+    return execHandler;
+  }
+
+  public TermServer setExecHandler(Handler<SSHExec> execHandler) {
+    this.execHandler = execHandler;
+    return this;
+  }
+
   @Override
   public TermServer termHandler(Handler<Term> handler) {
     termHandler = handler;
@@ -119,7 +128,7 @@ public class SSHTermServer implements TermServer {
     return this;
   }
 
-  public SSHTermServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
+  public SSHServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
     if (!status.compareAndSet(STATUS_STOPPED, STATUS_STARTING)) {
       listenHandler.handle(Future.failedFuture("Invalid state:" + status.get()));
       return this;
@@ -172,6 +181,12 @@ public class SSHTermServer implements TermServer {
 
         nativeServer = SshServer.setUpDefaultServer();
         nativeServer.setShellFactory(() -> new TtyCommand(defaultCharset, connectionHandler::handle));
+        Handler<SSHExec> execHandler = this.execHandler;
+        if (execHandler != null) {
+          nativeServer.setCommandFactory(command -> new TtyCommand(defaultCharset, conn -> {
+            execHandler.handle(new SSHExec(command, conn));
+          }));
+        }
         nativeServer.setHost(options.getHost());
         nativeServer.setPort(options.getPort());
         nativeServer.setKeyPairProvider(provider);

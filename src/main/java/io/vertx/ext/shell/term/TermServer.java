@@ -38,7 +38,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.auth.AuthProvider;
-import io.vertx.ext.shell.term.impl.SSHTermServer;
+import io.vertx.ext.shell.term.impl.SSHServer;
 import io.vertx.ext.shell.term.impl.TelnetTermServer;
 import io.vertx.ext.shell.term.impl.HttpTermServer;
 import io.vertx.ext.web.Router;
@@ -69,7 +69,7 @@ public interface TermServer {
    * @return the term server
    */
   static TermServer createSSHTermServer(Vertx vertx, SSHTermOptions options) {
-    return new SSHTermServer(vertx, options);
+    return new SSHServer(vertx, options);
   }
 
   /**

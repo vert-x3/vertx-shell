@@ -43,7 +43,6 @@ public class Completion {
 
   /**
    * @return the current Vert.x instance
-   * @return 
    */
   public Vertx vertx() { 
     Vertx ret = Vertx.newInstance(delegate.vertx());
@@ -52,7 +51,6 @@ public class Completion {
 
   /**
    * @return the shell current session, useful for accessing data like the current path for file completion, etc...
-   * @return 
    */
   public Session session() { 
     Session ret = Session.newInstance(delegate.session());
@@ -61,7 +59,6 @@ public class Completion {
 
   /**
    * @return the current line being completed in raw format, i.e without any char escape performed
-   * @return 
    */
   public String rawLine() { 
     String ret = delegate.rawLine();
@@ -70,7 +67,6 @@ public class Completion {
 
   /**
    * @return the current line being completed as preparsed tokens
-   * @return 
    */
   public List<CliToken> lineTokens() { 
     List<CliToken> ret = delegate.lineTokens().stream().map(elt -> CliToken.newInstance(elt)).collect(java.util.stream.Collectors.toList());

@@ -40,9 +40,7 @@ public class Tty {
   }
 
   /**
-   * @return the declared tty type, for instance , ,  etc... it can be null
-   * when the tty does not have declared its type.
-   * @return 
+   * @return the declared tty type, for instance , , etc... it can be null when the tty does not have declared its type.
    */
   public String type() { 
     String ret = delegate.type();
@@ -51,7 +49,6 @@ public class Tty {
 
   /**
    * @return the current width, i.e the number of rows or  if unknown
-   * @return 
    */
   public int width() { 
     int ret = delegate.width();
@@ -60,7 +57,6 @@ public class Tty {
 
   /**
    * @return the current height, i.e the number of columns or  if unknown
-   * @return 
    */
   public int height() { 
     int ret = delegate.height();

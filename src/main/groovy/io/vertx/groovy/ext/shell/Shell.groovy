@@ -55,7 +55,6 @@ public class Shell {
   }
   /**
    * @return the shell's job controller
-   * @return 
    */
   public JobController jobController() {
     if (cached_0 != null) {
@@ -67,7 +66,6 @@ public class Shell {
   }
   /**
    * @return the current shell session
-   * @return 
    */
   public Session session() {
     if (cached_1 != null) {

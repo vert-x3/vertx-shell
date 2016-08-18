@@ -34,11 +34,10 @@ var JobController = function(j_val) {
   var that = this;
 
   /**
-   @return the current foreground job
 
    @public
 
-   @return {Job}
+   @return {Job} the current foreground job
    */
   this.foregroundJob = function() {
     var __args = arguments;
@@ -48,11 +47,10 @@ var JobController = function(j_val) {
   };
 
   /**
-   @return the active jobs
 
    @public
 
-   @return {Array.<Job>}
+   @return {Array.<Job>} the active jobs
    */
   this.jobs = function() {
     var __args = arguments;

@@ -55,11 +55,10 @@ var ShellService = function(j_val) {
   };
 
   /**
-   @return the shell server
 
    @public
 
-   @return {ShellServer}
+   @return {ShellServer} the shell server
    */
   this.server = function() {
     var __args = arguments;

@@ -44,7 +44,6 @@ public class Process {
 
   /**
    * @return the current process status
-   * @return 
    */
   public ExecStatus status() { 
     ExecStatus ret = delegate.status();
@@ -53,7 +52,6 @@ public class Process {
 
   /**
    * @return the process exit code when the status is  otherwise <code>null</code>
-   * @return 
    */
   public Integer exitCode() { 
     Integer ret = delegate.exitCode();
@@ -72,7 +70,6 @@ public class Process {
 
   /**
    * @return the process tty
-   * @return 
    */
   public Tty getTty() { 
     if (cached_0 != null) {
@@ -95,7 +92,6 @@ public class Process {
 
   /**
    * @return the process session
-   * @return 
    */
   public Session getSession() { 
     if (cached_1 != null) {

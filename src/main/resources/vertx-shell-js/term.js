@@ -81,11 +81,10 @@ var Term = function(j_val) {
   };
 
   /**
-   @return the last time this term received input
 
    @public
 
-   @return {number}
+   @return {number} the last time this term received input
    */
   this.lastAccessedTime = function() {
     var __args = arguments;

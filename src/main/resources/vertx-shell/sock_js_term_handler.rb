@@ -4,7 +4,6 @@ require 'vertx-shell/term'
 require 'vertx/util/utils.rb'
 # Generated from io.vertx.ext.shell.term.SockJSTermHandler
 module VertxShell
-  #  @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
   class SockJSTermHandler
     # @private
     # @param j_del [::VertxShell::SockJSTermHandler] the java delegate

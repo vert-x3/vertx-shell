@@ -15,17 +15,15 @@ module VertxShell
     def j_del
       @j_del
     end
-    #  @return the base commands of Vert.x Shell.
     # @param [::Vertx::Vertx] vertx 
-    # @return [::VertxShell::CommandResolver]
+    # @return [::VertxShell::CommandResolver] the base commands of Vert.x Shell.
     def self.base_commands(vertx=nil)
       if vertx.class.method_defined?(:j_del) && !block_given?
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandResolver.java_method(:baseCommands, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::CommandResolver)
       end
       raise ArgumentError, "Invalid arguments when calling base_commands(vertx)"
     end
-    #  @return the current commands
-    # @return [Array<::VertxShell::Command>]
+    # @return [Array<::VertxShell::Command>] the current commands
     def commands
       if !block_given?
         return @j_del.java_method(:commands, []).call().to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::Command) }

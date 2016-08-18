@@ -20,7 +20,6 @@ import java.util.Map;
 import rx.Observable;
 
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  *
  * <p/>
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.term.SignalHandler original} non RX-ified interface using Vert.x codegen.

@@ -31,32 +31,28 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling create_blank(blank)"
     end
-    #  @return the token value
-    # @return [String]
+    # @return [String] the token value
     def value
       if !block_given?
         return @j_del.java_method(:value, []).call()
       end
       raise ArgumentError, "Invalid arguments when calling value()"
     end
-    #  @return the raw token value, that may contain unescaped chars, for instance 
-    # @return [String]
+    # @return [String] the raw token value, that may contain unescaped chars, for instance 
     def raw
       if !block_given?
         return @j_del.java_method(:raw, []).call()
       end
       raise ArgumentError, "Invalid arguments when calling raw()"
     end
-    #  @return true when it's a text token
-    # @return [true,false]
+    # @return [true,false] true when it's a text token
     def text?
       if !block_given?
         return @j_del.java_method(:isText, []).call()
       end
       raise ArgumentError, "Invalid arguments when calling text?()"
     end
-    #  @return true when it's a blank token
-    # @return [true,false]
+    # @return [true,false] true when it's a blank token
     def blank?
       if !block_given?
         return @j_del.java_method(:isBlank, []).call()

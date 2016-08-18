@@ -79,7 +79,6 @@ public class Pty {
   }
   /**
    * @return the pseudo terminal slave
-   * @return 
    */
   public Tty slave() {
     def ret = InternalHelper.safeCreate(delegate.slave(), io.vertx.groovy.ext.shell.term.Tty.class);

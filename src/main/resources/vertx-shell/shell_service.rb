@@ -42,8 +42,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling start()"
     end
-    #  @return the shell server
-    # @return [::VertxShell::ShellServer]
+    # @return [::VertxShell::ShellServer] the shell server
     def server
       if !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:server, []).call(),::VertxShell::ShellServer)

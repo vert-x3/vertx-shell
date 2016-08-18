@@ -48,7 +48,6 @@ public class Term extends Tty {
   }
   /**
    * @return the last time this term received input
-   * @return 
    */
   public long lastAccessedTime() {
     def ret = delegate.lastAccessedTime();

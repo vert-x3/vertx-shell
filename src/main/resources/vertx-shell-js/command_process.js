@@ -38,11 +38,10 @@ var CommandProcess = function(j_val) {
   Tty.call(this, j_val);
 
   /**
-   @return the current Vert.x instance
 
    @public
 
-   @return {Vertx}
+   @return {Vertx} the current Vert.x instance
    */
   this.vertx = function() {
     var __args = arguments;
@@ -52,11 +51,10 @@ var CommandProcess = function(j_val) {
   };
 
   /**
-   @return the unparsed arguments tokens
 
    @public
 
-   @return {Array.<CliToken>}
+   @return {Array.<CliToken>} the unparsed arguments tokens
    */
   this.argsTokens = function() {
     var __args = arguments;
@@ -66,11 +64,10 @@ var CommandProcess = function(j_val) {
   };
 
   /**
-   @return the actual string arguments of the command
 
    @public
 
-   @return {Array.<string>}
+   @return {Array.<string>} the actual string arguments of the command
    */
   this.args = function() {
     var __args = arguments;
@@ -80,11 +77,10 @@ var CommandProcess = function(j_val) {
   };
 
   /**
-   @return the command line object or null
 
    @public
 
-   @return {CommandLine}
+   @return {CommandLine} the command line object or null
    */
   this.commandLine = function() {
     var __args = arguments;
@@ -94,11 +90,10 @@ var CommandProcess = function(j_val) {
   };
 
   /**
-   @return the shell session
 
    @public
 
-   @return {Session}
+   @return {Session} the shell session
    */
   this.session = function() {
     var __args = arguments;
@@ -108,11 +103,10 @@ var CommandProcess = function(j_val) {
   };
 
   /**
-   @return true if the command is running in foreground
 
    @public
 
-   @return {boolean}
+   @return {boolean} true if the command is running in foreground
    */
   this.isForeground = function() {
     var __args = arguments;

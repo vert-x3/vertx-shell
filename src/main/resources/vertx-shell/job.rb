@@ -19,32 +19,28 @@ module VertxShell
     def j_del
       @j_del
     end
-    #  @return the job id
-    # @return [Fixnum]
+    # @return [Fixnum] the job id
     def id
       if !block_given?
         return @j_del.java_method(:id, []).call()
       end
       raise ArgumentError, "Invalid arguments when calling id()"
     end
-    #  @return the job exec status
-    # @return [:READY,:RUNNING,:STOPPED,:TERMINATED]
+    # @return [:READY,:RUNNING,:STOPPED,:TERMINATED] the job exec status
     def status
       if !block_given?
         return @j_del.java_method(:status, []).call().name.intern
       end
       raise ArgumentError, "Invalid arguments when calling status()"
     end
-    #  @return when the job was last stopped
-    # @return [Fixnum]
+    # @return [Fixnum] when the job was last stopped
     def last_stopped
       if !block_given?
         return @j_del.java_method(:lastStopped, []).call()
       end
       raise ArgumentError, "Invalid arguments when calling last_stopped()"
     end
-    #  @return the execution line of the job, i.e the shell command line that launched this job
-    # @return [String]
+    # @return [String] the execution line of the job, i.e the shell command line that launched this job
     def line
       if !block_given?
         return @j_del.java_method(:line, []).call()
@@ -145,8 +141,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling terminate()"
     end
-    #  @return the first process in the job
-    # @return [::VertxShell::Process]
+    # @return [::VertxShell::Process] the first process in the job
     def process
       if !block_given?
         if @cached_process != nil

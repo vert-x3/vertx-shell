@@ -39,6 +39,7 @@ import com.jcraft.jsch.Session;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.AbstractUser;
@@ -46,6 +47,8 @@ import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.shiro.ShiroAuthOptions;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.shell.SSHTestBase;
+import io.vertx.ext.shell.term.impl.SSHExec;
+import io.vertx.ext.shell.term.impl.SSHServer;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import org.junit.After;
@@ -71,10 +74,11 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class SSHTermServerTest extends SSHTestBase {
+public class SSHServerTest extends SSHTestBase {
 
   TermServer server;
   Handler<Term> termHandler;
+  Handler<SSHExec> execHandler;
   AuthProvider authProvider;
 
   @Override
@@ -100,6 +104,7 @@ public class SSHTermServerTest extends SSHTestBase {
     server = TermServer.createSSHTermServer(vertx, options);
     CompletableFuture<Void> fut = new CompletableFuture<>();
     server.termHandler(termHandler);
+    ((SSHServer)server).setExecHandler(execHandler);
     server.authProvider(authProvider);
     server.listen(ar -> {
       if (ar.succeeded()) {
@@ -336,5 +341,24 @@ public class SSHTermServerTest extends SSHTestBase {
     session.connect();
     Channel channel = session.openChannel("shell");
     channel.connect();
+  }
+
+  @Override
+  public void testExec(TestContext context) throws Exception {
+    execHandler = exec -> {
+      context.assertNotNull(Vertx.currentContext());
+      context.assertEquals("the-command arg1 arg2", exec.command());
+      exec.write("the_output");
+      StringBuilder input = new StringBuilder();
+      context.assertEquals(-1, exec.width());
+      context.assertEquals(-1, exec.height());
+      exec.stdinHandler(data -> {
+        input.append(data);
+        if (input.toString().equals("the_input")) {
+          exec.end(2);
+        }
+      });
+    };
+    super.testExec(context);
   }
 }

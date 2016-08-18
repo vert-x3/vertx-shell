@@ -37,9 +37,12 @@ import com.jcraft.jsch.Session;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.mongo.MongoAuth;
 import io.vertx.ext.mongo.MongoClient;
+import io.vertx.ext.shell.command.CommandBuilder;
+import io.vertx.ext.shell.command.CommandRegistry;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
@@ -58,6 +61,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -196,5 +201,30 @@ public class SSHShellTest extends SSHTestBase {
     channel.connect();
     channel.disconnect();
     session.disconnect();
+  }
+
+  @Override
+  public void testExec(TestContext context) throws Exception {
+    AtomicReference<Vertx> execCommand = new AtomicReference<>();
+    CommandRegistry registry = CommandRegistry.getShared(vertx);
+    registry.registerCommand(CommandBuilder.command("the-command").processHandler(process -> {
+      context.assertNotNull(Vertx.currentContext());
+      context.assertNull(process.session());
+      execCommand.set(process.vertx());
+      context.assertEquals(-1, process.width());
+      context.assertEquals(-1, process.height());
+      context.assertEquals(Arrays.asList("arg1", "arg2"), process.args());
+      context.assertTrue(process.isForeground());
+      StringBuilder input = new StringBuilder();
+      process.stdinHandler(data -> {
+        input.append(data);
+        if (input.toString().equals("the_input")) {
+          process.end(2);
+        }
+      });
+      process.write("the_output");
+    }).build(vertx));
+    super.testExec(context);
+    assertEquals(execCommand.get(), vertx);
   }
 }

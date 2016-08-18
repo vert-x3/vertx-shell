@@ -15,16 +15,14 @@ module VertxShell
     def j_del
       @j_del
     end
-    #  @return the current process status
-    # @return [:READY,:RUNNING,:STOPPED,:TERMINATED]
+    # @return [:READY,:RUNNING,:STOPPED,:TERMINATED] the current process status
     def status
       if !block_given?
         return @j_del.java_method(:status, []).call().name.intern
       end
       raise ArgumentError, "Invalid arguments when calling status()"
     end
-    #  @return the process exit code when the status is  otherwise <code>null</code>
-    # @return [Fixnum]
+    # @return [Fixnum] the process exit code when the status is  otherwise <code>null</code>
     def exit_code
       if !block_given?
         return @j_del.java_method(:exitCode, []).call()
@@ -41,8 +39,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling set_tty(tty)"
     end
-    #  @return the process tty
-    # @return [::VertxShell::Tty]
+    # @return [::VertxShell::Tty] the process tty
     def get_tty
       if !block_given?
         if @cached_get_tty != nil
@@ -62,8 +59,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling set_session(session)"
     end
-    #  @return the process session
-    # @return [::VertxShell::Session]
+    # @return [::VertxShell::Session] the process session
     def get_session
       if !block_given?
         if @cached_get_session != nil

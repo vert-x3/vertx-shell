@@ -31,8 +31,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling create_job(param_1)"
     end
-    #  @return the shell's job controller
-    # @return [::VertxShell::JobController]
+    # @return [::VertxShell::JobController] the shell's job controller
     def job_controller
       if !block_given?
         if @cached_job_controller != nil
@@ -42,8 +41,7 @@ module VertxShell
       end
       raise ArgumentError, "Invalid arguments when calling job_controller()"
     end
-    #  @return the current shell session
-    # @return [::VertxShell::Session]
+    # @return [::VertxShell::Session] the current shell session
     def session
       if !block_given?
         if @cached_session != nil

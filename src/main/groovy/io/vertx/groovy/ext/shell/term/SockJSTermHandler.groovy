@@ -22,7 +22,6 @@ import io.vertx.groovy.ext.web.handler.sockjs.SockJSSocket
 import io.vertx.groovy.core.Vertx
 import io.vertx.core.Handler
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
 */
 @CompileStatic
 public class SockJSTermHandler implements Handler<SockJSSocket> {

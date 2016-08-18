@@ -51,7 +51,6 @@ public class CliToken {
   }
   /**
    * @return the token value
-   * @return 
    */
   public String value() {
     def ret = delegate.value();
@@ -59,7 +58,6 @@ public class CliToken {
   }
   /**
    * @return the raw token value, that may contain unescaped chars, for instance 
-   * @return 
    */
   public String raw() {
     def ret = delegate.raw();
@@ -67,7 +65,6 @@ public class CliToken {
   }
   /**
    * @return true when it's a text token
-   * @return 
    */
   public boolean isText() {
     def ret = delegate.isText();
@@ -75,7 +72,6 @@ public class CliToken {
   }
   /**
    * @return true when it's a blank token
-   * @return 
    */
   public boolean isBlank() {
     def ret = delegate.isBlank();
