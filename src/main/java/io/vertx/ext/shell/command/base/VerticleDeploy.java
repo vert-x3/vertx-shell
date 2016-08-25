@@ -52,7 +52,6 @@ import java.io.StringWriter;
 public class VerticleDeploy extends AnnotatedCommand {
 
   private String name;
-
   private String options;
 
   @Argument(index = 0, argName = "name")
@@ -62,20 +61,20 @@ public class VerticleDeploy extends AnnotatedCommand {
   }
 
   @Argument(index = 1, argName = "options", required = false)
-  @Description("the verticle deployment options as JSON object string")
+  @Description("the verticle deployment options as JSON string")
   public void setOptions(String options) {
     this.options = options;
   }
+
+  protected DeploymentOptions getDeploymentOptions() {
+    return (options != null && !options.isEmpty()) ?
+      new DeploymentOptions(new JsonObject(options)) : new DeploymentOptions();
+  }
+
   @Override
   public void process(CommandProcess process) {
     try {
-      DeploymentOptions deploymentOptions;
-      if(options != null && !options.isEmpty()) {
-        deploymentOptions = new DeploymentOptions(new JsonObject(options));
-      } else {
-        deploymentOptions = new DeploymentOptions();
-      }
-      process.vertx().deployVerticle(name, deploymentOptions, ar -> {
+      process.vertx().deployVerticle(name, getDeploymentOptions(), ar -> {
         if (ar.succeeded()) {
           process.write("Deployed " + ar.result() + "\n").end();
         } else {
@@ -87,7 +86,7 @@ public class VerticleDeploy extends AnnotatedCommand {
         }
       });
     } catch (RuntimeException e) {
-      process.write("Invalid JSON object as a deployment options for " + name + "\n");
+      process.write("Invalid JSON string as a deployment options for " + name + "\n");
       StringWriter buffer = new StringWriter();
       PrintWriter writer = new PrintWriter(buffer);
       e.printStackTrace(writer);
