@@ -1,6 +1,7 @@
 package io.vertx.ext.shell.command.base;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.Shell;
 import io.vertx.ext.shell.ShellServer;
@@ -15,6 +16,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * @author <a href="mailto:emad.albloushi@gmail.com">Emad Alblueshi</a>
  */
@@ -22,14 +25,20 @@ import org.junit.runner.RunWith;
 @RunWith(VertxUnitRunner.class)
 public class DeployVerticleTest {
 
-  static public class SomeVerticle extends AbstractVerticle {}
   Vertx vertx;
   ShellServer server;
-  String name;
+  static AtomicReference<Context> ctx;
+
+  static public class SomeVerticle extends AbstractVerticle {
+    @Override
+    public void start() throws Exception {
+      ctx.set(this.vertx.getOrCreateContext());
+    }
+  }
 
   @Before
   public void before(TestContext context) throws Exception {
-    name = SomeVerticle.class.getName();
+    ctx = new AtomicReference<>(null);
     vertx = Vertx.vertx();
     server = ShellServer.create(vertx)
       .registerCommandResolver(new BaseCommandPack(vertx)).listen(context.asyncAssertSuccess());
@@ -42,92 +51,69 @@ public class DeployVerticleTest {
 
   @Test
   public void testDeploy(TestContext context) {
-    Async async = context.async();
-    Shell shell = server.createShell();
-    Pty pty = Pty.create();
-    StringBuffer result = new StringBuffer();
-    pty.stdoutHandler(result::append);
-    Job job = shell.createJob("verticle-deploy " + name)
-      .setTty(pty.slave());
-    job.statusUpdateHandler(status -> {
-      if (status == ExecStatus.TERMINATED) {
-        async.complete();
-      }
-    });
-    job.run();
-    async.awaitSuccess(5000);
-    shell.close();
-    context.assertTrue(result.toString().startsWith("Deployed"));
+    String cmd = "verticle-deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle";
+    String result = testDeployCmd(context, cmd);
+    context.assertNotNull(ctx.get());
+    context.assertEquals(result.trim(), "Deployed " + ctx.get().deploymentID());
+    context.assertEquals(1, ctx.get().getInstanceCount());
   }
 
   @Test
   public void testDeployWithOptionsAsEmptyString(TestContext context) {
-    Async async = context.async();
-    Shell shell = server.createShell();
-    Pty pty = Pty.create();
-    StringBuffer result = new StringBuffer();
-    pty.stdoutHandler(result::append);
-    Job job = shell.createJob("verticle-deploy " + name + " ''")
-      .setTty(pty.slave());
-    job.statusUpdateHandler(status -> {
-      if (status == ExecStatus.TERMINATED) {
-        async.complete();
-      }
-    });
-    job.run();
-    async.awaitSuccess(5000);
-    shell.close();
-    context.assertTrue(result.toString().startsWith("Deployed"));
+    String cmd = "verticle-deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle ''";
+    String result = testDeployCmd(context, cmd);
+    context.assertNotNull(ctx.get());
+    context.assertEquals(result.trim(), "Deployed " + ctx.get().deploymentID());
+    context.assertEquals(1, ctx.get().getInstanceCount());
   }
 
   @Test
-  public void testDeployWithOptionsAsJsonString(TestContext context) {
-    Async async = context.async();
-    Shell shell = server.createShell();
-    Pty pty = Pty.create();
-    StringBuffer result = new StringBuffer();
-    pty.stdoutHandler(result::append);
-    Job job = shell.createJob("verticle-deploy " + name + " '{\"instances\" : 8}'")
-      .setTty(pty.slave());
-    job.statusUpdateHandler(status -> {
-      if (status == ExecStatus.TERMINATED) {
-        async.complete();
-      }
-    });
-    job.run();
-    async.awaitSuccess(5000);
-    shell.close();
-    context.assertTrue(result.toString().startsWith("Deployed"));
+  public void testDeployWithOptionsAsJsonInstance(TestContext context) {
+    String cmd =
+      "verticle-deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle '{\"instances\" : 8}'";
+    String result = testDeployCmd(context, cmd);
+    context.assertNotNull(ctx.get());
+    context.assertEquals(result.trim(), "Deployed " + ctx.get().deploymentID());
+    context.assertEquals(8, ctx.get().getInstanceCount());
+  }
+
+  @Test
+  public void testDeployWithOptionsAsJsonConfig(TestContext context) {
+    String cmd =
+      "verticle-deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle '{\"config\":{\"ok\":true}}'";
+    String result = testDeployCmd(context, cmd);
+    context.assertNotNull(ctx.get());
+    context.assertEquals(result.trim(), "Deployed " + ctx.get().deploymentID());
+    context.assertEquals(1, ctx.get().getInstanceCount());
+    context.assertNotNull(ctx.get().config());
+    context.assertTrue(ctx.get().config().containsKey("ok"));
+    context.assertEquals(true, ctx.get().config().getBoolean("ok"));
   }
 
   @Test
   public void testDeployWithOptionsAsEmptyJsonString(TestContext context) {
-    Async async = context.async();
-    Shell shell = server.createShell();
-    Pty pty = Pty.create();
-    StringBuffer result = new StringBuffer();
-    pty.stdoutHandler(result::append);
-    Job job = shell.createJob("verticle-deploy " + name + " '{}'")
-      .setTty(pty.slave());
-    job.statusUpdateHandler(status -> {
-      if (status == ExecStatus.TERMINATED) {
-        async.complete();
-      }
-    });
-    job.run();
-    async.awaitSuccess(5000);
-    shell.close();
-    context.assertTrue(result.toString().startsWith("Deployed"));
+    String cmd = "verticle-deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle '{}'";
+    String result = testDeployCmd(context, cmd);
+    context.assertNotNull(ctx.get());
+    context.assertEquals(result.trim(), "Deployed " + ctx.get().deploymentID());
+    context.assertEquals(1, ctx.get().getInstanceCount());
   }
 
   @Test
   public void testDeployWithOptionsAsInvalidJsonString(TestContext context) {
+    String cmd = "verticle-deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle '{'";
+    String result = testDeployCmd(context, cmd);
+    String msg = "Could not deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle cause of invalid";
+    context.assertTrue(result.startsWith(msg));
+  }
+
+  private String testDeployCmd(TestContext context, String cmd) {
     Async async = context.async();
     Shell shell = server.createShell();
     Pty pty = Pty.create();
     StringBuffer result = new StringBuffer();
     pty.stdoutHandler(result::append);
-    Job job = shell.createJob("verticle-deploy " + name + " '[]'")
+    Job job = shell.createJob(cmd)
       .setTty(pty.slave());
     job.statusUpdateHandler(status -> {
       if (status == ExecStatus.TERMINATED) {
@@ -137,7 +123,7 @@ public class DeployVerticleTest {
     job.run();
     async.awaitSuccess(5000);
     shell.close();
-    context.assertTrue(result.toString().startsWith("Invalid JSON string"));
+    return result.toString();
   }
 }
 
