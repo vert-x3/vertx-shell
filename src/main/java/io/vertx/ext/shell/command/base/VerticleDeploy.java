@@ -53,6 +53,7 @@ public class VerticleDeploy extends AnnotatedCommand {
 
   private String name;
   private String options;
+  private DeploymentOptions deploymentOptions;
 
   @Argument(index = 0, argName = "name")
   @Description("the verticle name")
@@ -74,23 +75,25 @@ public class VerticleDeploy extends AnnotatedCommand {
   @Override
   public void process(CommandProcess process) {
     try {
-      process.vertx().deployVerticle(name, getDeploymentOptions(), ar -> {
-        if (ar.succeeded()) {
-          process.write("Deployed " + ar.result() + "\n").end();
-        } else {
-          process.write("Could not deploy " + name + "\n");
-          StringWriter buffer = new StringWriter();
-          PrintWriter writer = new PrintWriter(buffer);
-          ar.cause().printStackTrace(writer);
-          process.write(buffer.toString()).end();
-        }
-      });
+      deploymentOptions = getDeploymentOptions();
     } catch (RuntimeException e) {
-      process.write("Invalid JSON string as a deployment options for " + name + "\n");
+      process.write("Could not deploy " + name + " cause of invalid JSON string as a deployment options\n");
       StringWriter buffer = new StringWriter();
       PrintWriter writer = new PrintWriter(buffer);
       e.printStackTrace(writer);
       process.write(buffer.toString()).end();
+      return;
     }
+    process.vertx().deployVerticle(name, deploymentOptions, ar -> {
+      if (ar.succeeded()) {
+        process.write("Deployed " + ar.result() + "\n").end();
+      } else {
+        process.write("Could not deploy " + name + "\n");
+        StringWriter buffer = new StringWriter();
+        PrintWriter writer = new PrintWriter(buffer);
+        ar.cause().printStackTrace(writer);
+        process.write(buffer.toString()).end();
+      }
+    });
   }
 }
