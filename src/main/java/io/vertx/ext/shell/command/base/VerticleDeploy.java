@@ -32,10 +32,12 @@
 
 package io.vertx.ext.shell.command.base;
 
+import io.vertx.core.DeploymentOptions;
 import io.vertx.core.cli.annotations.Argument;
 import io.vertx.core.cli.annotations.Description;
 import io.vertx.core.cli.annotations.Name;
 import io.vertx.core.cli.annotations.Summary;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
 
@@ -50,6 +52,8 @@ import java.io.StringWriter;
 public class VerticleDeploy extends AnnotatedCommand {
 
   private String name;
+  private String options;
+  private DeploymentOptions deploymentOptions;
 
   @Argument(index = 0, argName = "name")
   @Description("the verticle name")
@@ -57,9 +61,30 @@ public class VerticleDeploy extends AnnotatedCommand {
     this.name = name;
   }
 
+  @Argument(index = 1, argName = "options", required = false)
+  @Description("the verticle deployment options as JSON string")
+  public void setOptions(String options) {
+    this.options = options;
+  }
+
+  protected DeploymentOptions getDeploymentOptions() {
+    return (options != null && !options.isEmpty()) ?
+      new DeploymentOptions(new JsonObject(options)) : new DeploymentOptions();
+  }
+
   @Override
   public void process(CommandProcess process) {
-    process.vertx().deployVerticle(name, ar -> {
+    try {
+      deploymentOptions = getDeploymentOptions();
+    } catch (RuntimeException e) {
+      process.write("Could not deploy " + name + " with deployment options\n");
+      StringWriter buffer = new StringWriter();
+      PrintWriter writer = new PrintWriter(buffer);
+      e.printStackTrace(writer);
+      process.write(buffer.toString()).end();
+      return;
+    }
+    process.vertx().deployVerticle(name, deploymentOptions, ar -> {
       if (ar.succeeded()) {
         process.write("Deployed " + ar.result() + "\n").end();
       } else {
