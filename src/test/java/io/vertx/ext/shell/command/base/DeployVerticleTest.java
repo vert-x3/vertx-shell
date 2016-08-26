@@ -103,7 +103,7 @@ public class DeployVerticleTest {
   public void testDeployWithOptionsAsInvalidJsonString(TestContext context) {
     String cmd = "verticle-deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle '{'";
     String result = testDeployCmd(context, cmd);
-    String msg = "Could not deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle cause of invalid";
+    String msg = "Could not deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle with deployment options";
     context.assertTrue(result.startsWith(msg));
   }
 
