@@ -77,7 +77,7 @@ public class VerticleDeploy extends AnnotatedCommand {
     try {
       deploymentOptions = getDeploymentOptions();
     } catch (RuntimeException e) {
-      process.write("Could not deploy " + name + " cause of invalid JSON string as a deployment options\n");
+      process.write("Could not deploy " + name + " with deployment options\n");
       StringWriter buffer = new StringWriter();
       PrintWriter writer = new PrintWriter(buffer);
       e.printStackTrace(writer);
