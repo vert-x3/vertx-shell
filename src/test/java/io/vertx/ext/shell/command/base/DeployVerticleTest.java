@@ -54,7 +54,7 @@ public class DeployVerticleTest {
     String cmd = "verticle-deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle";
     String result = testDeployCmd(context, cmd);
     context.assertNotNull(ctx.get());
-    context.assertEquals(result.trim(), "Deployed " + ctx.get().deploymentID());
+    context.assertEquals(result, "Deployed " + ctx.get().deploymentID());
     context.assertEquals(1, ctx.get().getInstanceCount());
   }
 
@@ -63,7 +63,7 @@ public class DeployVerticleTest {
     String cmd = "verticle-deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle ''";
     String result = testDeployCmd(context, cmd);
     context.assertNotNull(ctx.get());
-    context.assertEquals(result.trim(), "Deployed " + ctx.get().deploymentID());
+    context.assertEquals(result, "Deployed " + ctx.get().deploymentID());
     context.assertEquals(1, ctx.get().getInstanceCount());
   }
 
@@ -73,7 +73,7 @@ public class DeployVerticleTest {
       "verticle-deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle '{\"instances\" : 8}'";
     String result = testDeployCmd(context, cmd);
     context.assertNotNull(ctx.get());
-    context.assertEquals(result.trim(), "Deployed " + ctx.get().deploymentID());
+    context.assertEquals(result, "Deployed " + ctx.get().deploymentID());
     context.assertEquals(8, ctx.get().getInstanceCount());
   }
 
@@ -83,7 +83,7 @@ public class DeployVerticleTest {
       "verticle-deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle '{\"config\":{\"ok\":true}}'";
     String result = testDeployCmd(context, cmd);
     context.assertNotNull(ctx.get());
-    context.assertEquals(result.trim(), "Deployed " + ctx.get().deploymentID());
+    context.assertEquals(result, "Deployed " + ctx.get().deploymentID());
     context.assertEquals(1, ctx.get().getInstanceCount());
     context.assertNotNull(ctx.get().config());
     context.assertTrue(ctx.get().config().containsKey("ok"));
@@ -95,7 +95,7 @@ public class DeployVerticleTest {
     String cmd = "verticle-deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle '{}'";
     String result = testDeployCmd(context, cmd);
     context.assertNotNull(ctx.get());
-    context.assertEquals(result.trim(), "Deployed " + ctx.get().deploymentID());
+    context.assertEquals(result, "Deployed " + ctx.get().deploymentID());
     context.assertEquals(1, ctx.get().getInstanceCount());
   }
 
@@ -103,7 +103,9 @@ public class DeployVerticleTest {
   public void testDeployWithOptionsAsInvalidJsonString(TestContext context) {
     String cmd = "verticle-deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle '{'";
     String result = testDeployCmd(context, cmd);
-    String msg = "Could not deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle with deployment options";
+    String msg =
+      "Could not deploy io.vertx.ext.shell.command.base.DeployVerticleTest$SomeVerticle with deployment options";
+    context.assertNull(ctx.get());
     context.assertTrue(result.startsWith(msg));
   }
 
@@ -123,7 +125,7 @@ public class DeployVerticleTest {
     job.run();
     async.awaitSuccess(5000);
     shell.close();
-    return result.toString();
+    return result.toString().trim();
   }
 }
 
