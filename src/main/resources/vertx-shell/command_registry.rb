@@ -19,6 +19,22 @@ module VertxShell
     def j_del
       @j_del
     end
+    # @return [Array<::VertxShell::Command>] the current commands
+    def commands
+      if !block_given?
+        return @j_del.java_method(:commands, []).call().to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::Command) }
+      end
+      raise ArgumentError, "Invalid arguments when calling commands()"
+    end
+    #  Returns a single command by its name.
+    # @param [String] name the command name
+    # @return [::VertxShell::Command] the commad or null
+    def get_command(name=nil)
+      if name.class == String && !block_given?
+        return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:getCommand, [Java::java.lang.String.java_class]).call(name),::VertxShell::Command)
+      end
+      raise ArgumentError, "Invalid arguments when calling get_command(name)"
+    end
     #  Get the shared registry for the Vert.x instance.
     # @param [::Vertx::Vertx] vertx the vertx instance
     # @return [::VertxShell::CommandRegistry] the shared registry

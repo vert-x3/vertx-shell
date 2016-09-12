@@ -19,6 +19,27 @@ module VertxShell
     def j_del
       @j_del
     end
+    # @return [String] the declared tty type, for instance , , etc... it can be null when the tty does not have declared its type.
+    def type
+      if !block_given?
+        return @j_del.java_method(:type, []).call()
+      end
+      raise ArgumentError, "Invalid arguments when calling type()"
+    end
+    # @return [Fixnum] the current width, i.e the number of rows or  if unknown
+    def width
+      if !block_given?
+        return @j_del.java_method(:width, []).call()
+      end
+      raise ArgumentError, "Invalid arguments when calling width()"
+    end
+    # @return [Fixnum] the current height, i.e the number of columns or  if unknown
+    def height
+      if !block_given?
+        return @j_del.java_method(:height, []).call()
+      end
+      raise ArgumentError, "Invalid arguments when calling height()"
+    end
     # @return [::Vertx::Vertx] the current Vert.x instance
     def vertx
       if !block_given?
