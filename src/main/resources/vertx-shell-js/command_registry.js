@@ -39,6 +39,33 @@ var CommandRegistry = function(j_val) {
   CommandResolver.call(this, j_val);
 
   /**
+
+   @public
+
+   @return {Array.<Command>} the current commands
+   */
+  this.commands = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return utils.convReturnListSetVertxGen(j_commandRegistry["commands()"](), Command);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+   Returns a single command by its name.
+
+   @public
+   @param name {string} the command name 
+   @return {Command} the commad or null
+   */
+  this.getCommand = function(name) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'string') {
+      return utils.convReturnVertxGen(j_commandRegistry["getCommand(java.lang.String)"](name), Command);
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
    Register a command
 
    @public

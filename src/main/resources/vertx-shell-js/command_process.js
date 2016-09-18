@@ -41,6 +41,45 @@ var CommandProcess = function(j_val) {
 
    @public
 
+   @return {string} the declared tty type, for instance , , etc... it can be null when the tty does not have declared its type.
+   */
+  this.type = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return j_commandProcess["type()"]();
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+
+   @return {number} the current width, i.e the number of rows or  if unknown
+   */
+  this.width = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return j_commandProcess["width()"]();
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+
+   @return {number} the current height, i.e the number of columns or  if unknown
+   */
+  this.height = function() {
+    var __args = arguments;
+    if (__args.length === 0) {
+      return j_commandProcess["height()"]();
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+
    @return {Vertx} the current Vert.x instance
    */
   this.vertx = function() {
