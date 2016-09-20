@@ -291,7 +291,7 @@
  * . Verticle commands
  * .. verticle-ls: list all deployed verticles
  * .. verticle-undeploy: undeploy a verticle
- * .. verticle-deploy: deployes a verticle
+ * .. verticle-deploy: deployes a verticle with deployment options as JSON string
  * .. verticle-factories: list all known verticle factories
  * . File system commands
  * .. ls
