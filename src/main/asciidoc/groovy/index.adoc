@@ -9,7 +9,7 @@ Vert.x Shell can be extended with custom commands in any language supported by V
 
 == Using Vert.x Shell
 
-Vert.x Shell is a Vert.x Service and can be started programmatically via the `link:../../groovydoc/io/vertx/groovy/ext/shell/ShellService.html[ShellService]`
+Vert.x Shell is a Vert.x Service and can be started programmatically via the `link:../../apidocs/io/vertx/ext/shell/ShellService.html[ShellService]`
 or deployed as a service.
 
 === Shell service
@@ -118,14 +118,14 @@ or `maven:io.vertx:vertx-shell:3.4.0-SNAPSHOT`
 
 === Programmatic service
 
-The `link:../../groovydoc/io/vertx/groovy/ext/shell/ShellService.html[ShellService]` takes care of starting an instance of Vert.x Shell.
+The `link:../../apidocs/io/vertx/ext/shell/ShellService.html[ShellService]` takes care of starting an instance of Vert.x Shell.
 
 Starting a shell service available via SSH:
 
 [source,groovy]
 ----
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType
-import io.vertx.groovy.ext.shell.ShellService
+import io.vertx.ext.shell.ShellService
 def service = ShellService.create(vertx, [
   sSHOptions:[
     host:"localhost",
@@ -150,7 +150,7 @@ Starting a shell service available via Telnet:
 
 [source,groovy]
 ----
-import io.vertx.groovy.ext.shell.ShellService
+import io.vertx.ext.shell.ShellService
 def service = ShellService.create(vertx, [
   telnetOptions:[
     host:"localhost",
@@ -161,7 +161,7 @@ service.start()
 
 ----
 
-The `link:../dataobjects.html#TelnetTermOptions[TelnetTermOptions]` extends the Vert.x Core `NetServerOptions` as the Telnet server
+The `link:../../apidocs/io/vertx/ext/shell/term/TelnetTermOptions.html[TelnetTermOptions]` extends the Vert.x Core `NetServerOptions` as the Telnet server
 implementation is based on a `NetServer`.
 
 CAUTION: Telnet does not provide any authentication nor encryption at all.
@@ -170,7 +170,7 @@ Starting a shell service available via HTTP:
 
 [source,groovy]
 ----
-import io.vertx.groovy.ext.shell.ShellService
+import io.vertx.ext.shell.ShellService
 def service = ShellService.create(vertx, [
   httpOptions:[
     host:"localhost",
@@ -190,11 +190,11 @@ providers:
 - _jdbc_ : JDBC backend
 - _mongo_ : MongoDB backend
 
-These options can be created directly using directly `link:../../vertx-auth-common/dataobjects.html#AuthOptions[AuthOptions]`:
+These options can be created directly using directly `link:../../apidocs/io/vertx/ext/auth/AuthOptions.html[AuthOptions]`:
 
-- `link:../../vertx-auth-shiro/dataobjects.html#ShiroAuthOptions[ShiroAuthOptions]` for Shiro
-- `link:../../vertx-auth-jdbc/dataobjects.html#JDBCAuthOptions[JDBCAuthOptions]` for JDBC
-- `link:../../vertx-auth-mongo/dataobjects.html#MongoAuthOptions[MongoAuthOptions]` for Mongo
+- `link:../../apidocs/io/vertx/ext/auth/shiro/ShiroAuthOptions.html[ShiroAuthOptions]` for Shiro
+- `link:../../apidocs/io/vertx/ext/auth/jdbc/JDBCAuthOptions.html[JDBCAuthOptions]` for JDBC
+- `link:../../apidocs/io/vertx/ext/auth/mongo/MongoAuthOptions.html[MongoAuthOptions]` for Mongo
 
 As for external service configuration in Json, the `authOptions` uses the `provider` property to distinguish:
 
@@ -213,27 +213,27 @@ As for external service configuration in Json, the `authOptions` uses the `provi
 
 == Telnet term configuration
 
-Telnet terms are configured by `link:../dataobjects.html#ShellServiceOptions#setTelnetOptions(io.vertx.ext.shell.term.TelnetTermOptions)[telnetOptions]`,
-the `link:../dataobjects.html#TelnetTermOptions[TelnetTermOptions]` extends the `link:../../vertx-core/dataobjects.html#NetServerOptions[NetServerOptions]` so they
+Telnet terms are configured by `link:../../apidocs/io/vertx/ext/shell/ShellServiceOptions.html#setTelnetOptions-io.vertx.ext.shell.term.TelnetTermOptions-[setTelnetOptions]`,
+the `link:../../apidocs/io/vertx/ext/shell/term/TelnetTermOptions.html[TelnetTermOptions]` extends the `link:../../apidocs/io/vertx/core/net/NetServerOptions.html[NetServerOptions]` so they
 have the exact same configuration.
 
 == SSH term configuration
 
-SSH terms are configured by `link:../dataobjects.html#ShellServiceOptions#setSSHOptions(io.vertx.ext.shell.term.SSHTermOptions)[SSHOptions]`:
+SSH terms are configured by `link:../../apidocs/io/vertx/ext/shell/ShellServiceOptions.html#setSSHOptions-io.vertx.ext.shell.term.SSHTermOptions-[setSSHOptions]`:
 
-- `link:../dataobjects.html#SSHTermOptions#setPort(int)[port]`: port
-- `link:../dataobjects.html#SSHTermOptions#setHost(java.lang.String)[host]`: host
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setPort-int-[setPort]`: port
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setHost-java.lang.String-[setHost]`: host
 
 Only username/password authentication is supported at the moment, it can be configured with property file
 or LDAP, see Vert.x Auth for more info:
 
-- `link:../dataobjects.html#SSHTermOptions#setAuthOptions(io.vertx.ext.auth.AuthOptions)[authOptions]`: configures user authentication
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setAuthOptions-io.vertx.ext.auth.AuthOptions-[setAuthOptions]`: configures user authentication
 
 The server key configuration reuses the key pair store configuration scheme provided by _Vert.x Core_:
 
-- `link:../dataobjects.html#SSHTermOptions#setKeyPairOptions(io.vertx.core.net.JksOptions)[keyPairOptions]`: set `.jks` key pair store
-- `link:../dataobjects.html#SSHTermOptions#setPfxKeyPairOptions(io.vertx.core.net.PfxOptions)[pfxKeyPairOptions]`: set `.pfx` key pair store
-- `link:../dataobjects.html#SSHTermOptions#setPemKeyPairOptions(io.vertx.core.net.PemKeyCertOptions)[pemKeyPairOptions]`: set `.pem` key pair store
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setKeyPairOptions-io.vertx.core.net.JksOptions-[setKeyPairOptions]`: set `.jks` key pair store
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setPfxKeyPairOptions-io.vertx.core.net.PfxOptions-[setPfxKeyPairOptions]`: set `.pfx` key pair store
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setPemKeyPairOptions-io.vertx.core.net.PemKeyCertOptions-[setPemKeyPairOptions]`: set `.pem` key pair store
 
 
 .Deploying the Shell Service on SSH with Mongo authentication
@@ -263,7 +263,7 @@ vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
 .Running the Shell Service on SSH with Mongo authentication
 [source,groovy,subs="+attributes"]
 ----
-import io.vertx.groovy.ext.shell.ShellService
+import io.vertx.ext.shell.ShellService
 def service = ShellService.create(vertx, [
   sSHOptions:[
     host:"localhost",
@@ -311,7 +311,7 @@ vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
 .Running the Shell Service on SSH with JDBC authentication
 [source,groovy,subs="+attributes"]
 ----
-import io.vertx.groovy.ext.shell.ShellService
+import io.vertx.ext.shell.ShellService
 def service = ShellService.create(vertx, [
   sSHOptions:[
     host:"localhost",
@@ -334,14 +334,14 @@ service.start()
 
 == HTTP term configuration
 
-HTTP terms are configured by `link:../dataobjects.html#ShellServiceOptions#setHttpOptions(io.vertx.ext.shell.term.HttpTermOptions)[httpOptions]`, the http options
-extends the `link:../../vertx-core/dataobjects.html#HttpServerOptions[HttpServerOptions]` so they expose the exact same configuration.
+HTTP terms are configured by `link:../../apidocs/io/vertx/ext/shell/ShellServiceOptions.html#setHttpOptions-io.vertx.ext.shell.term.HttpTermOptions-[setHttpOptions]`, the http options
+extends the `link:../../apidocs/io/vertx/core/http/HttpServerOptions.html[HttpServerOptions]` so they expose the exact same configuration.
 
 In addition there are extra options for configuring an HTTP term:
 
-- `link:../dataobjects.html#HttpTermOptions#setAuthOptions(io.vertx.ext.auth.AuthOptions)[authOptions]`: configures user authentication
-- `link:../dataobjects.html#HttpTermOptions#setSockJSHandlerOptions(io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions)[sockJSHandlerOptions]`: configures SockJS
-- `link:../dataobjects.html#HttpTermOptions#setSockJSPath(java.lang.String)[sockJSPath]`: the SockJS path in the router
+- `link:../../apidocs/io/vertx/ext/shell/term/HttpTermOptions.html#setAuthOptions-io.vertx.ext.auth.AuthOptions-[setAuthOptions]`: configures user authentication
+- `link:../../apidocs/io/vertx/ext/shell/term/HttpTermOptions.html#setSockJSHandlerOptions-io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions-[setSockJSHandlerOptions]`: configures SockJS
+- `link:../../apidocs/io/vertx/ext/shell/term/HttpTermOptions.html#setSockJSPath-java.lang.String-[setSockJSPath]`: the SockJS path in the router
 
 .Deploying the Shell Service on HTTP with Mongo authentication
 [source,groovy,subs="+attributes"]
@@ -371,7 +371,7 @@ vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
 .Running the Shell Service on HTTP with Mongo authentication
 [source,groovy,subs="+attributes"]
 ----
-import io.vertx.groovy.ext.shell.ShellService
+import io.vertx.ext.shell.ShellService
 def service = ShellService.create(vertx, [
   httpOptions:[
     host:"localhost",
@@ -416,7 +416,7 @@ vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
 .Running the Shell Service on HTTP with JDBC authentication
 [source,groovy,subs="+attributes"]
 ----
-import io.vertx.groovy.ext.shell.ShellService
+import io.vertx.ext.shell.ShellService
 def service = ShellService.create(vertx, [
   httpOptions:[
     host:"localhost",
@@ -438,9 +438,9 @@ service.start()
 The shell uses a default keymap configuration that can be overriden using the `inputrc` property of the various
 term configuration object:
 
-- `link:../dataobjects.html#TelnetTermOptions#setIntputrc(java.lang.String)[intputrc]`
-- `link:../dataobjects.html#SSHTermOptions#setIntputrc(java.lang.String)[intputrc]`
-- `link:../dataobjects.html#HttpTermOptions#setIntputrc(java.lang.String)[intputrc]`
+- `link:../../apidocs/io/vertx/ext/shell/term/TelnetTermOptions.html#setIntputrc-java.lang.String-[setIntputrc]`
+- `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html#setIntputrc-java.lang.String-[setIntputrc]`
+- `link:../../apidocs/io/vertx/ext/shell/term/HttpTermOptions.html#setIntputrc-java.lang.String-[setIntputrc]`
 
 The `inputrc` must point to a file available via the classloader or the filesystem.
 
@@ -509,14 +509,14 @@ Vert.x Shell, for instance Dropwizard Metrics.
 
 Vert.x Shell can be extended with custom commands in any of the languages supporting code generation.
 
-A command is created by the `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandBuilder.html#command(java.lang.String)[CommandBuilder.command]` method: the command process handler is called
-by the shell when the command is executed, this handler can be set with the `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandBuilder.html#processHandler(io.vertx.core.Handler)[processHandler]`
+A command is created by the `link:../../apidocs/io/vertx/ext/shell/command/CommandBuilder.html#command-java.lang.String-[CommandBuilder.command]` method: the command process handler is called
+by the shell when the command is executed, this handler can be set with the `link:../../apidocs/io/vertx/ext/shell/command/CommandBuilder.html#processHandler-io.vertx.core.Handler-[processHandler]`
 method:
 
 [source,groovy]
 ----
-import io.vertx.groovy.ext.shell.command.CommandBuilder
-import io.vertx.groovy.ext.shell.command.CommandRegistry
+import io.vertx.ext.shell.command.CommandBuilder
+import io.vertx.ext.shell.command.CommandRegistry
 
 def builder = CommandBuilder.command("my-command")
 builder.processHandler({ process ->
@@ -534,20 +534,20 @@ registry.registerCommand(builder.build(vertx))
 
 ----
 
-After a command is created, it needs to be registed to a `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandRegistry.html[CommandRegistry]`. The
+After a command is created, it needs to be registed to a `link:../../apidocs/io/vertx/ext/shell/command/CommandRegistry.html[CommandRegistry]`. The
 command registry holds all the commands for a Vert.x instance.
 
-A command is registered until it is unregistered with the `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandRegistry.html#unregisterCommand(java.lang.String)[unregisterCommand]`.
+A command is registered until it is unregistered with the `link:../../apidocs/io/vertx/ext/shell/command/CommandRegistry.html#unregisterCommand-java.lang.String-[unregisterCommand]`.
 When a command is registered from a Verticle, this command is unregistered when this verticle is undeployed.
 
 NOTE: Command callbacks are invoked in the `io.vertx.core.Context` when the command is registered in the
 registry. Keep this in mind if you maintain state in a command.
 
-The `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html[CommandProcess]` object can be used for interacting with the shell.
+The `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html[CommandProcess]` object can be used for interacting with the shell.
 
 === Command arguments
 
-The `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#args()[args]` returns the command arguments:
+The `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html#args--[args]` returns the command arguments:
 
 [source,groovy]
 ----
@@ -563,7 +563,7 @@ command.processHandler({ process ->
 
 ----
 
-Besides it is also possible to create commands using `link:../../groovydoc/io/vertx/groovy/core/cli/CLI.html[Vert.x CLI]`: it makes easier to
+Besides it is also possible to create commands using `link:../../apidocs/io/vertx/core/cli/CLI.html[Vert.x CLI]`: it makes easier to
 write command line argument parsing:
 
 - _option_ and _argument_ parsing
@@ -572,8 +572,8 @@ write command line argument parsing:
 
 [source,groovy]
 ----
-import io.vertx.groovy.core.cli.CLI
-import io.vertx.groovy.ext.shell.command.CommandBuilder
+import io.vertx.core.cli.CLI
+import io.vertx.ext.shell.command.CommandBuilder
 def cli = CLI.create("my-command").addArgument([
   argName:"my-arg"
 ]).addOption([
@@ -599,8 +599,8 @@ when the option is activated:
 
 [source,groovy]
 ----
-import io.vertx.groovy.core.cli.CLI
-import io.vertx.groovy.ext.shell.command.CommandBuilder
+import io.vertx.core.cli.CLI
+import io.vertx.ext.shell.command.CommandBuilder
 def cli = CLI.create("my-command").addArgument([
   argName:"my-arg"
 ]).addOption([
@@ -615,15 +615,15 @@ command.processHandler({ process ->
 
 ----
 
-When the command executes the `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html[process]` is provided for interacting
-with the shell. A `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html[CommandProcess]` extends `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html[Tty]`
+When the command executes the `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html[process]` is provided for interacting
+with the shell. A `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html[CommandProcess]` extends `link:../../apidocs/io/vertx/ext/shell/term/Tty.html[Tty]`
 which is used for interacting with the terminal.
 
 === Terminal usage
 
 ==== terminal I/O
 
-The `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#stdinHandler(io.vertx.core.Handler)[stdinHandler]` handler is used to be notified when the terminal
+The `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#stdinHandler-io.vertx.core.Handler-[stdinHandler]` handler is used to be notified when the terminal
 receives data, e.g the user uses his keyboard:
 
 [source,groovy]
@@ -634,7 +634,7 @@ tty.stdinHandler({ data ->
 
 ----
 
-A command can use the `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#write(java.lang.String)[write]` to write to the standard output.
+A command can use the `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#write-java.lang.String-[write]` to write to the standard output.
 
 [source,groovy]
 ----
@@ -644,8 +644,8 @@ tty.write("Hello World")
 
 ==== Terminal size
 
-The current terminal size can be obtained using `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#width()[width]` and
-`link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#height()[height]`.
+The current terminal size can be obtained using `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#width--[width]` and
+`link:../../apidocs/io/vertx/ext/shell/term/Tty.html#height--[height]`.
 
 [source,groovy]
 ----
@@ -655,9 +655,9 @@ tty.write("Current terminal size: (${tty.width()}, ${tty.height()})")
 
 ==== Resize event
 
-When the size of the terminal changes the `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#resizehandler(io.vertx.core.Handler)[resizehandler]`
-is called, the new terminal size can be obtained with `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#width()[width]` and
-`link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#height()[height]`.
+When the size of the terminal changes the `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#resizehandler-io.vertx.core.Handler-[resizehandler]`
+is called, the new terminal size can be obtained with `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#width--[width]` and
+`link:../../apidocs/io/vertx/ext/shell/term/Tty.html#height--[height]`.
 
 [source,groovy]
 ----
@@ -669,7 +669,7 @@ tty.resizehandler({ v ->
 
 ==== Terminal type
 
-The terminal type is useful for sending escape codes to the remote terminal: `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html#type()[type]`
+The terminal type is useful for sending escape codes to the remote terminal: `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#type--[type]`
 returns the current terminal type, it can be null if the terminal has not advertised the value.
 
 [source,groovy]
@@ -681,7 +681,7 @@ println("terminal type : ${tty.type()}")
 === Shell session
 
 The shell is a connected service that naturally maintains a session with the client, this session can be
-used in commands to scope data. A command can get the session with `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#session()[session]`:
+used in commands to scope data. A command can get the session with `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html#session--[session]`:
 
 [source,groovy]
 ----
@@ -700,7 +700,7 @@ command.processHandler({ process ->
 
 === Process termination
 
-Calling `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#end()[end]` ends the current process. It can be called directly
+Calling `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html#end--[end]` ends the current process. It can be called directly
 in the invocation of the command handler or any time later:
 
 [source,groovy]
@@ -724,7 +724,7 @@ A command can subscribe to a few process events.
 
 ==== Interrupt event
 
-The `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#interruptHandler(io.vertx.core.Handler)[interruptHandler]` is called when the process
+The `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html#interruptHandler-io.vertx.core.Handler-[interruptHandler]` is called when the process
 is interrupted, this event is fired when the user press _Ctrl+C_ during the execution of a command. This handler can
 be used for interrupting commands _blocking_ the CLI and gracefully ending the command process:
 
@@ -752,7 +752,7 @@ will be delayed and will likely be handled by the shell, like printing a new lin
 
 ==== Suspend/resume events
 
-The `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#suspendHandler(io.vertx.core.Handler)[suspendHandler]` is called when the process
+The `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html#suspendHandler-io.vertx.core.Handler-[suspendHandler]` is called when the process
 is running and the user press _Ctrl+Z_, the command is _suspended_:
 
 - the command can receive the suspend event when it has registered an handler for this event
@@ -760,7 +760,7 @@ is running and the user press _Ctrl+Z_, the command is _suspended_:
 - the shell prompt the user for input
 - the command can receive interrupts event or end events
 
-The `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#resumeHandler(io.vertx.core.Handler)[resumeHandler]` is called when the process
+The `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html#resumeHandler-io.vertx.core.Handler-[resumeHandler]` is called when the process
 is resumed, usually when the user types _fg_:
 
 - the command can receive the resume event when it has registered an handler for this event
@@ -785,7 +785,7 @@ command.processHandler({ process ->
 
 ==== End events
 
-The `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#endHandler(io.vertx.core.Handler)[endHandler]` (io.vertx.core.Handler)} is
+The `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html#endHandler-io.vertx.core.Handler-[endHandler]` (io.vertx.core.Handler)} is
 called when the process is running or suspended and the command terminates, for instance the shell session is closed,
 the command is _terminated_.
 
@@ -801,7 +801,7 @@ command.processHandler({ process ->
 
 ----
 
-The end handler is called even when the command invokes `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandProcess.html#end()[end]`.
+The end handler is called even when the command invokes `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html#end--[end]`.
 
 This handler is useful for cleaning up resources upon command termination, for instance closing a client or a timer.
 
@@ -809,22 +809,22 @@ This handler is useful for cleaning up resources upon command termination, for i
 
 A command can provide a completion handler when it wants to provide contextual command line interface completion.
 
-Like the process handler, the `link:../../groovydoc/io/vertx/groovy/ext/shell/command/CommandBuilder.html#completionHandler(io.vertx.core.Handler)[completion
+Like the process handler, the `link:../../apidocs/io/vertx/ext/shell/command/CommandBuilder.html#completionHandler-io.vertx.core.Handler-[completion
 handler]` is non blocking because the implementation may use Vert.x services, e.g the file system.
 
-The `link:../../groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#lineTokens()[lineTokens]` returns a list of `link:../../groovydoc/io/vertx/groovy/ext/shell/cli/CliToken.html[tokens]`
+The `link:../../apidocs/io/vertx/ext/shell/cli/Completion.html#lineTokens--[lineTokens]` returns a list of `link:../../apidocs/io/vertx/ext/shell/cli/CliToken.html[tokens]`
 from the beginning of the line to the cursor position. The list can be empty if the cursor when the cursor is at the
 beginning of the line.
 
-The `link:../../groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#rawLine()[rawLine]` returns the current completed from the beginning
+The `link:../../apidocs/io/vertx/ext/shell/cli/Completion.html#rawLine--[rawLine]` returns the current completed from the beginning
 of the line to the cursor position, in raw format, i.e without any char escape performed.
 
-Completion ends with a call to `link:../../groovydoc/io/vertx/groovy/ext/shell/cli/Completion.html#complete(java.util.List)[complete]`.
+Completion ends with a call to `link:../../apidocs/io/vertx/ext/shell/cli/Completion.html#complete-java.util.List-[complete]`.
 
 == Shell server
 
 The Shell service is a convenient facade for starting a preconfigured shell either programmatically or as a Vert.x service.
-When more flexibility is needed, a `link:../../groovydoc/io/vertx/groovy/ext/shell/ShellServer.html[ShellServer]` can be used instead of the service.
+When more flexibility is needed, a `link:../../apidocs/io/vertx/ext/shell/ShellServer.html[ShellServer]` can be used instead of the service.
 
 For instance the shell http term can be configured to use an existing router instead of starting its own http server.
 
@@ -833,10 +833,10 @@ steps:
 
 [source,groovy]
 ----
-import io.vertx.groovy.ext.shell.ShellServer
-import io.vertx.groovy.ext.web.Router
-import io.vertx.groovy.ext.shell.term.TermServer
-import io.vertx.groovy.ext.shell.command.CommandResolver
+import io.vertx.ext.shell.ShellServer
+import io.vertx.ext.web.Router
+import io.vertx.ext.shell.term.TermServer
+import io.vertx.ext.shell.command.CommandResolver
 
 def server = ShellServer.create(vertx)
 
@@ -863,7 +863,7 @@ server.listen()
 
 Besides, the shell server can also be used for creating in process shell session: it provides a programmatic interactive shell.
 
-In process shell session can be created with `link:../../groovydoc/io/vertx/groovy/ext/shell/ShellServer.html#createShell(io.vertx.ext.shell.term.Term)[createShell]`:
+In process shell session can be created with `link:../../apidocs/io/vertx/ext/shell/ShellServer.html#createShell-io.vertx.ext.shell.term.Term-[createShell]`:
 
 [source,groovy]
 ----
@@ -878,7 +878,7 @@ The main use case is running or testing a command:
 
 [source,groovy]
 ----
-import io.vertx.groovy.ext.shell.term.Pty
+import io.vertx.ext.shell.term.Pty
 
 // Create a shell
 def shell = shellServer.createShell()
@@ -900,35 +900,35 @@ job.statusUpdateHandler({ status ->
 
 ----
 
-The `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Pty.html[Pty]` pseudo terminal is the main interface for interacting with the command
+The `link:../../apidocs/io/vertx/ext/shell/term/Pty.html[Pty]` pseudo terminal is the main interface for interacting with the command
 when it's running:
 
 - uses standard input/output for writing or reading strings
 - resize the terminal
 
-The `link:../../groovydoc/io/vertx/groovy/ext/shell/system/JobController.html#close(io.vertx.core.Handler)[close]` closes the shell, it will terminate all jobs in the current shell
+The `link:../../apidocs/io/vertx/ext/shell/system/JobController.html#close-io.vertx.core.Handler-[close]` closes the shell, it will terminate all jobs in the current shell
 session.
 
 == Terminal servers
 
 Vert.x Shell also provides bare terminal servers for those who need to write pure terminal applications.
 
-A `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` handler must be set on a term server before starting it. This handler will
+A `link:../../apidocs/io/vertx/ext/shell/term/Term.html[Term]` handler must be set on a term server before starting it. This handler will
 handle each term when the user connects.
 
-An `link:../../vertx-auth-common/dataobjects.html#AuthOptions[AuthOptions]` can be set on `link:../dataobjects.html#SSHTermOptions[SSHTermOptions]` and `link:../dataobjects.html#HttpTermOptions[HttpTermOptions]`.
-Alternatively, an `link:../../groovydoc/io/vertx/groovy/ext/auth/AuthProvider.html[AuthProvider]` can be `link:../../groovydoc/io/vertx/groovy/ext/shell/term/TermServer.html#authProvider(io.vertx.ext.auth.AuthProvider)[set]`
+An `link:../../apidocs/io/vertx/ext/auth/AuthOptions.html[AuthOptions]` can be set on `link:../../apidocs/io/vertx/ext/shell/term/SSHTermOptions.html[SSHTermOptions]` and `link:../../apidocs/io/vertx/ext/shell/term/HttpTermOptions.html[HttpTermOptions]`.
+Alternatively, an `link:../../apidocs/io/vertx/ext/auth/AuthProvider.html[AuthProvider]` can be `link:../../apidocs/io/vertx/ext/shell/term/TermServer.html#authProvider-io.vertx.ext.auth.AuthProvider-[set]`
 directly on the term server before starting it.
 
 === SSH term
 
-The terminal server `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` handler accepts incoming terminal connections.
-When a remote terminal connects, the `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` can be used to interact with connected
+The terminal server `link:../../apidocs/io/vertx/ext/shell/term/Term.html[Term]` handler accepts incoming terminal connections.
+When a remote terminal connects, the `link:../../apidocs/io/vertx/ext/shell/term/Term.html[Term]` can be used to interact with connected
 terminal.
 
 [source,groovy]
 ----
-import io.vertx.groovy.ext.shell.term.TermServer
+import io.vertx.ext.shell.term.TermServer
 def server = TermServer.createSSHTermServer(vertx, [
   port:5000,
   host:"localhost"
@@ -942,14 +942,14 @@ server.listen()
 
 ----
 
-The `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Term.html[Term]` is also a `link:../../groovydoc/io/vertx/groovy/ext/shell/term/Tty.html[Tty]`, this section explains
+The `link:../../apidocs/io/vertx/ext/shell/term/Term.html[Term]` is also a `link:../../apidocs/io/vertx/ext/shell/term/Tty.html[Tty]`, this section explains
 how to use the tty.
 
 === Telnet term
 
 [source,groovy]
 ----
-import io.vertx.groovy.ext.shell.term.TermServer
+import io.vertx.ext.shell.term.TermServer
 def server = TermServer.createTelnetTermServer(vertx, [
   port:5000,
   host:"localhost"
@@ -965,12 +965,12 @@ server.listen()
 
 === HTTP term
 
-The `link:../../groovydoc/io/vertx/groovy/ext/shell/term/TermServer.html#createHttpTermServer(io.vertx.core.Vertx)[TermServer.createHttpTermServer]` method creates an HTTP term server, built
+The `link:../../apidocs/io/vertx/ext/shell/term/TermServer.html#createHttpTermServer-io.vertx.core.Vertx-[TermServer.createHttpTermServer]` method creates an HTTP term server, built
 on top of Vert.x Web using the SockJS protocol.
 
 [source,groovy]
 ----
-import io.vertx.groovy.ext.shell.term.TermServer
+import io.vertx.ext.shell.term.TermServer
 def server = TermServer.createHttpTermServer(vertx, [
   port:5000,
   host:"localhost"
@@ -984,13 +984,13 @@ server.listen()
 
 ----
 
-An HTTP term can start its own HTTP server, or it can reuse an existing Vert.x Web `link:../../groovydoc/io/vertx/groovy/ext/web/Router.html[Router]`.
+An HTTP term can start its own HTTP server, or it can reuse an existing Vert.x Web `link:../../apidocs/io/vertx/ext/web/Router.html[Router]`.
 
 The shell can be found at `/shell.html`.
 
 [source,groovy]
 ----
-import io.vertx.groovy.ext.shell.term.TermServer
+import io.vertx.ext.shell.term.TermServer
 def server = TermServer.createHttpTermServer(vertx, router, [
   port:5000,
   host:"localhost"
@@ -1049,7 +1049,7 @@ The command discovery can be used when new commands need to be added to Vert.x w
 
 For example, the _Dropwizard_ metrics service, adds specific metrics command to the shell service on the fly.
 
-It can be achieved via the `java.util.ServiceLoader` of a `CommandResolverFactory`.
+It can be achieved via the `java.util.ServiceLoader` of a `link:../../apidocs/io/vertx/ext/shell/spi/CommandResolverFactory.html[CommandResolverFactory]`.
 
 [source,java]
 ----
@@ -1072,7 +1072,7 @@ The shell service discovery using the service loader mechanism:
 my.CustomCommands
 ----
 
-This is only valid for the `link:../../groovydoc/io/vertx/groovy/ext/shell/ShellService.html[ShellService]`. `link:../../groovydoc/io/vertx/groovy/ext/shell/ShellServer.html[ShellServer]`
+This is only valid for the `link:../../apidocs/io/vertx/ext/shell/ShellService.html[ShellService]`. `link:../../apidocs/io/vertx/ext/shell/ShellServer.html[ShellServer]`
 don't use this mechanism.
 
 == Command pack
