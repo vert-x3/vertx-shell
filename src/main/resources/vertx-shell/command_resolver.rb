@@ -15,13 +15,29 @@ module VertxShell
     def j_del
       @j_del
     end
+    @@j_api_type = Object.new
+    def @@j_api_type.accept?(obj)
+      obj.class == CommandResolver
+    end
+    def @@j_api_type.wrap(obj)
+      CommandResolver.new(obj)
+    end
+    def @@j_api_type.unwrap(obj)
+      obj.j_del
+    end
+    def self.j_api_type
+      @@j_api_type
+    end
+    def self.j_class
+      Java::IoVertxExtShellCommand::CommandResolver.java_class
+    end
     # @param [::Vertx::Vertx] vertx 
     # @return [::VertxShell::CommandResolver] the base commands of Vert.x Shell.
     def self.base_commands(vertx=nil)
       if vertx.class.method_defined?(:j_del) && !block_given?
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandResolver.java_method(:baseCommands, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::CommandResolver)
       end
-      raise ArgumentError, "Invalid arguments when calling base_commands(vertx)"
+      raise ArgumentError, "Invalid arguments when calling base_commands(#{vertx})"
     end
     # @return [Array<::VertxShell::Command>] the current commands
     def commands
@@ -37,7 +53,7 @@ module VertxShell
       if name.class == String && !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:getCommand, [Java::java.lang.String.java_class]).call(name),::VertxShell::Command)
       end
-      raise ArgumentError, "Invalid arguments when calling get_command(name)"
+      raise ArgumentError, "Invalid arguments when calling get_command(#{name})"
     end
   end
 end

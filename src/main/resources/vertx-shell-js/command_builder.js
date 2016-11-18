@@ -47,7 +47,7 @@ var CommandBuilder = function(j_val) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'function') {
       j_commandBuilder["processHandler(io.vertx.core.Handler)"](function(jVal) {
-      handler(utils.convReturnVertxGen(jVal, CommandProcess));
+      handler(utils.convReturnVertxGen(CommandProcess, jVal));
     });
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
@@ -65,7 +65,7 @@ var CommandBuilder = function(j_val) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'function') {
       j_commandBuilder["completionHandler(io.vertx.core.Handler)"](function(jVal) {
-      handler(utils.convReturnVertxGen(jVal, Completion));
+      handler(utils.convReturnVertxGen(Completion, jVal));
     });
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
@@ -81,7 +81,7 @@ var CommandBuilder = function(j_val) {
   this.build = function(vertx) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      return utils.convReturnVertxGen(j_commandBuilder["build(io.vertx.core.Vertx)"](vertx._jdel), Command);
+      return utils.convReturnVertxGen(Command, j_commandBuilder["build(io.vertx.core.Vertx)"](vertx._jdel));
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -91,6 +91,25 @@ var CommandBuilder = function(j_val) {
   this._jdel = j_commandBuilder;
 };
 
+CommandBuilder._jclass = utils.getJavaClass("io.vertx.ext.shell.command.CommandBuilder");
+CommandBuilder._jtype = {
+  accept: function(obj) {
+    return CommandBuilder._jclass.isInstance(obj._jdel);
+  },
+  wrap: function(jdel) {
+    var obj = Object.create(CommandBuilder.prototype, {});
+    CommandBuilder.apply(obj, arguments);
+    return obj;
+  },
+  unwrap: function(obj) {
+    return obj._jdel;
+  }
+};
+CommandBuilder._create = function(jdel) {
+  var obj = Object.create(CommandBuilder.prototype, {});
+  CommandBuilder.apply(obj, arguments);
+  return obj;
+}
 /**
  Create a new commmand with its {@link CLI} descriptor. This command can then retrieve the parsed
  {@link CommandProcess#commandLine} when it executes to know get the command arguments and options.
@@ -102,11 +121,10 @@ var CommandBuilder = function(j_val) {
 CommandBuilder.command = function() {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnVertxGen(JCommandBuilder["command(java.lang.String)"](__args[0]), CommandBuilder);
+    return utils.convReturnVertxGen(CommandBuilder, JCommandBuilder["command(java.lang.String)"](__args[0]));
   }else if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-    return utils.convReturnVertxGen(JCommandBuilder["command(io.vertx.core.cli.CLI)"](__args[0]._jdel), CommandBuilder);
+    return utils.convReturnVertxGen(CommandBuilder, JCommandBuilder["command(io.vertx.core.cli.CLI)"](__args[0]._jdel));
   } else throw new TypeError('function invoked with invalid arguments');
 };
 
-// We export the Constructor function
 module.exports = CommandBuilder;

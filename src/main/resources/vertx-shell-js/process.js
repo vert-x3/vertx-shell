@@ -84,7 +84,7 @@ var Process = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       if (that.cachedgetTty == null) {
-        that.cachedgetTty = utils.convReturnVertxGen(j_process["getTty()"](), Tty);
+        that.cachedgetTty = utils.convReturnVertxGen(Tty, j_process["getTty()"]());
       }
       return that.cachedgetTty;
     } else throw new TypeError('function invoked with invalid arguments');
@@ -115,7 +115,7 @@ var Process = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       if (that.cachedgetSession == null) {
-        that.cachedgetSession = utils.convReturnVertxGen(j_process["getSession()"](), Session);
+        that.cachedgetSession = utils.convReturnVertxGen(Session, j_process["getSession()"]());
       }
       return that.cachedgetSession;
     } else throw new TypeError('function invoked with invalid arguments');
@@ -260,5 +260,23 @@ var Process = function(j_val) {
   this._jdel = j_process;
 };
 
-// We export the Constructor function
+Process._jclass = utils.getJavaClass("io.vertx.ext.shell.system.Process");
+Process._jtype = {
+  accept: function(obj) {
+    return Process._jclass.isInstance(obj._jdel);
+  },
+  wrap: function(jdel) {
+    var obj = Object.create(Process.prototype, {});
+    Process.apply(obj, arguments);
+    return obj;
+  },
+  unwrap: function(obj) {
+    return obj._jdel;
+  }
+};
+Process._create = function(jdel) {
+  var obj = Object.create(Process.prototype, {});
+  Process.apply(obj, arguments);
+  return obj;
+}
 module.exports = Process;

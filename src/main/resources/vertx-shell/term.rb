@@ -18,6 +18,22 @@ module VertxShell
     def j_del
       @j_del
     end
+    @@j_api_type = Object.new
+    def @@j_api_type.accept?(obj)
+      obj.class == Term
+    end
+    def @@j_api_type.wrap(obj)
+      Term.new(obj)
+    end
+    def @@j_api_type.unwrap(obj)
+      obj.j_del
+    end
+    def self.j_api_type
+      @@j_api_type
+    end
+    def self.j_class
+      Java::IoVertxExtShellTerm::Term.java_class
+    end
     # @return [String] the declared tty type, for instance , , etc... it can be null when the tty does not have declared its type.
     def type
       if !block_given?
@@ -64,7 +80,7 @@ module VertxShell
         @j_del.java_method(:write, [Java::java.lang.String.java_class]).call(data)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling write(data)"
+      raise ArgumentError, "Invalid arguments when calling write(#{data})"
     end
     # @return [Fixnum] the last time this term received input
     def last_accessed_time
@@ -81,7 +97,7 @@ module VertxShell
         @j_del.java_method(:echo, [Java::java.lang.String.java_class]).call(text)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling echo(text)"
+      raise ArgumentError, "Invalid arguments when calling echo(#{text})"
     end
     #  Associate the term with a session.
     # @param [::VertxShell::Session] session the session to set
@@ -90,7 +106,7 @@ module VertxShell
       if session.class.method_defined?(:j_del) && !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:setSession, [Java::IoVertxExtShellSession::Session.java_class]).call(session.j_del),::VertxShell::Term)
       end
-      raise ArgumentError, "Invalid arguments when calling set_session(session)"
+      raise ArgumentError, "Invalid arguments when calling set_session(#{session})"
     end
     #  Set an interrupt signal handler on the term.
     # @param [::VertxShell::SignalHandler] handler the interrupt handler
@@ -100,7 +116,7 @@ module VertxShell
         @j_del.java_method(:interruptHandler, [Java::IoVertxExtShellTerm::SignalHandler.java_class]).call(handler.j_del)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling interrupt_handler(handler)"
+      raise ArgumentError, "Invalid arguments when calling interrupt_handler(#{handler})"
     end
     #  Set a suspend signal handler on the term.
     # @param [::VertxShell::SignalHandler] handler the suspend handler
@@ -110,7 +126,7 @@ module VertxShell
         @j_del.java_method(:suspendHandler, [Java::IoVertxExtShellTerm::SignalHandler.java_class]).call(handler.j_del)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling suspend_handler(handler)"
+      raise ArgumentError, "Invalid arguments when calling suspend_handler(#{handler})"
     end
     #  Prompt the user a line of text, providing a completion handler to handle user's completion.
     # @param [String] prompt the displayed prompt
@@ -123,7 +139,7 @@ module VertxShell
       elsif prompt.class == String && lineHandler.class == Proc && block_given?
         return @j_del.java_method(:readline, [Java::java.lang.String.java_class,Java::IoVertxCore::Handler.java_class,Java::IoVertxCore::Handler.java_class]).call(prompt,(Proc.new { |event| lineHandler.call(event) }),(Proc.new { |event| yield(::Vertx::Util::Utils.safe_create(event,::VertxShell::Completion)) }))
       end
-      raise ArgumentError, "Invalid arguments when calling readline(prompt,lineHandler)"
+      raise ArgumentError, "Invalid arguments when calling readline(#{prompt},#{lineHandler})"
     end
     #  Set a handler that will be called when the terminal is closed.
     # @yield the handler

@@ -19,6 +19,22 @@ module VertxShell
     def j_del
       @j_del
     end
+    @@j_api_type = Object.new
+    def @@j_api_type.accept?(obj)
+      obj.class == ShellService
+    end
+    def @@j_api_type.wrap(obj)
+      ShellService.new(obj)
+    end
+    def @@j_api_type.unwrap(obj)
+      obj.j_del
+    end
+    def self.j_api_type
+      @@j_api_type
+    end
+    def self.j_class
+      Java::IoVertxExtShell::ShellService.java_class
+    end
     #  Create a new shell service.
     # @param [::Vertx::Vertx] vertx the Vert.x instance
     # @param [Hash] options the service config options
@@ -29,7 +45,7 @@ module VertxShell
       elsif vertx.class.method_defined?(:j_del) && options.class == Hash && !block_given?
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShell::ShellService.java_method(:create, [Java::IoVertxCore::Vertx.java_class,Java::IoVertxExtShell::ShellServiceOptions.java_class]).call(vertx.j_del,Java::IoVertxExtShell::ShellServiceOptions.new(::Vertx::Util::Utils.to_json_object(options))),::VertxShell::ShellService)
       end
-      raise ArgumentError, "Invalid arguments when calling create(vertx,options)"
+      raise ArgumentError, "Invalid arguments when calling create(#{vertx},#{options})"
     end
     #  Start the shell service, this is an asynchronous start.
     # @yield handler for getting notified when service is started

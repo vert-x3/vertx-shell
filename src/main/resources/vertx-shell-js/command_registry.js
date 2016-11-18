@@ -61,7 +61,7 @@ var CommandRegistry = function(j_val) {
   this.getCommand = function(name) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'string') {
-      return utils.convReturnVertxGen(j_commandRegistry["getCommand(java.lang.String)"](name), Command);
+      return utils.convReturnVertxGen(Command, j_commandRegistry["getCommand(java.lang.String)"](name));
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -81,7 +81,7 @@ var CommandRegistry = function(j_val) {
     }  else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'function') {
       j_commandRegistry["registerCommand(io.vertx.ext.shell.command.Command,io.vertx.core.Handler)"](__args[0]._jdel, function(ar) {
       if (ar.succeeded()) {
-        __args[1](utils.convReturnVertxGen(ar.result(), Command), null);
+        __args[1](utils.convReturnVertxGen(Command, ar.result()), null);
       } else {
         __args[1](null, ar.cause());
       }
@@ -146,6 +146,25 @@ var CommandRegistry = function(j_val) {
   this._jdel = j_commandRegistry;
 };
 
+CommandRegistry._jclass = utils.getJavaClass("io.vertx.ext.shell.command.CommandRegistry");
+CommandRegistry._jtype = {
+  accept: function(obj) {
+    return CommandRegistry._jclass.isInstance(obj._jdel);
+  },
+  wrap: function(jdel) {
+    var obj = Object.create(CommandRegistry.prototype, {});
+    CommandRegistry.apply(obj, arguments);
+    return obj;
+  },
+  unwrap: function(obj) {
+    return obj._jdel;
+  }
+};
+CommandRegistry._create = function(jdel) {
+  var obj = Object.create(CommandRegistry.prototype, {});
+  CommandRegistry.apply(obj, arguments);
+  return obj;
+}
 /**
  Get the shared registry for the Vert.x instance.
 
@@ -156,7 +175,7 @@ var CommandRegistry = function(j_val) {
 CommandRegistry.getShared = function(vertx) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-    return utils.convReturnVertxGen(JCommandRegistry["getShared(io.vertx.core.Vertx)"](vertx._jdel), CommandRegistry);
+    return utils.convReturnVertxGen(CommandRegistry, JCommandRegistry["getShared(io.vertx.core.Vertx)"](vertx._jdel));
   } else throw new TypeError('function invoked with invalid arguments');
 };
 
@@ -170,9 +189,8 @@ CommandRegistry.getShared = function(vertx) {
 CommandRegistry.create = function(vertx) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-    return utils.convReturnVertxGen(JCommandRegistry["create(io.vertx.core.Vertx)"](vertx._jdel), CommandRegistry);
+    return utils.convReturnVertxGen(CommandRegistry, JCommandRegistry["create(io.vertx.core.Vertx)"](vertx._jdel));
   } else throw new TypeError('function invoked with invalid arguments');
 };
 
-// We export the Constructor function
 module.exports = CommandRegistry;

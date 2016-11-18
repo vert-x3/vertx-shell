@@ -157,7 +157,7 @@ var Term = function(j_val) {
   this.setSession = function(session) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      return utils.convReturnVertxGen(j_term["setSession(io.vertx.ext.shell.session.Session)"](session._jdel), Term);
+      return utils.convReturnVertxGen(Term, j_term["setSession(io.vertx.ext.shell.session.Session)"](session._jdel));
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -209,7 +209,7 @@ var Term = function(j_val) {
       j_term["readline(java.lang.String,io.vertx.core.Handler,io.vertx.core.Handler)"](__args[0], function(jVal) {
       __args[1](jVal);
     }, function(jVal) {
-      __args[2](utils.convReturnVertxGen(jVal, Completion));
+      __args[2](utils.convReturnVertxGen(Completion, jVal));
     });
     } else throw new TypeError('function invoked with invalid arguments');
   };
@@ -248,5 +248,23 @@ var Term = function(j_val) {
   this._jdel = j_term;
 };
 
-// We export the Constructor function
+Term._jclass = utils.getJavaClass("io.vertx.ext.shell.term.Term");
+Term._jtype = {
+  accept: function(obj) {
+    return Term._jclass.isInstance(obj._jdel);
+  },
+  wrap: function(jdel) {
+    var obj = Object.create(Term.prototype, {});
+    Term.apply(obj, arguments);
+    return obj;
+  },
+  unwrap: function(obj) {
+    return obj._jdel;
+  }
+};
+Term._create = function(jdel) {
+  var obj = Object.create(Term.prototype, {});
+  Term.apply(obj, arguments);
+  return obj;
+}
 module.exports = Term;

@@ -45,9 +45,9 @@ var Shell = function(j_val) {
   this.createJob = function() {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'object' && __args[0] instanceof Array) {
-      return utils.convReturnVertxGen(j_shell["createJob(java.util.List)"](utils.convParamListVertxGen(__args[0])), Job);
+      return utils.convReturnVertxGen(Job, j_shell["createJob(java.util.List)"](utils.convParamListVertxGen(__args[0])));
     }  else if (__args.length === 1 && typeof __args[0] === 'string') {
-      return utils.convReturnVertxGen(j_shell["createJob(java.lang.String)"](__args[0]), Job);
+      return utils.convReturnVertxGen(Job, j_shell["createJob(java.lang.String)"](__args[0]));
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -61,7 +61,7 @@ var Shell = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       if (that.cachedjobController == null) {
-        that.cachedjobController = utils.convReturnVertxGen(j_shell["jobController()"](), JobController);
+        that.cachedjobController = utils.convReturnVertxGen(JobController, j_shell["jobController()"]());
       }
       return that.cachedjobController;
     } else throw new TypeError('function invoked with invalid arguments');
@@ -77,7 +77,7 @@ var Shell = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       if (that.cachedsession == null) {
-        that.cachedsession = utils.convReturnVertxGen(j_shell["session()"](), Session);
+        that.cachedsession = utils.convReturnVertxGen(Session, j_shell["session()"]());
       }
       return that.cachedsession;
     } else throw new TypeError('function invoked with invalid arguments');
@@ -102,5 +102,23 @@ var Shell = function(j_val) {
   this._jdel = j_shell;
 };
 
-// We export the Constructor function
+Shell._jclass = utils.getJavaClass("io.vertx.ext.shell.Shell");
+Shell._jtype = {
+  accept: function(obj) {
+    return Shell._jclass.isInstance(obj._jdel);
+  },
+  wrap: function(jdel) {
+    var obj = Object.create(Shell.prototype, {});
+    Shell.apply(obj, arguments);
+    return obj;
+  },
+  unwrap: function(obj) {
+    return obj._jdel;
+  }
+};
+Shell._create = function(jdel) {
+  var obj = Object.create(Shell.prototype, {});
+  Shell.apply(obj, arguments);
+  return obj;
+}
 module.exports = Shell;

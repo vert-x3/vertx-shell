@@ -88,7 +88,7 @@ var Pty = function(j_val) {
   this.slave = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_pty["slave()"](), Tty);
+      return utils.convReturnVertxGen(Tty, j_pty["slave()"]());
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -98,6 +98,25 @@ var Pty = function(j_val) {
   this._jdel = j_pty;
 };
 
+Pty._jclass = utils.getJavaClass("io.vertx.ext.shell.term.Pty");
+Pty._jtype = {
+  accept: function(obj) {
+    return Pty._jclass.isInstance(obj._jdel);
+  },
+  wrap: function(jdel) {
+    var obj = Object.create(Pty.prototype, {});
+    Pty.apply(obj, arguments);
+    return obj;
+  },
+  unwrap: function(obj) {
+    return obj._jdel;
+  }
+};
+Pty._create = function(jdel) {
+  var obj = Object.create(Pty.prototype, {});
+  Pty.apply(obj, arguments);
+  return obj;
+}
 /**
  Create a new pseudo terminal.
 
@@ -108,11 +127,10 @@ var Pty = function(j_val) {
 Pty.create = function() {
   var __args = arguments;
   if (__args.length === 0) {
-    return utils.convReturnVertxGen(JPty["create()"](), Pty);
+    return utils.convReturnVertxGen(Pty, JPty["create()"]());
   }else if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnVertxGen(JPty["create(java.lang.String)"](__args[0]), Pty);
+    return utils.convReturnVertxGen(Pty, JPty["create(java.lang.String)"](__args[0]));
   } else throw new TypeError('function invoked with invalid arguments');
 };
 
-// We export the Constructor function
 module.exports = Pty;

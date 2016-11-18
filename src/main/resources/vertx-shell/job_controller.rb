@@ -15,6 +15,22 @@ module VertxShell
     def j_del
       @j_del
     end
+    @@j_api_type = Object.new
+    def @@j_api_type.accept?(obj)
+      obj.class == JobController
+    end
+    def @@j_api_type.wrap(obj)
+      JobController.new(obj)
+    end
+    def @@j_api_type.unwrap(obj)
+      obj.j_del
+    end
+    def self.j_api_type
+      @@j_api_type
+    end
+    def self.j_class
+      Java::IoVertxExtShellSystem::JobController.java_class
+    end
     # @return [::VertxShell::Job] the current foreground job
     def foreground_job
       if !block_given?
@@ -36,7 +52,7 @@ module VertxShell
       if id.class == Fixnum && !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:getJob, [Java::int.java_class]).call(id),::VertxShell::Job)
       end
-      raise ArgumentError, "Invalid arguments when calling get_job(id)"
+      raise ArgumentError, "Invalid arguments when calling get_job(#{id})"
     end
     #  Create a job wrapping a process.
     # @param [::VertxShell::Process] process the process
@@ -46,7 +62,7 @@ module VertxShell
       if process.class.method_defined?(:j_del) && line.class == String && !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:createJob, [Java::IoVertxExtShellSystem::Process.java_class,Java::java.lang.String.java_class]).call(process.j_del,line),::VertxShell::Job)
       end
-      raise ArgumentError, "Invalid arguments when calling create_job(process,line)"
+      raise ArgumentError, "Invalid arguments when calling create_job(#{process},#{line})"
     end
     #  Close the controller and terminate all the underlying jobs, a closed controller does not accept anymore jobs.
     # @yield 

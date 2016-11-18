@@ -89,6 +89,25 @@ var CliToken = function(j_val) {
   this._jdel = j_cliToken;
 };
 
+CliToken._jclass = utils.getJavaClass("io.vertx.ext.shell.cli.CliToken");
+CliToken._jtype = {
+  accept: function(obj) {
+    return CliToken._jclass.isInstance(obj._jdel);
+  },
+  wrap: function(jdel) {
+    var obj = Object.create(CliToken.prototype, {});
+    CliToken.apply(obj, arguments);
+    return obj;
+  },
+  unwrap: function(obj) {
+    return obj._jdel;
+  }
+};
+CliToken._create = function(jdel) {
+  var obj = Object.create(CliToken.prototype, {});
+  CliToken.apply(obj, arguments);
+  return obj;
+}
 /**
  Create a text token.
 
@@ -99,7 +118,7 @@ var CliToken = function(j_val) {
 CliToken.createText = function(text) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnVertxGen(JCliToken["createText(java.lang.String)"](text), CliToken);
+    return utils.convReturnVertxGen(CliToken, JCliToken["createText(java.lang.String)"](text));
   } else throw new TypeError('function invoked with invalid arguments');
 };
 
@@ -113,7 +132,7 @@ CliToken.createText = function(text) {
 CliToken.createBlank = function(blank) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'string') {
-    return utils.convReturnVertxGen(JCliToken["createBlank(java.lang.String)"](blank), CliToken);
+    return utils.convReturnVertxGen(CliToken, JCliToken["createBlank(java.lang.String)"](blank));
   } else throw new TypeError('function invoked with invalid arguments');
 };
 
@@ -131,5 +150,4 @@ CliToken.tokenize = function(s) {
   } else throw new TypeError('function invoked with invalid arguments');
 };
 
-// We export the Constructor function
 module.exports = CliToken;

@@ -16,6 +16,22 @@ module VertxShell
     def j_del
       @j_del
     end
+    @@j_api_type = Object.new
+    def @@j_api_type.accept?(obj)
+      obj.class == Completion
+    end
+    def @@j_api_type.wrap(obj)
+      Completion.new(obj)
+    end
+    def @@j_api_type.unwrap(obj)
+      obj.j_del
+    end
+    def self.j_api_type
+      @@j_api_type
+    end
+    def self.j_class
+      Java::IoVertxExtShellCli::Completion.java_class
+    end
     # @return [::Vertx::Vertx] the current Vert.x instance
     def vertx
       if !block_given?
@@ -57,7 +73,7 @@ module VertxShell
       elsif param_1.class == String && (param_2.class == TrueClass || param_2.class == FalseClass) && !block_given?
         return @j_del.java_method(:complete, [Java::java.lang.String.java_class,Java::boolean.java_class]).call(param_1,param_2)
       end
-      raise ArgumentError, "Invalid arguments when calling complete(param_1,param_2)"
+      raise ArgumentError, "Invalid arguments when calling complete(#{param_1},#{param_2})"
     end
   end
 end

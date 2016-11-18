@@ -19,6 +19,22 @@ module VertxShell
     def j_del
       @j_del
     end
+    @@j_api_type = Object.new
+    def @@j_api_type.accept?(obj)
+      obj.class == Job
+    end
+    def @@j_api_type.wrap(obj)
+      Job.new(obj)
+    end
+    def @@j_api_type.unwrap(obj)
+      obj.j_del
+    end
+    def self.j_api_type
+      @@j_api_type
+    end
+    def self.j_class
+      Java::IoVertxExtShellSystem::Job.java_class
+    end
     # @return [Fixnum] the job id
     def id
       if !block_given?
@@ -55,7 +71,7 @@ module VertxShell
         @j_del.java_method(:setTty, [Java::IoVertxExtShellTerm::Tty.java_class]).call(tty.j_del)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling set_tty(tty)"
+      raise ArgumentError, "Invalid arguments when calling set_tty(#{tty})"
     end
     #  Set a session on the job.
     # @param [::VertxShell::Session] session the session to use
@@ -65,7 +81,7 @@ module VertxShell
         @j_del.java_method(:setSession, [Java::IoVertxExtShellSession::Session.java_class]).call(session.j_del)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling set_session(session)"
+      raise ArgumentError, "Invalid arguments when calling set_session(#{session})"
     end
     #  Set an handler called when the job terminates.
     # @yield the terminate handler
@@ -104,7 +120,7 @@ module VertxShell
         @j_del.java_method(:resume, [Java::boolean.java_class]).call(foreground)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling resume(foreground)"
+      raise ArgumentError, "Invalid arguments when calling resume(#{foreground})"
     end
     #  Send the job to background.
     # @return [self]

@@ -81,6 +81,25 @@ var Session = function(j_val) {
   this._jdel = j_session;
 };
 
+Session._jclass = utils.getJavaClass("io.vertx.ext.shell.session.Session");
+Session._jtype = {
+  accept: function(obj) {
+    return Session._jclass.isInstance(obj._jdel);
+  },
+  wrap: function(jdel) {
+    var obj = Object.create(Session.prototype, {});
+    Session.apply(obj, arguments);
+    return obj;
+  },
+  unwrap: function(obj) {
+    return obj._jdel;
+  }
+};
+Session._create = function(jdel) {
+  var obj = Object.create(Session.prototype, {});
+  Session.apply(obj, arguments);
+  return obj;
+}
 /**
  Create a new empty session.
 
@@ -91,9 +110,8 @@ var Session = function(j_val) {
 Session.create = function() {
   var __args = arguments;
   if (__args.length === 0) {
-    return utils.convReturnVertxGen(JSession["create()"](), Session);
+    return utils.convReturnVertxGen(Session, JSession["create()"]());
   } else throw new TypeError('function invoked with invalid arguments');
 };
 
-// We export the Constructor function
 module.exports = Session;

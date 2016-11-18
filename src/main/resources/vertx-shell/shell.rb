@@ -17,6 +17,22 @@ module VertxShell
     def j_del
       @j_del
     end
+    @@j_api_type = Object.new
+    def @@j_api_type.accept?(obj)
+      obj.class == Shell
+    end
+    def @@j_api_type.wrap(obj)
+      Shell.new(obj)
+    end
+    def @@j_api_type.unwrap(obj)
+      obj.j_del
+    end
+    def self.j_api_type
+      @@j_api_type
+    end
+    def self.j_class
+      Java::IoVertxExtShell::Shell.java_class
+    end
     #  See {::VertxShell::Shell#create_job}
     # @overload createJob(line)
     #   @param [Array<::VertxShell::CliToken>] line the command line creating this job
@@ -29,7 +45,7 @@ module VertxShell
       elsif param_1.class == String && !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:createJob, [Java::java.lang.String.java_class]).call(param_1),::VertxShell::Job)
       end
-      raise ArgumentError, "Invalid arguments when calling create_job(param_1)"
+      raise ArgumentError, "Invalid arguments when calling create_job(#{param_1})"
     end
     # @return [::VertxShell::JobController] the shell's job controller
     def job_controller

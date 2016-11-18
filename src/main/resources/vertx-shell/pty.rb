@@ -15,6 +15,22 @@ module VertxShell
     def j_del
       @j_del
     end
+    @@j_api_type = Object.new
+    def @@j_api_type.accept?(obj)
+      obj.class == Pty
+    end
+    def @@j_api_type.wrap(obj)
+      Pty.new(obj)
+    end
+    def @@j_api_type.unwrap(obj)
+      obj.j_del
+    end
+    def self.j_api_type
+      @@j_api_type
+    end
+    def self.j_class
+      Java::IoVertxExtShellTerm::Pty.java_class
+    end
     #  Create a new pseudo terminal.
     # @param [String] terminalType the terminal type, for instance 
     # @return [::VertxShell::Pty] the created pseudo terminal
@@ -24,7 +40,7 @@ module VertxShell
       elsif terminalType.class == String && !block_given?
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::Pty.java_method(:create, [Java::java.lang.String.java_class]).call(terminalType),::VertxShell::Pty)
       end
-      raise ArgumentError, "Invalid arguments when calling create(terminalType)"
+      raise ArgumentError, "Invalid arguments when calling create(#{terminalType})"
     end
     #  Set the standard out handler of the pseudo terminal.
     # @yield the standard output
@@ -44,7 +60,7 @@ module VertxShell
         @j_del.java_method(:write, [Java::java.lang.String.java_class]).call(data)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling write(data)"
+      raise ArgumentError, "Invalid arguments when calling write(#{data})"
     end
     #  Resize the terminal.
     # @param [Fixnum] width 
@@ -55,7 +71,7 @@ module VertxShell
         @j_del.java_method(:setSize, [Java::int.java_class,Java::int.java_class]).call(width,height)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling set_size(width,height)"
+      raise ArgumentError, "Invalid arguments when calling set_size(#{width},#{height})"
     end
     # @return [::VertxShell::Tty] the pseudo terminal slave
     def slave

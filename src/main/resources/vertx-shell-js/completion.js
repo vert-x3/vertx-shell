@@ -43,7 +43,7 @@ var Completion = function(j_val) {
   this.vertx = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_completion["vertx()"](), Vertx);
+      return utils.convReturnVertxGen(Vertx, j_completion["vertx()"]());
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -56,7 +56,7 @@ var Completion = function(j_val) {
   this.session = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_completion["session()"](), Session);
+      return utils.convReturnVertxGen(Session, j_completion["session()"]());
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -108,5 +108,23 @@ var Completion = function(j_val) {
   this._jdel = j_completion;
 };
 
-// We export the Constructor function
+Completion._jclass = utils.getJavaClass("io.vertx.ext.shell.cli.Completion");
+Completion._jtype = {
+  accept: function(obj) {
+    return Completion._jclass.isInstance(obj._jdel);
+  },
+  wrap: function(jdel) {
+    var obj = Object.create(Completion.prototype, {});
+    Completion.apply(obj, arguments);
+    return obj;
+  },
+  unwrap: function(obj) {
+    return obj._jdel;
+  }
+};
+Completion._create = function(jdel) {
+  var obj = Object.create(Completion.prototype, {});
+  Completion.apply(obj, arguments);
+  return obj;
+}
 module.exports = Completion;

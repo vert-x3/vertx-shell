@@ -13,6 +13,22 @@ module VertxShell
     def j_del
       @j_del
     end
+    @@j_api_type = Object.new
+    def @@j_api_type.accept?(obj)
+      obj.class == Tty
+    end
+    def @@j_api_type.wrap(obj)
+      Tty.new(obj)
+    end
+    def @@j_api_type.unwrap(obj)
+      obj.j_del
+    end
+    def self.j_api_type
+      @@j_api_type
+    end
+    def self.j_class
+      Java::IoVertxExtShellTerm::Tty.java_class
+    end
     # @return [String] the declared tty type, for instance , , etc... it can be null when the tty does not have declared its type.
     def type
       if !block_given?
@@ -52,7 +68,7 @@ module VertxShell
         @j_del.java_method(:write, [Java::java.lang.String.java_class]).call(data)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling write(data)"
+      raise ArgumentError, "Invalid arguments when calling write(#{data})"
     end
     #  Set a resize handler, the handler is called when the tty size changes.
     # @yield the resize handler

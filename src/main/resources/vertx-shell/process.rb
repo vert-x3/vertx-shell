@@ -15,6 +15,22 @@ module VertxShell
     def j_del
       @j_del
     end
+    @@j_api_type = Object.new
+    def @@j_api_type.accept?(obj)
+      obj.class == Process
+    end
+    def @@j_api_type.wrap(obj)
+      Process.new(obj)
+    end
+    def @@j_api_type.unwrap(obj)
+      obj.j_del
+    end
+    def self.j_api_type
+      @@j_api_type
+    end
+    def self.j_class
+      Java::IoVertxExtShellSystem::Process.java_class
+    end
     # @return [:READY,:RUNNING,:STOPPED,:TERMINATED] the current process status
     def status
       if !block_given?
@@ -37,7 +53,7 @@ module VertxShell
         @j_del.java_method(:setTty, [Java::IoVertxExtShellTerm::Tty.java_class]).call(tty.j_del)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling set_tty(tty)"
+      raise ArgumentError, "Invalid arguments when calling set_tty(#{tty})"
     end
     # @return [::VertxShell::Tty] the process tty
     def get_tty
@@ -57,7 +73,7 @@ module VertxShell
         @j_del.java_method(:setSession, [Java::IoVertxExtShellSession::Session.java_class]).call(session.j_del)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling set_session(session)"
+      raise ArgumentError, "Invalid arguments when calling set_session(#{session})"
     end
     # @return [::VertxShell::Session] the process session
     def get_session
@@ -93,7 +109,7 @@ module VertxShell
       elsif (foregraound.class == TrueClass || foregraound.class == FalseClass) && block_given?
         return @j_del.java_method(:run, [Java::boolean.java_class,Java::IoVertxCore::Handler.java_class]).call(foregraound,Proc.new { yield })
       end
-      raise ArgumentError, "Invalid arguments when calling run(foregraound)"
+      raise ArgumentError, "Invalid arguments when calling run(#{foregraound})"
     end
     #  Attempt to interrupt the process.
     # @yield handler called after interrupt callback
@@ -120,7 +136,7 @@ module VertxShell
       elsif (foreground.class == TrueClass || foreground.class == FalseClass) && block_given?
         return @j_del.java_method(:resume, [Java::boolean.java_class,Java::IoVertxCore::Handler.java_class]).call(foreground,Proc.new { yield })
       end
-      raise ArgumentError, "Invalid arguments when calling resume(foreground)"
+      raise ArgumentError, "Invalid arguments when calling resume(#{foreground})"
     end
     #  Resume the process.
     # @yield handler called after suspend callback

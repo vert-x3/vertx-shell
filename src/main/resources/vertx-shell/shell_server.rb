@@ -26,6 +26,22 @@ module VertxShell
     def j_del
       @j_del
     end
+    @@j_api_type = Object.new
+    def @@j_api_type.accept?(obj)
+      obj.class == ShellServer
+    end
+    def @@j_api_type.wrap(obj)
+      ShellServer.new(obj)
+    end
+    def @@j_api_type.unwrap(obj)
+      obj.j_del
+    end
+    def self.j_api_type
+      @@j_api_type
+    end
+    def self.j_class
+      Java::IoVertxExtShell::ShellServer.java_class
+    end
     #  Create a new shell server with default options.
     # @param [::Vertx::Vertx] vertx the vertx
     # @param [Hash] options the options
@@ -36,7 +52,7 @@ module VertxShell
       elsif vertx.class.method_defined?(:j_del) && options.class == Hash && !block_given?
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShell::ShellServer.java_method(:create, [Java::IoVertxCore::Vertx.java_class,Java::IoVertxExtShell::ShellServerOptions.java_class]).call(vertx.j_del,Java::IoVertxExtShell::ShellServerOptions.new(::Vertx::Util::Utils.to_json_object(options))),::VertxShell::ShellServer)
       end
-      raise ArgumentError, "Invalid arguments when calling create(vertx,options)"
+      raise ArgumentError, "Invalid arguments when calling create(#{vertx},#{options})"
     end
     #  Register a command resolver for this server.
     # @param [::VertxShell::CommandResolver] resolver the resolver
@@ -46,7 +62,7 @@ module VertxShell
         @j_del.java_method(:registerCommandResolver, [Java::IoVertxExtShellCommand::CommandResolver.java_class]).call(resolver.j_del)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling register_command_resolver(resolver)"
+      raise ArgumentError, "Invalid arguments when calling register_command_resolver(#{resolver})"
     end
     #  Register a term server to this shell server, the term server lifecycle methods are managed by this shell server.
     # @param [::VertxShell::TermServer] termServer the term server to add
@@ -56,7 +72,7 @@ module VertxShell
         @j_del.java_method(:registerTermServer, [Java::IoVertxExtShellTerm::TermServer.java_class]).call(termServer.j_del)
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling register_term_server(termServer)"
+      raise ArgumentError, "Invalid arguments when calling register_term_server(#{termServer})"
     end
     #  Create a new shell, the returned shell should be closed explicitely.
     # @param [::VertxShell::Term] term the shell associated terminal
@@ -67,7 +83,7 @@ module VertxShell
       elsif term.class.method_defined?(:j_del) && !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:createShell, [Java::IoVertxExtShellTerm::Term.java_class]).call(term.j_del),::VertxShell::Shell)
       end
-      raise ArgumentError, "Invalid arguments when calling create_shell(term)"
+      raise ArgumentError, "Invalid arguments when calling create_shell(#{term})"
     end
     #  Start the shell service, this is an asynchronous start.
     # @yield handler for getting notified when service is started

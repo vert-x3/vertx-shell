@@ -18,6 +18,22 @@ module VertxShell
     def j_del
       @j_del
     end
+    @@j_api_type = Object.new
+    def @@j_api_type.accept?(obj)
+      obj.class == Command
+    end
+    def @@j_api_type.wrap(obj)
+      Command.new(obj)
+    end
+    def @@j_api_type.unwrap(obj)
+      obj.j_del
+    end
+    def self.j_api_type
+      @@j_api_type
+    end
+    def self.j_class
+      Java::IoVertxExtShellCommand::Command.java_class
+    end
     # @return [String] the command name
     def name
       if !block_given?
@@ -41,7 +57,7 @@ module VertxShell
       elsif args.class == Array && !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:createProcess, [Java::JavaUtil::List.java_class]).call(args.map { |element| element.j_del }),::VertxShell::Process)
       end
-      raise ArgumentError, "Invalid arguments when calling create_process(args)"
+      raise ArgumentError, "Invalid arguments when calling create_process(#{args})"
     end
     #  Perform command completion, when the command is done completing it should call 
     #  or  )} method to signal completion is done.
@@ -51,7 +67,7 @@ module VertxShell
       if completion.class.method_defined?(:j_del) && !block_given?
         return @j_del.java_method(:complete, [Java::IoVertxExtShellCli::Completion.java_class]).call(completion.j_del)
       end
-      raise ArgumentError, "Invalid arguments when calling complete(completion)"
+      raise ArgumentError, "Invalid arguments when calling complete(#{completion})"
     end
   end
 end

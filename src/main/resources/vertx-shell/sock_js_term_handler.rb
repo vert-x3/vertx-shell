@@ -15,13 +15,29 @@ module VertxShell
     def j_del
       @j_del
     end
+    @@j_api_type = Object.new
+    def @@j_api_type.accept?(obj)
+      obj.class == SockJSTermHandler
+    end
+    def @@j_api_type.wrap(obj)
+      SockJSTermHandler.new(obj)
+    end
+    def @@j_api_type.unwrap(obj)
+      obj.j_del
+    end
+    def self.j_api_type
+      @@j_api_type
+    end
+    def self.j_class
+      Java::IoVertxExtShellTerm::SockJSTermHandler.java_class
+    end
     # @param [::VertxWeb::SockJSSocket] arg0 
     # @return [void]
     def handle(arg0=nil)
       if arg0.class.method_defined?(:j_del) && !block_given?
         return @j_del.java_method(:handle, [Java::IoVertxExtWebHandlerSockjs::SockJSSocket.java_class]).call(arg0.j_del)
       end
-      raise ArgumentError, "Invalid arguments when calling handle(arg0)"
+      raise ArgumentError, "Invalid arguments when calling handle(#{arg0})"
     end
     # @param [::Vertx::Vertx] vertx 
     # @param [String] charset 
@@ -30,7 +46,7 @@ module VertxShell
       if vertx.class.method_defined?(:j_del) && charset.class == String && !block_given?
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellTerm::SockJSTermHandler.java_method(:create, [Java::IoVertxCore::Vertx.java_class,Java::java.lang.String.java_class]).call(vertx.j_del,charset),::VertxShell::SockJSTermHandler)
       end
-      raise ArgumentError, "Invalid arguments when calling create(vertx,charset)"
+      raise ArgumentError, "Invalid arguments when calling create(#{vertx},#{charset})"
     end
     # @yield 
     # @return [self]

@@ -171,7 +171,7 @@ var Job = function(j_val) {
   this.resume = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_job["resume()"](), Job);
+      return utils.convReturnVertxGen(Job, j_job["resume()"]());
     }  else if (__args.length === 1 && typeof __args[0] ==='boolean') {
       j_job["resume(boolean)"](__args[0]);
       return that;
@@ -246,7 +246,7 @@ var Job = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       if (that.cachedprocess == null) {
-        that.cachedprocess = utils.convReturnVertxGen(j_job["process()"](), Process);
+        that.cachedprocess = utils.convReturnVertxGen(Process, j_job["process()"]());
       }
       return that.cachedprocess;
     } else throw new TypeError('function invoked with invalid arguments');
@@ -258,5 +258,23 @@ var Job = function(j_val) {
   this._jdel = j_job;
 };
 
-// We export the Constructor function
+Job._jclass = utils.getJavaClass("io.vertx.ext.shell.system.Job");
+Job._jtype = {
+  accept: function(obj) {
+    return Job._jclass.isInstance(obj._jdel);
+  },
+  wrap: function(jdel) {
+    var obj = Object.create(Job.prototype, {});
+    Job.apply(obj, arguments);
+    return obj;
+  },
+  unwrap: function(obj) {
+    return obj._jdel;
+  }
+};
+Job._create = function(jdel) {
+  var obj = Object.create(Job.prototype, {});
+  Job.apply(obj, arguments);
+  return obj;
+}
 module.exports = Job;

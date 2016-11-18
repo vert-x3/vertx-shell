@@ -123,5 +123,23 @@ var Tty = function(j_val) {
   this._jdel = j_tty;
 };
 
-// We export the Constructor function
+Tty._jclass = utils.getJavaClass("io.vertx.ext.shell.term.Tty");
+Tty._jtype = {
+  accept: function(obj) {
+    return Tty._jclass.isInstance(obj._jdel);
+  },
+  wrap: function(jdel) {
+    var obj = Object.create(Tty.prototype, {});
+    Tty.apply(obj, arguments);
+    return obj;
+  },
+  unwrap: function(obj) {
+    return obj._jdel;
+  }
+};
+Tty._create = function(jdel) {
+  var obj = Object.create(Tty.prototype, {});
+  Tty.apply(obj, arguments);
+  return obj;
+}
 module.exports = Tty;

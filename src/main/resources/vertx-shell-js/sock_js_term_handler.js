@@ -55,7 +55,7 @@ var SockJSTermHandler = function(j_val) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'function') {
       j_sockJSTermHandler["termHandler(io.vertx.core.Handler)"](function(jVal) {
-      handler(utils.convReturnVertxGen(jVal, Term));
+      handler(utils.convReturnVertxGen(Term, jVal));
     });
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
@@ -67,6 +67,25 @@ var SockJSTermHandler = function(j_val) {
   this._jdel = j_sockJSTermHandler;
 };
 
+SockJSTermHandler._jclass = utils.getJavaClass("io.vertx.ext.shell.term.SockJSTermHandler");
+SockJSTermHandler._jtype = {
+  accept: function(obj) {
+    return SockJSTermHandler._jclass.isInstance(obj._jdel);
+  },
+  wrap: function(jdel) {
+    var obj = Object.create(SockJSTermHandler.prototype, {});
+    SockJSTermHandler.apply(obj, arguments);
+    return obj;
+  },
+  unwrap: function(obj) {
+    return obj._jdel;
+  }
+};
+SockJSTermHandler._create = function(jdel) {
+  var obj = Object.create(SockJSTermHandler.prototype, {});
+  SockJSTermHandler.apply(obj, arguments);
+  return obj;
+}
 /**
 
  @memberof module:vertx-shell-js/sock_js_term_handler
@@ -77,9 +96,8 @@ var SockJSTermHandler = function(j_val) {
 SockJSTermHandler.create = function(vertx, charset) {
   var __args = arguments;
   if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'string') {
-    return utils.convReturnVertxGen(JSockJSTermHandler["create(io.vertx.core.Vertx,java.lang.String)"](vertx._jdel, charset), SockJSTermHandler);
+    return utils.convReturnVertxGen(SockJSTermHandler, JSockJSTermHandler["create(io.vertx.core.Vertx,java.lang.String)"](vertx._jdel, charset));
   } else throw new TypeError('function invoked with invalid arguments');
 };
 
-// We export the Constructor function
 module.exports = SockJSTermHandler;

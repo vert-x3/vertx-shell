@@ -13,6 +13,22 @@ module VertxShell
     def j_del
       @j_del
     end
+    @@j_api_type = Object.new
+    def @@j_api_type.accept?(obj)
+      obj.class == CliToken
+    end
+    def @@j_api_type.wrap(obj)
+      CliToken.new(obj)
+    end
+    def @@j_api_type.unwrap(obj)
+      obj.j_del
+    end
+    def self.j_api_type
+      @@j_api_type
+    end
+    def self.j_class
+      Java::IoVertxExtShellCli::CliToken.java_class
+    end
     #  Create a text token.
     # @param [String] text the text
     # @return [::VertxShell::CliToken] the token
@@ -20,7 +36,7 @@ module VertxShell
       if text.class == String && !block_given?
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCli::CliToken.java_method(:createText, [Java::java.lang.String.java_class]).call(text),::VertxShell::CliToken)
       end
-      raise ArgumentError, "Invalid arguments when calling create_text(text)"
+      raise ArgumentError, "Invalid arguments when calling create_text(#{text})"
     end
     #  Create a new blank token.
     # @param [String] blank the blank value
@@ -29,7 +45,7 @@ module VertxShell
       if blank.class == String && !block_given?
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCli::CliToken.java_method(:createBlank, [Java::java.lang.String.java_class]).call(blank),::VertxShell::CliToken)
       end
-      raise ArgumentError, "Invalid arguments when calling create_blank(blank)"
+      raise ArgumentError, "Invalid arguments when calling create_blank(#{blank})"
     end
     # @return [String] the token value
     def value
@@ -66,7 +82,7 @@ module VertxShell
       if s.class == String && !block_given?
         return Java::IoVertxExtShellCli::CliToken.java_method(:tokenize, [Java::java.lang.String.java_class]).call(s).to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::CliToken) }
       end
-      raise ArgumentError, "Invalid arguments when calling tokenize(s)"
+      raise ArgumentError, "Invalid arguments when calling tokenize(#{s})"
     end
   end
 end

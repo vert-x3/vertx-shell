@@ -18,6 +18,22 @@ module VertxShell
     def j_del
       @j_del
     end
+    @@j_api_type = Object.new
+    def @@j_api_type.accept?(obj)
+      obj.class == CommandBuilder
+    end
+    def @@j_api_type.wrap(obj)
+      CommandBuilder.new(obj)
+    end
+    def @@j_api_type.unwrap(obj)
+      obj.j_del
+    end
+    def self.j_api_type
+      @@j_api_type
+    end
+    def self.j_class
+      Java::IoVertxExtShellCommand::CommandBuilder.java_class
+    end
     #  Create a new commmand with its {::Vertx::CLI} descriptor. This command can then retrieve the parsed
     #  {::VertxShell::CommandProcess#command_line} when it executes to know get the command arguments and options.
     # @overload command(name)
@@ -31,7 +47,7 @@ module VertxShell
       elsif param_1.class.method_defined?(:j_del) && !block_given?
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandBuilder.java_method(:command, [Java::IoVertxCoreCli::CLI.java_class]).call(param_1.j_del),::VertxShell::CommandBuilder)
       end
-      raise ArgumentError, "Invalid arguments when calling command(param_1)"
+      raise ArgumentError, "Invalid arguments when calling command(#{param_1})"
     end
     #  Set the command process handler, the process handler is called when the command is executed.
     # @yield the process handler
@@ -61,7 +77,7 @@ module VertxShell
       if vertx.class.method_defined?(:j_del) && !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:build, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::Command)
       end
-      raise ArgumentError, "Invalid arguments when calling build(vertx)"
+      raise ArgumentError, "Invalid arguments when calling build(#{vertx})"
     end
   end
 end

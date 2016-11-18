@@ -42,7 +42,7 @@ var JobController = function(j_val) {
   this.foregroundJob = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_jobController["foregroundJob()"](), Job);
+      return utils.convReturnVertxGen(Job, j_jobController["foregroundJob()"]());
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -69,7 +69,7 @@ var JobController = function(j_val) {
   this.getJob = function(id) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] ==='number') {
-      return utils.convReturnVertxGen(j_jobController["getJob(int)"](id), Job);
+      return utils.convReturnVertxGen(Job, j_jobController["getJob(int)"](id));
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -84,7 +84,7 @@ var JobController = function(j_val) {
   this.createJob = function(process, line) {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'string') {
-      return utils.convReturnVertxGen(j_jobController["createJob(io.vertx.ext.shell.system.Process,java.lang.String)"](process._jdel, line), Job);
+      return utils.convReturnVertxGen(Job, j_jobController["createJob(io.vertx.ext.shell.system.Process,java.lang.String)"](process._jdel, line));
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -109,5 +109,23 @@ var JobController = function(j_val) {
   this._jdel = j_jobController;
 };
 
-// We export the Constructor function
+JobController._jclass = utils.getJavaClass("io.vertx.ext.shell.system.JobController");
+JobController._jtype = {
+  accept: function(obj) {
+    return JobController._jclass.isInstance(obj._jdel);
+  },
+  wrap: function(jdel) {
+    var obj = Object.create(JobController.prototype, {});
+    JobController.apply(obj, arguments);
+    return obj;
+  },
+  unwrap: function(obj) {
+    return obj._jdel;
+  }
+};
+JobController._create = function(jdel) {
+  var obj = Object.create(JobController.prototype, {});
+  JobController.apply(obj, arguments);
+  return obj;
+}
 module.exports = JobController;

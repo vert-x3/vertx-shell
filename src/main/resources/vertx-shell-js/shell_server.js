@@ -77,9 +77,9 @@ var ShellServer = function(j_val) {
   this.createShell = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_shellServer["createShell()"](), Shell);
+      return utils.convReturnVertxGen(Shell, j_shellServer["createShell()"]());
     }  else if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-      return utils.convReturnVertxGen(j_shellServer["createShell(io.vertx.ext.shell.term.Term)"](__args[0]._jdel), Shell);
+      return utils.convReturnVertxGen(Shell, j_shellServer["createShell(io.vertx.ext.shell.term.Term)"](__args[0]._jdel));
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -134,6 +134,25 @@ var ShellServer = function(j_val) {
   this._jdel = j_shellServer;
 };
 
+ShellServer._jclass = utils.getJavaClass("io.vertx.ext.shell.ShellServer");
+ShellServer._jtype = {
+  accept: function(obj) {
+    return ShellServer._jclass.isInstance(obj._jdel);
+  },
+  wrap: function(jdel) {
+    var obj = Object.create(ShellServer.prototype, {});
+    ShellServer.apply(obj, arguments);
+    return obj;
+  },
+  unwrap: function(obj) {
+    return obj._jdel;
+  }
+};
+ShellServer._create = function(jdel) {
+  var obj = Object.create(ShellServer.prototype, {});
+  ShellServer.apply(obj, arguments);
+  return obj;
+}
 /**
  Create a new shell server with default options.
 
@@ -145,11 +164,10 @@ var ShellServer = function(j_val) {
 ShellServer.create = function() {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-    return utils.convReturnVertxGen(JShellServer["create(io.vertx.core.Vertx)"](__args[0]._jdel), ShellServer);
+    return utils.convReturnVertxGen(ShellServer, JShellServer["create(io.vertx.core.Vertx)"](__args[0]._jdel));
   }else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && (typeof __args[1] === 'object' && __args[1] != null)) {
-    return utils.convReturnVertxGen(JShellServer["create(io.vertx.core.Vertx,io.vertx.ext.shell.ShellServerOptions)"](__args[0]._jdel, __args[1] != null ? new ShellServerOptions(new JsonObject(JSON.stringify(__args[1]))) : null), ShellServer);
+    return utils.convReturnVertxGen(ShellServer, JShellServer["create(io.vertx.core.Vertx,io.vertx.ext.shell.ShellServerOptions)"](__args[0]._jdel, __args[1] != null ? new ShellServerOptions(new JsonObject(JSON.stringify(__args[1]))) : null));
   } else throw new TypeError('function invoked with invalid arguments');
 };
 
-// We export the Constructor function
 module.exports = ShellServer;

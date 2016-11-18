@@ -19,6 +19,22 @@ module VertxShell
     def j_del
       @j_del
     end
+    @@j_api_type = Object.new
+    def @@j_api_type.accept?(obj)
+      obj.class == CommandRegistry
+    end
+    def @@j_api_type.wrap(obj)
+      CommandRegistry.new(obj)
+    end
+    def @@j_api_type.unwrap(obj)
+      obj.j_del
+    end
+    def self.j_api_type
+      @@j_api_type
+    end
+    def self.j_class
+      Java::IoVertxExtShellCommand::CommandRegistry.java_class
+    end
     # @return [Array<::VertxShell::Command>] the current commands
     def commands
       if !block_given?
@@ -33,7 +49,7 @@ module VertxShell
       if name.class == String && !block_given?
         return ::Vertx::Util::Utils.safe_create(@j_del.java_method(:getCommand, [Java::java.lang.String.java_class]).call(name),::VertxShell::Command)
       end
-      raise ArgumentError, "Invalid arguments when calling get_command(name)"
+      raise ArgumentError, "Invalid arguments when calling get_command(#{name})"
     end
     #  Get the shared registry for the Vert.x instance.
     # @param [::Vertx::Vertx] vertx the vertx instance
@@ -42,7 +58,7 @@ module VertxShell
       if vertx.class.method_defined?(:j_del) && !block_given?
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandRegistry.java_method(:getShared, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::CommandRegistry)
       end
-      raise ArgumentError, "Invalid arguments when calling get_shared(vertx)"
+      raise ArgumentError, "Invalid arguments when calling get_shared(#{vertx})"
     end
     #  Create a new registry.
     # @param [::Vertx::Vertx] vertx the vertx instance
@@ -51,7 +67,7 @@ module VertxShell
       if vertx.class.method_defined?(:j_del) && !block_given?
         return ::Vertx::Util::Utils.safe_create(Java::IoVertxExtShellCommand::CommandRegistry.java_method(:create, [Java::IoVertxCore::Vertx.java_class]).call(vertx.j_del),::VertxShell::CommandRegistry)
       end
-      raise ArgumentError, "Invalid arguments when calling create(vertx)"
+      raise ArgumentError, "Invalid arguments when calling create(#{vertx})"
     end
     #  Register a command
     # @param [::VertxShell::Command] command the command to register
@@ -65,7 +81,7 @@ module VertxShell
         @j_del.java_method(:registerCommand, [Java::IoVertxExtShellCommand::Command.java_class,Java::IoVertxCore::Handler.java_class]).call(command.j_del,(Proc.new { |ar| yield(ar.failed ? ar.cause : nil, ar.succeeded ? ::Vertx::Util::Utils.safe_create(ar.result,::VertxShell::Command) : nil) }))
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling register_command(command)"
+      raise ArgumentError, "Invalid arguments when calling register_command(#{command})"
     end
     #  Register a list of commands.
     # @param [Array<::VertxShell::Command>] commands the commands to register
@@ -79,7 +95,7 @@ module VertxShell
         @j_del.java_method(:registerCommands, [Java::JavaUtil::List.java_class,Java::IoVertxCore::Handler.java_class]).call(commands.map { |element| element.j_del },(Proc.new { |ar| yield(ar.failed ? ar.cause : nil, ar.succeeded ? ar.result.to_a.map { |elt| ::Vertx::Util::Utils.safe_create(elt,::VertxShell::Command) } : nil) }))
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling register_commands(commands)"
+      raise ArgumentError, "Invalid arguments when calling register_commands(#{commands})"
     end
     #  Unregister a command.
     # @param [String] commandName the command name
@@ -93,7 +109,7 @@ module VertxShell
         @j_del.java_method(:unregisterCommand, [Java::java.lang.String.java_class,Java::IoVertxCore::Handler.java_class]).call(commandName,(Proc.new { |ar| yield(ar.failed ? ar.cause : nil) }))
         return self
       end
-      raise ArgumentError, "Invalid arguments when calling unregister_command(commandName)"
+      raise ArgumentError, "Invalid arguments when calling unregister_command(#{commandName})"
     end
   end
 end

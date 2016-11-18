@@ -12,13 +12,29 @@ module VertxShell
     def j_del
       @j_del
     end
+    @@j_api_type = Object.new
+    def @@j_api_type.accept?(obj)
+      obj.class == SignalHandler
+    end
+    def @@j_api_type.wrap(obj)
+      SignalHandler.new(obj)
+    end
+    def @@j_api_type.unwrap(obj)
+      obj.j_del
+    end
+    def self.j_api_type
+      @@j_api_type
+    end
+    def self.j_class
+      Java::IoVertxExtShellTerm::SignalHandler.java_class
+    end
     # @param [Fixnum] key 
     # @return [true,false]
     def deliver?(key=nil)
       if key.class == Fixnum && !block_given?
         return @j_del.java_method(:deliver, [Java::int.java_class]).call(key)
       end
-      raise ArgumentError, "Invalid arguments when calling deliver?(key)"
+      raise ArgumentError, "Invalid arguments when calling deliver?(#{key})"
     end
   end
 end

@@ -51,7 +51,7 @@ var TermServer = function(j_val) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'function') {
       j_termServer["termHandler(io.vertx.core.Handler)"](function(jVal) {
-      handler(utils.convReturnVertxGen(jVal, Term));
+      handler(utils.convReturnVertxGen(Term, jVal));
     });
       return that;
     } else throw new TypeError('function invoked with invalid arguments');
@@ -88,7 +88,7 @@ var TermServer = function(j_val) {
     }  else if (__args.length === 1 && typeof __args[0] === 'function') {
       j_termServer["listen(io.vertx.core.Handler)"](function(ar) {
       if (ar.succeeded()) {
-        __args[0](utils.convReturnVertxGen(ar.result(), TermServer), null);
+        __args[0](utils.convReturnVertxGen(TermServer, ar.result()), null);
       } else {
         __args[0](null, ar.cause());
       }
@@ -139,6 +139,25 @@ var TermServer = function(j_val) {
   this._jdel = j_termServer;
 };
 
+TermServer._jclass = utils.getJavaClass("io.vertx.ext.shell.term.TermServer");
+TermServer._jtype = {
+  accept: function(obj) {
+    return TermServer._jclass.isInstance(obj._jdel);
+  },
+  wrap: function(jdel) {
+    var obj = Object.create(TermServer.prototype, {});
+    TermServer.apply(obj, arguments);
+    return obj;
+  },
+  unwrap: function(obj) {
+    return obj._jdel;
+  }
+};
+TermServer._create = function(jdel) {
+  var obj = Object.create(TermServer.prototype, {});
+  TermServer.apply(obj, arguments);
+  return obj;
+}
 /**
  Create a term server for the SSH protocol.
 
@@ -150,9 +169,9 @@ var TermServer = function(j_val) {
 TermServer.createSSHTermServer = function() {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-    return utils.convReturnVertxGen(JTermServer["createSSHTermServer(io.vertx.core.Vertx)"](__args[0]._jdel), TermServer);
+    return utils.convReturnVertxGen(TermServer, JTermServer["createSSHTermServer(io.vertx.core.Vertx)"](__args[0]._jdel));
   }else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && (typeof __args[1] === 'object' && __args[1] != null)) {
-    return utils.convReturnVertxGen(JTermServer["createSSHTermServer(io.vertx.core.Vertx,io.vertx.ext.shell.term.SSHTermOptions)"](__args[0]._jdel, __args[1] != null ? new SSHTermOptions(new JsonObject(JSON.stringify(__args[1]))) : null), TermServer);
+    return utils.convReturnVertxGen(TermServer, JTermServer["createSSHTermServer(io.vertx.core.Vertx,io.vertx.ext.shell.term.SSHTermOptions)"](__args[0]._jdel, __args[1] != null ? new SSHTermOptions(new JsonObject(JSON.stringify(__args[1]))) : null));
   } else throw new TypeError('function invoked with invalid arguments');
 };
 
@@ -167,9 +186,9 @@ TermServer.createSSHTermServer = function() {
 TermServer.createTelnetTermServer = function() {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-    return utils.convReturnVertxGen(JTermServer["createTelnetTermServer(io.vertx.core.Vertx)"](__args[0]._jdel), TermServer);
+    return utils.convReturnVertxGen(TermServer, JTermServer["createTelnetTermServer(io.vertx.core.Vertx)"](__args[0]._jdel));
   }else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && (typeof __args[1] === 'object' && __args[1] != null)) {
-    return utils.convReturnVertxGen(JTermServer["createTelnetTermServer(io.vertx.core.Vertx,io.vertx.ext.shell.term.TelnetTermOptions)"](__args[0]._jdel, __args[1] != null ? new TelnetTermOptions(new JsonObject(JSON.stringify(__args[1]))) : null), TermServer);
+    return utils.convReturnVertxGen(TermServer, JTermServer["createTelnetTermServer(io.vertx.core.Vertx,io.vertx.ext.shell.term.TelnetTermOptions)"](__args[0]._jdel, __args[1] != null ? new TelnetTermOptions(new JsonObject(JSON.stringify(__args[1]))) : null));
   } else throw new TypeError('function invoked with invalid arguments');
 };
 
@@ -185,15 +204,14 @@ TermServer.createTelnetTermServer = function() {
 TermServer.createHttpTermServer = function() {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-    return utils.convReturnVertxGen(JTermServer["createHttpTermServer(io.vertx.core.Vertx)"](__args[0]._jdel), TermServer);
+    return utils.convReturnVertxGen(TermServer, JTermServer["createHttpTermServer(io.vertx.core.Vertx)"](__args[0]._jdel));
   }else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && (typeof __args[1] === 'object' && __args[1] != null)) {
-    return utils.convReturnVertxGen(JTermServer["createHttpTermServer(io.vertx.core.Vertx,io.vertx.ext.shell.term.HttpTermOptions)"](__args[0]._jdel, __args[1] != null ? new HttpTermOptions(new JsonObject(JSON.stringify(__args[1]))) : null), TermServer);
+    return utils.convReturnVertxGen(TermServer, JTermServer["createHttpTermServer(io.vertx.core.Vertx,io.vertx.ext.shell.term.HttpTermOptions)"](__args[0]._jdel, __args[1] != null ? new HttpTermOptions(new JsonObject(JSON.stringify(__args[1]))) : null));
   }else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'object' && __args[1]._jdel) {
-    return utils.convReturnVertxGen(JTermServer["createHttpTermServer(io.vertx.core.Vertx,io.vertx.ext.web.Router)"](__args[0]._jdel, __args[1]._jdel), TermServer);
+    return utils.convReturnVertxGen(TermServer, JTermServer["createHttpTermServer(io.vertx.core.Vertx,io.vertx.ext.web.Router)"](__args[0]._jdel, __args[1]._jdel));
   }else if (__args.length === 3 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'object' && __args[1]._jdel && (typeof __args[2] === 'object' && __args[2] != null)) {
-    return utils.convReturnVertxGen(JTermServer["createHttpTermServer(io.vertx.core.Vertx,io.vertx.ext.web.Router,io.vertx.ext.shell.term.HttpTermOptions)"](__args[0]._jdel, __args[1]._jdel, __args[2] != null ? new HttpTermOptions(new JsonObject(JSON.stringify(__args[2]))) : null), TermServer);
+    return utils.convReturnVertxGen(TermServer, JTermServer["createHttpTermServer(io.vertx.core.Vertx,io.vertx.ext.web.Router,io.vertx.ext.shell.term.HttpTermOptions)"](__args[0]._jdel, __args[1]._jdel, __args[2] != null ? new HttpTermOptions(new JsonObject(JSON.stringify(__args[2]))) : null));
   } else throw new TypeError('function invoked with invalid arguments');
 };
 
-// We export the Constructor function
 module.exports = TermServer;

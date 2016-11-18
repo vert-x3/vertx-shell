@@ -56,7 +56,7 @@ var CommandResolver = function(j_val) {
   this.getCommand = function(name) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'string') {
-      return utils.convReturnVertxGen(j_commandResolver["getCommand(java.lang.String)"](name), Command);
+      return utils.convReturnVertxGen(Command, j_commandResolver["getCommand(java.lang.String)"](name));
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -66,6 +66,25 @@ var CommandResolver = function(j_val) {
   this._jdel = j_commandResolver;
 };
 
+CommandResolver._jclass = utils.getJavaClass("io.vertx.ext.shell.command.CommandResolver");
+CommandResolver._jtype = {
+  accept: function(obj) {
+    return CommandResolver._jclass.isInstance(obj._jdel);
+  },
+  wrap: function(jdel) {
+    var obj = Object.create(CommandResolver.prototype, {});
+    CommandResolver.apply(obj, arguments);
+    return obj;
+  },
+  unwrap: function(obj) {
+    return obj._jdel;
+  }
+};
+CommandResolver._create = function(jdel) {
+  var obj = Object.create(CommandResolver.prototype, {});
+  CommandResolver.apply(obj, arguments);
+  return obj;
+}
 /**
 
  @memberof module:vertx-shell-js/command_resolver
@@ -75,9 +94,8 @@ var CommandResolver = function(j_val) {
 CommandResolver.baseCommands = function(vertx) {
   var __args = arguments;
   if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
-    return utils.convReturnVertxGen(JCommandResolver["baseCommands(io.vertx.core.Vertx)"](vertx._jdel), CommandResolver);
+    return utils.convReturnVertxGen(CommandResolver, JCommandResolver["baseCommands(io.vertx.core.Vertx)"](vertx._jdel));
   } else throw new TypeError('function invoked with invalid arguments');
 };
 
-// We export the Constructor function
 module.exports = CommandResolver;

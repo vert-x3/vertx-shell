@@ -85,7 +85,7 @@ var CommandProcess = function(j_val) {
   this.vertx = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_commandProcess["vertx()"](), Vertx);
+      return utils.convReturnVertxGen(Vertx, j_commandProcess["vertx()"]());
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -124,7 +124,7 @@ var CommandProcess = function(j_val) {
   this.commandLine = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_commandProcess["commandLine()"](), CommandLine);
+      return utils.convReturnVertxGen(CommandLine, j_commandProcess["commandLine()"]());
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -137,7 +137,7 @@ var CommandProcess = function(j_val) {
   this.session = function() {
     var __args = arguments;
     if (__args.length === 0) {
-      return utils.convReturnVertxGen(j_commandProcess["session()"](), Session);
+      return utils.convReturnVertxGen(Session, j_commandProcess["session()"]());
     } else throw new TypeError('function invoked with invalid arguments');
   };
 
@@ -314,5 +314,23 @@ var CommandProcess = function(j_val) {
   this._jdel = j_commandProcess;
 };
 
-// We export the Constructor function
+CommandProcess._jclass = utils.getJavaClass("io.vertx.ext.shell.command.CommandProcess");
+CommandProcess._jtype = {
+  accept: function(obj) {
+    return CommandProcess._jclass.isInstance(obj._jdel);
+  },
+  wrap: function(jdel) {
+    var obj = Object.create(CommandProcess.prototype, {});
+    CommandProcess.apply(obj, arguments);
+    return obj;
+  },
+  unwrap: function(obj) {
+    return obj._jdel;
+  }
+};
+CommandProcess._create = function(jdel) {
+  var obj = Object.create(CommandProcess.prototype, {});
+  CommandProcess.apply(obj, arguments);
+  return obj;
+}
 module.exports = CommandProcess;
