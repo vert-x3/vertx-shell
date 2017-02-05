@@ -2,28 +2,107 @@ package io.vertx.kotlin.ext.shell.term
 
 import io.vertx.ext.shell.term.HttpTermOptions
 import io.vertx.core.http.ClientAuth
+import io.vertx.core.http.Http2Settings
 import io.vertx.core.http.HttpVersion
+import io.vertx.core.net.JdkSSLEngineOptions
+import io.vertx.core.net.JksOptions
+import io.vertx.core.net.OpenSSLEngineOptions
+import io.vertx.core.net.PemKeyCertOptions
+import io.vertx.core.net.PemTrustOptions
+import io.vertx.core.net.PfxOptions
+import io.vertx.ext.auth.AuthOptions
+import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions
 
+/**
+ * A function providing a DSL for building [io.vertx.ext.shell.term.HttpTermOptions] objects.
+ *
+ * The web term configuration options.
+ *
+ * @param acceptBacklog 
+ * @param acceptUnmaskedFrames 
+ * @param alpnVersions 
+ * @param charset  Set the charset used for encoding / decoding text data from/to SockJS
+ * @param clientAuth 
+ * @param clientAuthRequired 
+ * @param compressionLevel 
+ * @param compressionSupported 
+ * @param crlPaths 
+ * @param crlValues 
+ * @param decompressionSupported 
+ * @param enabledCipherSuites 
+ * @param enabledSecureTransportProtocols 
+ * @param handle100ContinueAutomatically 
+ * @param host 
+ * @param http2ConnectionWindowSize 
+ * @param idleTimeout 
+ * @param initialSettings 
+ * @param intputrc  The path of the <i>inputrc</i> config.
+ * @param jdkSslEngineOptions 
+ * @param keyStoreOptions 
+ * @param logActivity 
+ * @param maxChunkSize 
+ * @param maxHeaderSize 
+ * @param maxInitialLineLength 
+ * @param maxWebsocketFrameSize 
+ * @param openSslEngineOptions 
+ * @param pemKeyCertOptions 
+ * @param pemTrustOptions 
+ * @param pfxKeyCertOptions 
+ * @param pfxTrustOptions 
+ * @param port 
+ * @param receiveBufferSize 
+ * @param reuseAddress 
+ * @param sendBufferSize 
+ * @param shellHtmlResource  Set <code>shell.html</code> resource to use.
+ * @param soLinger 
+ * @param sockJSHandlerOptions  The SockJS handler options.
+ * @param sockJSPath  Configure the SockJS path, the default value is <code>/term/<star></code>.
+ * @param ssl 
+ * @param tcpKeepAlive 
+ * @param tcpNoDelay 
+ * @param termJsResource  Set <code>term.js</code> resource to use.
+ * @param trafficClass 
+ * @param trustStoreOptions 
+ * @param useAlpn 
+ * @param usePooledBuffers 
+ * @param vertsShellJsResource  Set <code>vertxshell.js</code> resource to use.
+ * @param websocketSubProtocols 
+ *
+ * <p/>
+ * NOTE: This function has been automatically generated from the [io.vertx.ext.shell.term.HttpTermOptions original] using Vert.x codegen.
+ */
 fun HttpTermOptions(
-    acceptBacklog: Int? = null,
-  alpnVersions: List<HttpVersion>? = null,
+  acceptBacklog: Int? = null,
+  acceptUnmaskedFrames: Boolean? = null,
+  alpnVersions: Iterable<HttpVersion>? = null,
   charset: String? = null,
   clientAuth: ClientAuth? = null,
   clientAuthRequired: Boolean? = null,
   compressionLevel: Int? = null,
   compressionSupported: Boolean? = null,
+  crlPaths: Iterable<String>? = null,
+  crlValues: Iterable<io.vertx.core.buffer.Buffer>? = null,
   decompressionSupported: Boolean? = null,
+  enabledCipherSuites: Iterable<String>? = null,
+  enabledSecureTransportProtocols: Iterable<String>? = null,
   handle100ContinueAutomatically: Boolean? = null,
   host: String? = null,
   http2ConnectionWindowSize: Int? = null,
   idleTimeout: Int? = null,
   initialSettings: io.vertx.core.http.Http2Settings? = null,
   intputrc: String? = null,
+  jdkSslEngineOptions: io.vertx.core.net.JdkSSLEngineOptions? = null,
+  keyStoreOptions: io.vertx.core.net.JksOptions? = null,
   logActivity: Boolean? = null,
   maxChunkSize: Int? = null,
   maxHeaderSize: Int? = null,
   maxInitialLineLength: Int? = null,
   maxWebsocketFrameSize: Int? = null,
+  openSslEngineOptions: io.vertx.core.net.OpenSSLEngineOptions? = null,
+  pemKeyCertOptions: io.vertx.core.net.PemKeyCertOptions? = null,
+  pemTrustOptions: io.vertx.core.net.PemTrustOptions? = null,
+  pfxKeyCertOptions: io.vertx.core.net.PfxOptions? = null,
+  pfxTrustOptions: io.vertx.core.net.PfxOptions? = null,
   port: Int? = null,
   receiveBufferSize: Int? = null,
   reuseAddress: Boolean? = null,
@@ -37,154 +116,166 @@ fun HttpTermOptions(
   tcpNoDelay: Boolean? = null,
   termJsResource: io.vertx.core.buffer.Buffer? = null,
   trafficClass: Int? = null,
+  trustStoreOptions: io.vertx.core.net.JksOptions? = null,
   useAlpn: Boolean? = null,
   usePooledBuffers: Boolean? = null,
   vertsShellJsResource: io.vertx.core.buffer.Buffer? = null,
   websocketSubProtocols: String? = null): HttpTermOptions = io.vertx.ext.shell.term.HttpTermOptions().apply {
 
   if (acceptBacklog != null) {
-    this.acceptBacklog = acceptBacklog
+    this.setAcceptBacklog(acceptBacklog)
   }
-
+  if (acceptUnmaskedFrames != null) {
+    this.setAcceptUnmaskedFrames(acceptUnmaskedFrames)
+  }
   if (alpnVersions != null) {
-    this.alpnVersions = alpnVersions
+    this.setAlpnVersions(alpnVersions.toList())
   }
-
   if (charset != null) {
-    this.charset = charset
+    this.setCharset(charset)
   }
-
   if (clientAuth != null) {
-    this.clientAuth = clientAuth
+    this.setClientAuth(clientAuth)
   }
-
   if (clientAuthRequired != null) {
-    this.isClientAuthRequired = clientAuthRequired
+    this.setClientAuthRequired(clientAuthRequired)
   }
-
   if (compressionLevel != null) {
-    this.compressionLevel = compressionLevel
+    this.setCompressionLevel(compressionLevel)
   }
-
   if (compressionSupported != null) {
-    this.isCompressionSupported = compressionSupported
+    this.setCompressionSupported(compressionSupported)
   }
-
+  if (crlPaths != null) {
+    for (item in crlPaths) {
+      this.addCrlPath(item)
+    }
+  }
+  if (crlValues != null) {
+    for (item in crlValues) {
+      this.addCrlValue(item)
+    }
+  }
   if (decompressionSupported != null) {
-    this.isDecompressionSupported = decompressionSupported
+    this.setDecompressionSupported(decompressionSupported)
   }
-
+  if (enabledCipherSuites != null) {
+    for (item in enabledCipherSuites) {
+      this.addEnabledCipherSuite(item)
+    }
+  }
+  if (enabledSecureTransportProtocols != null) {
+    for (item in enabledSecureTransportProtocols) {
+      this.addEnabledSecureTransportProtocol(item)
+    }
+  }
   if (handle100ContinueAutomatically != null) {
-    this.isHandle100ContinueAutomatically = handle100ContinueAutomatically
+    this.setHandle100ContinueAutomatically(handle100ContinueAutomatically)
   }
-
   if (host != null) {
-    this.host = host
+    this.setHost(host)
   }
-
   if (http2ConnectionWindowSize != null) {
-    this.http2ConnectionWindowSize = http2ConnectionWindowSize
+    this.setHttp2ConnectionWindowSize(http2ConnectionWindowSize)
   }
-
   if (idleTimeout != null) {
-    this.idleTimeout = idleTimeout
+    this.setIdleTimeout(idleTimeout)
   }
-
   if (initialSettings != null) {
-    this.initialSettings = initialSettings
+    this.setInitialSettings(initialSettings)
   }
-
   if (intputrc != null) {
-    this.intputrc = intputrc
+    this.setIntputrc(intputrc)
   }
-
+  if (jdkSslEngineOptions != null) {
+    this.setJdkSslEngineOptions(jdkSslEngineOptions)
+  }
+  if (keyStoreOptions != null) {
+    this.setKeyStoreOptions(keyStoreOptions)
+  }
   if (logActivity != null) {
-    this.logActivity = logActivity
+    this.setLogActivity(logActivity)
   }
-
   if (maxChunkSize != null) {
-    this.maxChunkSize = maxChunkSize
+    this.setMaxChunkSize(maxChunkSize)
   }
-
   if (maxHeaderSize != null) {
-    this.maxHeaderSize = maxHeaderSize
+    this.setMaxHeaderSize(maxHeaderSize)
   }
-
   if (maxInitialLineLength != null) {
-    this.maxInitialLineLength = maxInitialLineLength
+    this.setMaxInitialLineLength(maxInitialLineLength)
   }
-
   if (maxWebsocketFrameSize != null) {
-    this.maxWebsocketFrameSize = maxWebsocketFrameSize
+    this.setMaxWebsocketFrameSize(maxWebsocketFrameSize)
   }
-
+  if (openSslEngineOptions != null) {
+    this.setOpenSslEngineOptions(openSslEngineOptions)
+  }
+  if (pemKeyCertOptions != null) {
+    this.setPemKeyCertOptions(pemKeyCertOptions)
+  }
+  if (pemTrustOptions != null) {
+    this.setPemTrustOptions(pemTrustOptions)
+  }
+  if (pfxKeyCertOptions != null) {
+    this.setPfxKeyCertOptions(pfxKeyCertOptions)
+  }
+  if (pfxTrustOptions != null) {
+    this.setPfxTrustOptions(pfxTrustOptions)
+  }
   if (port != null) {
-    this.port = port
+    this.setPort(port)
   }
-
   if (receiveBufferSize != null) {
-    this.receiveBufferSize = receiveBufferSize
+    this.setReceiveBufferSize(receiveBufferSize)
   }
-
   if (reuseAddress != null) {
-    this.isReuseAddress = reuseAddress
+    this.setReuseAddress(reuseAddress)
   }
-
   if (sendBufferSize != null) {
-    this.sendBufferSize = sendBufferSize
+    this.setSendBufferSize(sendBufferSize)
   }
-
   if (shellHtmlResource != null) {
-    this.shellHtmlResource = shellHtmlResource
+    this.setShellHtmlResource(shellHtmlResource)
   }
-
   if (soLinger != null) {
-    this.soLinger = soLinger
+    this.setSoLinger(soLinger)
   }
-
   if (sockJSHandlerOptions != null) {
-    this.sockJSHandlerOptions = sockJSHandlerOptions
+    this.setSockJSHandlerOptions(sockJSHandlerOptions)
   }
-
   if (sockJSPath != null) {
-    this.sockJSPath = sockJSPath
+    this.setSockJSPath(sockJSPath)
   }
-
   if (ssl != null) {
-    this.isSsl = ssl
+    this.setSsl(ssl)
   }
-
   if (tcpKeepAlive != null) {
-    this.isTcpKeepAlive = tcpKeepAlive
+    this.setTcpKeepAlive(tcpKeepAlive)
   }
-
   if (tcpNoDelay != null) {
-    this.isTcpNoDelay = tcpNoDelay
+    this.setTcpNoDelay(tcpNoDelay)
   }
-
   if (termJsResource != null) {
-    this.termJsResource = termJsResource
+    this.setTermJsResource(termJsResource)
   }
-
   if (trafficClass != null) {
-    this.trafficClass = trafficClass
+    this.setTrafficClass(trafficClass)
   }
-
+  if (trustStoreOptions != null) {
+    this.setTrustStoreOptions(trustStoreOptions)
+  }
   if (useAlpn != null) {
-    this.isUseAlpn = useAlpn
+    this.setUseAlpn(useAlpn)
   }
-
   if (usePooledBuffers != null) {
-    this.isUsePooledBuffers = usePooledBuffers
+    this.setUsePooledBuffers(usePooledBuffers)
   }
-
   if (vertsShellJsResource != null) {
-    this.vertsShellJsResource = vertsShellJsResource
+    this.setVertsShellJsResource(vertsShellJsResource)
   }
-
   if (websocketSubProtocols != null) {
-    this.websocketSubProtocols = websocketSubProtocols
+    this.setWebsocketSubProtocols(websocketSubProtocols)
   }
-
 }
 

@@ -24,7 +24,7 @@ var Session = require('vertx-shell-js/session');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JCommandProcess = io.vertx.ext.shell.command.CommandProcess;
+var JCommandProcess = Java.type('io.vertx.ext.shell.command.CommandProcess');
 
 /**
  The command process provides interaction with the process of the command provided by Vert.x Shell.

@@ -19,7 +19,7 @@ var utils = require('vertx-js/util/utils');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JSignalHandler = io.vertx.ext.shell.term.SignalHandler;
+var JSignalHandler = Java.type('io.vertx.ext.shell.term.SignalHandler');
 
 /**
 

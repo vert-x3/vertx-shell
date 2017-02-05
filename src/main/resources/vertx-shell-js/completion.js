@@ -22,7 +22,7 @@ var Session = require('vertx-shell-js/session');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JCompletion = io.vertx.ext.shell.cli.Completion;
+var JCompletion = Java.type('io.vertx.ext.shell.cli.Completion');
 
 /**
  The completion object

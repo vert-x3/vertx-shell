@@ -24,7 +24,7 @@ var CommandProcess = require('vertx-shell-js/command_process');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JCommandBuilder = io.vertx.ext.shell.command.CommandBuilder;
+var JCommandBuilder = Java.type('io.vertx.ext.shell.command.CommandBuilder');
 
 /**
  A build for Vert.x Shell command.

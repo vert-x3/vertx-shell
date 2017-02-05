@@ -21,7 +21,7 @@ var Vertx = require('vertx-js/vertx');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JCommandResolver = io.vertx.ext.shell.command.CommandResolver;
+var JCommandResolver = Java.type('io.vertx.ext.shell.command.CommandResolver');
 
 /**
  A resolver for commands, so the shell can discover commands.

@@ -1,4 +1,4 @@
-moduleName = vertx-shell-module
+moduleName = io.vertx.ext.shell.term.Tty-module
 moduleVersion = 1.0
-extensionClasses = io.vertx.groovy.ext.shell.GroovyExtension
-staticExtensionClasses = io.vertx.groovy.ext.shell.GroovyStaticExtension
+extensionClasses = io.vertx.groovy.ext.shell.session.Session_GroovyExtension
+staticExtensionClasses = io.vertx.groovy.ext.shell.ShellServer_GroovyStaticExtension, io.vertx.groovy.ext.shell.ShellService_GroovyStaticExtension, io.vertx.groovy.ext.shell.term.TermServer_GroovyStaticExtension

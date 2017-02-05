@@ -22,7 +22,7 @@ var Term = require('vertx-shell-js/term');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JSockJSTermHandler = io.vertx.ext.shell.term.SockJSTermHandler;
+var JSockJSTermHandler = Java.type('io.vertx.ext.shell.term.SockJSTermHandler');
 
 /**
 

@@ -21,7 +21,7 @@ var Process = require('vertx-shell-js/process');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JJobController = io.vertx.ext.shell.system.JobController;
+var JJobController = Java.type('io.vertx.ext.shell.system.JobController');
 
 /**
  The job controller.<p/>

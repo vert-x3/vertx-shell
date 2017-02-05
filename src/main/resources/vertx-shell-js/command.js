@@ -23,7 +23,7 @@ var Process = require('vertx-shell-js/process');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JCommand = io.vertx.ext.shell.command.Command;
+var JCommand = Java.type('io.vertx.ext.shell.command.Command');
 
 /**
 

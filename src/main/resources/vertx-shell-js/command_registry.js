@@ -22,7 +22,7 @@ var CommandResolver = require('vertx-shell-js/command_resolver');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JCommandRegistry = io.vertx.ext.shell.command.CommandRegistry;
+var JCommandRegistry = Java.type('io.vertx.ext.shell.command.CommandRegistry');
 
 /**
  A registry that contains the commands known by a shell.<p/>

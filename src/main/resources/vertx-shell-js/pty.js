@@ -20,7 +20,7 @@ var Tty = require('vertx-shell-js/tty');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JPty = io.vertx.ext.shell.term.Pty;
+var JPty = Java.type('io.vertx.ext.shell.term.Pty');
 
 /**
 

@@ -21,8 +21,8 @@ var Vertx = require('vertx-js/vertx');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JShellService = io.vertx.ext.shell.ShellService;
-var ShellServiceOptions = io.vertx.ext.shell.ShellServiceOptions;
+var JShellService = Java.type('io.vertx.ext.shell.ShellService');
+var ShellServiceOptions = Java.type('io.vertx.ext.shell.ShellServiceOptions');
 
 /**
  The shell service, provides a remotely accessible shell available via Telnet or SSH according to the
@@ -126,7 +126,7 @@ ShellService.create = function() {
   if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
     return utils.convReturnVertxGen(ShellService, JShellService["create(io.vertx.core.Vertx)"](__args[0]._jdel));
   }else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && (typeof __args[1] === 'object' && __args[1] != null)) {
-    return utils.convReturnVertxGen(ShellService, JShellService["create(io.vertx.core.Vertx,io.vertx.ext.shell.ShellServiceOptions)"](__args[0]._jdel, __args[1] != null ? new ShellServiceOptions(new JsonObject(JSON.stringify(__args[1]))) : null));
+    return utils.convReturnVertxGen(ShellService, JShellService["create(io.vertx.core.Vertx,io.vertx.ext.shell.ShellServiceOptions)"](__args[0]._jdel, __args[1] != null ? new ShellServiceOptions(new JsonObject(Java.asJSONCompatible(__args[1]))) : null));
   } else throw new TypeError('function invoked with invalid arguments');
 };
 

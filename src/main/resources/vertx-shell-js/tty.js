@@ -19,7 +19,7 @@ var utils = require('vertx-js/util/utils');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JTty = io.vertx.ext.shell.term.Tty;
+var JTty = Java.type('io.vertx.ext.shell.term.Tty');
 
 /**
  Provide interactions with the Shell TTY.

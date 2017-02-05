@@ -22,7 +22,7 @@ var Session = require('vertx-shell-js/session');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JJob = io.vertx.ext.shell.system.Job;
+var JJob = Java.type('io.vertx.ext.shell.system.Job');
 
 /**
 

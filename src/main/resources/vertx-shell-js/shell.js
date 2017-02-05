@@ -23,7 +23,7 @@ var Session = require('vertx-shell-js/session');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JShell = io.vertx.ext.shell.Shell;
+var JShell = Java.type('io.vertx.ext.shell.Shell');
 
 /**
  An interactive session between a consumer and a shell.

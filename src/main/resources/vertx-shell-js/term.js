@@ -23,7 +23,7 @@ var Session = require('vertx-shell-js/session');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JTerm = io.vertx.ext.shell.term.Term;
+var JTerm = Java.type('io.vertx.ext.shell.term.Term');
 
 /**
  The terminal.

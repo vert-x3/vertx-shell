@@ -19,7 +19,7 @@ var utils = require('vertx-js/util/utils');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JCliToken = io.vertx.ext.shell.cli.CliToken;
+var JCliToken = Java.type('io.vertx.ext.shell.cli.CliToken');
 
 /**
  A parsed token in the command line interface.

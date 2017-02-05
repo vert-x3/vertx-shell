@@ -21,7 +21,7 @@ var Session = require('vertx-shell-js/session');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JProcess = io.vertx.ext.shell.system.Process;
+var JProcess = Java.type('io.vertx.ext.shell.system.Process');
 
 /**
  A process managed by the shell.

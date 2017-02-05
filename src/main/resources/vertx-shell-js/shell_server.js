@@ -24,8 +24,8 @@ var Term = require('vertx-shell-js/term');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
-var JShellServer = io.vertx.ext.shell.ShellServer;
-var ShellServerOptions = io.vertx.ext.shell.ShellServerOptions;
+var JShellServer = Java.type('io.vertx.ext.shell.ShellServer');
+var ShellServerOptions = Java.type('io.vertx.ext.shell.ShellServerOptions');
 
 /**
  The shell server.<p/>
@@ -166,7 +166,7 @@ ShellServer.create = function() {
   if (__args.length === 1 && typeof __args[0] === 'object' && __args[0]._jdel) {
     return utils.convReturnVertxGen(ShellServer, JShellServer["create(io.vertx.core.Vertx)"](__args[0]._jdel));
   }else if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && (typeof __args[1] === 'object' && __args[1] != null)) {
-    return utils.convReturnVertxGen(ShellServer, JShellServer["create(io.vertx.core.Vertx,io.vertx.ext.shell.ShellServerOptions)"](__args[0]._jdel, __args[1] != null ? new ShellServerOptions(new JsonObject(JSON.stringify(__args[1]))) : null));
+    return utils.convReturnVertxGen(ShellServer, JShellServer["create(io.vertx.core.Vertx,io.vertx.ext.shell.ShellServerOptions)"](__args[0]._jdel, __args[1] != null ? new ShellServerOptions(new JsonObject(Java.asJSONCompatible(__args[1]))) : null));
   } else throw new TypeError('function invoked with invalid arguments');
 };
 
