@@ -49,67 +49,60 @@ vertx run -conf '{"httpOptions":{"port":8080,"ssl":true,"keyStoreOptions":{"path
 
 You can also deploy this service inside your own verticle:
 
-[source,groovy,subs="+attributes"]
+[source,kotlin,subs="+attributes"]
 ----
-vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", [
-  config:[
-    telnetOptions:[
-      host:"localhost",
-      port:4000
-    ]
-  ]
-])
-
-----
-
-or
-
-[source,groovy,subs="+attributes"]
-----
-vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", [
-  config:[
-    sshOptions:[
-      host:"localhost",
-      port:5000,
-      keyPairOptions:[
-        path:"src/test/resources/ssh.jks",
-        password:"wibble"
-      ],
-      authOptions:[
-        provider:"shiro",
-        config:[
-          properties_path:"file:/path/to/my/auth.properties"
-        ]
-      ]
-    ]
-  ]
-])
+vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", DeploymentOptions(
+  config = json {
+    obj("telnetOptions" to obj(
+        "host" to "localhost",
+        "port" to 4000
+      ))
+  }))
 
 ----
 
 or
 
-[source,groovy,subs="+attributes"]
+[source,kotlin,subs="+attributes"]
 ----
-vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", [
-  config:[
-    httpOptions:[
-      host:"localhost",
-      port:8080,
-      ssl:true,
-      keyPairOptions:[
-        path:"src/test/resources/server-keystore.jks",
-        password:"wibble"
-      ],
-      authOptions:[
-        provider:"shiro",
-        config:[
-          properties_path:"file:/path/to/my/auth.properties"
-        ]
-      ]
-    ]
-  ]
-])
+vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", DeploymentOptions(
+  config = json {
+    obj("sshOptions" to obj(
+        "host" to "localhost",
+        "port" to 5000,
+        "keyPairOptions" to obj(
+          "path" to "src/test/resources/ssh.jks",
+          "password" to "wibble"
+        ),
+        "authOptions" to obj(
+          "provider" to "shiro",
+          "config" to obj("properties_path" to "file:/path/to/my/auth.properties")
+        )
+      ))
+  }))
+
+----
+
+or
+
+[source,kotlin,subs="+attributes"]
+----
+vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", DeploymentOptions(
+  config = json {
+    obj("httpOptions" to obj(
+        "host" to "localhost",
+        "port" to 8080,
+        "ssl" to true,
+        "keyPairOptions" to obj(
+          "path" to "src/test/resources/server-keystore.jks",
+          "password" to "wibble"
+        ),
+        "authOptions" to obj(
+          "provider" to "shiro",
+          "config" to obj("properties_path" to "file:/path/to/my/auth.properties")
+        )
+      ))
+  }))
 
 ----
 
@@ -122,38 +115,32 @@ The `link:../../apidocs/io/vertx/ext/shell/ShellService.html[ShellService]` take
 
 Starting a shell service available via SSH:
 
-[source,groovy]
+[source,kotlin]
 ----
-def service = ShellService.create(vertx, [
-  sSHOptions:[
-    host:"localhost",
-    port:5000,
-    keyPairOptions:[
-      path:"server-keystore.jks",
-      password:"wibble"
-    ],
-    authOptions:[
-      type:"PROPERTIES",
-      config:[
-        properties_path:"file:/path/to/my/auth.properties"
-      ]
-    ]
-  ]
-])
+var service = ShellService.create(vertx, ShellServiceOptions(
+  sSHOptions = SSHTermOptions(
+    host = "localhost",
+    port = 5000,
+    keyPairOptions = JksOptions(
+      path = "server-keystore.jks",
+      password = "wibble"),
+    authOptions = ShiroAuthOptions(
+      type = ShiroAuthRealmType.PROPERTIES,
+      config = json {
+        obj("properties_path" to "file:/path/to/my/auth.properties")
+      }))))
 service.start()
 
 ----
 
 Starting a shell service available via Telnet:
 
-[source,groovy]
+[source,kotlin]
 ----
-def service = ShellService.create(vertx, [
-  telnetOptions:[
-    host:"localhost",
-    port:4000
-  ]
-])
+var service = ShellService.create(vertx, ShellServiceOptions(
+  telnetOptions = TelnetTermOptions(
+    host = "localhost",
+    port = 4000)))
 service.start()
 
 ----
@@ -165,14 +152,12 @@ CAUTION: Telnet does not provide any authentication nor encryption at all.
 
 Starting a shell service available via HTTP:
 
-[source,groovy]
+[source,kotlin]
 ----
-def service = ShellService.create(vertx, [
-  httpOptions:[
-    host:"localhost",
-    port:8080
-  ]
-])
+var service = ShellService.create(vertx, ShellServiceOptions(
+  httpOptions = HttpTermOptions(
+    host = "localhost",
+    port = 8080)))
 service.start()
 
 ----
@@ -233,95 +218,85 @@ The server key configuration reuses the key pair store configuration scheme prov
 
 
 .Deploying the Shell Service on SSH with Mongo authentication
-[source,groovy,subs="+attributes"]
+[source,kotlin,subs="+attributes"]
 ----
-vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", [
-  config:[
-    sshOptions:[
-      host:"localhost",
-      port:5000,
-      keyPairOptions:[
-        path:"src/test/resources/ssh.jks",
-        password:"wibble"
-      ],
-      authOptions:[
-        provider:"mongo",
-        config:[
-          connection_string:"mongodb://localhost:27018"
-        ]
-      ]
-    ]
-  ]
-])
+vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", DeploymentOptions(
+  config = json {
+    obj("sshOptions" to obj(
+        "host" to "localhost",
+        "port" to 5000,
+        "keyPairOptions" to obj(
+          "path" to "src/test/resources/ssh.jks",
+          "password" to "wibble"
+        ),
+        "authOptions" to obj(
+          "provider" to "mongo",
+          "config" to obj("connection_string" to "mongodb://localhost:27018")
+        )
+      ))
+  }))
 
 ----
 
 .Running the Shell Service on SSH with Mongo authentication
-[source,groovy,subs="+attributes"]
+[source,kotlin,subs="+attributes"]
 ----
-def service = ShellService.create(vertx, [
-  sSHOptions:[
-    host:"localhost",
-    port:5000,
-    keyPairOptions:[
-      path:"server-keystore.jks",
-      password:"wibble"
-    ],
-    authOptions:[
-      config:[
-        connection_string:"mongodb://localhost:27018"
-      ]
-    ]
-  ]
-])
+var service = ShellService.create(vertx, ShellServiceOptions(
+  sSHOptions = SSHTermOptions(
+    host = "localhost",
+    port = 5000,
+    keyPairOptions = JksOptions(
+      path = "server-keystore.jks",
+      password = "wibble"),
+    authOptions = MongoAuthOptions(
+      config = json {
+        obj("connection_string" to "mongodb://localhost:27018")
+      }))))
 service.start()
 
 ----
 
 .Deploying the Shell Service on SSH with JDBC authentication
-[source,groovy,subs="+attributes"]
+[source,kotlin,subs="+attributes"]
 ----
-vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", [
-  config:[
-    sshOptions:[
-      host:"localhost",
-      port:5000,
-      keyPairOptions:[
-        path:"src/test/resources/ssh.jks",
-        password:"wibble"
-      ],
-      authOptions:[
-        provider:"jdbc",
-        config:[
-          url:"jdbc:hsqldb:mem:test?shutdown=true",
-          driver_class:"org.hsqldb.jdbcDriver"
-        ]
-      ]
-    ]
-  ]
-])
+vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", DeploymentOptions(
+  config = json {
+    obj("sshOptions" to obj(
+        "host" to "localhost",
+        "port" to 5000,
+        "keyPairOptions" to obj(
+          "path" to "src/test/resources/ssh.jks",
+          "password" to "wibble"
+        ),
+        "authOptions" to obj(
+          "provider" to "jdbc",
+          "config" to obj(
+            "url" to "jdbc:hsqldb:mem:test?shutdown=true",
+            "driver_class" to "org.hsqldb.jdbcDriver"
+          )
+        )
+      ))
+  }))
 
 ----
 
 .Running the Shell Service on SSH with JDBC authentication
-[source,groovy,subs="+attributes"]
+[source,kotlin,subs="+attributes"]
 ----
-def service = ShellService.create(vertx, [
-  sSHOptions:[
-    host:"localhost",
-    port:5000,
-    keyPairOptions:[
-      path:"server-keystore.jks",
-      password:"wibble"
-    ],
-    authOptions:[
-      config:[
-        url:"jdbc:hsqldb:mem:test?shutdown=true",
-        driver_class:"org.hsqldb.jdbcDriver"
-      ]
-    ]
-  ]
-])
+var service = ShellService.create(vertx, ShellServiceOptions(
+  sSHOptions = SSHTermOptions(
+    host = "localhost",
+    port = 5000,
+    keyPairOptions = JksOptions(
+      path = "server-keystore.jks",
+      password = "wibble"),
+    authOptions = JDBCAuthOptions(
+      config = json {
+        obj(
+          "url" to "jdbc:hsqldb:mem:test?shutdown=true",
+          "driver_class" to "org.hsqldb.jdbcDriver"
+        )
+      }))))
 service.start()
 
 ----
@@ -338,89 +313,81 @@ In addition there are extra options for configuring an HTTP term:
 - `link:../../apidocs/io/vertx/ext/shell/term/HttpTermOptions.html#setSockJSPath-java.lang.String-[setSockJSPath]`: the SockJS path in the router
 
 .Deploying the Shell Service on HTTP with Mongo authentication
-[source,groovy,subs="+attributes"]
+[source,kotlin,subs="+attributes"]
 ----
-vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", [
-  config:[
-    httpOptions:[
-      host:"localhost",
-      port:8080,
-      ssl:true,
-      keyPairOptions:[
-        path:"src/test/resources/server-keystore.jks",
-        password:"wibble"
-      ],
-      authOptions:[
-        provider:"mongo",
-        config:[
-          connection_string:"mongodb://localhost:27018"
-        ]
-      ]
-    ]
-  ]
-])
+vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", DeploymentOptions(
+  config = json {
+    obj("httpOptions" to obj(
+        "host" to "localhost",
+        "port" to 8080,
+        "ssl" to true,
+        "keyPairOptions" to obj(
+          "path" to "src/test/resources/server-keystore.jks",
+          "password" to "wibble"
+        ),
+        "authOptions" to obj(
+          "provider" to "mongo",
+          "config" to obj("connection_string" to "mongodb://localhost:27018")
+        )
+      ))
+  }))
 
 ----
 
 .Running the Shell Service on HTTP with Mongo authentication
-[source,groovy,subs="+attributes"]
+[source,kotlin,subs="+attributes"]
 ----
-def service = ShellService.create(vertx, [
-  httpOptions:[
-    host:"localhost",
-    port:8080,
-    authOptions:[
-      config:[
-        connection_string:"mongodb://localhost:27018"
-      ]
-    ]
-  ]
-])
+var service = ShellService.create(vertx, ShellServiceOptions(
+  httpOptions = HttpTermOptions(
+    host = "localhost",
+    port = 8080,
+    authOptions = MongoAuthOptions(
+      config = json {
+        obj("connection_string" to "mongodb://localhost:27018")
+      }))))
 service.start()
 
 ----
 
 .Deploying the Shell Service on HTTP with JDBC authentication
-[source,groovy,subs="+attributes"]
+[source,kotlin,subs="+attributes"]
 ----
-vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", [
-  config:[
-    httpOptions:[
-      host:"localhost",
-      port:8080,
-      ssl:true,
-      keyPairOptions:[
-        path:"src/test/resources/server-keystore.jks",
-        password:"wibble"
-      ],
-      authOptions:[
-        provider:"jdbc",
-        config:[
-          url:"jdbc:hsqldb:mem:test?shutdown=true",
-          driver_class:"org.hsqldb.jdbcDriver"
-        ]
-      ]
-    ]
-  ]
-])
+vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}", DeploymentOptions(
+  config = json {
+    obj("httpOptions" to obj(
+        "host" to "localhost",
+        "port" to 8080,
+        "ssl" to true,
+        "keyPairOptions" to obj(
+          "path" to "src/test/resources/server-keystore.jks",
+          "password" to "wibble"
+        ),
+        "authOptions" to obj(
+          "provider" to "jdbc",
+          "config" to obj(
+            "url" to "jdbc:hsqldb:mem:test?shutdown=true",
+            "driver_class" to "org.hsqldb.jdbcDriver"
+          )
+        )
+      ))
+  }))
 
 ----
 
 .Running the Shell Service on HTTP with JDBC authentication
-[source,groovy,subs="+attributes"]
+[source,kotlin,subs="+attributes"]
 ----
-def service = ShellService.create(vertx, [
-  httpOptions:[
-    host:"localhost",
-    port:8080,
-    authOptions:[
-      config:[
-        url:"jdbc:hsqldb:mem:test?shutdown=true",
-        driver_class:"org.hsqldb.jdbcDriver"
-      ]
-    ]
-  ]
-])
+var service = ShellService.create(vertx, ShellServiceOptions(
+  httpOptions = HttpTermOptions(
+    host = "localhost",
+    port = 8080,
+    authOptions = JDBCAuthOptions(
+      config = json {
+        obj(
+          "url" to "jdbc:hsqldb:mem:test?shutdown=true",
+          "driver_class" to "org.hsqldb.jdbcDriver"
+        )
+      }))))
 service.start()
 
 ----
@@ -505,10 +472,10 @@ A command is created by the `link:../../apidocs/io/vertx/ext/shell/command/Comma
 by the shell when the command is executed, this handler can be set with the `link:../../apidocs/io/vertx/ext/shell/command/CommandBuilder.html#processHandler-io.vertx.core.Handler-[processHandler]`
 method:
 
-[source,groovy]
+[source,kotlin]
 ----
 
-def builder = CommandBuilder.command("my-command")
+var builder = CommandBuilder.command("my-command")
 builder.processHandler({ process ->
 
   // Write a message to the console
@@ -519,7 +486,7 @@ builder.processHandler({ process ->
 })
 
 // Register the command
-def registry = CommandRegistry.getShared(vertx)
+var registry = CommandRegistry.getShared(vertx)
 registry.registerCommand(builder.build(vertx))
 
 ----
@@ -539,11 +506,11 @@ The `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html[CommandPr
 
 The `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html#args--[args]` returns the command arguments:
 
-[source,groovy]
+[source,kotlin]
 ----
 command.processHandler({ process ->
 
-  process.args().each { arg ->
+  for (arg in process.args()) {
     // Print each argument on the console
     process.write("Argument ${arg}")
   }
@@ -560,21 +527,19 @@ write command line argument parsing:
 - argument _validation_
 - generation of the command _usage_
 
-[source,groovy]
+[source,kotlin]
 ----
-def cli = CLI.create("my-command").addArgument([
-  argName:"my-arg"
-]).addOption([
-  shortName:"m",
-  longName:"my-option"
-])
-def command = CommandBuilder.command(cli)
+var cli = CLI.create("my-command").addArgument(Argument(
+  argName = "my-arg")).addOption(Option(
+  shortName = "m",
+  longName = "my-option"))
+var command = CommandBuilder.command(cli)
 command.processHandler({ process ->
 
-  def commandLine = process.commandLine()
+  var commandLine = process.commandLine()
 
-  def argValue = commandLine.getArgumentValue(0)
-  def optValue = commandLine.getOptionValue("my-option")
+  var argValue = commandLine.getArgumentValue<Any>(0)
+  var optValue = commandLine.getOptionValue<Any>("my-option")
   process.write("The argument is ${argValue} and the option is ${optValue}")
 
   process.end()
@@ -585,16 +550,14 @@ command.processHandler({ process ->
 When an option named _help_ is added to the CLI object, the shell will take care of generating the command usage
 when the option is activated:
 
-[source,groovy]
+[source,kotlin]
 ----
-def cli = CLI.create("my-command").addArgument([
-  argName:"my-arg"
-]).addOption([
-  argName:"help",
-  shortName:"h",
-  longName:"help"
-])
-def command = CommandBuilder.command(cli)
+var cli = CLI.create("my-command").addArgument(Argument(
+  argName = "my-arg")).addOption(Option(
+  argName = "help",
+  shortName = "h",
+  longName = "help"))
+var command = CommandBuilder.command(cli)
 command.processHandler({ process ->
   // ...
 })
@@ -612,7 +575,7 @@ which is used for interacting with the terminal.
 The `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#stdinHandler-io.vertx.core.Handler-[stdinHandler]` handler is used to be notified when the terminal
 receives data, e.g the user uses his keyboard:
 
-[source,groovy]
+[source,kotlin]
 ----
 tty.stdinHandler({ data ->
   println("Received ${data}")
@@ -622,7 +585,7 @@ tty.stdinHandler({ data ->
 
 A command can use the `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#write-java.lang.String-[write]` to write to the standard output.
 
-[source,groovy]
+[source,kotlin]
 ----
 tty.write("Hello World")
 
@@ -633,7 +596,7 @@ tty.write("Hello World")
 The current terminal size can be obtained using `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#width--[width]` and
 `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#height--[height]`.
 
-[source,groovy]
+[source,kotlin]
 ----
 tty.write("Current terminal size: (${tty.width()}, ${tty.height()})")
 
@@ -645,7 +608,7 @@ When the size of the terminal changes the `link:../../apidocs/io/vertx/ext/shell
 is called, the new terminal size can be obtained with `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#width--[width]` and
 `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#height--[height]`.
 
-[source,groovy]
+[source,kotlin]
 ----
 tty.resizehandler({ v ->
   println("terminal resized : ${tty.width()} ${tty.height()}")
@@ -658,7 +621,7 @@ tty.resizehandler({ v ->
 The terminal type is useful for sending escape codes to the remote terminal: `link:../../apidocs/io/vertx/ext/shell/term/Tty.html#type--[type]`
 returns the current terminal type, it can be null if the terminal has not advertised the value.
 
-[source,groovy]
+[source,kotlin]
 ----
 println("terminal type : ${tty.type()}")
 
@@ -669,13 +632,13 @@ println("terminal type : ${tty.type()}")
 The shell is a connected service that naturally maintains a session with the client, this session can be
 used in commands to scope data. A command can get the session with `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html#session--[session]`:
 
-[source,groovy]
+[source,kotlin]
 ----
 command.processHandler({ process ->
 
-  def session = process.session()
+  var session = process.session()
 
-  if (session.get("my_key") == null) {
+  if (session.get<Any>("my_key") == null) {
     session.put("my key", "my value")
   }
 
@@ -689,10 +652,10 @@ command.processHandler({ process ->
 Calling `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html#end--[end]` ends the current process. It can be called directly
 in the invocation of the command handler or any time later:
 
-[source,groovy]
+[source,kotlin]
 ----
 command.processHandler({ process ->
-  def vertx = process.vertx()
+  var vertx = process.vertx()
 
   // Set a timer
   vertx.setTimer(1000, { id ->
@@ -714,13 +677,13 @@ The `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html#interrupt
 is interrupted, this event is fired when the user press _Ctrl+C_ during the execution of a command. This handler can
 be used for interrupting commands _blocking_ the CLI and gracefully ending the command process:
 
-[source,groovy]
+[source,kotlin]
 ----
 command.processHandler({ process ->
-  def vertx = process.vertx()
+  var vertx = process.vertx()
 
   // Every second print a message on the console
-  def periodicId = vertx.setPeriodic(1000, { id ->
+  var periodicId = vertx.setPeriodic(1000, { id ->
     process.write("tick\n")
   })
 
@@ -752,7 +715,7 @@ is resumed, usually when the user types _fg_:
 - the command can receive the resume event when it has registered an handler for this event
 - the command will receive again data from the standard input when it has registered an stdin handler
 
-[source,groovy]
+[source,kotlin]
 ----
 command.processHandler({ process ->
 
@@ -775,7 +738,7 @@ The `link:../../apidocs/io/vertx/ext/shell/command/CommandProcess.html#endHandle
 called when the process is running or suspended and the command terminates, for instance the shell session is closed,
 the command is _terminated_.
 
-[source,groovy]
+[source,kotlin]
 ----
 command.processHandler({ process ->
 
@@ -817,16 +780,16 @@ For instance the shell http term can be configured to use an existing router ins
 Using a shell server requires explicit configuration but provides full flexiblity, a shell server is setup in a few
 steps:
 
-[source,groovy]
+[source,kotlin]
 ----
 
-def server = ShellServer.create(vertx)
+var server = ShellServer.create(vertx)
 
-def shellRouter = Router.router(vertx)
+var shellRouter = Router.router(vertx)
 router.mountSubRouter("/shell", shellRouter)
-def httpTermServer = TermServer.createHttpTermServer(vertx, router)
+var httpTermServer = TermServer.createHttpTermServer(vertx, router)
 
-def sshTermServer = TermServer.createSSHTermServer(vertx)
+var sshTermServer = TermServer.createSSHTermServer(vertx)
 
 server.registerTermServer(httpTermServer)
 server.registerTermServer(sshTermServer)
@@ -847,28 +810,28 @@ Besides, the shell server can also be used for creating in process shell session
 
 In process shell session can be created with `link:../../apidocs/io/vertx/ext/shell/ShellServer.html#createShell-io.vertx.ext.shell.term.Term-[createShell]`:
 
-[source,groovy]
+[source,kotlin]
 ----
 
 // Create a shell ession
-def shell = shellServer.createShell()
+var shell = shellServer.createShell()
 
 
 ----
 
 The main use case is running or testing a command:
 
-[source,groovy]
+[source,kotlin]
 ----
 
 // Create a shell
-def shell = shellServer.createShell()
+var shell = shellServer.createShell()
 
 // Create a job fo the command
-def job = shell.createJob("my-command 1234")
+var job = shell.createJob("my-command 1234")
 
 // Create a pseudo terminal
-def pty = Pty.create()
+var pty = Pty.create()
 pty.stdoutHandler({ data ->
   println("Command wrote ${data}")
 })
@@ -907,12 +870,11 @@ The terminal server `link:../../apidocs/io/vertx/ext/shell/term/Term.html[Term]`
 When a remote terminal connects, the `link:../../apidocs/io/vertx/ext/shell/term/Term.html[Term]` can be used to interact with connected
 terminal.
 
-[source,groovy]
+[source,kotlin]
 ----
-def server = TermServer.createSSHTermServer(vertx, [
-  port:5000,
-  host:"localhost"
-])
+var server = TermServer.createSSHTermServer(vertx, SSHTermOptions(
+  port = 5000,
+  host = "localhost"))
 server.termHandler({ term ->
   term.stdinHandler({ line ->
     term.write(line)
@@ -927,12 +889,11 @@ how to use the tty.
 
 === Telnet term
 
-[source,groovy]
+[source,kotlin]
 ----
-def server = TermServer.createTelnetTermServer(vertx, [
-  port:5000,
-  host:"localhost"
-])
+var server = TermServer.createTelnetTermServer(vertx, TelnetTermOptions(
+  port = 5000,
+  host = "localhost"))
 server.termHandler({ term ->
   term.stdinHandler({ line ->
     term.write(line)
@@ -947,12 +908,11 @@ server.listen()
 The `link:../../apidocs/io/vertx/ext/shell/term/TermServer.html#createHttpTermServer-io.vertx.core.Vertx-[TermServer.createHttpTermServer]` method creates an HTTP term server, built
 on top of Vert.x Web using the SockJS protocol.
 
-[source,groovy]
+[source,kotlin]
 ----
-def server = TermServer.createHttpTermServer(vertx, [
-  port:5000,
-  host:"localhost"
-])
+var server = TermServer.createHttpTermServer(vertx, HttpTermOptions(
+  port = 5000,
+  host = "localhost"))
 server.termHandler({ term ->
   term.stdinHandler({ line ->
     term.write(line)
@@ -966,12 +926,11 @@ An HTTP term can start its own HTTP server, or it can reuse an existing Vert.x W
 
 The shell can be found at `/shell.html`.
 
-[source,groovy]
+[source,kotlin]
 ----
-def server = TermServer.createHttpTermServer(vertx, router, [
-  port:5000,
-  host:"localhost"
-])
+var server = TermServer.createHttpTermServer(vertx, router, HttpTermOptions(
+  port = 5000,
+  host = "localhost"))
 server.termHandler({ term ->
   term.stdinHandler({ line ->
     term.write(line)
