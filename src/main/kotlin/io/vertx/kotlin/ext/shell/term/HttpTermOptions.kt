@@ -44,6 +44,7 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions
  * @param maxHeaderSize 
  * @param maxInitialLineLength 
  * @param maxWebsocketFrameSize 
+ * @param maxWebsocketMessageSize 
  * @param openSslEngineOptions 
  * @param pemKeyCertOptions 
  * @param pemTrustOptions 
@@ -98,6 +99,7 @@ fun HttpTermOptions(
   maxHeaderSize: Int? = null,
   maxInitialLineLength: Int? = null,
   maxWebsocketFrameSize: Int? = null,
+  maxWebsocketMessageSize: Int? = null,
   openSslEngineOptions: io.vertx.core.net.OpenSSLEngineOptions? = null,
   pemKeyCertOptions: io.vertx.core.net.PemKeyCertOptions? = null,
   pemTrustOptions: io.vertx.core.net.PemTrustOptions? = null,
@@ -207,6 +209,9 @@ fun HttpTermOptions(
   }
   if (maxWebsocketFrameSize != null) {
     this.setMaxWebsocketFrameSize(maxWebsocketFrameSize)
+  }
+  if (maxWebsocketMessageSize != null) {
+    this.setMaxWebsocketMessageSize(maxWebsocketMessageSize)
   }
   if (openSslEngineOptions != null) {
     this.setOpenSslEngineOptions(openSslEngineOptions)
