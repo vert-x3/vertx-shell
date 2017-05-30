@@ -230,11 +230,6 @@ public class ShellImpl implements Shell {
       }
       job.setTty(term);
       job.setSession(session);
-      job.statusUpdateHandler(status -> {
-        if (status == ExecStatus.RUNNING && job == jobController.foregroundJob()) {
-          term.echo(job.line() + "\n");
-        }
-      });
       job.run();
     }, completion -> {
       commandManager.complete(completion);

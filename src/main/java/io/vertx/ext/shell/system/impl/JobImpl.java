@@ -215,14 +215,13 @@ public class JobImpl implements Job {
     if (controller.foregroundUpdatedHandler != null) {
       controller.foregroundUpdatedHandler.handle(this);
     }
+    actualStatus = ExecStatus.RUNNING;
+    if (statusUpdateHandler != null) {
+      statusUpdateHandler.handle(ExecStatus.RUNNING);
+    }
     process.setTty(tty);
     process.setSession(session);
-    process.run(v -> {
-      actualStatus = ExecStatus.RUNNING;
-      if (statusUpdateHandler != null) {
-        statusUpdateHandler.handle(process.status());
-      }
-    });
+    process.run();
     return this;
   }
 }

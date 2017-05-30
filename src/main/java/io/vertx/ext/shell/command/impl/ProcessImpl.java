@@ -278,8 +278,7 @@ public class ProcessImpl implements Process {
   }
 
   @Override
-  public synchronized void run(boolean fg, Handler<Void> completionHandler) {
-
+  public synchronized void run(boolean fg) {
     if (processStatus != ExecStatus.READY) {
       throw new IllegalStateException("Cannot run proces in " + processStatus + " state");
     }
@@ -466,13 +465,7 @@ public class ProcessImpl implements Process {
     //
     context.runOnContext(v -> {
       try {
-        try {
-          handler.handle(process);
-        } finally {
-          if (completionHandler != null) {
-            processContext.runOnContext(completionHandler);
-          }
-        }
+        handler.handle(process);
       } catch (Throwable e) {
         terminate(1, null);
         throw e;

@@ -98,33 +98,17 @@ public interface Process {
 
   /**
    * Run the process.
+   *
    */
   default void run() {
-    run(null);
-  }
-
-  /**
-   * Run the process.
-   */
-  default void run(boolean foreground) {
-    run(foreground, null);
+    run(true);
   }
 
   /**
    * Run the process.
    *
-   * @param completionHandler handler called after process callback
    */
-  default void run(Handler<Void> completionHandler) {
-    run(true, completionHandler);
-  }
-
-  /**
-   * Run the process.
-   *
-   * @param completionHandler handler called after process callback
-   */
-  void run(boolean foregraound, Handler<Void> completionHandler);
+  void run(boolean foregraound);
 
   /**
    * Attempt to interrupt the process.

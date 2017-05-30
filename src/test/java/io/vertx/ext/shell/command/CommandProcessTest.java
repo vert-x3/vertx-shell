@@ -82,19 +82,23 @@ public class CommandProcessTest {
   public void testRunReadyProcess(TestContext context) throws Exception {
     AtomicInteger status = new AtomicInteger();
     CommandBuilder builder = CommandBuilder.command("hello");
-    Async runningLatch = context.async(2);
+    Async runningLatch = context.async(1);
     builder.processHandler(process -> {
       context.assertEquals(0, status.getAndIncrement());
       runningLatch.countDown();
+      process.end();
     });
     Command command = builder.build(vertx);
     Context ctx = vertx.getOrCreateContext();
     Process process = createProcessInContext(ctx, command);
-    process.run(v -> {
-      context.assertEquals(ctx, Vertx.currentContext());
-      context.assertEquals(1, status.getAndIncrement());
-      runningLatch.countDown();
-    });
+    context.assertEquals(ExecStatus.READY, process.status());
+    process.run();
+    context.assertEquals(ExecStatus.RUNNING, process.status());
+    runningLatch.awaitSuccess(5000);
+    long now = System.currentTimeMillis();
+    while (process.status() != ExecStatus.TERMINATED) {
+      context.assertTrue(System.currentTimeMillis() - now < 5000);
+    }
   }
 
   @Test

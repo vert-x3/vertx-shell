@@ -46,7 +46,6 @@ import io.vertx.ext.shell.system.Process;
 import io.vertx.ext.shell.system.impl.InternalCommandManager;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
-import io.vertx.ext.shell.term.Tty;
 import io.vertx.ext.shell.term.impl.SSHServer;
 
 import java.util.ArrayList;
@@ -177,7 +176,7 @@ public class ShellServerImpl implements ShellServer {
           process.setSession(new SessionImpl());
           process.setTty(exec);
           process.terminatedHandler(exec::end);
-          process.run(true, done -> {});
+          process.run(true);
         });
       }
       termServer.termHandler(this::handleTerm);

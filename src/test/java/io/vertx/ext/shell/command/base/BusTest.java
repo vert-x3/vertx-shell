@@ -36,8 +36,8 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.DeliveryOptions;
-import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
+import io.vertx.core.eventbus.ReplyException;
 import io.vertx.core.http.CaseInsensitiveHeaders;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -57,6 +57,10 @@ import sun.misc.BASE64Encoder;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+
+import static io.vertx.core.eventbus.ReplyFailure.NO_HANDLERS;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -305,23 +309,24 @@ public class BusTest {
 
   @Test
   public void testBusTail(TestContext context) {
-    EventBus eb = vertx.eventBus();
+    String expected = "the_address1:the_message1\nthe_address2:the_message2\nthe_address1:the_message3\n";
     assertBusTail(context, "bus-tail the_address1 the_address2", () -> {
-      eb.send("the_address1", "the_message1");
-      eb.send("the_address2", "the_message2");
-      eb.send("the_address1", "the_message3");
-    }, "the_address1:the_message1\nthe_address2:the_message2\nthe_address1:the_message3\n");
+      assertSend(context, "the_address1", "the_message1", 50);
+      assertSend(context, "the_address2", "the_message2", 50);
+      assertSend(context, "the_address1", "the_message3", 50);
+    }, expected::equals);
   }
 
   @Test
   public void testBusTailVerbose(TestContext context) {
-    EventBus eb = vertx.eventBus();
+    String expected = "the_address:\nReply address: .*\nHeader header_name:\\[header_value\\]\nthe_message\n";
+    Pattern p = Pattern.compile(expected);
     assertBusTail(context, "bus-tail --verbose the_address", () -> {
-      eb.send("the_address", "the_message", new DeliveryOptions().setHeaders(new CaseInsensitiveHeaders()).addHeader("header_name", "header_value"));
-    }, "the_address:\nReply address: null\nHeader header_name:[header_value]\nthe_message\n");
+      assertSend(context, "the_address", "the_message", new DeliveryOptions().setHeaders(new CaseInsensitiveHeaders()).addHeader("header_name", "header_value"), 50);
+    }, s -> p.matcher(s).matches());
   }
 
-  private void assertBusTail(TestContext context, String cmd, Runnable send, String expected) {
+  private void assertBusTail(TestContext context, String cmd, Runnable send, Predicate<String> check) {
     Async runningLatch = context.async();
     Shell shell = server.createShell();
     Pty pty = Pty.create();
@@ -337,9 +342,24 @@ public class BusTest {
     runningLatch.awaitSuccess(5000);
     send.run();
     long now = System.currentTimeMillis();
-    while (result.length() < expected.length()) {
+    while (!check.test(result.toString())) {
       context.assertTrue(System.currentTimeMillis() - now < 2000);
     }
-    context.assertEquals(expected, result.toString());
+  }
+
+  private void assertSend(TestContext context, String address, Object body, int times) {
+    assertSend(context, address, body, new DeliveryOptions(), times);
+  }
+
+  private void assertSend(TestContext context, String address, Object body, DeliveryOptions options, int times) {
+    context.assertTrue(times > 0);
+    vertx.eventBus().send(address, body, options, ar -> {
+      if (ar.failed()) {
+        ReplyException ex = (ReplyException) ar.cause();
+        if (ex.failureType() == NO_HANDLERS) {
+          assertSend(context, address, body, options, times - 1);
+        }
+      }
+    });
   }
 }
