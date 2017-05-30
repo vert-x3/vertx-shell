@@ -146,7 +146,7 @@ public class SSHServer implements TermServer {
         if (ksHelper == null) {
           throw new VertxException("No key pair store configured");
         }
-        KeyStore ks = ksHelper.loadStore((VertxInternal) vertx);
+        KeyStore ks = ksHelper.store();
 
         String kpPassword = "";
         if (ksOptions instanceof JksOptions) {

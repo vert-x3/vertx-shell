@@ -28,6 +28,7 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions
  * @param compressionSupported 
  * @param crlPaths 
  * @param crlValues 
+ * @param decoderInitialBufferSize 
  * @param decompressionSupported 
  * @param enabledCipherSuites 
  * @param enabledSecureTransportProtocols 
@@ -55,6 +56,7 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions
  * @param reuseAddress 
  * @param sendBufferSize 
  * @param shellHtmlResource  Set <code>shell.html</code> resource to use.
+ * @param sni 
  * @param soLinger 
  * @param sockJSHandlerOptions  The SockJS handler options.
  * @param sockJSPath  Configure the SockJS path, the default value is <code>/term/<star></code>.
@@ -83,6 +85,7 @@ fun HttpTermOptions(
   compressionSupported: Boolean? = null,
   crlPaths: Iterable<String>? = null,
   crlValues: Iterable<io.vertx.core.buffer.Buffer>? = null,
+  decoderInitialBufferSize: Int? = null,
   decompressionSupported: Boolean? = null,
   enabledCipherSuites: Iterable<String>? = null,
   enabledSecureTransportProtocols: Iterable<String>? = null,
@@ -110,6 +113,7 @@ fun HttpTermOptions(
   reuseAddress: Boolean? = null,
   sendBufferSize: Int? = null,
   shellHtmlResource: io.vertx.core.buffer.Buffer? = null,
+  sni: Boolean? = null,
   soLinger: Int? = null,
   sockJSHandlerOptions: io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions? = null,
   sockJSPath: String? = null,
@@ -157,6 +161,9 @@ fun HttpTermOptions(
     for (item in crlValues) {
       this.addCrlValue(item)
     }
+  }
+  if (decoderInitialBufferSize != null) {
+    this.setDecoderInitialBufferSize(decoderInitialBufferSize)
   }
   if (decompressionSupported != null) {
     this.setDecompressionSupported(decompressionSupported)
@@ -242,6 +249,9 @@ fun HttpTermOptions(
   }
   if (shellHtmlResource != null) {
     this.setShellHtmlResource(shellHtmlResource)
+  }
+  if (sni != null) {
+    this.setSni(sni)
   }
   if (soLinger != null) {
     this.setSoLinger(soLinger)

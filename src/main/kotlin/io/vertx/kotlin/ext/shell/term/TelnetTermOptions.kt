@@ -39,6 +39,7 @@ import io.vertx.core.net.PfxOptions
  * @param receiveBufferSize 
  * @param reuseAddress 
  * @param sendBufferSize 
+ * @param sni 
  * @param soLinger 
  * @param ssl 
  * @param tcpKeepAlive 
@@ -77,6 +78,7 @@ fun TelnetTermOptions(
   receiveBufferSize: Int? = null,
   reuseAddress: Boolean? = null,
   sendBufferSize: Int? = null,
+  sni: Boolean? = null,
   soLinger: Int? = null,
   ssl: Boolean? = null,
   tcpKeepAlive: Boolean? = null,
@@ -168,6 +170,9 @@ fun TelnetTermOptions(
   }
   if (sendBufferSize != null) {
     this.setSendBufferSize(sendBufferSize)
+  }
+  if (sni != null) {
+    this.setSni(sni)
   }
   if (soLinger != null) {
     this.setSoLinger(soLinger)
