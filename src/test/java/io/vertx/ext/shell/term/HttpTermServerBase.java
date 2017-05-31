@@ -308,9 +308,7 @@ public abstract class HttpTermServerBase {
       HttpClient client = vertx.createHttpClient();
       client.websocket(8080, "localhost", basePath + "/shell/websocket", new CaseInsensitiveHeaders().add("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes())), ws -> {
         async.countDown();
-      }, err -> {
-        context.fail();
-      });
+      }, context::fail);
     }));
   }
 
@@ -353,9 +351,7 @@ public abstract class HttpTermServerBase {
           context.assertTrue(Arrays.equals(new byte[]{63}, buf.getBytes()));
           async.complete();
         });
-      }, err -> {
-        context.fail();
-      });
+      }, context::fail);
     }));
   }
 
@@ -374,9 +370,7 @@ public abstract class HttpTermServerBase {
       client.websocket(8080, "localhost", basePath + "/shell/websocket", new CaseInsensitiveHeaders().add("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes())), ws -> {
         ws.handler(buf -> {
         });
-      }, err -> {
-        context.fail();
-      });
+      }, context::fail);
     }));
   }
 }
