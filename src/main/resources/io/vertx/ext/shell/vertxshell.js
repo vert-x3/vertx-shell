@@ -1,6 +1,7 @@
 (function () {
-  var VertxTerm = function (url, element) {
-    var term = new Terminal();
+  var VertxTerm = function (url, element, options) {
+    options = options || {};
+    var term = new Terminal(options);
     term.open(element, true);
 
     var socket;
@@ -45,7 +46,9 @@
     };
 
     term.on('resize', onResize);
-    term.fit();
+    if (options.cols && options.rows) {
+      onResize(options);
+    }
 
     return {
       socket: socket,

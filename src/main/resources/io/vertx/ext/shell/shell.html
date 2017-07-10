@@ -6,7 +6,7 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/xterm/2.8.1/xterm.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/xterm/2.8.1/addons/fit/fit.min.js"></script>
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/xterm/2.8.1/xterm.min.css"/>
-  <link href="//fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu"/>
   <style>
     html, body {
       height: 100%;
@@ -55,19 +55,18 @@
 
   // Workaround for https://github.com/sourcelair/xterm.js/issues/762
   var brandElement = document.getElementById('brand');
-  var fixHeight = function (termElement) {
-    termElement.style.marginTop = termElement.parentElement.offsetHeight - termElement.offsetHeight + 'px';
-    brandElement.style.lineHeight = document.body.offsetHeight - termElement.offsetHeight + 'px';
+  var fixHeight = function (term) {
+    term.element.style.marginTop = '';
+    term.fit();
+    term.element.style.marginTop = term.element.parentElement.offsetHeight - term.element.offsetHeight + 'px';
+    brandElement.style.lineHeight = document.body.offsetHeight - term.element.offsetHeight + 'px';
   };
 
   var vertxTerm = new VertxTerm(url, document.getElementById('terminal'));
-  var vertxTermElement = vertxTerm.term.element;
-  fixHeight(vertxTermElement);
+  fixHeight(vertxTerm.term);
 
   window.addEventListener('resize', function () {
-    vertxTermElement.style.marginTop = '';
-    vertxTerm.term.fit();
-    fixHeight(vertxTermElement);
+    fixHeight(vertxTerm.term);
   });
 </script>
 </body>
