@@ -92,6 +92,11 @@
       <optional>true</optional>
     </dependency>
     <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-rxjava2</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
       <groupId>io.termd</groupId>
       <artifactId>termd-core</artifactId>
       <version>${termd.version}</version>
