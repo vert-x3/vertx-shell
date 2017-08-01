@@ -45,7 +45,6 @@ import org.apache.sshd.server.SshServer;
 import org.junit.After;
 import org.junit.Before;
 
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -60,6 +59,7 @@ public class VertxSshTtyTest extends SshTtyTestBase {
 
   @Before
   public void before() {
+    super.before();
     vertx = Vertx.vertx();
     context = (ContextInternal) vertx.getOrCreateContext();
   }
