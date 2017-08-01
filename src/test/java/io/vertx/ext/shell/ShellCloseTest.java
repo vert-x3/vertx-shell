@@ -83,7 +83,7 @@ public class ShellCloseTest {
         registerTermServer(termServer).
         registerCommandResolver(registry).
         listen(context.asyncAssertSuccess(v -> latch.complete()));
-    latch.awaitSuccess(2000);
+    latch.awaitSuccess(20000);
   }
 
   @Test
@@ -98,7 +98,7 @@ public class ShellCloseTest {
     long now = System.currentTimeMillis();
     TestTtyConnection conn = termServer.openConnection();
     conn.read("cmd\r");
-    ended.awaitSuccess(2000);
+    ended.awaitSuccess(20000);
     context.assertTrue(conn.isClosed());
     long elapsed = System.currentTimeMillis() - now;
     context.assertTrue(elapsed < 1000);
@@ -121,7 +121,7 @@ public class ShellCloseTest {
     testClose(context, conn -> {
       Async async = context.async();
       shellServer.close(context.asyncAssertSuccess(v -> async.complete()));
-      async.awaitSuccess(2000);
+      async.awaitSuccess(20000);
     });
   }
 
@@ -146,9 +146,9 @@ public class ShellCloseTest {
     startShellServer(context, 30000, 100);
     TestTtyConnection conn = termServer.openConnection();
     conn.read("cmd\r");
-    processStarted.awaitSuccess(2000);
+    processStarted.awaitSuccess(20000);
     closer.accept(conn);
-    processEnded.awaitSuccess(2000);
+    processEnded.awaitSuccess(20000);
     context.assertTrue(conn.getCloseLatch().await(2, TimeUnit.SECONDS));
   }
 
@@ -162,7 +162,7 @@ public class ShellCloseTest {
     registry.add(CommandBuilder.command("cmd").processHandler(process -> {
       process.endHandler(v -> {
         processEnding.complete();
-        processEnd.awaitSuccess(2000);
+        processEnd.awaitSuccess(20000);
       });
       Context ctx = process.vertx().getOrCreateContext();
       end.set(() -> {
@@ -175,9 +175,9 @@ public class ShellCloseTest {
     startShellServer(context, 30000, 100);
     TestTtyConnection conn = termServer.openConnection();
     conn.read("cmd\r");
-    processStarted.awaitSuccess(2000);
+    processStarted.awaitSuccess(20000);
     end.get().run();
-    processEnding.awaitSuccess(2000);
+    processEnding.awaitSuccess(20000);
     shellServer.close(context.asyncAssertSuccess(v -> {
         closed.complete();
       }
