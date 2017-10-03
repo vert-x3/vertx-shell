@@ -32,6 +32,7 @@
 
 package io.vertx.ext.shell.command.base;
 
+import io.netty.util.internal.StringUtil;
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
 import io.vertx.core.buffer.Buffer;
@@ -46,7 +47,6 @@ import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
 
-import javax.xml.bind.DatatypeConverter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,9 +85,9 @@ public class BusTail extends AnnotatedCommand {
     List<MessageConsumer<Object>> consumers = addresses.stream().map(address -> {
       Handler<Message<Object>> consumer = msg -> {
         Object body = msg.body();
-        String bodyString = null;
+        String bodyString;
         if (body instanceof Buffer) {
-          bodyString = DatatypeConverter.printHexBinary(((Buffer)body).getBytes());
+          bodyString = StringUtil.toHexString(((Buffer)body).getBytes());
         } else {
           bodyString = String.valueOf(body);
         }

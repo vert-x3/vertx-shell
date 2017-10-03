@@ -53,9 +53,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import sun.misc.BASE64Encoder;
 
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -274,7 +274,7 @@ public class BusTest {
   @Test
   public void testBusSendBase64(TestContext context) {
     Async consumerAsync = context.async();
-    assertBusSend(context, "bus-send --type BASE64 the_address " + new BASE64Encoder().encode(new byte[]{0,31,-1}), msg -> {
+    assertBusSend(context, "bus-send --type BASE64 the_address " + new String(Base64.getEncoder().encode(new byte[]{0,31,-1})), msg -> {
       context.assertEquals(Buffer.buffer(new byte[]{0,31,-1}), msg.body());
       consumerAsync.complete();
     });

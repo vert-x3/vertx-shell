@@ -32,12 +32,11 @@
 
 package io.vertx.ext.shell.command.base;
 
+import io.netty.util.internal.StringUtil;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-import javax.xml.bind.DatatypeConverter;
-import java.math.BigInteger;
 import java.util.Base64;
 import java.util.function.Function;
 
@@ -62,7 +61,7 @@ public enum ObjectType {
     byte[] bytes = Base64.getDecoder().decode(s);
     return Buffer.buffer(bytes);
   }),
-  HEX(s -> Buffer.buffer(DatatypeConverter.parseHexBinary(s)));
+  HEX(s -> Buffer.buffer(StringUtil.decodeHexDump(s)));
 
   final Function<String, ?> parser;
 
