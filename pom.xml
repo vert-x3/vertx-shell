@@ -60,11 +60,10 @@
       <artifactId>vertx-web</artifactId>
     </dependency>
     <dependency>
-      <!-- declare this dependency to force shiro to use this one. It is the version used by vert.x -->
+      <!-- Used by SSHD that, we need to force it for Java 9 -->
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.7.21</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
