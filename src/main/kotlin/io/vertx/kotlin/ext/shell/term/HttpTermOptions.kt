@@ -54,6 +54,7 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions
  * @param port 
  * @param receiveBufferSize 
  * @param reuseAddress 
+ * @param reusePort 
  * @param sendBufferSize 
  * @param shellHtmlResource  Set <code>shell.html</code> resource to use.
  * @param sni 
@@ -61,8 +62,11 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions
  * @param sockJSHandlerOptions  The SockJS handler options.
  * @param sockJSPath  Configure the SockJS path, the default value is <code>/term/<star></code>.
  * @param ssl 
+ * @param tcpCork 
+ * @param tcpFastOpen 
  * @param tcpKeepAlive 
  * @param tcpNoDelay 
+ * @param tcpQuickAck 
  * @param termJsResource  Set <code>term.js</code> resource to use.
  * @param trafficClass 
  * @param trustStoreOptions 
@@ -111,6 +115,7 @@ fun HttpTermOptions(
   port: Int? = null,
   receiveBufferSize: Int? = null,
   reuseAddress: Boolean? = null,
+  reusePort: Boolean? = null,
   sendBufferSize: Int? = null,
   shellHtmlResource: io.vertx.core.buffer.Buffer? = null,
   sni: Boolean? = null,
@@ -118,8 +123,11 @@ fun HttpTermOptions(
   sockJSHandlerOptions: io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions? = null,
   sockJSPath: String? = null,
   ssl: Boolean? = null,
+  tcpCork: Boolean? = null,
+  tcpFastOpen: Boolean? = null,
   tcpKeepAlive: Boolean? = null,
   tcpNoDelay: Boolean? = null,
+  tcpQuickAck: Boolean? = null,
   termJsResource: io.vertx.core.buffer.Buffer? = null,
   trafficClass: Int? = null,
   trustStoreOptions: io.vertx.core.net.JksOptions? = null,
@@ -244,6 +252,9 @@ fun HttpTermOptions(
   if (reuseAddress != null) {
     this.setReuseAddress(reuseAddress)
   }
+  if (reusePort != null) {
+    this.setReusePort(reusePort)
+  }
   if (sendBufferSize != null) {
     this.setSendBufferSize(sendBufferSize)
   }
@@ -265,11 +276,20 @@ fun HttpTermOptions(
   if (ssl != null) {
     this.setSsl(ssl)
   }
+  if (tcpCork != null) {
+    this.setTcpCork(tcpCork)
+  }
+  if (tcpFastOpen != null) {
+    this.setTcpFastOpen(tcpFastOpen)
+  }
   if (tcpKeepAlive != null) {
     this.setTcpKeepAlive(tcpKeepAlive)
   }
   if (tcpNoDelay != null) {
     this.setTcpNoDelay(tcpNoDelay)
+  }
+  if (tcpQuickAck != null) {
+    this.setTcpQuickAck(tcpQuickAck)
   }
   if (termJsResource != null) {
     this.setTermJsResource(termJsResource)
