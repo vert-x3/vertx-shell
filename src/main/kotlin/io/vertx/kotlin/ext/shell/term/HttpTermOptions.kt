@@ -182,9 +182,7 @@ fun HttpTermOptions(
     }
   }
   if (enabledSecureTransportProtocols != null) {
-    for (item in enabledSecureTransportProtocols) {
-      this.addEnabledSecureTransportProtocol(item)
-    }
+    this.setEnabledSecureTransportProtocols(enabledSecureTransportProtocols.toSet())
   }
   if (handle100ContinueAutomatically != null) {
     this.setHandle100ContinueAutomatically(handle100ContinueAutomatically)
