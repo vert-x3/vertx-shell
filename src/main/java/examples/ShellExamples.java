@@ -64,7 +64,7 @@ import io.vertx.ext.web.Router;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class Examples {
+public class ShellExamples {
 
   public void deployTelnetService(Vertx vertx) throws Exception {
     vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",

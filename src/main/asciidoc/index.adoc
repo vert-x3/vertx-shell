@@ -51,21 +51,21 @@ You can also deploy this service inside your own verticle:
 
 [source,$lang,subs="+attributes"]
 ----
-{@link examples.Examples#deployTelnetService(io.vertx.core.Vertx)}
+{@link examples.ShellExamples#deployTelnetService(io.vertx.core.Vertx)}
 ----
 
 or
 
 [source,$lang,subs="+attributes"]
 ----
-{@link examples.Examples#deploySSHServiceWithShiro(io.vertx.core.Vertx)}
+{@link examples.ShellExamples#deploySSHServiceWithShiro(io.vertx.core.Vertx)}
 ----
 
 or
 
 [source,$lang,subs="+attributes"]
 ----
-{@link examples.Examples#deployHttpServiceWithShiro(io.vertx.core.Vertx)}
+{@link examples.ShellExamples#deployHttpServiceWithShiro(io.vertx.core.Vertx)}
 ----
 
 NOTE: when Vert.x Shell is already on your classpath you can use `service:io.vertx.ext.shell` instead
@@ -79,14 +79,14 @@ Starting a shell service available via SSH:
 
 [source,$lang]
 ----
-{@link examples.Examples#runSSHServiceWithShiro(io.vertx.core.Vertx)}
+{@link examples.ShellExamples#runSSHServiceWithShiro(io.vertx.core.Vertx)}
 ----
 
 Starting a shell service available via Telnet:
 
 [source,$lang]
 ----
-{@link examples.Examples#runTelnetService}
+{@link examples.ShellExamples#runTelnetService}
 ----
 
 The {@link io.vertx.ext.shell.term.TelnetTermOptions} extends the Vert.x Core `NetServerOptions` as the Telnet server
@@ -98,7 +98,7 @@ Starting a shell service available via HTTP:
 
 [source,$lang]
 ----
-{@link examples.Examples#runHttpService}
+{@link examples.ShellExamples#runHttpService}
 ----
 
 == Authentication
@@ -159,25 +159,25 @@ The server key configuration reuses the key pair store configuration scheme prov
 .Deploying the Shell Service on SSH with Mongo authentication
 [source,$lang,subs="+attributes"]
 ----
-{@link examples.Examples#deploySSHServiceWithMongo(io.vertx.core.Vertx)}
+{@link examples.ShellExamples#deploySSHServiceWithMongo(io.vertx.core.Vertx)}
 ----
 
 .Running the Shell Service on SSH with Mongo authentication
 [source,$lang,subs="+attributes"]
 ----
-{@link examples.Examples#runSSHServiceWithMongo(io.vertx.core.Vertx)}
+{@link examples.ShellExamples#runSSHServiceWithMongo(io.vertx.core.Vertx)}
 ----
 
 .Deploying the Shell Service on SSH with JDBC authentication
 [source,$lang,subs="+attributes"]
 ----
-{@link examples.Examples#deploySSHServiceWithJDBC(io.vertx.core.Vertx)}
+{@link examples.ShellExamples#deploySSHServiceWithJDBC(io.vertx.core.Vertx)}
 ----
 
 .Running the Shell Service on SSH with JDBC authentication
 [source,$lang,subs="+attributes"]
 ----
-{@link examples.Examples#runSSHServiceWithJDBC(io.vertx.core.Vertx)}
+{@link examples.ShellExamples#runSSHServiceWithJDBC(io.vertx.core.Vertx)}
 ----
 
 == HTTP term configuration
@@ -194,25 +194,25 @@ In addition there are extra options for configuring an HTTP term:
 .Deploying the Shell Service on HTTP with Mongo authentication
 [source,$lang,subs="+attributes"]
 ----
-{@link examples.Examples#deployHttpServiceWithMongo(io.vertx.core.Vertx)}
+{@link examples.ShellExamples#deployHttpServiceWithMongo(io.vertx.core.Vertx)}
 ----
 
 .Running the Shell Service on HTTP with Mongo authentication
 [source,$lang,subs="+attributes"]
 ----
-{@link examples.Examples#runHTTPServiceWithMongo(io.vertx.core.Vertx)}
+{@link examples.ShellExamples#runHTTPServiceWithMongo(io.vertx.core.Vertx)}
 ----
 
 .Deploying the Shell Service on HTTP with JDBC authentication
 [source,$lang,subs="+attributes"]
 ----
-{@link examples.Examples#deployHttpServiceWithJDBC(io.vertx.core.Vertx)}
+{@link examples.ShellExamples#deployHttpServiceWithJDBC(io.vertx.core.Vertx)}
 ----
 
 .Running the Shell Service on HTTP with JDBC authentication
 [source,$lang,subs="+attributes"]
 ----
-{@link examples.Examples#runHTTPServiceWithJDBC(io.vertx.core.Vertx)}
+{@link examples.ShellExamples#runHTTPServiceWithJDBC(io.vertx.core.Vertx)}
 ----
 
 == Keymap configuration
@@ -297,7 +297,7 @@ method:
 
 [source,$lang]
 ----
-{@link examples.Examples#helloWorld}
+{@link examples.ShellExamples#helloWorld}
 ----
 
 After a command is created, it needs to be registed to a {@link io.vertx.ext.shell.command.CommandRegistry}. The
@@ -317,7 +317,7 @@ The {@link io.vertx.ext.shell.command.CommandProcess#args()} returns the command
 
 [source,$lang]
 ----
-{@link examples.Examples#commandArgs}
+{@link examples.ShellExamples#commandArgs}
 ----
 
 Besides it is also possible to create commands using {@link io.vertx.core.cli.CLI Vert.x CLI}: it makes easier to
@@ -329,7 +329,7 @@ write command line argument parsing:
 
 [source,$lang]
 ----
-{@link examples.Examples#cliCommand()}
+{@link examples.ShellExamples#cliCommand()}
 ----
 
 When an option named _help_ is added to the CLI object, the shell will take care of generating the command usage
@@ -337,7 +337,7 @@ when the option is activated:
 
 [source,$lang]
 ----
-{@link examples.Examples#cliCommandWithHelp()}
+{@link examples.ShellExamples#cliCommandWithHelp()}
 ----
 
 When the command executes the {@link io.vertx.ext.shell.command.CommandProcess process} is provided for interacting
@@ -353,14 +353,14 @@ receives data, e.g the user uses his keyboard:
 
 [source,$lang]
 ----
-{@link examples.Examples#readStdin}
+{@link examples.ShellExamples#readStdin}
 ----
 
 A command can use the {@link io.vertx.ext.shell.term.Tty#write} to write to the standard output.
 
 [source,$lang]
 ----
-{@link examples.Examples#writeStdout}
+{@link examples.ShellExamples#writeStdout}
 ----
 
 ==== Terminal size
@@ -370,7 +370,7 @@ The current terminal size can be obtained using {@link io.vertx.ext.shell.term.T
 
 [source,$lang]
 ----
-{@link examples.Examples#terminalSize}
+{@link examples.ShellExamples#terminalSize}
 ----
 
 ==== Resize event
@@ -381,7 +381,7 @@ is called, the new terminal size can be obtained with {@link io.vertx.ext.shell.
 
 [source,$lang]
 ----
-{@link examples.Examples#resizeHandlerTerminal}
+{@link examples.ShellExamples#resizeHandlerTerminal}
 ----
 
 ==== Terminal type
@@ -391,7 +391,7 @@ returns the current terminal type, it can be null if the terminal has not advert
 
 [source,$lang]
 ----
-{@link examples.Examples#terminalType}
+{@link examples.ShellExamples#terminalType}
 ----
 
 === Shell session
@@ -401,7 +401,7 @@ used in commands to scope data. A command can get the session with {@link io.ver
 
 [source,$lang]
 ----
-{@link examples.Examples#session}
+{@link examples.ShellExamples#session}
 ----
 
 === Process termination
@@ -411,7 +411,7 @@ in the invocation of the command handler or any time later:
 
 [source,$lang]
 ----
-{@link examples.Examples#asyncCommand}
+{@link examples.ShellExamples#asyncCommand}
 ----
 
 === Process events
@@ -426,7 +426,7 @@ be used for interrupting commands _blocking_ the CLI and gracefully ending the c
 
 [source,$lang]
 ----
-{@link examples.Examples#interruptHandler}
+{@link examples.ShellExamples#interruptHandler}
 ----
 
 When no interrupt handler is registered, pressing _Ctrl+C_ will have no effect on the current process and the event
@@ -450,7 +450,7 @@ is resumed, usually when the user types _fg_:
 
 [source,$lang]
 ----
-{@link examples.Examples#suspendResumeHandler}
+{@link examples.ShellExamples#suspendResumeHandler}
 ----
 
 ==== End events
@@ -461,7 +461,7 @@ the command is _terminated_.
 
 [source,$lang]
 ----
-{@link examples.Examples#endHandler}
+{@link examples.ShellExamples#endHandler}
 ----
 
 The end handler is called even when the command invokes {@link io.vertx.ext.shell.command.CommandProcess#end()}.
@@ -496,7 +496,7 @@ steps:
 
 [source,$lang]
 ----
-{@link examples.Examples#shellServer}
+{@link examples.ShellExamples#shellServer}
 ----
 <1> create a the shell server
 <2> create an HTTP term server mounted on an existing router
@@ -511,14 +511,14 @@ In process shell session can be created with {@link io.vertx.ext.shell.ShellServ
 
 [source,$lang]
 ----
-{@link examples.Examples#creatingShell}
+{@link examples.ShellExamples#creatingShell}
 ----
 
 The main use case is running or testing a command:
 
 [source,$lang]
 ----
-{@link examples.Examples#runningShellCommand}
+{@link examples.ShellExamples#runningShellCommand}
 ----
 
 The {@link io.vertx.ext.shell.term.Pty} pseudo terminal is the main interface for interacting with the command
@@ -549,7 +549,7 @@ terminal.
 
 [source,$lang]
 ----
-{@link examples.Examples#sshEchoTerminal}
+{@link examples.ShellExamples#sshEchoTerminal}
 ----
 
 The {@link io.vertx.ext.shell.term.Term} is also a {@link io.vertx.ext.shell.term.Tty}, this section explains
@@ -559,7 +559,7 @@ how to use the tty.
 
 [source,$lang]
 ----
-{@link examples.Examples#telnetEchoTerminal}
+{@link examples.ShellExamples#telnetEchoTerminal}
 ----
 
 === HTTP term
@@ -569,7 +569,7 @@ on top of Vert.x Web using the SockJS protocol.
 
 [source,$lang]
 ----
-{@link examples.Examples#httpEchoTerminal}
+{@link examples.ShellExamples#httpEchoTerminal}
 ----
 
 An HTTP term can start its own HTTP server, or it can reuse an existing Vert.x Web {@link io.vertx.ext.web.Router}.
@@ -578,7 +578,7 @@ The shell can be found at `/shell.html`.
 
 [source,$lang]
 ----
-{@link examples.Examples#httpEchoTerminalUsingRouter}
+{@link examples.ShellExamples#httpEchoTerminalUsingRouter}
 ----
 
 The later option is convenient when the HTTP shell is integrated in an existing HTTP server.
