@@ -66,16 +66,6 @@
       <version>1.7.21</version>
     </dependency>
     <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-rx-java</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-rx-java2</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
       <groupId>io.termd</groupId>
       <artifactId>termd-core</artifactId>
       <version>${termd.version}</version>
