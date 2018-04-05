@@ -33,6 +33,7 @@
 package io.vertx.ext.shell.term.impl;
 
 import io.termd.core.ssh.netty.NettyIoHandlerBridge;
+import io.vertx.core.VertxException;
 import io.vertx.core.impl.ContextInternal;
 import org.apache.sshd.common.io.IoHandler;
 import org.apache.sshd.common.io.IoSession;
@@ -50,22 +51,34 @@ public class VertxIoHandlerBridge extends NettyIoHandlerBridge {
 
   @Override
   public void sessionCreated(IoHandler handler, IoSession session) throws Exception {
-    context.executeFromIO(() -> {
-      super.sessionCreated(handler, session);
+    context.executeFromIO(v -> {
+      try {
+        super.sessionCreated(handler, session);
+      } catch (Exception e) {
+        throw new VertxException(e);
+      }
     });
   }
 
   @Override
   public void sessionClosed(IoHandler handler, IoSession session) throws Exception {
-    context.executeFromIO(() -> {
-      super.sessionClosed(handler, session);
+    context.executeFromIO(v -> {
+      try {
+        super.sessionClosed(handler, session);
+      } catch (Exception e) {
+        throw new VertxException(e);
+      }
     });
   }
 
   @Override
   public void messageReceived(IoHandler handler, IoSession session, org.apache.sshd.common.util.Readable message) throws Exception {
-    context.executeFromIO(() -> {
-      super.messageReceived(handler, session, message);
+    context.executeFromIO(v -> {
+      try {
+        super.messageReceived(handler, session, message);
+      } catch (Exception e) {
+        throw new VertxException(e);
+      }
     });
   }
 }
