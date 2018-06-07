@@ -1,4 +1,4 @@
-library "vertx-shared-library@master
+library "vertx-shared-library@master"
 pipeline {
   agent any
   tools {
