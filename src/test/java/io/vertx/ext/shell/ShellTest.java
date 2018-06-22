@@ -67,6 +67,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -450,9 +451,11 @@ public class ShellTest {
     TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = createShell(conn);
     SessionImpl session = (SessionImpl)shell.session();
+    Function<Session,String> dynamicPrompt = x -> x.get("CURRENT_PROMPT");
     String prompt1 = "PROMPT1";
     String prompt2 = "PROMPT2";
-    session.setPrompt(prompt1);
+    session.setPrompt(dynamicPrompt);
+    session.put("CURRENT_PROMPT",prompt1);
     shell.init().readline();
     Async async = context.async();
     commands.add(CommandBuilder.command("foo").processHandler(process -> {
@@ -480,7 +483,7 @@ public class ShellTest {
       process.end();
     }));
     conn.read("foo\r");
-    session.setPrompt(prompt2);
+    session.put("CURRENT_PROMPT",prompt2);
     async.awaitSuccess(5000);
     conn.read("bar2\n");
   }

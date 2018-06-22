@@ -155,7 +155,8 @@ public class ShellImpl implements Shell {
   }
 
   public void readline() {
-    term.readline(((SessionImpl)session).getPrompt(), line -> {
+    String prompt = ((SessionImpl)session).getPrompt().apply(session);
+    term.readline(prompt, line -> {
 
       if (line == null) {
         // EOF
