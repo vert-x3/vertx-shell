@@ -36,7 +36,6 @@ import io.vertx.ext.shell.session.Session;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -44,9 +43,6 @@ import java.util.function.Function;
 public class SessionImpl implements Session {
 
   private Map<String, Object> data = new HashMap<>();
-
-  private Function<Session, String> prompt = s -> "% ";
-
 
   @Override
   public Session put(String key, Object obj) {
@@ -68,13 +64,4 @@ public class SessionImpl implements Session {
     return (T) data.remove(key);
   }
 
-  @Override
-  public Session setPrompt(Function<Session, String> prompt) {
-    this.prompt = prompt;
-    return this;
-  }
-
-
-
-  public Function<Session, String> getPrompt() { return prompt; }
 }

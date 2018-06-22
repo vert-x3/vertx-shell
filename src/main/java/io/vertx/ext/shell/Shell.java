@@ -33,6 +33,7 @@
 package io.vertx.ext.shell;
 
 import io.vertx.codegen.annotations.CacheReturn;
+import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.session.Session;
@@ -40,6 +41,7 @@ import io.vertx.ext.shell.system.Job;
 import io.vertx.ext.shell.system.JobController;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * An interactive session between a consumer and a shell.
@@ -73,6 +75,15 @@ public interface Shell {
    */
   @CacheReturn
   Session session();
+
+
+  /**
+   * Set a new prompt in this session.
+   *
+   * @param prompt  the new prompt will be calculated when it's needed.
+   */
+  void setPrompt(Function<Session, String> prompt);
+
 
   /**
    * Close the shell.

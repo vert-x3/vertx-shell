@@ -463,7 +463,7 @@ public class ShellTest {
     Function<Session,String> dynamicPrompt = x -> x.get("CURRENT_PROMPT");
     String prompt1 = "PROMPT1";
     String prompt2 = "PROMPT2";
-    session.setPrompt(dynamicPrompt);
+    shell.setPrompt(dynamicPrompt);
     session.put("CURRENT_PROMPT",prompt1);
     shell.init().readline();
     Async async = context.async();

@@ -36,8 +36,6 @@ import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.ext.shell.session.impl.SessionImpl;
 
-import java.util.function.Function;
-
 /**
  * A shell session.
  *
@@ -81,14 +79,5 @@ public interface Session {
    */
   <T> T remove(String key);
 
-
-  /**
-   * Set a new prompt in this session.
-   *
-   * @param prompt  the new prompt will be calculated when it's needed.
-   * @return a reference to this, so the API can be used fluently
-   */
-  @Fluent
-  Session setPrompt(Function<Session, String> prompt);
 
 }
