@@ -446,6 +446,15 @@ public class ShellTest {
     conn.read("\u0004");
     context.assertTrue(conn.getCloseLatch().await(2, TimeUnit.SECONDS));
   }
+
+  @Test
+  public void testDefaultPrompt(TestContext context) throws Exception {
+    TestTtyConnection conn = new TestTtyConnection(vertx);
+    ShellImpl shell = createShell(conn);
+    shell.init().readline();
+    conn.assertWritten("% ");
+  }
+
   @Test
   public void testPrompt(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection(vertx);
