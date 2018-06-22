@@ -44,6 +44,8 @@ public class SessionImpl implements Session {
 
   private Map<String, Object> data = new HashMap<>();
 
+  private String prompt = "% ";
+
   @Override
   public Session put(String key, Object obj) {
     if (obj == null) {
@@ -63,4 +65,12 @@ public class SessionImpl implements Session {
   public <T> T remove(String key) {
     return (T) data.remove(key);
   }
+
+  @Override
+  public Session setPrompt(String prompt) {
+    this.prompt = prompt == null ? "" : prompt;
+    return this;
+  }
+
+  public String getPrompt() { return prompt; }
 }

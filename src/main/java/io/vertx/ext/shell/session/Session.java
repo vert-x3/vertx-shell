@@ -79,4 +79,14 @@ public interface Session {
    */
   <T> T remove(String key);
 
+
+  /**
+   * Set a new prompt in this session.
+   *
+   * @param prompt  the new prompt
+   * @return a reference to this, so the API can be used fluently
+   */
+  @Fluent
+  Session setPrompt(String prompt);
+
 }

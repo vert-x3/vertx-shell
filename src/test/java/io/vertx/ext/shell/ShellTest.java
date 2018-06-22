@@ -40,6 +40,8 @@ import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.CommandProcess;
 import io.vertx.ext.shell.command.base.Sleep;
+import io.vertx.ext.shell.session.Session;
+import io.vertx.ext.shell.session.impl.SessionImpl;
 import io.vertx.ext.shell.support.TestCommands;
 import io.vertx.ext.shell.system.impl.InternalCommandManager;
 import io.vertx.ext.shell.system.Job;
@@ -442,6 +444,45 @@ public class ShellTest {
     shell.init().readline();
     conn.read("\u0004");
     context.assertTrue(conn.getCloseLatch().await(2, TimeUnit.SECONDS));
+  }
+  @Test
+  public void testPrompt(TestContext context) throws Exception {
+    TestTtyConnection conn = new TestTtyConnection(vertx);
+    ShellImpl shell = createShell(conn);
+    SessionImpl session = (SessionImpl)shell.session();
+    String prompt1 = "PROMPT1";
+    String prompt2 = "PROMPT2";
+    session.setPrompt(prompt1);
+    shell.init().readline();
+    Async async = context.async();
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
+      context.assertEquals(null, conn.checkWritten(prompt1+"foo\n"));
+      process.stdinHandler(cp -> {
+        context.fail();
+      });
+      process.endHandler(v -> {
+        async.complete();
+        }
+      );
+      process.end();
+
+    }));
+    Async async2 = context.async();
+    commands.add(CommandBuilder.command("bar2").processHandler(process -> {
+      context.assertEquals(null, conn.checkWritten(prompt2+"bar2\n"));
+      process.stdinHandler(cp -> {
+        context.fail();
+      });
+      process.endHandler(v -> {
+          async2.complete();
+        }
+      );
+      process.end();
+    }));
+    conn.read("foo\r");
+    session.setPrompt(prompt2);
+    async.awaitSuccess(5000);
+    conn.read("bar2\n");
   }
 
   @Test
