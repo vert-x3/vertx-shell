@@ -162,7 +162,12 @@ public class ShellImpl implements Shell {
   }
 
   public void readline() {
-    String prompt = promptFunc.apply(session);
+    String prompt;
+    try {
+      prompt = promptFunc.apply(session);
+    } catch (Exception e) {
+      prompt = "% ";
+    }
     term.readline(prompt, line -> {
 
       if (line == null) {

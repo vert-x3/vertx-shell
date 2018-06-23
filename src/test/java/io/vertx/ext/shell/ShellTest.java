@@ -456,6 +456,22 @@ public class ShellTest {
   }
 
   @Test
+  public void testPromptException(TestContext context) throws Exception {
+    TestTtyConnection conn = new TestTtyConnection(vertx);
+    ShellImpl shell = createShell(conn);
+    Function<Session,String> dynamicPrompt = x ->  {
+      System.out.println("Before");
+      if (context != null) {
+        throw new IllegalArgumentException("BAD_PROMPT");
+      }
+      System.out.println("After");
+      return "OK";
+      };
+    shell.setPrompt(dynamicPrompt);
+    shell.init().readline();
+    conn.assertWritten("% ");
+  }
+  @Test
   public void testPrompt(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = createShell(conn);
