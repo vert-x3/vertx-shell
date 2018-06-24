@@ -47,6 +47,7 @@ import io.vertx.ext.shell.term.Term;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 
 /**
  * The shell session as seen from the shell server perspective.
@@ -62,6 +63,7 @@ public class ShellImpl implements Shell {
   private final JobControllerImpl jobController;
   private Term term;
   private String welcome;
+  private Function<Session, String> promptFunc = s -> "% ";
 
   public ShellImpl(Term term, InternalCommandManager commandManager) {
 
@@ -113,6 +115,11 @@ public class ShellImpl implements Shell {
     this.welcome = welcome;
   }
 
+  @Override
+  public void setPrompt(Function<Session, String> prompt) {
+    this.promptFunc = prompt;
+  }
+
   public ShellImpl init() {
 
     term.interruptHandler(key -> jobController().foregroundJob().interrupt());
@@ -155,7 +162,13 @@ public class ShellImpl implements Shell {
   }
 
   public void readline() {
-    term.readline("% ", line -> {
+    String prompt;
+    try {
+      prompt = promptFunc.apply(session);
+    } catch (Exception e) {
+      prompt = "% ";
+    }
+    term.readline(prompt, line -> {
 
       if (line == null) {
         // EOF

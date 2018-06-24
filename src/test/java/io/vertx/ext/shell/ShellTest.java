@@ -40,6 +40,8 @@ import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.CommandProcess;
 import io.vertx.ext.shell.command.base.Sleep;
+import io.vertx.ext.shell.session.Session;
+import io.vertx.ext.shell.session.impl.SessionImpl;
 import io.vertx.ext.shell.support.TestCommands;
 import io.vertx.ext.shell.system.impl.InternalCommandManager;
 import io.vertx.ext.shell.system.Job;
@@ -65,6 +67,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -442,6 +445,72 @@ public class ShellTest {
     shell.init().readline();
     conn.read("\u0004");
     context.assertTrue(conn.getCloseLatch().await(2, TimeUnit.SECONDS));
+  }
+
+  @Test
+  public void testDefaultPrompt(TestContext context) throws Exception {
+    TestTtyConnection conn = new TestTtyConnection(vertx);
+    ShellImpl shell = createShell(conn);
+    shell.init().readline();
+    conn.assertWritten("% ");
+  }
+
+  @Test
+  public void testPromptException(TestContext context) throws Exception {
+    TestTtyConnection conn = new TestTtyConnection(vertx);
+    ShellImpl shell = createShell(conn);
+    Function<Session,String> dynamicPrompt = x ->  {
+      System.out.println("Before");
+      if (context != null) {
+        throw new IllegalArgumentException("BAD_PROMPT");
+      }
+      System.out.println("After");
+      return "OK";
+      };
+    shell.setPrompt(dynamicPrompt);
+    shell.init().readline();
+    conn.assertWritten("% ");
+  }
+  @Test
+  public void testPrompt(TestContext context) throws Exception {
+    TestTtyConnection conn = new TestTtyConnection(vertx);
+    ShellImpl shell = createShell(conn);
+    SessionImpl session = (SessionImpl)shell.session();
+    Function<Session,String> dynamicPrompt = x -> x.get("CURRENT_PROMPT");
+    String prompt1 = "PROMPT1";
+    String prompt2 = "PROMPT2";
+    shell.setPrompt(dynamicPrompt);
+    session.put("CURRENT_PROMPT",prompt1);
+    shell.init().readline();
+    Async async = context.async();
+    commands.add(CommandBuilder.command("foo").processHandler(process -> {
+      context.assertEquals(null, conn.checkWritten(prompt1+"foo\n"));
+      process.stdinHandler(cp -> {
+        context.fail();
+      });
+      process.endHandler(v -> {
+        async.complete();
+        }
+      );
+      process.end();
+
+    }));
+    Async async2 = context.async();
+    commands.add(CommandBuilder.command("bar2").processHandler(process -> {
+      context.assertEquals(null, conn.checkWritten(prompt2+"bar2\n"));
+      process.stdinHandler(cp -> {
+        context.fail();
+      });
+      process.endHandler(v -> {
+          async2.complete();
+        }
+      );
+      process.end();
+    }));
+    conn.read("foo\r");
+    session.put("CURRENT_PROMPT",prompt2);
+    async.awaitSuccess(5000);
+    conn.read("bar2\n");
   }
 
   @Test
