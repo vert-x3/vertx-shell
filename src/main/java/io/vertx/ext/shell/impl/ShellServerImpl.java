@@ -76,6 +76,7 @@ public class ShellServerImpl implements ShellServer {
   private long timerID = -1;
   private final Map<String, ShellImpl> sessions;
   private final Future<Void> sessionsClosed = Future.future();
+  private Handler<Shell> shellHandler;
 
   public ShellServerImpl(Vertx vertx, ShellServerOptions options) {
     this.vertx = vertx;
@@ -130,6 +131,9 @@ public class ShellServerImpl implements ShellServer {
       }
     });
     session.init();
+    if (shellHandler != null) {
+      shellHandler.handle(session);
+    }
     sessions.put(session.id, session); // Put after init so the close handler on the connection is set
     session.readline(); // Now readline
   }
@@ -251,5 +255,10 @@ public class ShellServerImpl implements ShellServer {
       toStop.forEach(termServer -> termServer.close(handler));
       sessionsClosed.setHandler(handler);
     }
+  }
+
+  @Override
+  public void shellHandler(Handler<Shell> shellHandler) {
+    this.shellHandler = shellHandler;
   }
 }
