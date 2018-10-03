@@ -143,4 +143,15 @@ public interface ShellServer {
    */
   void close(Handler<AsyncResult<Void>> completionHandler);
 
+
+  /**
+   * Called when a new shell is created. Can be used to prepopulate the shell session with objects
+   * or set the prompt.
+   *
+   * @param shellHandler handler for getting notified when the server creates a new shell.
+   */
+  void shellHandler(Handler<Shell> shellHandler);
+
+
+
 }
