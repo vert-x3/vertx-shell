@@ -57,6 +57,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 /**
@@ -249,14 +250,19 @@ public class TelnetTermServerTest {
 
   @Test
   public void testDifferentCharset(TestContext context) throws Exception {
+    CompletableFuture<Void> closeLatch = new CompletableFuture<Void>();
     startTelnet(context, new TelnetTermOptions().setCharset("ISO_8859_1"), term -> {
       term.write("\u20AC");
-      term.close();
+      closeLatch.thenAccept(v -> {
+        term.close();
+      });
     });
     client.connect("localhost", server.actualPort());
     InputStream in = client.getInputStream();
     int b = in.read();
     context.assertEquals(63, b);
+    closeLatch.complete(null);
+
   }
 
   @Test

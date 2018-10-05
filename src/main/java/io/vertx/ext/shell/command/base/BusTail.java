@@ -83,7 +83,7 @@ public class BusTail extends AnnotatedCommand {
   public void process(CommandProcess process) {
     EventBus eb = process.vertx().eventBus();
     List<MessageConsumer<Object>> consumers = addresses.stream().map(address -> {
-      Handler<Message<Object>> consumer = msg -> {
+      Handler<Message<Object>> handler = msg -> {
         Object body = msg.body();
         String bodyString;
         if (body instanceof Buffer) {
@@ -103,7 +103,7 @@ public class BusTail extends AnnotatedCommand {
           process.write(address + ":" + bodyString + "\n");
         }
       };
-      return local ? eb.localConsumer(address, consumer) : eb.consumer(address, consumer);
+      return local ? eb.localConsumer(address, handler) : eb.consumer(address, handler);
     }).collect(Collectors.toList());
     process.interruptHandler(done -> {
       process.end();
