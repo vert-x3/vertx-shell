@@ -59,6 +59,8 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.vertx.core.eventbus.ReplyFailure.NO_HANDLERS;
 
@@ -309,12 +311,16 @@ public class BusTest {
 
   @Test
   public void testBusTail(TestContext context) {
-    String expected = "the_address1:the_message1\nthe_address2:the_message2\nthe_address1:the_message3\n";
     assertBusTail(context, "bus-tail the_address1 the_address2", () -> {
       assertSend(context, "the_address1", "the_message1", 50);
       assertSend(context, "the_address2", "the_message2", 50);
       assertSend(context, "the_address1", "the_message3", 50);
-    }, expected::equals);
+    }, val -> {
+      // Use this as message send can be reordered because bus tail command races against message send
+      return Stream.of(val.split("\\n")).sorted().collect(Collectors.toList()).equals(Arrays.asList(
+        "the_address1:the_message1", "the_address1:the_message3", "the_address2:the_message2"
+      ));
+    });
   }
 
   @Test
@@ -339,11 +345,12 @@ public class BusTest {
       }
     });
     job.run();
-    runningLatch.awaitSuccess(5000);
+    runningLatch.awaitSuccess(10000);
     send.run();
     long now = System.currentTimeMillis();
-    while (!check.test(result.toString())) {
-      context.assertTrue(System.currentTimeMillis() - now < 2000);
+    String output;
+    while (!check.test(output = result.toString())) {
+      context.assertTrue(System.currentTimeMillis() - now < 10000, "Invalid command output <" + output + ">");
     }
   }
 
@@ -357,7 +364,10 @@ public class BusTest {
       if (ar.failed()) {
         ReplyException ex = (ReplyException) ar.cause();
         if (ex.failureType() == NO_HANDLERS) {
-          assertSend(context, address, body, options, times - 1);
+          // Wait 10 ms to be sure consumer is deployed
+          vertx.setTimer(10, id -> {
+            assertSend(context, address, body, options, times - 1);
+          });
         } else {
           context.fail();
         }
