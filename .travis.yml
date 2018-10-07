@@ -15,11 +15,11 @@ jobs:
       script: mvn -q clean verify -B
     - stage: deploy
       name: "Deploy to Sonatype's snapshots repository"
-      if: type != pull_request
+      if: type != pull_request AND env(SONATYPE_NEXUS_USERNAME) IS present
       script: bash .travis.deploy.artifacts.sh
 notifications:
   email:
     recipients:
-      - vertx3-ci@googlegroups.com
+      - secure: "FHm2DuQEKoXcwO9Ax5usZU+3+Run5JKO+amvTL5+9Nsh43HpqgjGI7/20iouJY2F8n/KHnt0RGdRs0l4gsa/g60nruqMtNEDtzWqxULDTM6rxsWHfhqr0dWz5v4hKl8V4UTIp/yIkQJnE2+7S2s/145PVmXNjZPCR56vcM18dGfnWJvQ5oGp04W8T03wLEywb7oq+J/snpfkPPoyjOv6gb43gVGQEZJD3RtreqW7g3XpXfDpJZtA2yiK+Yav3XjXqF+i00Cm4jbqpSiMGc8w/HVHpMAwWoibL7jEp6wKTsjQ6VAEFd3ly5mO1PxHJpIBqr5/HmQlRw4tYxTCm+5UsRe2BWUcj0HXA+507q82qcnehWm20jfLXDS3Aj6emOVWZpAWq+FJ9THN5D9+6pvje3hRBrgoXhDCZRAOSx8+7EFh9nAd4X02AXYhVP/t2mipstYd2jOfihQv9X+xgoPjj0HGyurSctlUrwQTZz0UMfzx51OsIg0FwRM14VX/NRreS8KXgp3haaF0PQRJBfDBHYG84KrvNdtmQYEO6jyLj4e2+gwzezhP6uVzquDnF1G0i46QU07MJ6h96jAZ7cTkPzaUDVbfI0i9Y8NEcr60jvHG/Gl9dcNbwfj+ZkHEw/DqPnMBfK6GqDvnJQaXtrbwOvAUqki4/+u3wVEOk1Rel4o="
     on_success: always
     on_failure: always
