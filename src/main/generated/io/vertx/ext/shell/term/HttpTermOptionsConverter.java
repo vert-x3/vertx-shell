@@ -1,56 +1,65 @@
-/*
- * Copyright (c) 2014 Red Hat, Inc. and others
- *
- * Red Hat licenses this file to you under the Apache License, version 2.0
- * (the "License"); you may not use this file except in compliance with the
- * License.  You may obtain a copy of the License at:
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations
- * under the License.
- */
-
 package io.vertx.ext.shell.term;
 
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.JsonArray;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Converter for {@link io.vertx.ext.shell.term.HttpTermOptions}.
- *
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.term.HttpTermOptions} original class using Vert.x codegen.
  */
 public class HttpTermOptionsConverter {
 
-  public static void fromJson(JsonObject json, HttpTermOptions obj) {
-    if (json.getValue("charset") instanceof String) {
-      obj.setCharset((String)json.getValue("charset"));
-    }
-    if (json.getValue("intputrc") instanceof String) {
-      obj.setIntputrc((String)json.getValue("intputrc"));
-    }
-    if (json.getValue("shellHtmlResource") instanceof String) {
-      obj.setShellHtmlResource(io.vertx.core.buffer.Buffer.buffer(java.util.Base64.getDecoder().decode((String)json.getValue("shellHtmlResource"))));
-    }
-    if (json.getValue("sockJSHandlerOptions") instanceof JsonObject) {
-      obj.setSockJSHandlerOptions(new io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions((JsonObject)json.getValue("sockJSHandlerOptions")));
-    }
-    if (json.getValue("sockJSPath") instanceof String) {
-      obj.setSockJSPath((String)json.getValue("sockJSPath"));
-    }
-    if (json.getValue("termJsResource") instanceof String) {
-      obj.setTermJsResource(io.vertx.core.buffer.Buffer.buffer(java.util.Base64.getDecoder().decode((String)json.getValue("termJsResource"))));
-    }
-    if (json.getValue("vertsShellJsResource") instanceof String) {
-      obj.setVertsShellJsResource(io.vertx.core.buffer.Buffer.buffer(java.util.Base64.getDecoder().decode((String)json.getValue("vertsShellJsResource"))));
+  public static void fromJson(Iterable<java.util.Map.Entry<String, Object>> json, HttpTermOptions obj) {
+    for (java.util.Map.Entry<String, Object> member : json) {
+      switch (member.getKey()) {
+        case "authOptions":
+          break;
+        case "charset":
+          if (member.getValue() instanceof String) {
+            obj.setCharset((String)member.getValue());
+          }
+          break;
+        case "intputrc":
+          if (member.getValue() instanceof String) {
+            obj.setIntputrc((String)member.getValue());
+          }
+          break;
+        case "shellHtmlResource":
+          if (member.getValue() instanceof String) {
+            obj.setShellHtmlResource(io.vertx.core.buffer.Buffer.buffer(java.util.Base64.getDecoder().decode((String)member.getValue())));
+          }
+          break;
+        case "sockJSHandlerOptions":
+          if (member.getValue() instanceof JsonObject) {
+            obj.setSockJSHandlerOptions(new io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions((JsonObject)member.getValue()));
+          }
+          break;
+        case "sockJSPath":
+          if (member.getValue() instanceof String) {
+            obj.setSockJSPath((String)member.getValue());
+          }
+          break;
+        case "termJsResource":
+          if (member.getValue() instanceof String) {
+            obj.setTermJsResource(io.vertx.core.buffer.Buffer.buffer(java.util.Base64.getDecoder().decode((String)member.getValue())));
+          }
+          break;
+        case "vertsShellJsResource":
+          if (member.getValue() instanceof String) {
+            obj.setVertsShellJsResource(io.vertx.core.buffer.Buffer.buffer(java.util.Base64.getDecoder().decode((String)member.getValue())));
+          }
+          break;
+      }
     }
   }
 
   public static void toJson(HttpTermOptions obj, JsonObject json) {
+    toJson(obj, json.getMap());
+  }
+
+  public static void toJson(HttpTermOptions obj, java.util.Map<String, Object> json) {
     if (obj.getCharset() != null) {
       json.put("charset", obj.getCharset());
     }
@@ -58,16 +67,16 @@ public class HttpTermOptionsConverter {
       json.put("intputrc", obj.getIntputrc());
     }
     if (obj.getShellHtmlResource() != null) {
-      json.put("shellHtmlResource", obj.getShellHtmlResource().getBytes());
+      json.put("shellHtmlResource", java.util.Base64.getEncoder().encodeToString(obj.getShellHtmlResource().getBytes()));
     }
     if (obj.getSockJSPath() != null) {
       json.put("sockJSPath", obj.getSockJSPath());
     }
     if (obj.getTermJsResource() != null) {
-      json.put("termJsResource", obj.getTermJsResource().getBytes());
+      json.put("termJsResource", java.util.Base64.getEncoder().encodeToString(obj.getTermJsResource().getBytes()));
     }
     if (obj.getVertsShellJsResource() != null) {
-      json.put("vertsShellJsResource", obj.getVertsShellJsResource().getBytes());
+      json.put("vertsShellJsResource", java.util.Base64.getEncoder().encodeToString(obj.getVertsShellJsResource().getBytes()));
     }
   }
 }
