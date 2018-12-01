@@ -34,6 +34,13 @@ package io.vertx.ext.shell;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.Session;
+import de.flapdoodle.embed.mongo.MongodExecutable;
+import de.flapdoodle.embed.mongo.MongodStarter;
+import de.flapdoodle.embed.mongo.config.IMongodConfig;
+import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.Net;
+import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.process.runtime.Network;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Handler;
@@ -171,36 +178,42 @@ public class SSHShellTest extends SSHTestBase {
 
   @Test
   public void testDeployServiceWithMongoAuthOptions(TestContext context) throws Exception {
-    Async mongo = context.async();
-    vertx.deployVerticle("service:io.vertx.vertx-mongo-embedded-db", context.asyncAssertSuccess(v -> mongo.complete()));
-    mongo.awaitSuccess(120 * 1000); // Enough time for downloading the db
-    JsonObject config = new JsonObject().put("connection_string", "mongodb://localhost:27018");
-    MongoClient client = MongoClient.createNonShared(vertx, config);
-    MongoAuth auth = MongoAuth.create(client, new JsonObject());
-    Async ready = context.async();
-    auth.insertUser("admin", "password", Collections.emptyList(), Collections.emptyList(), context.asyncAssertSuccess(v -> ready.complete()));
-    ready.awaitSuccess(2000);
-    Async async = context.async();
-    vertx.deployVerticle("service:io.vertx.ext.shell", new DeploymentOptions().setConfig(new JsonObject().put("sshOptions",
-        new JsonObject().
-            put("host", "localhost").
-            put("port", 5000).
-            put("keyPairOptions", new JsonObject().
-                put("path", "src/test/resources/server-keystore.jks").
-                put("password", "wibble")).
-            put("authOptions", new JsonObject().put("provider", "mongo").put("config",
-                new JsonObject().
-                    put("connection_string", "mongodb://localhost:27018")))))
-        , context.asyncAssertSuccess(v -> {
-      async.complete();
-    }));
-    async.awaitSuccess(2000);
-    Session session = createSession("admin", "password", false);
-    session.connect();
-    Channel channel = session.openChannel("shell");
-    channel.connect();
-    channel.disconnect();
-    session.disconnect();
+    MongodExecutable exe = MongodStarter.getDefaultInstance().prepare(new MongodConfigBuilder().
+      version(Version.Main.V3_4).
+      net(new Net(27018, Network.localhostIsIPv6())).
+      build());
+    exe.start();
+    try {
+      JsonObject config = new JsonObject().put("connection_string", "mongodb://localhost:27018");
+      MongoClient client = MongoClient.createNonShared(vertx, config);
+      MongoAuth auth = MongoAuth.create(client, new JsonObject());
+      Async ready = context.async();
+      auth.insertUser("admin", "password", Collections.emptyList(), Collections.emptyList(), context.asyncAssertSuccess(v -> ready.complete()));
+      ready.awaitSuccess(2000);
+      Async async = context.async();
+      vertx.deployVerticle("service:io.vertx.ext.shell", new DeploymentOptions().setConfig(new JsonObject().put("sshOptions",
+          new JsonObject().
+              put("host", "localhost").
+              put("port", 5000).
+              put("keyPairOptions", new JsonObject().
+                  put("path", "src/test/resources/server-keystore.jks").
+                  put("password", "wibble")).
+              put("authOptions", new JsonObject().put("provider", "mongo").put("config",
+                  new JsonObject().
+                      put("connection_string", "mongodb://localhost:27018")))))
+          , context.asyncAssertSuccess(v -> {
+        async.complete();
+      }));
+      async.awaitSuccess(2000);
+      Session session = createSession("admin", "password", false);
+      session.connect();
+      Channel channel = session.openChannel("shell");
+      channel.connect();
+      channel.disconnect();
+      session.disconnect();
+    } finally {
+      exe.stop();
+    }
   }
 
   @Override
