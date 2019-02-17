@@ -76,7 +76,7 @@ public class SSHTermOptions {
   public SSHTermOptions(SSHTermOptions that) {
     this.host = that.host;
     this.port = that.port;
-    this.keyPairOptions = that.keyPairOptions != null ? that.keyPairOptions.clone() : null;
+    this.keyPairOptions = that.keyPairOptions != null ? that.keyPairOptions.copy() : null;
     this.authOptions = that.authOptions != null ? that.authOptions.clone() : null;
     this.defaultCharset = that.defaultCharset;
     this.intputrc = that.intputrc;
