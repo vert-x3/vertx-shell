@@ -213,11 +213,6 @@ public class HttpTermOptions extends HttpServerOptions {
   }
 
   @Override
-  public HttpTermOptions setUsePooledBuffers(boolean usePooledBuffers) {
-    return (HttpTermOptions) super.setUsePooledBuffers(usePooledBuffers);
-  }
-
-  @Override
   public HttpTermOptions setIdleTimeout(int idleTimeout) {
     return (HttpTermOptions) super.setIdleTimeout(idleTimeout);
   }

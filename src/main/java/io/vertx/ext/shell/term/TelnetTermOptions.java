@@ -122,11 +122,6 @@ public class TelnetTermOptions extends NetServerOptions {
   }
 
   @Override
-  public TelnetTermOptions setUsePooledBuffers(boolean usePooledBuffers) {
-    return (TelnetTermOptions) super.setUsePooledBuffers(usePooledBuffers);
-  }
-
-  @Override
   public TelnetTermOptions setIdleTimeout(int idleTimeout) {
     return (TelnetTermOptions) super.setIdleTimeout(idleTimeout);
   }
