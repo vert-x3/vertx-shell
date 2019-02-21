@@ -191,11 +191,6 @@ public class TelnetTermOptions extends NetServerOptions {
     return (TelnetTermOptions) super.setPort(port);
   }
 
-  @Override
-  public TelnetTermOptions setClientAuthRequired(boolean clientAuthRequired) {
-    return (TelnetTermOptions) super.setClientAuthRequired(clientAuthRequired);
-  }
-
   public boolean getOutBinary() {
     return outBinary;
   }
