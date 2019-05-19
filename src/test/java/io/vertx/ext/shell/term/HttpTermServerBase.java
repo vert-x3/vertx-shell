@@ -38,6 +38,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.CaseInsensitiveHeaders;
 import io.vertx.core.http.HttpClient;
+import io.vertx.core.http.WebSocketConnectOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.AbstractUser;
 import io.vertx.ext.auth.AuthProvider;
@@ -94,12 +95,12 @@ public abstract class HttpTermServerBase {
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
-      client.websocket(8080, "localhost", basePath + "/shell/websocket", ws -> {
+      client.webSocket(8080, "localhost", basePath + "/shell/websocket", context.asyncAssertSuccess(ws -> {
         ws.handler(buf -> {
           context.assertEquals("hello_from_server", buf.toString());
           async.complete();
         });
-      }, context::fail);
+      }));
     }));
   }
 
@@ -115,9 +116,9 @@ public abstract class HttpTermServerBase {
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
-      client.websocket(8080, "localhost", basePath + "/shell/websocket", ws -> {
+      client.webSocket(8080, "localhost", basePath + "/shell/websocket", context.asyncAssertSuccess(ws -> {
         ws.writeFinalTextFrame(new JsonObject().put("action", "read").put("data", "hello_from_client").encode());
-      }, context::fail);
+      }));
     }));
   }
 
@@ -186,8 +187,8 @@ public abstract class HttpTermServerBase {
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
-      client.websocket(8080, "localhost", uri, ws -> {
-      }, context::fail);
+      client.webSocket(8080, "localhost", uri, context.asyncAssertSuccess(ws -> {
+      }));
     }));
   }
 
@@ -218,9 +219,9 @@ public abstract class HttpTermServerBase {
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
-      client.websocket(8080, "localhost", basePath + "/shell/websocket", ws -> {
+      client.webSocket(8080, "localhost", basePath + "/shell/websocket", context.asyncAssertSuccess(ws -> {
         ws.writeFinalTextFrame(event.encode());
-      }, context::fail);
+      }));
     }));
   }
 
@@ -235,12 +236,12 @@ public abstract class HttpTermServerBase {
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
-      client.websocket(8080, "localhost", basePath + "/shell/websocket", ws -> {
+      client.webSocket(8080, "localhost", basePath + "/shell/websocket", context.asyncAssertSuccess(ws -> {
         ws.writeFinalTextFrame(new JsonObject().put("action", "resize").put("cols", -50).encode());
         vertx.setTimer(1000, id -> {
           async.complete();
         });
-      }, context::fail);
+      }));
     }));
   }
 
@@ -256,19 +257,19 @@ public abstract class HttpTermServerBase {
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
-      client.websocket(8080, "localhost", basePath + "/shell/websocket", ws -> {
-        context.fail();
-      }, err -> {
+      client.webSocket(8080, "localhost", basePath + "/shell/websocket", context.asyncAssertFailure(err -> {
         // Retry now with auth
-        client.websocket(8080, "localhost", basePath + "/shell/websocket",
-            new CaseInsensitiveHeaders().add("Authorization", "Basic " + Base64.getEncoder().encodeToString("tim:sausages".getBytes())),
-            ws -> {
-              ws.handler(buf -> {
-                context.assertEquals("hello", buf.toString());
-                async.complete();
-              });
-            }, context::fail);
-      });
+        WebSocketConnectOptions options = new WebSocketConnectOptions()
+          .setPort(8080)
+          .setURI(basePath + "/shell/websocket")
+          .addHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString("tim:sausages".getBytes()));
+        client.webSocket(options, context.asyncAssertSuccess(ws -> {
+          ws.handler(buf -> {
+            context.assertEquals("hello", buf.toString());
+            async.complete();
+          });
+        }));
+      }));
     }));
   }
 
@@ -306,9 +307,13 @@ public abstract class HttpTermServerBase {
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
-      client.websocket(8080, "localhost", basePath + "/shell/websocket", new CaseInsensitiveHeaders().add("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes())), ws -> {
+      WebSocketConnectOptions options = new WebSocketConnectOptions()
+        .setPort(8080)
+        .setURI(basePath + "/shell/websocket")
+        .addHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes()));
+      client.webSocket(options, context.asyncAssertSuccess(ws -> {
         async.countDown();
-      }, context::fail);
+      }));
     }));
   }
 
@@ -327,12 +332,14 @@ public abstract class HttpTermServerBase {
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
-      client.websocket(8080, "localhost", basePath + "/shell/websocket", new CaseInsensitiveHeaders().add("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes())), ws -> {
-        context.fail();
-      }, err -> {
+      WebSocketConnectOptions options = new WebSocketConnectOptions()
+        .setPort(8080)
+        .setURI(basePath + "/shell/websocket")
+        .addHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes()));
+      client.webSocket(options, context.asyncAssertFailure(ws -> {
         assertEquals(1, count.get());
         async.complete();
-      });
+      }));
     }));
   }
 
@@ -346,12 +353,16 @@ public abstract class HttpTermServerBase {
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
-      client.websocket(8080, "localhost", basePath + "/shell/websocket", new CaseInsensitiveHeaders().add("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes())), ws -> {
+      WebSocketConnectOptions options = new WebSocketConnectOptions()
+        .setPort(8080)
+        .setURI(basePath + "/shell/websocket")
+        .addHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes()));
+      client.webSocket(options, context.asyncAssertSuccess(ws -> {
         ws.handler(buf -> {
           context.assertTrue(Arrays.equals(new byte[]{63}, buf.getBytes()));
           async.complete();
         });
-      }, context::fail);
+      }));
     }));
   }
 
@@ -367,10 +378,14 @@ public abstract class HttpTermServerBase {
     });
     server.listen(context.asyncAssertSuccess(server -> {
       HttpClient client = vertx.createHttpClient();
-      client.websocket(8080, "localhost", basePath + "/shell/websocket", new CaseInsensitiveHeaders().add("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes())), ws -> {
+      WebSocketConnectOptions options = new WebSocketConnectOptions()
+        .setPort(8080)
+        .setURI(basePath + "/shell/websocket")
+        .addHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes()));
+      client.webSocket(options, context.asyncAssertSuccess(ws -> {
         ws.handler(buf -> {
         });
-      }, context::fail);
+      }));
     }));
   }
 }
