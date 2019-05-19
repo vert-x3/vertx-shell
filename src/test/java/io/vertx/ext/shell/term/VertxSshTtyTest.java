@@ -102,6 +102,5 @@ public class VertxSshTtyTest extends SshTtyTestBase {
   protected void assertThreading(Thread connThread, Thread schedulerThread) throws Exception {
     assertTrue(connThread.getName().startsWith("vert.x-eventloop-thread"));
     assertEquals(connThread, schedulerThread);
-    assertEquals(context, Vertx.currentContext());
   }
 }
