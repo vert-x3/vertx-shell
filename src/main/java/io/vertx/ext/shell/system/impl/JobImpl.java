@@ -32,9 +32,9 @@
 
 package io.vertx.ext.shell.system.impl;
 
-import io.vertx.core.Future;
 import io.vertx.core.Handler;
 
+import io.vertx.core.Promise;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.system.Process;
 import io.vertx.ext.shell.term.Tty;
@@ -55,14 +55,14 @@ public class JobImpl implements Job {
   volatile Tty tty;
   volatile Session session;
   volatile Handler<ExecStatus> statusUpdateHandler;
-  final Future<Void> terminateFuture;
+  final Promise<Void> terminatePromise;
 
   JobImpl(int id, JobControllerImpl controller, Process process, String line) {
     this.id = id;
     this.controller = controller;
     this.process = process;
     this.line = line;
-    this.terminateFuture = Future.future();
+    this.terminatePromise = Promise.promise();
 
     process.terminatedHandler(exitCode -> {
       if (controller.foregroundJob == this) {
@@ -75,7 +75,7 @@ public class JobImpl implements Job {
       if (statusUpdateHandler != null) {
         statusUpdateHandler.handle(ExecStatus.TERMINATED);
       }
-      terminateFuture.complete();
+      terminatePromise.complete();
     });
   }
 

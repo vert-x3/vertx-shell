@@ -33,7 +33,7 @@
 package io.vertx.ext.shell;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Future;
+import io.vertx.core.Promise;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -41,7 +41,7 @@ import io.vertx.core.Future;
 public class ShellVerticle extends AbstractVerticle {
 
   @Override
-  public void start(Future<Void> startFuture) throws Exception {
+  public void start(Promise<Void> startFuture) throws Exception {
     ShellServiceOptions options = new ShellServiceOptions(context.config());
     ShellService service = ShellService.create(vertx, options);
     service.start(ar -> {

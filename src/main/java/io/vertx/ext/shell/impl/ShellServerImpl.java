@@ -35,6 +35,7 @@ package io.vertx.ext.shell.impl;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.Shell;
 import io.vertx.ext.shell.ShellServer;
@@ -75,7 +76,7 @@ public class ShellServerImpl implements ShellServer {
   private boolean closed = true;
   private long timerID = -1;
   private final Map<String, ShellImpl> sessions;
-  private final Future<Void> sessionsClosed = Future.future();
+  private final Promise<Void> sessionsClosed = Promise.promise();
   private Handler<Shell> shellHandler;
 
   public ShellServerImpl(Vertx vertx, ShellServerOptions options) {
@@ -120,7 +121,7 @@ public class ShellServerImpl implements ShellServer {
     }
     ShellImpl session = createShell(term);
     session.setWelcome(welcomeMessage);
-    session.closedFuture.setHandler(ar -> {
+    session.closedPromise.future().setHandler(ar -> {
       boolean completeSessionClosed;
       synchronized (ShellServerImpl.this) {
         sessions.remove(session.id);
@@ -253,7 +254,7 @@ public class ShellServerImpl implements ShellServer {
       };
       toClose.forEach(ShellImpl::close);
       toStop.forEach(termServer -> termServer.close(handler));
-      sessionsClosed.setHandler(handler);
+      sessionsClosed.future().setHandler(handler);
     }
   }
 

@@ -34,6 +34,7 @@ package io.vertx.ext.shell.command;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.impl.CommandRegistryImpl;
 import io.vertx.ext.unit.Async;
@@ -111,15 +112,15 @@ public class CommandRegistryTest {
     AtomicReference<String> ref = new AtomicReference<>();
     vertx.deployVerticle(new AbstractVerticle() {
       @Override
-      public void start(Future<Void> startFuture) throws Exception {
+      public void start(Promise<Void> startPromise) throws Exception {
         CommandBuilder command = CommandBuilder.command("hello");
         command.processHandler(process -> {
         });
         registry.registerCommand(command.build(vertx), ar -> {
           if (ar.succeeded()) {
-            startFuture.complete();
+            startPromise.complete();
           } else {
-            startFuture.fail(ar.cause());
+            startPromise.fail(ar.cause());
           }
         });
       }

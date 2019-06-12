@@ -33,7 +33,7 @@
 package io.vertx.ext.shell.impl;
 
 import io.termd.core.util.Helper;
-import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.ext.shell.Shell;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.session.impl.SessionImpl;
@@ -57,7 +57,7 @@ import java.util.function.Function;
 public class ShellImpl implements Shell {
 
   final String id;
-  final Future<Void> closedFuture;
+  final Promise<Void> closedPromise;
   private final InternalCommandManager commandManager;
   private final Session session = new SessionImpl();
   private final JobControllerImpl jobController;
@@ -72,7 +72,7 @@ public class ShellImpl implements Shell {
     this.id = UUID.randomUUID().toString();
     this.jobController = new JobControllerImpl();
     this.commandManager = commandManager;
-    this.closedFuture = Future.future();
+    this.closedPromise = Promise.promise();
     this.term = term;
 
     if (term != null) {
@@ -134,7 +134,7 @@ public class ShellImpl implements Shell {
 
     term.closeHandler(v ->
         jobController.close(ar ->
-            closedFuture.complete()
+            closedPromise.complete()
         )
     );
     if (welcome != null && welcome.length() > 0) {
@@ -253,7 +253,7 @@ public class ShellImpl implements Shell {
     if (term != null) {
       term.close();
     } else {
-      jobController.close(ar -> closedFuture.complete());
+      jobController.close(ar -> closedPromise.complete());
     }
   }
 }
