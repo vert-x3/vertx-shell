@@ -65,7 +65,7 @@ public class BusSend extends BusPublish {
   public void process(CommandProcess process) {
     Object body = parseBody();
     if (reply) {
-      process.vertx().eventBus().send(address, body, options, ar -> {
+      process.vertx().eventBus().request(address, body, options, ar -> {
         if (ar.succeeded()) {
           Message<Object> reply = ar.result();
           if (verbose) {

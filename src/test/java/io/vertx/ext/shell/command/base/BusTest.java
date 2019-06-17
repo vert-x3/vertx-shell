@@ -360,7 +360,7 @@ public class BusTest {
 
   private void assertSend(TestContext context, String address, Object body, DeliveryOptions options, int times) {
     context.assertTrue(times > 0, "Could not send message " + body + " to address " + address);
-    vertx.eventBus().send(address, body, options, ar -> {
+    vertx.eventBus().request(address, body, options, ar -> {
       if (ar.failed()) {
         ReplyException ex = (ReplyException) ar.cause();
         if (ex.failureType() == NO_HANDLERS) {
