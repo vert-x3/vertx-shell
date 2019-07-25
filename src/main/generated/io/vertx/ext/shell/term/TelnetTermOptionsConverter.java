@@ -4,12 +4,21 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.JsonArray;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import io.vertx.core.spi.json.JsonCodec;
 
 /**
- * Converter for {@link io.vertx.ext.shell.term.TelnetTermOptions}.
+ * Converter and Codec for {@link io.vertx.ext.shell.term.TelnetTermOptions}.
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.term.TelnetTermOptions} original class using Vert.x codegen.
  */
-public class TelnetTermOptionsConverter {
+public class TelnetTermOptionsConverter implements JsonCodec<TelnetTermOptions, JsonObject> {
+
+  public static final TelnetTermOptionsConverter INSTANCE = new TelnetTermOptionsConverter();
+
+  @Override public JsonObject encode(TelnetTermOptions value) { return (value != null) ? value.toJson() : null; }
+
+  @Override public TelnetTermOptions decode(JsonObject value) { return (value != null) ? new TelnetTermOptions(value) : null; }
+
+  @Override public Class<TelnetTermOptions> getTargetClass() { return TelnetTermOptions.class; }
 
   public static void fromJson(Iterable<java.util.Map.Entry<String, Object>> json, TelnetTermOptions obj) {
     for (java.util.Map.Entry<String, Object> member : json) {

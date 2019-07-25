@@ -4,12 +4,19 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.JsonArray;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import io.vertx.core.spi.json.JsonDecoder;
 
 /**
- * Converter for {@link io.vertx.ext.shell.ShellServiceOptions}.
+ * Converter and Codec for {@link io.vertx.ext.shell.ShellServiceOptions}.
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.ShellServiceOptions} original class using Vert.x codegen.
  */
-public class ShellServiceOptionsConverter {
+public class ShellServiceOptionsConverter implements JsonDecoder<ShellServiceOptions, JsonObject> {
+
+  public static final ShellServiceOptionsConverter INSTANCE = new ShellServiceOptionsConverter();
+
+  @Override public ShellServiceOptions decode(JsonObject value) { return (value != null) ? new ShellServiceOptions(value) : null; }
+
+  @Override public Class<ShellServiceOptions> getTargetClass() { return ShellServiceOptions.class; }
 
   public static void fromJson(Iterable<java.util.Map.Entry<String, Object>> json, ShellServiceOptions obj) {
     for (java.util.Map.Entry<String, Object> member : json) {

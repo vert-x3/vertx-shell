@@ -4,18 +4,25 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.JsonArray;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import io.vertx.core.spi.json.JsonCodec;
 
 /**
- * Converter for {@link io.vertx.ext.shell.term.HttpTermOptions}.
+ * Converter and Codec for {@link io.vertx.ext.shell.term.HttpTermOptions}.
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.term.HttpTermOptions} original class using Vert.x codegen.
  */
-public class HttpTermOptionsConverter {
+public class HttpTermOptionsConverter implements JsonCodec<HttpTermOptions, JsonObject> {
+
+  public static final HttpTermOptionsConverter INSTANCE = new HttpTermOptionsConverter();
+
+  @Override public JsonObject encode(HttpTermOptions value) { return (value != null) ? value.toJson() : null; }
+
+  @Override public HttpTermOptions decode(JsonObject value) { return (value != null) ? new HttpTermOptions(value) : null; }
+
+  @Override public Class<HttpTermOptions> getTargetClass() { return HttpTermOptions.class; }
 
   public static void fromJson(Iterable<java.util.Map.Entry<String, Object>> json, HttpTermOptions obj) {
     for (java.util.Map.Entry<String, Object> member : json) {
       switch (member.getKey()) {
-        case "authOptions":
-          break;
         case "charset":
           if (member.getValue() instanceof String) {
             obj.setCharset((String)member.getValue());
