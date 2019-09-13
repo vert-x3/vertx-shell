@@ -4,19 +4,13 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.JsonArray;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
-import io.vertx.core.spi.json.JsonDecoder;
 
 /**
- * Converter and Codec for {@link io.vertx.ext.shell.term.SSHTermOptions}.
+ * Converter and mapper for {@link io.vertx.ext.shell.term.SSHTermOptions}.
  * NOTE: This class has been automatically generated from the {@link io.vertx.ext.shell.term.SSHTermOptions} original class using Vert.x codegen.
  */
-public class SSHTermOptionsConverter implements JsonDecoder<SSHTermOptions, JsonObject> {
+public class SSHTermOptionsConverter {
 
-  public static final SSHTermOptionsConverter INSTANCE = new SSHTermOptionsConverter();
-
-  @Override public SSHTermOptions decode(JsonObject value) { return (value != null) ? new SSHTermOptions(value) : null; }
-
-  @Override public Class<SSHTermOptions> getTargetClass() { return SSHTermOptions.class; }
 
   public static void fromJson(Iterable<java.util.Map.Entry<String, Object>> json, SSHTermOptions obj) {
     for (java.util.Map.Entry<String, Object> member : json) {
