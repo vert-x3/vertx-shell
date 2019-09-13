@@ -53,7 +53,7 @@ public class HttpTermServerSubRouterTest extends HttpTermServerBase {
     Router router = Router.router(vertx);
     Router subRouter = Router.router(vertx);
     router.mountSubRouter("/sub", subRouter);
-    httpServer.requestHandler(router::accept);
+    httpServer.requestHandler(router);
     Async async = context.async();
     httpServer.listen(8080, context.asyncAssertSuccess(s -> {
       async.complete();

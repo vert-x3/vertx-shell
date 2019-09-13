@@ -132,7 +132,7 @@ public class HttpTermServer implements TermServer {
 
     if (createServer) {
       server = vertx.createHttpServer(options);
-      server.requestHandler(router::accept);
+      server.requestHandler(router);
       server.listen(ar -> {
         if (listenHandler != null) {
           if (ar.succeeded()) {
