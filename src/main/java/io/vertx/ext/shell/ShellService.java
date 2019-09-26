@@ -34,7 +34,9 @@ package io.vertx.ext.shell;
 
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.impl.ShellServiceImpl;
 
@@ -71,8 +73,10 @@ public interface ShellService {
   /**
    * Start the shell service, this is an asynchronous start.
    */
-  default void start() {
-    start(ar -> {});
+  default Future<Void> start() {
+    Promise<Void> promise = Promise.promise();
+    start(promise);
+    return promise.future();
   }
 
   /**
@@ -90,9 +94,10 @@ public interface ShellService {
   /**
    * Stop the shell service, this is an asynchronous stop.
    */
-  default void stop() {
-    stop(ar -> {
-    });
+  default Future<Void> stop() {
+    Promise<Void> promise = Promise.promise();
+    stop(promise);
+    return promise.future();
   }
 
   /**

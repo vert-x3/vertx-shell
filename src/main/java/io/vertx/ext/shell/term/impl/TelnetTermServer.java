@@ -77,7 +77,7 @@ public class TelnetTermServer implements TermServer {
   }
 
   @Override
-  public TermServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
+  public TermServer listen(Handler<AsyncResult<Void>> listenHandler) {
     Charset charset = Charset.forName(options.getCharset());
     if (server == null) {
       server = vertx.createNetServer(options);
@@ -93,7 +93,7 @@ public class TelnetTermServer implements TermServer {
       }));
       server.listen(ar -> {
         if (ar.succeeded()) {
-          listenHandler.handle(Future.succeededFuture(this));
+          listenHandler.handle(Future.succeededFuture());
         } else {
           listenHandler.handle(Future.failedFuture(ar.cause()));
         }
@@ -102,11 +102,6 @@ public class TelnetTermServer implements TermServer {
       listenHandler.handle(Future.failedFuture("Already started"));
     }
     return this;
-  }
-
-  @Override
-  public void close() {
-    close(null);
   }
 
   public void close(Handler<AsyncResult<Void>> completionHandler) {

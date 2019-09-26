@@ -87,7 +87,7 @@ public class HttpTermServer implements TermServer {
   }
 
   @Override
-  public TermServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
+  public TermServer listen(Handler<AsyncResult<Void>> listenHandler) {
 
     Charset charset = Charset.forName(options.getCharset());
 
@@ -136,7 +136,7 @@ public class HttpTermServer implements TermServer {
       server.listen(ar -> {
         if (listenHandler != null) {
           if (ar.succeeded()) {
-            listenHandler.handle(Future.succeededFuture(this));
+            listenHandler.handle(Future.succeededFuture());
           } else {
             listenHandler.handle(Future.failedFuture(ar.cause()));
           }
@@ -144,7 +144,7 @@ public class HttpTermServer implements TermServer {
       });
     } else {
       if (listenHandler != null) {
-        listenHandler.handle(Future.succeededFuture(this));
+        listenHandler.handle(Future.succeededFuture());
       }
     }
     return this;
@@ -153,11 +153,6 @@ public class HttpTermServer implements TermServer {
   @Override
   public int actualPort() {
     return -1;
-  }
-
-  @Override
-  public void close() {
-    close(ar -> {});
   }
 
   @Override

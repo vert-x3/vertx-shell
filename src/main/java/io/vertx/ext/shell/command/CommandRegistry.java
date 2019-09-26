@@ -36,6 +36,7 @@ import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.impl.VertxInternal;
@@ -78,7 +79,7 @@ public interface CommandRegistry extends CommandResolver {
    * Like {@link #registerCommand(Class, Handler)}, without a completion handler.
    */
   @GenIgnore
-  CommandRegistry registerCommand(Class<? extends AnnotatedCommand> command);
+  Future<Command> registerCommand(Class<? extends AnnotatedCommand> command);
 
   /**
    * Register a single command.
@@ -93,8 +94,7 @@ public interface CommandRegistry extends CommandResolver {
   /**
    * Like {@link #registerCommand(Command, Handler)}, without a completion handler.
    */
-  @Fluent
-  CommandRegistry registerCommand(Command command);
+  Future<Command> registerCommand(Command command);
 
   /**
    * Register a command
@@ -109,8 +109,7 @@ public interface CommandRegistry extends CommandResolver {
   /**
    * Like {@link #registerCommands(List, Handler)}, without a completion handler.
    */
-  @Fluent
-  CommandRegistry registerCommands(List<Command> commands);
+  Future<List<Command>> registerCommands(List<Command> commands);
 
   /**
    * Register a list of commands.
@@ -125,8 +124,7 @@ public interface CommandRegistry extends CommandResolver {
   /**
    * Like {@link #unregisterCommand(String, Handler)}, without a completion handler.
    */
-  @Fluent
-  CommandRegistry unregisterCommand(String commandName);
+  Future<Void> unregisterCommand(String commandName);
 
   /**
    * Unregister a command.

@@ -75,18 +75,14 @@ public class TestTermServer implements TermServer {
   }
 
   @Override
-  public TermServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
-    listenHandler.handle(Future.succeededFuture(this));
+  public TermServer listen(Handler<AsyncResult<Void>> listenHandler) {
+    listenHandler.handle(Future.succeededFuture());
     return this;
   }
 
   @Override
   public int actualPort() {
     throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public void close() {
   }
 
   @Override

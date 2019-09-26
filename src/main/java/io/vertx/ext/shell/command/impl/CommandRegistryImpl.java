@@ -37,6 +37,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Closeable;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.impl.VertxInternal;
 import io.vertx.ext.shell.command.AnnotatedCommand;
@@ -95,7 +96,7 @@ public class CommandRegistryImpl implements CommandRegistry {
   }
 
   @Override
-  public CommandRegistry registerCommand(Class<? extends AnnotatedCommand> command) {
+  public Future<Command> registerCommand(Class<? extends AnnotatedCommand> command) {
     return registerCommand(Command.create(vertx, command));
   }
 
@@ -105,8 +106,10 @@ public class CommandRegistryImpl implements CommandRegistry {
   }
 
   @Override
-  public CommandRegistry registerCommand(Command command) {
-    return registerCommand(command, null);
+  public Future<Command> registerCommand(Command command) {
+    Promise<Command> promise = Promise.promise();
+    registerCommand(command, promise);
+    return promise.future();
   }
 
   @Override
@@ -123,8 +126,10 @@ public class CommandRegistryImpl implements CommandRegistry {
   }
 
   @Override
-  public CommandRegistry registerCommands(List<Command> commands) {
-    return registerCommands(commands, null);
+  public Future<List<Command>> registerCommands(List<Command> commands) {
+    Promise<List<Command>> promise = Promise.promise();
+    registerCommands(commands, promise);
+    return promise.future();
   }
 
   @Override
@@ -169,8 +174,10 @@ public class CommandRegistryImpl implements CommandRegistry {
   }
 
   @Override
-  public CommandRegistry unregisterCommand(String commandName) {
-    return unregisterCommand(commandName, null);
+  public Future<Void> unregisterCommand(String commandName) {
+    Promise<Void> promise = Promise.promise();
+    unregisterCommand(commandName, promise);
+    return promise.future();
   }
 
   @Override

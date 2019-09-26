@@ -35,7 +35,9 @@ package io.vertx.ext.shell;
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.impl.ShellServerImpl;
 import io.vertx.ext.shell.command.CommandResolver;
@@ -116,9 +118,10 @@ public interface ShellServer {
   /**
    * Start the shell service, this is an asynchronous start.
    */
-  @Fluent
-  default ShellServer listen() {
-    return listen(ar -> {});
+  default Future<Void> listen() {
+    Promise<Void> promise = Promise.promise();
+    listen(promise);
+    return promise.future();
   }
 
   /**
@@ -132,8 +135,10 @@ public interface ShellServer {
   /**
    * Close the shell server, this is an asynchronous close.
    */
-  default void close() {
-    close(ar -> {});
+  default Future<Void> close() {
+    Promise<Void> promise = Promise.promise();
+    close(promise);
+    return promise.future();
   }
 
   /**

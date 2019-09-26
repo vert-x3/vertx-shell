@@ -128,7 +128,7 @@ public class SSHServer implements TermServer {
     return this;
   }
 
-  public SSHServer listen(Handler<AsyncResult<TermServer>> listenHandler) {
+  public SSHServer listen(Handler<AsyncResult<Void>> listenHandler) {
     if (!status.compareAndSet(STATUS_STOPPED, STATUS_STARTING)) {
       listenHandler.handle(Future.failedFuture("Invalid state:" + status.get()));
       return this;
@@ -211,7 +211,7 @@ public class SSHServer implements TermServer {
         //
         nativeServer.start();
         status.set(STATUS_STARTED);
-        fut.complete(this);
+        fut.complete();
       } catch (Exception e) {
         status.set(STATUS_STOPPED);
         fut.fail(e);
@@ -223,11 +223,6 @@ public class SSHServer implements TermServer {
   @Override
   public int actualPort() {
     return nativeServer.getPort();
-  }
-
-  @Override
-  public void close() {
-    close(ar -> {});
   }
 
   public void close(Handler<AsyncResult<Void>> completionHandler) {

@@ -157,7 +157,7 @@ public class ShellServerImpl implements ShellServer {
       return this;
     }
     AtomicBoolean failed = new AtomicBoolean();
-    Handler<AsyncResult<TermServer>> handler = ar -> {
+    Handler<AsyncResult<Void>> handler = ar -> {
       if (ar.failed()) {
         failed.set(true);
       }
