@@ -51,7 +51,7 @@ public class VertxIoHandlerBridge extends NettyIoHandlerBridge {
 
   @Override
   public void sessionCreated(IoHandler handler, IoSession session) throws Exception {
-    context.executeFromIO(v -> {
+    context.emitFromIO(v -> {
       try {
         super.sessionCreated(handler, session);
       } catch (Exception e) {
@@ -62,7 +62,7 @@ public class VertxIoHandlerBridge extends NettyIoHandlerBridge {
 
   @Override
   public void sessionClosed(IoHandler handler, IoSession session) throws Exception {
-    context.executeFromIO(v -> {
+    context.emitFromIO(v -> {
       try {
         super.sessionClosed(handler, session);
       } catch (Exception e) {
@@ -73,7 +73,7 @@ public class VertxIoHandlerBridge extends NettyIoHandlerBridge {
 
   @Override
   public void messageReceived(IoHandler handler, IoSession session, org.apache.sshd.common.util.Readable message) throws Exception {
-    context.executeFromIO(v -> {
+    context.emitFromIO(v -> {
       try {
         super.messageReceived(handler, session, message);
       } catch (Exception e) {
