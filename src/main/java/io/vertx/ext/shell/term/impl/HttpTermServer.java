@@ -40,6 +40,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServer;
 import io.vertx.ext.auth.AuthProvider;
+import io.vertx.ext.shell.impl.ShellAuth;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.HttpTermOptions;
@@ -98,7 +99,7 @@ public class HttpTermServer implements TermServer {
     }
 
     if (options.getAuthOptions() != null) {
-      authProvider = options.getAuthOptions().createProvider(vertx);
+      authProvider = ShellAuth.load(vertx, options.getAuthOptions());
     }
 
     if (options.getSockJSPath() != null && options.getSockJSHandlerOptions() != null) {

@@ -83,7 +83,7 @@ public class HttpTermOptions extends HttpServerOptions {
   private static final String DEFAULT_SOCKJSPATH = "/shell/*";
 
   private SockJSHandlerOptions sockJSHandlerOptions;
-  private AuthOptions authOptions;
+  private JsonObject authOptions;
   private String sockJSPath;
   private Buffer vertsShellJsResource;
   private Buffer termJsResource;
@@ -99,7 +99,6 @@ public class HttpTermOptions extends HttpServerOptions {
     super(json);
     init();
     HttpTermOptionsConverter.fromJson(json, this);
-    authOptions = json.getJsonObject("authOptions") != null ? SSHTermOptions.createAuthOptions(json.getJsonObject("authOptions")) : null;
   }
 
   public HttpTermOptions(HttpTermOptions that) {
@@ -108,6 +107,7 @@ public class HttpTermOptions extends HttpServerOptions {
     vertsShellJsResource = that.vertsShellJsResource != null ? that.vertsShellJsResource.copy() : null;
     termJsResource = that.termJsResource != null ? that.termJsResource.copy() : null;
     shellHtmlResource = that.shellHtmlResource != null ? that.shellHtmlResource.copy() : null;
+    authOptions = that.authOptions != null ? that.authOptions.copy() : null;
     charset = that.charset;
     intputrc = that.intputrc;
   }
@@ -161,7 +161,7 @@ public class HttpTermOptions extends HttpServerOptions {
   /**
    * @return the auth options
    */
-  public AuthOptions getAuthOptions() {
+  public JsonObject getAuthOptions() {
     return authOptions;
   }
 
@@ -171,8 +171,7 @@ public class HttpTermOptions extends HttpServerOptions {
    * @param authOptions the auth options
    * @return a reference to this, so the API can be used fluently
    */
-  @GenIgnore
-  public HttpTermOptions setAuthOptions(AuthOptions authOptions) {
+  public HttpTermOptions setAuthOptions(JsonObject authOptions) {
     this.authOptions = authOptions;
     return this;
   }

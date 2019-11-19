@@ -51,6 +51,7 @@ import io.vertx.core.net.KeyCertOptions;
 import io.vertx.core.net.PfxOptions;
 import io.vertx.core.net.impl.KeyStoreHelper;
 import io.vertx.ext.auth.AuthProvider;
+import io.vertx.ext.shell.impl.ShellAuth;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.Term;
@@ -134,7 +135,7 @@ public class SSHServer implements TermServer {
       return this;
     }
     if (options.getAuthOptions() != null) {
-      authProvider = options.getAuthOptions().createProvider(vertx);
+      authProvider = ShellAuth.load(vertx, options.getAuthOptions());
     }
     Charset defaultCharset = Charset.forName(options.getDefaultCharset());
     listenContext = (ContextInternal) vertx.getOrCreateContext();

@@ -15,6 +15,11 @@ public class SSHTermOptionsConverter {
   public static void fromJson(Iterable<java.util.Map.Entry<String, Object>> json, SSHTermOptions obj) {
     for (java.util.Map.Entry<String, Object> member : json) {
       switch (member.getKey()) {
+        case "authOptions":
+          if (member.getValue() instanceof JsonObject) {
+            obj.setAuthOptions(((JsonObject)member.getValue()).copy());
+          }
+          break;
         case "defaultCharset":
           if (member.getValue() instanceof String) {
             obj.setDefaultCharset((String)member.getValue());
@@ -59,6 +64,9 @@ public class SSHTermOptionsConverter {
   }
 
   public static void toJson(SSHTermOptions obj, java.util.Map<String, Object> json) {
+    if (obj.getAuthOptions() != null) {
+      json.put("authOptions", obj.getAuthOptions());
+    }
     if (obj.getDefaultCharset() != null) {
       json.put("defaultCharset", obj.getDefaultCharset());
     }

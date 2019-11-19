@@ -160,7 +160,9 @@ public class SSHShellTest extends SSHTestBase {
             put("keyPairOptions", new JsonObject().
                 put("path", "src/test/resources/server-keystore.jks").
                 put("password", "wibble")).
-            put("authOptions", new JsonObject().put("provider", "jdbc").put("config",
+            put("authOptions", new JsonObject()
+              .put("provider", "jdbc")
+              .put("config",
                 new JsonObject()
                     .put("url", "jdbc:hsqldb:mem:test?shutdown=true")
                     .put("driver_class", "org.hsqldb.jdbcDriver")))))

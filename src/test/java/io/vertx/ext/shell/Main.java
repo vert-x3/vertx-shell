@@ -35,13 +35,11 @@ package io.vertx.ext.shell;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
-import io.vertx.ext.auth.shiro.ShiroAuthOptions;
-import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.shell.command.CommandBuilder;
-import io.vertx.ext.shell.term.SSHTermOptions;
-import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.command.CommandRegistry;
 import io.vertx.ext.shell.term.HttpTermOptions;
+import io.vertx.ext.shell.term.SSHTermOptions;
+import io.vertx.ext.shell.term.TelnetTermOptions;
 
 /**
  * A simple class for testing from command line directly.
@@ -87,23 +85,24 @@ public class Main {
     // vertx.deployVerticle("command.js");
 
     // Expose the shell
-    ShiroAuthOptions authOptions = new ShiroAuthOptions().
-        setType(ShiroAuthRealmType.PROPERTIES).
-        setConfig(new JsonObject().put("properties_path", "file:src/test/resources/test-auth.properties"));
+    JsonObject authOptions = new JsonObject()
+      .put("provider", "shiro")
+      .put("type", "PROPERTIES")
+      .put("config", new JsonObject().put("properties_path", "file:src/test/resources/test-auth.properties"));
     SSHTermOptions options = new SSHTermOptions().setPort(5001);
     options.setKeyPairOptions(new JksOptions().
-        setPath("src/test/resources/server-keystore.jks").
-        setPassword("wibble")).
-        setAuthOptions(
-            authOptions
-        );
+      setPath("src/test/resources/server-keystore.jks").
+      setPassword("wibble")).
+      setAuthOptions(
+        authOptions
+      );
     ShellService service = ShellService.create(vertx, new ShellServiceOptions().
-        setTelnetOptions(new TelnetTermOptions().setPort(5000)).
-        setSSHOptions(options).
-            setHttpOptions(new HttpTermOptions().
-                    setPort(8080).
-                    setAuthOptions(authOptions)
-            )
+      setTelnetOptions(new TelnetTermOptions().setPort(5000)).
+      setSSHOptions(options).
+      setHttpOptions(new HttpTermOptions().
+        setPort(8080).
+        setAuthOptions(authOptions)
+      )
     );
     service.start();
 

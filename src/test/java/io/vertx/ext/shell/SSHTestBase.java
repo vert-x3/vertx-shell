@@ -32,20 +32,13 @@
 
 package io.vertx.ext.shell;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.UserInfo;
+import com.jcraft.jsch.*;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxException;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
-import io.vertx.ext.auth.shiro.ShiroAuthOptions;
-import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -61,9 +54,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -92,13 +83,16 @@ public abstract class SSHTestBase {
 
   protected void startShell() throws Exception {
     startShell(new SSHTermOptions().setPort(5000).setHost("localhost").setKeyPairOptions(
-        new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
-        setAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
-            new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
+      new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
+      setAuthOptions(new JsonObject()
+        .put("provider", "shiro")
+        .put("type", "PROPERTIES")
+        .put("config",
+          new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
   }
 
   protected Session createSession(String username, String password, boolean interactive) throws Exception {
-    JSch jsch= new JSch();
+    JSch jsch = new JSch();
     Session session = jsch.getSession(username, "localhost", 5000);
     if (!interactive) {
       session.setPassword(password);
@@ -173,7 +167,7 @@ public abstract class SSHTestBase {
   public void testNoAuthenticationConfigured() throws Exception {
     try {
       startShell(new SSHTermOptions().setPort(5000).setHost("localhost").setKeyPairOptions(
-              new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble"))
+        new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble"))
       );
       fail();
     } catch (ExecutionException e) {
@@ -186,8 +180,11 @@ public abstract class SSHTestBase {
   public void testNoKeyPairConfigured() throws Exception {
     try {
       startShell(new SSHTermOptions().setPort(5000).setHost("localhost").
-              setAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
-                  new JsonObject().put("properties_path", "classpath:test-auth.properties")))
+        setAuthOptions(new JsonObject()
+          .put("provider", "shiro")
+          .put("type", "PROPERTIES")
+          .put("config",
+            new JsonObject().put("properties_path", "classpath:test-auth.properties")))
       );
     } catch (ExecutionException e) {
       assertTrue(e.getCause() instanceof VertxException);
@@ -210,7 +207,7 @@ public abstract class SSHTestBase {
       if (a == -1) {
         break;
       }
-      input.append((char)a);
+      input.append((char) a);
     }
     OutputStream out = channel.getOutputStream();
     out.write("the_input".getBytes());

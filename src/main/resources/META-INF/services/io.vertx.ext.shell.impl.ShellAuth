@@ -1,0 +1,3 @@
+io.vertx.ext.shell.impl.auth.JDBCShellAuth
+io.vertx.ext.shell.impl.auth.ShiroShellAuth
+io.vertx.ext.shell.impl.auth.MongoShellAuth
