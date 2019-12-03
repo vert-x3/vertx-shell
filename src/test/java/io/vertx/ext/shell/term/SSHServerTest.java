@@ -42,8 +42,8 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
-import io.vertx.ext.auth.AbstractUser;
 import io.vertx.ext.auth.AuthProvider;
+import io.vertx.ext.auth.User;
 import io.vertx.ext.shell.SSHTestBase;
 import io.vertx.ext.shell.term.impl.SSHExec;
 import io.vertx.ext.shell.term.impl.SSHServer;
@@ -247,10 +247,21 @@ public class SSHServerTest extends SSHTestBase {
       String username = authInfo.getString("username");
       String password = authInfo.getString("password");
       if (username.equals("paulo") && password.equals("anothersecret")) {
-        resultHandler.handle(Future.succeededFuture(new AbstractUser() {
+        resultHandler.handle(Future.succeededFuture(new User() {
           @Override
-          protected void doIsPermitted(String permission, Handler<AsyncResult<Boolean>> resultHandler) {
+          public JsonObject attributes() {
+            return new JsonObject();
+          }
+
+          @Override
+          public User isAuthorized(String authority, Handler<AsyncResult<Boolean>> resultHandler) {
             resultHandler.handle(Future.succeededFuture(true));
+            return this;
+          }
+
+          @Override
+          public User clearCache() {
+            return this;
           }
 
           @Override

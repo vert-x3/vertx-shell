@@ -110,7 +110,7 @@ providers:
 - _jdbc_ : JDBC backend
 - _mongo_ : MongoDB backend
 
-These options can be created directly using directly {@link io.vertx.ext.auth.AuthOptions}:
+These options can be created directly using directly corresponding class:
 
 - {@link io.vertx.ext.auth.shiro.ShiroAuthOptions} for Shiro
 - {@link io.vertx.ext.auth.jdbc.JDBCAuthOptions} for JDBC
@@ -537,7 +537,7 @@ Vert.x Shell also provides bare terminal servers for those who need to write pur
 A {@link io.vertx.ext.shell.term.Term} handler must be set on a term server before starting it. This handler will
 handle each term when the user connects.
 
-An {@link io.vertx.ext.auth.AuthOptions} can be set on {@link io.vertx.ext.shell.term.SSHTermOptions} and {@link io.vertx.ext.shell.term.HttpTermOptions}.
+An {@code Auth*Options} can be set on {@link io.vertx.ext.shell.term.SSHTermOptions} and {@link io.vertx.ext.shell.term.HttpTermOptions}.
 Alternatively, an {@link io.vertx.ext.auth.AuthProvider} can be {@link io.vertx.ext.shell.term.TermServer#authProvider(io.vertx.ext.auth.AuthProvider) set}
 directly on the term server before starting it.
 

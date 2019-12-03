@@ -34,16 +34,13 @@ package io.vertx.ext.shell.term;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.annotations.GenIgnore;
-import io.vertx.core.VertxException;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.core.net.KeyCertOptions;
 import io.vertx.core.net.NetServerOptions;
 import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.core.net.PfxOptions;
-import io.vertx.ext.auth.AuthOptions;
 
-import java.lang.reflect.Constructor;
 import java.nio.charset.StandardCharsets;
 
 /**

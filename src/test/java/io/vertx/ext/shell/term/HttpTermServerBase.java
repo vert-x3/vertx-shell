@@ -39,8 +39,8 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.WebSocketConnectOptions;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.auth.AbstractUser;
 import io.vertx.ext.auth.AuthProvider;
+import io.vertx.ext.auth.User;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -279,10 +279,21 @@ public abstract class HttpTermServerBase {
       String username = authInfo.getString("username");
       String password = authInfo.getString("password");
       if (username.equals("paulo") && password.equals("anothersecret")) {
-        resultHandler.handle(Future.succeededFuture(new AbstractUser() {
+        resultHandler.handle(Future.succeededFuture(new User() {
           @Override
-          protected void doIsPermitted(String permission, Handler<AsyncResult<Boolean>> resultHandler) {
+          public JsonObject attributes() {
+            return new JsonObject();
+          }
+
+          @Override
+          public User isAuthorized(String authority, Handler<AsyncResult<Boolean>> resultHandler) {
             resultHandler.handle(Future.succeededFuture(true));
+            return this;
+          }
+
+          @Override
+          public User clearCache() {
+            return this;
           }
 
           @Override

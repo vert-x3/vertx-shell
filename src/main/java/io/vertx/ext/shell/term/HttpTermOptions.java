@@ -42,7 +42,6 @@ import io.vertx.core.net.JksOptions;
 import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.core.net.PemTrustOptions;
 import io.vertx.core.net.PfxOptions;
-import io.vertx.ext.auth.AuthOptions;
 import io.vertx.ext.shell.term.impl.Helper;
 import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
 
