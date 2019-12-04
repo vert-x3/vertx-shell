@@ -42,10 +42,8 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
-import io.vertx.ext.auth.AbstractUser;
 import io.vertx.ext.auth.AuthProvider;
-import io.vertx.ext.auth.shiro.ShiroAuthOptions;
-import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
+import io.vertx.ext.auth.User;
 import io.vertx.ext.shell.SSHTestBase;
 import io.vertx.ext.shell.term.impl.SSHExec;
 import io.vertx.ext.shell.term.impl.SSHServer;
@@ -54,17 +52,9 @@ import io.vertx.ext.unit.TestContext;
 import org.junit.After;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
+import java.io.*;
 import java.net.URL;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -104,7 +94,7 @@ public class SSHServerTest extends SSHTestBase {
     server = TermServer.createSSHTermServer(vertx, options);
     CompletableFuture<Void> fut = new CompletableFuture<>();
     server.termHandler(termHandler);
-    ((SSHServer)server).setExecHandler(execHandler);
+    ((SSHServer) server).setExecHandler(execHandler);
     server.authProvider(authProvider);
     server.listen(ar -> {
       if (ar.succeeded()) {
@@ -156,7 +146,7 @@ public class SSHServerTest extends SSHTestBase {
         count = 0;
       } else {
         count--;
-        sb.append((char)code);
+        sb.append((char) code);
       }
     }
     assertEquals("hello", sb.toString());
@@ -257,15 +247,28 @@ public class SSHServerTest extends SSHTestBase {
       String username = authInfo.getString("username");
       String password = authInfo.getString("password");
       if (username.equals("paulo") && password.equals("anothersecret")) {
-        resultHandler.handle(Future.succeededFuture(new AbstractUser() {
+        resultHandler.handle(Future.succeededFuture(new User() {
           @Override
-          protected void doIsPermitted(String permission, Handler<AsyncResult<Boolean>> resultHandler) {
-            resultHandler.handle(Future.succeededFuture(true));
+          public JsonObject attributes() {
+            return new JsonObject();
           }
+
+          @Override
+          public User isAuthorized(String authority, Handler<AsyncResult<Boolean>> resultHandler) {
+            resultHandler.handle(Future.succeededFuture(true));
+            return this;
+          }
+
+          @Override
+          public User clearCache() {
+            return this;
+          }
+
           @Override
           public JsonObject principal() {
             return new JsonObject().put("username", username);
           }
+
           @Override
           public void setAuthProvider(AuthProvider authProvider) {
           }
@@ -280,7 +283,7 @@ public class SSHServerTest extends SSHTestBase {
       async.complete();
     };
     startShell(new SSHTermOptions().setPort(5000).setHost("localhost").setKeyPairOptions(
-        new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")));
+      new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")));
     Session session = createSession("paulo", "anothersecret", false);
     session.connect();
     Channel channel = session.openChannel("shell");
@@ -298,7 +301,7 @@ public class SSHServerTest extends SSHTestBase {
       context.fail();
     };
     startShell(new SSHTermOptions().setPort(5000).setHost("localhost").setKeyPairOptions(
-        new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")));
+      new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")));
     Session session = createSession("paulo", "anothersecret", false);
     try {
       session.connect();
@@ -316,9 +319,12 @@ public class SSHServerTest extends SSHTestBase {
       term.close();
     };
     startShell(new SSHTermOptions().setDefaultCharset("ISO_8859_1").setPort(5000).setHost("localhost").setKeyPairOptions(
-        new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
-        setAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
-            new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
+      new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
+      setAuthOptions(new JsonObject()
+        .put("provider", "shiro")
+        .put("type", "PROPERTIES")
+        .put("config",
+          new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
     Session session = createSession("paulo", "secret", false);
     session.connect();
     Channel channel = session.openChannel("shell");
@@ -334,9 +340,12 @@ public class SSHServerTest extends SSHTestBase {
     File f = new File(url.toURI());
     termHandler = Term::close;
     startShell(new SSHTermOptions().setIntputrc(f.getAbsolutePath()).setPort(5000).setHost("localhost").setKeyPairOptions(
-        new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
-        setAuthOptions(new ShiroAuthOptions().setType(ShiroAuthRealmType.PROPERTIES).setConfig(
-            new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
+      new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
+      setAuthOptions(new JsonObject()
+        .put("provider", "shiro")
+        .put("type", "PROPERTIES")
+        .put("config",
+          new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
     Session session = createSession("paulo", "secret", false);
     session.connect();
     Channel channel = session.openChannel("shell");

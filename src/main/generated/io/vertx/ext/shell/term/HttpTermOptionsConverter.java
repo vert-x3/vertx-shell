@@ -15,6 +15,11 @@ public class HttpTermOptionsConverter {
   public static void fromJson(Iterable<java.util.Map.Entry<String, Object>> json, HttpTermOptions obj) {
     for (java.util.Map.Entry<String, Object> member : json) {
       switch (member.getKey()) {
+        case "authOptions":
+          if (member.getValue() instanceof JsonObject) {
+            obj.setAuthOptions(((JsonObject)member.getValue()).copy());
+          }
+          break;
         case "charset":
           if (member.getValue() instanceof String) {
             obj.setCharset((String)member.getValue());
@@ -59,6 +64,9 @@ public class HttpTermOptionsConverter {
   }
 
   public static void toJson(HttpTermOptions obj, java.util.Map<String, Object> json) {
+    if (obj.getAuthOptions() != null) {
+      json.put("authOptions", obj.getAuthOptions());
+    }
     if (obj.getCharset() != null) {
       json.put("charset", obj.getCharset());
     }

@@ -36,14 +36,11 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.core.http.CaseInsensitiveHeaders;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.WebSocketConnectOptions;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.auth.AbstractUser;
 import io.vertx.ext.auth.AuthProvider;
-import io.vertx.ext.auth.shiro.ShiroAuthOptions;
-import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
+import io.vertx.ext.auth.User;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -179,7 +176,7 @@ public abstract class HttpTermServerBase {
 
   private void testSize(TestContext context, String uri, int expectedCols, int expectedRows) {
     Async async = context.async();
-    server = createServer(context, new HttpTermOptions().setPort(8080));;
+    server = createServer(context, new HttpTermOptions().setPort(8080));
     server.termHandler(term -> {
       context.assertEquals(expectedCols, term.width());
       context.assertEquals(expectedRows, term.height());
@@ -209,7 +206,7 @@ public abstract class HttpTermServerBase {
 
   private void testResize(TestContext context, JsonObject event, int expectedCols, int expectedRows) {
     Async async = context.async();
-    server = createServer(context, new HttpTermOptions().setPort(8080));;
+    server = createServer(context, new HttpTermOptions().setPort(8080));
     server.termHandler(term -> {
       term.resizehandler(v -> {
         context.assertEquals(expectedCols, term.width());
@@ -228,7 +225,7 @@ public abstract class HttpTermServerBase {
   @Test
   public void testResizeInvalid(TestContext context) {
     Async async = context.async();
-    server = createServer(context, new HttpTermOptions().setPort(8080));;
+    server = createServer(context, new HttpTermOptions().setPort(8080));
     server.termHandler(term -> {
       term.resizehandler(v -> {
         context.fail();
@@ -249,9 +246,10 @@ public abstract class HttpTermServerBase {
   public void testSecure(TestContext context) {
     Async async = context.async();
     server = createServer(context, new HttpTermOptions().setAuthOptions(
-        new ShiroAuthOptions().
-            setType(ShiroAuthRealmType.PROPERTIES).
-            setConfig(new JsonObject().put("properties_path", "classpath:test-auth.properties"))).setPort(8080));
+      new JsonObject()
+        .put("provider", "shiro")
+        .put("type", "PROPERTIES")
+        .put("config", new JsonObject().put("properties_path", "classpath:test-auth.properties"))).setPort(8080));
     server.termHandler(term -> {
       term.write("hello");
     });
@@ -281,15 +279,28 @@ public abstract class HttpTermServerBase {
       String username = authInfo.getString("username");
       String password = authInfo.getString("password");
       if (username.equals("paulo") && password.equals("anothersecret")) {
-        resultHandler.handle(Future.succeededFuture(new AbstractUser() {
+        resultHandler.handle(Future.succeededFuture(new User() {
           @Override
-          protected void doIsPermitted(String permission, Handler<AsyncResult<Boolean>> resultHandler) {
-            resultHandler.handle(Future.succeededFuture(true));
+          public JsonObject attributes() {
+            return new JsonObject();
           }
+
+          @Override
+          public User isAuthorized(String authority, Handler<AsyncResult<Boolean>> resultHandler) {
+            resultHandler.handle(Future.succeededFuture(true));
+            return this;
+          }
+
+          @Override
+          public User clearCache() {
+            return this;
+          }
+
           @Override
           public JsonObject principal() {
             return new JsonObject().put("username", username);
           }
+
           @Override
           public void setAuthProvider(AuthProvider authProvider) {
           }

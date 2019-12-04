@@ -40,25 +40,16 @@ import io.vertx.core.cli.CommandLine;
 import io.vertx.core.cli.Option;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
-import io.vertx.ext.auth.jdbc.JDBCAuthOptions;
-import io.vertx.ext.auth.mongo.MongoAuthOptions;
-import io.vertx.ext.auth.shiro.ShiroAuthOptions;
-import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.shell.Shell;
 import io.vertx.ext.shell.ShellServer;
-import io.vertx.ext.shell.command.CommandResolver;
-import io.vertx.ext.shell.term.HttpTermOptions;
-import io.vertx.ext.shell.term.Pty;
-import io.vertx.ext.shell.term.Tty;
-import io.vertx.ext.shell.system.Job;
-import io.vertx.ext.shell.term.SSHTermOptions;
-import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.ShellService;
 import io.vertx.ext.shell.ShellServiceOptions;
-import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.CommandRegistry;
-import io.vertx.ext.shell.term.TermServer;
+import io.vertx.ext.shell.command.CommandResolver;
+import io.vertx.ext.shell.session.Session;
+import io.vertx.ext.shell.system.Job;
+import io.vertx.ext.shell.term.*;
 import io.vertx.ext.web.Router;
 
 /**
@@ -68,226 +59,235 @@ public class ShellExamples {
 
   public void deployTelnetService(Vertx vertx) throws Exception {
     vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
-        new DeploymentOptions().setConfig(
-            new JsonObject().put("telnetOptions",
-                new JsonObject().
-                    put("host", "localhost").
-                    put("port", 4000))
-        )
+      new DeploymentOptions().setConfig(
+        new JsonObject().put("telnetOptions",
+          new JsonObject().
+            put("host", "localhost").
+            put("port", 4000))
+      )
     );
   }
 
   public void deploySSHServiceWithShiro(Vertx vertx) throws Exception {
     vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
-        new DeploymentOptions().setConfig(new JsonObject().
-                put("sshOptions", new JsonObject().
-                    put("host", "localhost").
-                    put("port", 5000).
-                    put("keyPairOptions", new JsonObject().
-                        put("path", "src/test/resources/ssh.jks").
-                        put("password", "wibble")).
-                    put("authOptions", new JsonObject().
-                        put("provider", "shiro").
-                        put("config", new JsonObject().
-                            put("properties_path", "file:/path/to/my/auth.properties"))))
-        )
+      new DeploymentOptions().setConfig(new JsonObject().
+        put("sshOptions", new JsonObject().
+          put("host", "localhost").
+          put("port", 5000).
+          put("keyPairOptions", new JsonObject().
+            put("path", "src/test/resources/ssh.jks").
+            put("password", "wibble")).
+          put("authOptions", new JsonObject().
+            put("provider", "shiro").
+            put("config", new JsonObject().
+              put("properties_path", "file:/path/to/my/auth.properties"))))
+      )
     );
   }
 
   public void deploySSHServiceWithJDBC(Vertx vertx) throws Exception {
     vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
-        new DeploymentOptions().setConfig(new JsonObject().
-                put("sshOptions", new JsonObject().
-                    put("host", "localhost").
-                    put("port", 5000).
-                    put("keyPairOptions", new JsonObject().
-                        put("path", "src/test/resources/ssh.jks").
-                        put("password", "wibble")).
-                    put("authOptions", new JsonObject().
-                        put("provider", "jdbc").
-                        put("config", new JsonObject()
-                            .put("url", "jdbc:hsqldb:mem:test?shutdown=true")
-                            .put("driver_class", "org.hsqldb.jdbcDriver"))))
-        )
+      new DeploymentOptions().setConfig(new JsonObject().
+        put("sshOptions", new JsonObject().
+          put("host", "localhost").
+          put("port", 5000).
+          put("keyPairOptions", new JsonObject().
+            put("path", "src/test/resources/ssh.jks").
+            put("password", "wibble")).
+          put("authOptions", new JsonObject().
+            put("provider", "jdbc").
+            put("config", new JsonObject()
+              .put("url", "jdbc:hsqldb:mem:test?shutdown=true")
+              .put("driver_class", "org.hsqldb.jdbcDriver"))))
+      )
     );
   }
 
   public void deploySSHServiceWithMongo(Vertx vertx) throws Exception {
     vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
-        new DeploymentOptions().setConfig(new JsonObject().
-                put("sshOptions", new JsonObject().
-                    put("host", "localhost").
-                    put("port", 5000).
-                    put("keyPairOptions", new JsonObject().
-                        put("path", "src/test/resources/ssh.jks").
-                        put("password", "wibble")).
-                    put("authOptions", new JsonObject().
-                        put("provider", "mongo").
-                        put("config", new JsonObject().
-                            put("connection_string", "mongodb://localhost:27018"))))
-        )
+      new DeploymentOptions().setConfig(new JsonObject().
+        put("sshOptions", new JsonObject().
+          put("host", "localhost").
+          put("port", 5000).
+          put("keyPairOptions", new JsonObject().
+            put("path", "src/test/resources/ssh.jks").
+            put("password", "wibble")).
+          put("authOptions", new JsonObject().
+            put("provider", "mongo").
+            put("config", new JsonObject().
+              put("connection_string", "mongodb://localhost:27018"))))
+      )
     );
   }
 
   public void deployHttpServiceWithShiro(Vertx vertx) throws Exception {
     vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
-        new DeploymentOptions().setConfig(new JsonObject().
-                put("httpOptions", new JsonObject().
-                    put("host", "localhost").
-                    put("port", 8080).
-                    put("ssl", true).
-                    put("keyPairOptions", new JsonObject().
-                        put("path", "src/test/resources/server-keystore.jks").
-                        put("password", "wibble")).
-                    put("authOptions", new JsonObject().
-                        put("provider", "shiro").
-                        put("config", new JsonObject().
-                            put("properties_path", "file:/path/to/my/auth.properties"))))
-        )
+      new DeploymentOptions().setConfig(new JsonObject().
+        put("httpOptions", new JsonObject().
+          put("host", "localhost").
+          put("port", 8080).
+          put("ssl", true).
+          put("keyPairOptions", new JsonObject().
+            put("path", "src/test/resources/server-keystore.jks").
+            put("password", "wibble")).
+          put("authOptions", new JsonObject().
+            put("provider", "shiro").
+            put("config", new JsonObject().
+              put("properties_path", "file:/path/to/my/auth.properties"))))
+      )
     );
   }
 
   public void deployHttpServiceWithJDBC(Vertx vertx) throws Exception {
     vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
-        new DeploymentOptions().setConfig(new JsonObject().
-                put("httpOptions", new JsonObject().
-                    put("host", "localhost").
-                    put("port", 8080).
-                    put("ssl", true).
-                    put("keyPairOptions", new JsonObject().
-                        put("path", "src/test/resources/server-keystore.jks").
-                        put("password", "wibble")).
-                    put("authOptions", new JsonObject().
-                        put("provider", "jdbc").
-                        put("config", new JsonObject()
-                            .put("url", "jdbc:hsqldb:mem:test?shutdown=true")
-                            .put("driver_class", "org.hsqldb.jdbcDriver"))))
-        )
+      new DeploymentOptions().setConfig(new JsonObject().
+        put("httpOptions", new JsonObject().
+          put("host", "localhost").
+          put("port", 8080).
+          put("ssl", true).
+          put("keyPairOptions", new JsonObject().
+            put("path", "src/test/resources/server-keystore.jks").
+            put("password", "wibble")).
+          put("authOptions", new JsonObject().
+            put("provider", "jdbc").
+            put("config", new JsonObject()
+              .put("url", "jdbc:hsqldb:mem:test?shutdown=true")
+              .put("driver_class", "org.hsqldb.jdbcDriver"))))
+      )
     );
   }
 
   public void deployHttpServiceWithMongo(Vertx vertx) throws Exception {
     vertx.deployVerticle("maven:{maven-groupId}:{maven-artifactId}:{maven-version}",
-        new DeploymentOptions().setConfig(new JsonObject().
-                put("httpOptions", new JsonObject().
-                    put("host", "localhost").
-                    put("port", 8080).
-                    put("ssl", true).
-                    put("keyPairOptions", new JsonObject().
-                        put("path", "src/test/resources/server-keystore.jks").
-                        put("password", "wibble")).
-                    put("authOptions", new JsonObject().
-                        put("provider", "mongo").
-                        put("config", new JsonObject().
-                            put("connection_string", "mongodb://localhost:27018"))))
-        )
+      new DeploymentOptions().setConfig(new JsonObject().
+        put("httpOptions", new JsonObject().
+          put("host", "localhost").
+          put("port", 8080).
+          put("ssl", true).
+          put("keyPairOptions", new JsonObject().
+            put("path", "src/test/resources/server-keystore.jks").
+            put("password", "wibble")).
+          put("authOptions", new JsonObject().
+            put("provider", "mongo").
+            put("config", new JsonObject().
+              put("connection_string", "mongodb://localhost:27018"))))
+      )
     );
   }
 
   public void runTelnetService(Vertx vertx) throws Exception {
     ShellService service = ShellService.create(vertx,
-        new ShellServiceOptions().setTelnetOptions(
-            new TelnetTermOptions().
-                setHost("localhost").
-                setPort(4000)
-        )
+      new ShellServiceOptions().setTelnetOptions(
+        new TelnetTermOptions().
+          setHost("localhost").
+          setPort(4000)
+      )
     );
     service.start();
   }
 
   public void runSSHServiceWithShiro(Vertx vertx) throws Exception {
     ShellService service = ShellService.create(vertx,
-        new ShellServiceOptions().setSSHOptions(
-            new SSHTermOptions().
-                setHost("localhost").
-                setPort(5000).
-                setKeyPairOptions(new JksOptions().
-                        setPath("server-keystore.jks").
-                        setPassword("wibble")
-                ).
-                setAuthOptions(new ShiroAuthOptions().
-                        setType(ShiroAuthRealmType.PROPERTIES).
-                        setConfig(new JsonObject().
-                            put("properties_path", "file:/path/to/my/auth.properties"))
-                )
-        )
+      new ShellServiceOptions().setSSHOptions(
+        new SSHTermOptions().
+          setHost("localhost").
+          setPort(5000).
+          setKeyPairOptions(new JksOptions().
+            setPath("server-keystore.jks").
+            setPassword("wibble")
+          ).
+          setAuthOptions(
+            new JsonObject()
+              .put("provider", "shiro")
+              .put("type", "PROPERTIES")
+              .put("config", new JsonObject().
+                put("properties_path", "file:/path/to/my/auth.properties"))
+          )
+      )
     );
     service.start();
   }
 
   public void runSSHServiceWithMongo(Vertx vertx) throws Exception {
     ShellService service = ShellService.create(vertx,
-        new ShellServiceOptions().setSSHOptions(
-            new SSHTermOptions().
-                setHost("localhost").
-                setPort(5000).
-                setKeyPairOptions(new JksOptions().
-                        setPath("server-keystore.jks").
-                        setPassword("wibble")
-                ).
-                setAuthOptions(new MongoAuthOptions().setConfig(new JsonObject().
-                        put("connection_string", "mongodb://localhost:27018"))
-                )
-        )
+      new ShellServiceOptions().setSSHOptions(
+        new SSHTermOptions().
+          setHost("localhost").
+          setPort(5000).
+          setKeyPairOptions(new JksOptions().
+            setPath("server-keystore.jks").
+            setPassword("wibble")
+          ).
+          setAuthOptions(new JsonObject()
+            .put("provider", "mongo")
+            .put("config", new JsonObject().put("connection_string", "mongodb://localhost:27018"))
+          )
+      )
     );
     service.start();
   }
 
   public void runSSHServiceWithJDBC(Vertx vertx) throws Exception {
     ShellService service = ShellService.create(vertx,
-        new ShellServiceOptions().setSSHOptions(
-            new SSHTermOptions().
-                setHost("localhost").
-                setPort(5000).
-                setKeyPairOptions(new JksOptions().
-                        setPath("server-keystore.jks").
-                        setPassword("wibble")
-                ).
-                setAuthOptions(new JDBCAuthOptions().setConfig(new JsonObject()
-                        .put("url", "jdbc:hsqldb:mem:test?shutdown=true")
-                        .put("driver_class", "org.hsqldb.jdbcDriver"))
-                )
-        )
+      new ShellServiceOptions().setSSHOptions(
+        new SSHTermOptions().
+          setHost("localhost").
+          setPort(5000).
+          setKeyPairOptions(new JksOptions().
+            setPath("server-keystore.jks").
+            setPassword("wibble")
+          ).
+          setAuthOptions(new JsonObject()
+            .put("provider", "jdbc")
+            .put("config", new JsonObject()
+              .put("url", "jdbc:hsqldb:mem:test?shutdown=true")
+              .put("driver_class", "org.hsqldb.jdbcDriver"))
+          )
+      )
     );
     service.start();
   }
 
   public void runHttpService(Vertx vertx) throws Exception {
     ShellService service = ShellService.create(vertx,
-        new ShellServiceOptions().setHttpOptions(
-            new HttpTermOptions().
-                setHost("localhost").
-                setPort(8080)
-        )
+      new ShellServiceOptions().setHttpOptions(
+        new HttpTermOptions().
+          setHost("localhost").
+          setPort(8080)
+      )
     );
     service.start();
   }
 
   public void runHTTPServiceWithMongo(Vertx vertx) throws Exception {
     ShellService service = ShellService.create(vertx,
-        new ShellServiceOptions().setHttpOptions(
-            new HttpTermOptions().
-                setHost("localhost").
-                setPort(8080).
-                setAuthOptions(new MongoAuthOptions().setConfig(new JsonObject().
-                        put("connection_string", "mongodb://localhost:27018"))
-                )
-        )
+      new ShellServiceOptions().setHttpOptions(
+        new HttpTermOptions().
+          setHost("localhost").
+          setPort(8080).
+          setAuthOptions(new JsonObject()
+            .put("provider", "mongo")
+            .put("config", new JsonObject()
+              .put("connection_string", "mongodb://localhost:27018"))
+          )
+      )
     );
     service.start();
   }
 
   public void runHTTPServiceWithJDBC(Vertx vertx) throws Exception {
     ShellService service = ShellService.create(vertx,
-        new ShellServiceOptions().setHttpOptions(
-            new HttpTermOptions().
-                setHost("localhost").
-                setPort(8080).
-                setAuthOptions(new JDBCAuthOptions().setConfig(new JsonObject()
-                        .put("url", "jdbc:hsqldb:mem:test?shutdown=true")
-                        .put("driver_class", "org.hsqldb.jdbcDriver"))
-                )
-        )
+      new ShellServiceOptions().setHttpOptions(
+        new HttpTermOptions().
+          setHost("localhost").
+          setPort(8080).
+          setAuthOptions(new JsonObject()
+            .put("provider", "jdbc")
+            .put("config", new JsonObject()
+              .put("url", "jdbc:hsqldb:mem:test?shutdown=true")
+              .put("driver_class", "org.hsqldb.jdbcDriver"))
+          )
+      )
     );
     service.start();
   }
@@ -329,8 +329,8 @@ public class ShellExamples {
 
   public void cliCommand() {
     CLI cli = CLI.create("my-command").
-        addArgument(new Argument().setArgName("my-arg")).
-        addOption(new Option().setShortName("m").setLongName("my-option"));
+      addArgument(new Argument().setArgName("my-arg")).
+      addOption(new Option().setShortName("m").setLongName("my-option"));
     CommandBuilder command = CommandBuilder.command(cli);
     command.processHandler(process -> {
 
@@ -346,8 +346,8 @@ public class ShellExamples {
 
   public void cliCommandWithHelp() {
     CLI cli = CLI.create("my-command").
-        addArgument(new Argument().setArgName("my-arg")).
-        addOption(new Option().setArgName("help").setShortName("h").setLongName("help"));
+      addArgument(new Argument().setArgName("my-arg")).
+      addOption(new Option().setArgName("help").setShortName("h").setLongName("help"));
     CommandBuilder command = CommandBuilder.command(cli);
     command.processHandler(process -> {
       // ...
