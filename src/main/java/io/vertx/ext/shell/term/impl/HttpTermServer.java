@@ -45,7 +45,7 @@ import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.HttpTermOptions;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.handler.AuthHandler;
+import io.vertx.ext.web.handler.AuthenticationHandler;
 import io.vertx.ext.web.handler.BasicAuthHandler;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 
@@ -104,7 +104,7 @@ public class HttpTermServer implements TermServer {
 
     if (options.getSockJSPath() != null && options.getSockJSHandlerOptions() != null) {
       if (authProvider != null) {
-        AuthHandler basicAuthHandler = BasicAuthHandler.create(authProvider);
+        AuthenticationHandler basicAuthHandler = BasicAuthHandler.create(authProvider);
         router.route(options.getSockJSPath()).handler(basicAuthHandler);
       }
 
