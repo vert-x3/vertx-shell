@@ -41,6 +41,7 @@ import io.vertx.core.http.WebSocketConnectOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.User;
+import io.vertx.ext.auth.authorization.Authorization;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -287,6 +288,12 @@ public abstract class HttpTermServerBase {
 
           @Override
           public User isAuthorized(String authority, Handler<AsyncResult<Boolean>> resultHandler) {
+            resultHandler.handle(Future.succeededFuture(true));
+            return this;
+          }
+
+          @Override
+          public User isAuthorized(Authorization authority, Handler<AsyncResult<Boolean>> resultHandler) {
             resultHandler.handle(Future.succeededFuture(true));
             return this;
           }

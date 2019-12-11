@@ -44,6 +44,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.User;
+import io.vertx.ext.auth.authorization.Authorization;
 import io.vertx.ext.shell.SSHTestBase;
 import io.vertx.ext.shell.term.impl.SSHExec;
 import io.vertx.ext.shell.term.impl.SSHServer;
@@ -255,6 +256,12 @@ public class SSHServerTest extends SSHTestBase {
 
           @Override
           public User isAuthorized(String authority, Handler<AsyncResult<Boolean>> resultHandler) {
+            resultHandler.handle(Future.succeededFuture(true));
+            return this;
+          }
+
+          @Override
+          public User isAuthorized(Authorization authority, Handler<AsyncResult<Boolean>> resultHandler) {
             resultHandler.handle(Future.succeededFuture(true));
             return this;
           }
