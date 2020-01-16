@@ -55,20 +55,16 @@ import io.vertx.ext.unit.TestContext;
 import org.junit.After;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -187,7 +183,7 @@ public class SSHShellTest extends SSHTestBase {
     exe.start();
     try {
       JsonObject config = new JsonObject().put("connection_string", "mongodb://localhost:27018");
-      MongoClient client = MongoClient.createNonShared(vertx, config);
+      MongoClient client = MongoClient.create(vertx, config);
       MongoAuth auth = MongoAuth.create(client, new JsonObject());
       Async ready = context.async();
       auth.insertUser("admin", "password", Collections.emptyList(), Collections.emptyList(), context.asyncAssertSuccess(v -> ready.complete()));

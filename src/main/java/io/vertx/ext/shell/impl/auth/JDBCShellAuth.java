@@ -59,7 +59,7 @@ public class JDBCShellAuth implements ShellAuth {
         client = JDBCClient.createShared(vertx, options.getConfig());
       }
     } else {
-      client = JDBCClient.createNonShared(vertx, options.getConfig());
+      client = JDBCClient.create(vertx, options.getConfig());
     }
 
     final JDBCAuth auth = JDBCAuth.create(vertx, client);

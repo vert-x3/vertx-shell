@@ -59,7 +59,7 @@ public class MongoShellAuth implements ShellAuth {
         client = MongoClient.createShared(vertx, options.getConfig());
       }
     } else {
-      client = MongoClient.createNonShared(vertx, options.getConfig());
+      client = MongoClient.create(vertx, options.getConfig());
     }
 
     JsonObject authConfig = new JsonObject();
