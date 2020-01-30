@@ -33,12 +33,12 @@
 package io.vertx.ext.shell.command.base;
 
 import io.vertx.core.Handler;
+import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.ReplyException;
-import io.vertx.core.http.CaseInsensitiveHeaders;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.shell.Shell;
@@ -328,7 +328,7 @@ public class BusTest {
     String expected = "the_address:\nReply address: .*\nHeader header_name:\\[header_value\\]\nthe_message\n";
     Pattern p = Pattern.compile(expected);
     assertBusTail(context, "bus-tail --verbose the_address", () -> {
-      assertSend(context, "the_address", "the_message", new DeliveryOptions().setHeaders(new CaseInsensitiveHeaders()).addHeader("header_name", "header_value"), 50);
+      assertSend(context, "the_address", "the_message", new DeliveryOptions().setHeaders(MultiMap.caseInsensitiveMultiMap()).addHeader("header_name", "header_value"), 50);
     }, s -> p.matcher(s).matches());
   }
 
