@@ -50,7 +50,7 @@ public class VerticleFactories extends AnnotatedCommand {
   public void process(CommandProcess process) {
     VertxInternal vertx = (VertxInternal) process.vertx();
     for (VerticleFactory factory : vertx.verticleFactories()) {
-      process.write(factory.getClass().getName() + ": prefix=" + factory.prefix() + ", order=" + factory.order() + ", requiresResolve=" + factory.requiresResolve() + "\n");
+      process.write(factory.getClass().getName() + ": prefix=" + factory.prefix() + ", order=" + factory.order() + "o\n");
     }
     process.end();
   }

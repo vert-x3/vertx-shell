@@ -121,7 +121,7 @@ public class ShellServerImpl implements ShellServer {
     }
     ShellImpl session = createShell(term);
     session.setWelcome(welcomeMessage);
-    session.closedPromise.future().setHandler(ar -> {
+    session.closedPromise.future().onComplete(ar -> {
       boolean completeSessionClosed;
       synchronized (ShellServerImpl.this) {
         sessions.remove(session.id);
@@ -254,7 +254,7 @@ public class ShellServerImpl implements ShellServer {
       };
       toClose.forEach(ShellImpl::close);
       toStop.forEach(termServer -> termServer.close(handler));
-      sessionsClosed.future().setHandler(handler);
+      sessionsClosed.future().onComplete(handler);
     }
   }
 

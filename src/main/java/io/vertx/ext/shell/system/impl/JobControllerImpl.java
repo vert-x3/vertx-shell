@@ -104,7 +104,7 @@ public class JobControllerImpl implements JobController {
     } else {
       AtomicInteger count = new AtomicInteger(jobs.size());
       jobs.forEach(job -> {
-        job.terminatePromise.future().setHandler(v -> {
+        job.terminatePromise.future().onComplete(v -> {
           if (count.decrementAndGet() == 0 && completionHandler != null) {
             completionHandler.handle(null);
           }
