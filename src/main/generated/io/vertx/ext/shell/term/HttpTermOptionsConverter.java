@@ -37,7 +37,7 @@ public class HttpTermOptionsConverter {
           break;
         case "sockJSHandlerOptions":
           if (member.getValue() instanceof JsonObject) {
-            obj.setSockJSHandlerOptions(new io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions((JsonObject)member.getValue()));
+            obj.setSockJSHandlerOptions(new io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions((io.vertx.core.json.JsonObject)member.getValue()));
           }
           break;
         case "sockJSPath":

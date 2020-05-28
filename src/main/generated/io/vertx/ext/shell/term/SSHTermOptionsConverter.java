@@ -37,17 +37,17 @@ public class SSHTermOptionsConverter {
           break;
         case "keyPairOptions":
           if (member.getValue() instanceof JsonObject) {
-            obj.setKeyPairOptions(new io.vertx.core.net.JksOptions((JsonObject)member.getValue()));
+            obj.setKeyPairOptions(new io.vertx.core.net.JksOptions((io.vertx.core.json.JsonObject)member.getValue()));
           }
           break;
         case "pemKeyPairOptions":
           if (member.getValue() instanceof JsonObject) {
-            obj.setPemKeyPairOptions(new io.vertx.core.net.PemKeyCertOptions((JsonObject)member.getValue()));
+            obj.setPemKeyPairOptions(new io.vertx.core.net.PemKeyCertOptions((io.vertx.core.json.JsonObject)member.getValue()));
           }
           break;
         case "pfxKeyPairOptions":
           if (member.getValue() instanceof JsonObject) {
-            obj.setPfxKeyPairOptions(new io.vertx.core.net.PfxOptions((JsonObject)member.getValue()));
+            obj.setPfxKeyPairOptions(new io.vertx.core.net.PfxOptions((io.vertx.core.json.JsonObject)member.getValue()));
           }
           break;
         case "port":

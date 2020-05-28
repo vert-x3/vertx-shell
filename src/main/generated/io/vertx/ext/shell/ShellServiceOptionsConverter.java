@@ -17,17 +17,17 @@ public class ShellServiceOptionsConverter {
       switch (member.getKey()) {
         case "httpOptions":
           if (member.getValue() instanceof JsonObject) {
-            obj.setHttpOptions(new io.vertx.ext.shell.term.HttpTermOptions((JsonObject)member.getValue()));
+            obj.setHttpOptions(new io.vertx.ext.shell.term.HttpTermOptions((io.vertx.core.json.JsonObject)member.getValue()));
           }
           break;
         case "sshOptions":
           if (member.getValue() instanceof JsonObject) {
-            obj.setSSHOptions(new io.vertx.ext.shell.term.SSHTermOptions((JsonObject)member.getValue()));
+            obj.setSSHOptions(new io.vertx.ext.shell.term.SSHTermOptions((io.vertx.core.json.JsonObject)member.getValue()));
           }
           break;
         case "telnetOptions":
           if (member.getValue() instanceof JsonObject) {
-            obj.setTelnetOptions(new io.vertx.ext.shell.term.TelnetTermOptions((JsonObject)member.getValue()));
+            obj.setTelnetOptions(new io.vertx.ext.shell.term.TelnetTermOptions((io.vertx.core.json.JsonObject)member.getValue()));
           }
           break;
       }
