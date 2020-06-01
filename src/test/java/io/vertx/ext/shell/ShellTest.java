@@ -399,9 +399,9 @@ public class ShellTest {
     ShellImpl shell = createShell(conn);
     shell.init().readline();
     Async async = testContext.async();
-    vertx.deployVerticle(() -> new AbstractVerticle() {
+    vertx.deployVerticle(new AbstractVerticle() {
       @Override
-      public void start() throws Exception {
+      public void start() {
         commands.add(CommandBuilder.command("foo").processHandler(process -> {
           testContext.assertEquals(null, conn.checkWritten("% foo\n"));
           conn.read("\u0007");
@@ -417,7 +417,7 @@ public class ShellTest {
           async.complete();
         }));
       }
-    }, new DeploymentOptions(), testContext.asyncAssertSuccess(id -> {
+    }, testContext.asyncAssertSuccess(id -> {
       conn.read("foo\r");
     }));
   }

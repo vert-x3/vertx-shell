@@ -164,7 +164,7 @@ public class ShellServerTest {
   public void testVertxContext(TestContext testContext) throws Exception {
     Async async = testContext.async();
     Async latch = testContext.async();
-    vertx.deployVerticle(() -> new AbstractVerticle() {
+    vertx.deployVerticle(new AbstractVerticle() {
       @Override
       public void start() {
         CommandBuilder cmd = CommandBuilder.command("foo");
@@ -183,7 +183,7 @@ public class ShellServerTest {
           latch.countDown();
         });
         commands.add(cmd);
-        vertx.deployVerticle(() -> new AbstractVerticle() {
+        vertx.deployVerticle(new AbstractVerticle() {
           @Override
           public void start() {
             testContext.assertTrue(context == Vertx.currentContext());
@@ -202,9 +202,9 @@ public class ShellServerTest {
             latch.awaitSuccess(10000);
             pty.write("ping");
           }
-        }, new DeploymentOptions());
+        });
       }
-    }, new DeploymentOptions());
+    });
   }
 
   @Test
