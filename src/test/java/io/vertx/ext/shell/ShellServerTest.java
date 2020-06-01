@@ -32,7 +32,9 @@
 
 package io.vertx.ext.shell;
 
+import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Context;
+import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandBuilder;
@@ -160,45 +162,49 @@ public class ShellServerTest {
 
   @Test
   public void testVertxContext(TestContext testContext) throws Exception {
-    Context commandCtx = vertx.getOrCreateContext();
-    Context shellCtx = vertx.getOrCreateContext();
     Async async = testContext.async();
     Async latch = testContext.async();
-    commandCtx.runOnContext(v1 -> {
-      CommandBuilder cmd = CommandBuilder.command("foo");
-      cmd.processHandler(process -> {
-        Context currentCtx = Vertx.currentContext();
-        testContext.assertTrue(commandCtx == currentCtx);
-        process.stdinHandler(text -> {
-          testContext.assertTrue(commandCtx == Vertx.currentContext());
-          testContext.assertEquals("ping", text);
-          process.write("pong");
+    vertx.deployVerticle(() -> new AbstractVerticle() {
+      @Override
+      public void start() {
+        CommandBuilder cmd = CommandBuilder.command("foo");
+        cmd.processHandler(process -> {
+          Context currentCtx = Vertx.currentContext();
+          testContext.assertTrue(context == currentCtx);
+          process.stdinHandler(text -> {
+            testContext.assertTrue(context == Vertx.currentContext());
+            testContext.assertEquals("ping", text);
+            process.write("pong");
+          });
+          process.suspendHandler(event -> {
+            testContext.assertTrue(context == Vertx.currentContext());
+            process.end(0);
+          });
+          latch.countDown();
         });
-        process.suspendHandler(event -> {
-          testContext.assertTrue(commandCtx == Vertx.currentContext());
-          process.end(0);
-        });
-        latch.countDown();
-      });
-      commands.add(cmd);
-      shellCtx.runOnContext(v3 -> {
-        testContext.assertTrue(shellCtx == Vertx.currentContext());
-        Shell shell = server.createShell();
-        Job job = shell.createJob("foo");
-        Pty pty = Pty.create();
-        pty.stdoutHandler(text -> {
-          testContext.assertTrue(shellCtx == Vertx.currentContext());
-          testContext.assertEquals("pong", text);
-          job.suspend();
-        });
-        job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(code -> {
-          testContext.assertTrue(shellCtx == Vertx.currentContext());
-          async.complete();
-        })).run();
-        latch.awaitSuccess(10000);
-        pty.write("ping");
-      });
-    });
+        commands.add(cmd);
+        vertx.deployVerticle(() -> new AbstractVerticle() {
+          @Override
+          public void start() {
+            testContext.assertTrue(context == Vertx.currentContext());
+            Shell shell = server.createShell();
+            Job job = shell.createJob("foo");
+            Pty pty = Pty.create();
+            pty.stdoutHandler(text -> {
+              testContext.assertTrue(context == Vertx.currentContext());
+              testContext.assertEquals("pong", text);
+              job.suspend();
+            });
+            job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(code -> {
+              testContext.assertTrue(context == Vertx.currentContext());
+              async.complete();
+            })).run();
+            latch.awaitSuccess(10000);
+            pty.write("ping");
+          }
+        }, new DeploymentOptions());
+      }
+    }, new DeploymentOptions());
   }
 
   @Test

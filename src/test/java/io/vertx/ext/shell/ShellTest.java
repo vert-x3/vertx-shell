@@ -34,7 +34,9 @@ package io.vertx.ext.shell;
 
 import io.termd.core.readline.Keymap;
 import io.termd.core.tty.TtyEvent;
+import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Context;
+import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
@@ -392,26 +394,32 @@ public class ShellTest {
   }
 
   @Test
-  public void testEchoCharsDuringExecute(TestContext context) throws Exception {
+  public void testEchoCharsDuringExecute(TestContext testContext) throws Exception {
     TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = createShell(conn);
     shell.init().readline();
-    Async async = context.async();
-    commands.add(CommandBuilder.command("foo").processHandler(process -> {
-      context.assertEquals(null, conn.checkWritten("% foo\n"));
-      conn.read("\u0007");
-      context.assertNull(conn.checkWritten("^G"));
-      conn.read("A");
-      context.assertNull(conn.checkWritten("A"));
-      conn.read("\r");
-      context.assertNull(conn.checkWritten("\n"));
-      conn.read("\003");
-      context.assertNull(conn.checkWritten("^C"));
-      conn.read("\004");
-      context.assertNull(conn.checkWritten("^D"));
-      async.complete();
+    Async async = testContext.async();
+    vertx.deployVerticle(() -> new AbstractVerticle() {
+      @Override
+      public void start() throws Exception {
+        commands.add(CommandBuilder.command("foo").processHandler(process -> {
+          testContext.assertEquals(null, conn.checkWritten("% foo\n"));
+          conn.read("\u0007");
+          testContext.assertNull(conn.checkWritten("^G"));
+          conn.read("A");
+          testContext.assertNull(conn.checkWritten("A"));
+          conn.read("\r");
+          testContext.assertNull(conn.checkWritten("\n"));
+          conn.read("\003");
+          testContext.assertNull(conn.checkWritten("^C"));
+          conn.read("\004");
+          testContext.assertNull(conn.checkWritten("^D"));
+          async.complete();
+        }));
+      }
+    }, new DeploymentOptions(), testContext.asyncAssertSuccess(id -> {
+      conn.read("foo\r");
     }));
-    conn.read("foo\r");
   }
 
   public void testExit(TestContext context) throws Exception {
