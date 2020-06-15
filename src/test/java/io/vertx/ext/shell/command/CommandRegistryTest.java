@@ -33,7 +33,6 @@
 package io.vertx.ext.shell.command;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.impl.CommandRegistryImpl;
@@ -75,11 +74,7 @@ public class CommandRegistryTest {
   public void testRegister(TestContext context) {
     CommandRegistry registry = CommandRegistry.getShared(vertx);
     CommandBuilder command = CommandBuilder.command("hello");
-    registry.registerCommand(command.build(vertx), context.asyncAssertSuccess(reg -> {
-      registry.unregisterCommand("hello", context.asyncAssertSuccess(done -> {
-        context.assertEquals(Collections.emptyList(), registry.commands());
-      }));
-    }));
+    registry.registerCommand(command.build(vertx), context.asyncAssertSuccess(reg -> registry.unregisterCommand("hello", context.asyncAssertSuccess(done -> context.assertEquals(Collections.emptyList(), registry.commands())))));
   }
 
   @Test
@@ -87,12 +82,10 @@ public class CommandRegistryTest {
     CommandRegistry registry = CommandRegistry.getShared(vertx);
     Command a = CommandBuilder.command("a").build(vertx);
     Command b = CommandBuilder.command("b").build(vertx);
-    registry.registerCommand(a, context.asyncAssertSuccess(reg -> {
-      registry.registerCommands(Arrays.asList(a, b), context.asyncAssertFailure(err -> {
-        context.assertEquals(1, registry.commands().size());
-        context.assertNotNull(registry.getCommand("a"));
-      }));
-    }));
+    registry.registerCommand(a, context.asyncAssertSuccess(reg -> registry.registerCommands(Arrays.asList(a, b), context.asyncAssertFailure(err -> {
+      context.assertEquals(1, registry.commands().size());
+      context.assertNotNull(registry.getCommand("a"));
+    }))));
   }
 
   @Test
@@ -100,9 +93,7 @@ public class CommandRegistryTest {
     Vertx vertx = Vertx.vertx();
     CommandRegistryImpl registry = (CommandRegistryImpl) CommandRegistry.getShared(vertx);
     context.assertFalse(registry.isClosed());
-    vertx.close(context.asyncAssertSuccess(v -> {
-      context.assertTrue(registry.isClosed());
-    }));
+    vertx.close(context.asyncAssertSuccess(v -> context.assertTrue(registry.isClosed())));
   }
 
   @Test
@@ -129,9 +120,7 @@ public class CommandRegistryTest {
       async.complete();
     }));
     async.awaitSuccess(5000);
-    vertx.undeploy(ref.get(), context.asyncAssertSuccess(v -> {
-      context.assertEquals(Collections.emptyList(), registry.commands());
-    }));
+    vertx.undeploy(ref.get(), context.asyncAssertSuccess(v -> context.assertEquals(Collections.emptyList(), registry.commands())));
   }
 
   @Test

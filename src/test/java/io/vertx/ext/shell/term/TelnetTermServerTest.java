@@ -105,12 +105,10 @@ public class TelnetTermServerTest {
   @Test
   public void testRead(TestContext context) throws IOException {
     Async async = context.async();
-    startTelnet(context, term -> {
-      term.stdinHandler(s -> {
-        context.assertEquals("hello_from_client", s);
-        async.complete();
-      });
-    });
+    startTelnet(context, term -> term.stdinHandler(s -> {
+      context.assertEquals("hello_from_client", s);
+      async.complete();
+    }));
     client.connect("localhost", server.actualPort());
     Writer writer = new OutputStreamWriter(client.getOutputStream());
     writer.write("hello_from_client");
@@ -119,9 +117,7 @@ public class TelnetTermServerTest {
 
   @Test
   public void testWrite(TestContext context) throws IOException {
-    startTelnet(context, term -> {
-      term.write("hello_from_server");
-    });
+    startTelnet(context, term -> term.write("hello_from_server"));
     client.connect("localhost", server.actualPort());
     Reader reader = new InputStreamReader(client.getInputStream());
     StringBuilder sb = new StringBuilder("hello_from_server");
@@ -138,9 +134,7 @@ public class TelnetTermServerTest {
     Async async1 = context.async();
     Async async2 = context.async();
     startTelnet(context, term -> {
-      term.closeHandler(v -> {
-        async2.complete();
-      });
+      term.closeHandler(v -> async2.complete());
       async1.complete();
     });
     client.connect("localhost", server.actualPort());
@@ -150,11 +144,7 @@ public class TelnetTermServerTest {
 
   @Test
   public void testClose(TestContext context) throws Exception {
-    testClose(context, term -> {
-      vertx.setTimer(10, id -> {
-        term.close();
-      });
-    });
+    testClose(context, term -> vertx.setTimer(10, id -> term.close()));
   }
 
   @Test
@@ -166,9 +156,7 @@ public class TelnetTermServerTest {
     Async async1 = context.async();
     Async async2 = context.async();
     startTelnet(context, term -> {
-      term.closeHandler(v -> {
-        async2.complete();
-      });
+      term.closeHandler(v -> async2.complete());
       closer.accept(term);
       async1.complete();
     });
@@ -223,9 +211,7 @@ public class TelnetTermServerTest {
 
   @Test
   public void testOutBinaryTrue(TestContext context) throws Exception {
-    startTelnet(context, new TelnetTermOptions().setOutBinary(true), term -> {
-      term.write("\u20AC");
-    });
+    startTelnet(context, new TelnetTermOptions().setOutBinary(true), term -> term.write("\u20AC"));
     client.addOptionHandler(new WindowSizeOptionHandler(10, 20, false, false, true, false));
     client.connect("localhost", server.actualPort());
     InputStream in = client.getInputStream();
@@ -237,25 +223,21 @@ public class TelnetTermServerTest {
   @Test
   public void testOutBinaryFalse(TestContext context) throws Exception {
     byte[] expected = StandardCharsets.US_ASCII.encode("€").array();
-    startTelnet(context, new TelnetTermOptions().setOutBinary(false), term -> {
-      term.write("\u20AC");
-    });
+    startTelnet(context, new TelnetTermOptions().setOutBinary(false), term -> term.write("\u20AC"));
     client.addOptionHandler(new WindowSizeOptionHandler(10, 20, false, false, true, false));
     client.connect("localhost", server.actualPort());
     InputStream in = client.getInputStream();
-    for (int i = 0;i < expected.length;i++) {
-      context.assertEquals((int)expected[i], in.read());
+    for (byte b : expected) {
+      context.assertEquals((int) b, in.read());
     }
   }
 
   @Test
   public void testDifferentCharset(TestContext context) throws Exception {
-    CompletableFuture<Void> closeLatch = new CompletableFuture<Void>();
+    CompletableFuture<Void> closeLatch = new CompletableFuture<>();
     startTelnet(context, new TelnetTermOptions().setCharset("ISO_8859_1"), term -> {
       term.write("\u20AC");
-      closeLatch.thenAccept(v -> {
-        term.close();
-      });
+      closeLatch.thenAccept(v -> term.close());
     });
     client.connect("localhost", server.actualPort());
     InputStream in = client.getInputStream();

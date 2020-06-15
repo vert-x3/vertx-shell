@@ -267,9 +267,7 @@ public class CommandProcessTest {
     Async suspendedLatch = context.async();
     Async resumedLatch = context.async(2);
     builder.processHandler(process -> {
-      process.suspendHandler(v -> {
-        suspendedLatch.complete();
-      });
+      process.suspendHandler(v -> suspendedLatch.complete());
       process.resumeHandler(v -> {
         context.assertEquals(0, status.getAndIncrement());
         resumedLatch.countDown();
@@ -324,9 +322,7 @@ public class CommandProcessTest {
     Async runningLatch = context.async();
     Async interruptedLatch = context.async(6);
     builder.processHandler(process -> {
-      process.interruptHandler(v -> {
-        interruptedLatch.countDown();
-      });
+      process.interruptHandler(v -> interruptedLatch.countDown());
       runningLatch.complete();
     });
     Context ctx = vertx.getOrCreateContext();
@@ -375,7 +371,7 @@ public class CommandProcessTest {
   public void testInterruptTerminatedProcess(TestContext context) {
     CommandBuilder builder = CommandBuilder.command("hello");
     Async terminatedLatch = context.async();
-    builder.processHandler(process -> process.end());
+    builder.processHandler(CommandProcess::end);
     Process process = builder.build(vertx).createProcess().setSession(Session.create()).setTty(Pty.create().slave());
     process.terminatedHandler(exitCode -> terminatedLatch.complete());
     process.run();
@@ -504,9 +500,7 @@ public class CommandProcessTest {
     Async runningLatch = context.async();
     Async endedHandler = context.async();
     builder.processHandler(process -> {
-      process.suspendHandler(v -> {
-        process.end(0);
-      });
+      process.suspendHandler(v -> process.end(0));
       process.endHandler(v -> endedHandler.complete());
       runningLatch.complete();
     });

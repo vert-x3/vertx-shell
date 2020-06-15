@@ -89,11 +89,7 @@ public class ShellCloseTest {
   @Test
   public void testSessionExpires(TestContext context) throws Exception {
     Async ended = context.async();
-    registry.add(CommandBuilder.command("cmd").processHandler(process -> {
-      process.endHandler(v -> {
-        ended.complete();
-      });
-    }));
+    registry.add(CommandBuilder.command("cmd").processHandler(process -> process.endHandler(v -> ended.complete())));
     startShellServer(context, 100, 100);
     long now = System.currentTimeMillis();
     TestTtyConnection conn = termServer.openConnection();
@@ -127,9 +123,7 @@ public class ShellCloseTest {
 
   @Test
   public void testCloseConnection(TestContext context) throws Exception {
-    testClose(context, (conn) -> {
-      conn.close();
-    });
+    testClose(context, TestTtyConnection::close);
     shellServer.close();
     shellServer = null;
   }
@@ -138,9 +132,7 @@ public class ShellCloseTest {
     Async processEnded = context.async();
     Async processStarted = context.async();
     registry.add(CommandBuilder.command("cmd").processHandler(process -> {
-      process.endHandler(v -> {
-        processEnded.complete();
-      });
+      process.endHandler(v -> processEnded.complete());
       processStarted.complete();
     }));
     startShellServer(context, 30000, 100);
@@ -165,11 +157,7 @@ public class ShellCloseTest {
         processEnd.awaitSuccess(20000);
       });
       Context ctx = process.vertx().getOrCreateContext();
-      end.set(() -> {
-        ctx.runOnContext(v -> {
-          process.end();
-        });
-      });
+      end.set(() -> ctx.runOnContext(v -> process.end()));
       processStarted.complete();
     }));
     startShellServer(context, 30000, 100);
@@ -178,9 +166,7 @@ public class ShellCloseTest {
     processStarted.awaitSuccess(20000);
     end.get().run();
     processEnding.awaitSuccess(20000);
-    shellServer.close(context.asyncAssertSuccess(v -> {
-        closed.complete();
-      }
+    shellServer.close(context.asyncAssertSuccess(v -> closed.complete()
     ));
     processEnd.complete();
   }

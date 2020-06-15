@@ -188,16 +188,12 @@ public class TestTtyConnection implements TtyConnection {
       default:
         throw new AssertionError();
     }
-    context.runOnContext(v -> {
-      eventHandler.accept(event, c);
-    });
+    context.runOnContext(v -> eventHandler.accept(event, c));
   }
 
   public void read(String s) {
     lastAccessedTime = System.currentTimeMillis();
-    context.runOnContext(v -> {
-      stdinHandler.accept(Helper.toCodePoints(s));
-    });
+    context.runOnContext(v -> stdinHandler.accept(Helper.toCodePoints(s)));
   }
 
   public synchronized String checkWritten(String s) {

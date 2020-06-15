@@ -72,9 +72,7 @@ public abstract class SSHTestBase {
   @After
   public void after() throws Exception {
     CountDownLatch latch = new CountDownLatch(1);
-    Handler<AsyncResult<Void>> handler = ar -> {
-      latch.countDown();
-    };
+    Handler<AsyncResult<Void>> handler = ar -> latch.countDown();
     vertx.close(handler);
     assertTrue(latch.await(10, TimeUnit.SECONDS));
   }
@@ -85,10 +83,9 @@ public abstract class SSHTestBase {
     startShell(new SSHTermOptions().setPort(5000).setHost("localhost").setKeyPairOptions(
       new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
       setAuthOptions(new JsonObject()
-        .put("provider", "shiro")
-        .put("type", "PROPERTIES")
+        .put("provider", "properties")
         .put("config",
-          new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
+          new JsonObject().put("file", "test-auth.properties"))));
   }
 
   protected Session createSession(String username, String password, boolean interactive) throws Exception {
@@ -181,10 +178,9 @@ public abstract class SSHTestBase {
     try {
       startShell(new SSHTermOptions().setPort(5000).setHost("localhost").
         setAuthOptions(new JsonObject()
-          .put("provider", "shiro")
-          .put("type", "PROPERTIES")
+          .put("provider", "properties")
           .put("config",
-            new JsonObject().put("properties_path", "classpath:test-auth.properties")))
+            new JsonObject().put("file", "test-auth.properties")))
       );
     } catch (ExecutionException e) {
       assertTrue(e.getCause() instanceof VertxException);

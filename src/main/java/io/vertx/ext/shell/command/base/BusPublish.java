@@ -52,7 +52,7 @@ import java.util.regex.Pattern;
 @Summary("Publish a message to the event bus")
 public class BusPublish extends AnnotatedCommand {
 
-  private Pattern HEADER_PATTERN = Pattern.compile("(.*):(.*)");
+  private final Pattern HEADER_PATTERN = Pattern.compile("(.*):(.*)");
 
   protected boolean verbose;
   protected String address;

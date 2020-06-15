@@ -56,9 +56,7 @@ public class HttpTermServerSubRouterTest extends HttpTermServerBase {
       .subRouter(subRouter);
     httpServer.requestHandler(router);
     Async async = context.async();
-    httpServer.listen(8080, context.asyncAssertSuccess(s -> {
-      async.complete();
-    }));
+    httpServer.listen(8080, context.asyncAssertSuccess(s -> async.complete()));
     async.awaitSuccess(20000);
     return TermServer.createHttpTermServer(vertx, subRouter, options);
   }

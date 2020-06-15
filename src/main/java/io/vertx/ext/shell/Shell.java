@@ -33,7 +33,6 @@
 package io.vertx.ext.shell;
 
 import io.vertx.codegen.annotations.CacheReturn;
-import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.session.Session;

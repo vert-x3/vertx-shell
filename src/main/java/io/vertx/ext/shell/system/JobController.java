@@ -34,7 +34,6 @@ package io.vertx.ext.shell.system;
 
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
-import io.vertx.ext.shell.system.impl.JobControllerImpl;
 
 import java.util.Set;
 

@@ -48,7 +48,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TestCommands implements CommandResolver {
 
   private final Vertx vertx;
-  private Map<String, Command> commands = new ConcurrentHashMap<>();
+  private final Map<String, Command> commands = new ConcurrentHashMap<>();
 
   public TestCommands(Vertx vertx) {
     this.vertx = vertx;

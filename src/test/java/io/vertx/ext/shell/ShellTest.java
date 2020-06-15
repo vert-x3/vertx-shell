@@ -32,11 +32,9 @@
 
 package io.vertx.ext.shell;
 
-import io.termd.core.readline.Keymap;
 import io.termd.core.tty.TtyEvent;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Context;
-import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
@@ -54,12 +52,9 @@ import io.vertx.ext.shell.system.impl.JobImpl;
 import io.vertx.ext.shell.term.impl.TermImpl;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
-import io.vertx.ext.unit.junit.Repeat;
-import io.vertx.ext.unit.junit.RepeatRule;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -135,9 +130,7 @@ public class ShellTest {
     ShellImpl shell = createShell(conn);
     shell.init().readline();
     Async async = context.async();
-    commands.add(CommandBuilder.command("_not_consumed").processHandler(process -> {
-      async.complete();
-    }));
+    commands.add(CommandBuilder.command("_not_consumed").processHandler(process -> async.complete()));
     commands.add(CommandBuilder.command("read").processHandler(process -> {
       StringBuilder buffer = new StringBuilder();
       process.stdinHandler(line -> {
@@ -197,9 +190,7 @@ public class ShellTest {
     Async latch2 = context.async();
     Async latch3 = context.async();
     commands.add(CommandBuilder.command("read").processHandler(process -> {
-      process.stdinHandler(line -> {
-        context.fail("Should not process line " + line);
-      });
+      process.stdinHandler(line -> context.fail("Should not process line " + line));
       process.suspendHandler(v -> {
         try {
           process.write("");
@@ -214,13 +205,9 @@ public class ShellTest {
       // Do nothing, this command is used to escape from readline and make
       // sure that the read data is not sent to the stopped command
       latch3.countDown();
-      process.suspendHandler(v -> {
-        process.end(0);
-      });
+      process.suspendHandler(v -> process.end(0));
     }));
-    commands.add(CommandBuilder.command("end").processHandler(process -> {
-      done.complete();
-    }));
+    commands.add(CommandBuilder.command("end").processHandler(process -> done.complete()));
     conn.read("read\r");
     latch1.awaitSuccess(10000);
     conn.sendEvent(TtyEvent.SUSP);
@@ -311,9 +298,7 @@ public class ShellTest {
         latch3.awaitSuccess(2000);
         process.write("resumed");
       });
-      process.stdinHandler(txt -> {
-        context.fail();
-      });
+      process.stdinHandler(txt -> context.fail());
       latch1.countDown();
     }));
     conn.read("foo\r");
@@ -344,16 +329,12 @@ public class ShellTest {
         context.assertEquals(1, latch2.count());
         latch2.countDown();
       });
-      process.resumeHandler(v -> {
-        context.assertFalse(process.isForeground());
-      });
+      process.resumeHandler(v -> context.assertFalse(process.isForeground()));
       process.foregroundHandler(v -> {
         context.assertTrue(process.isForeground());
         latch3.countDown();
       });
-      process.stdinHandler(line -> {
-        async.complete();
-      });
+      process.stdinHandler(line -> async.complete());
       latch1.countDown();
     }));
     conn.read("foo\r");
@@ -417,9 +398,7 @@ public class ShellTest {
           async.complete();
         }));
       }
-    }, testContext.asyncAssertSuccess(id -> {
-      conn.read("foo\r");
-    }));
+    }, testContext.asyncAssertSuccess(id -> conn.read("foo\r")));
   }
 
   public void testExit(TestContext context) throws Exception {
@@ -493,12 +472,8 @@ public class ShellTest {
     Async async = context.async();
     commands.add(CommandBuilder.command("foo").processHandler(process -> {
       context.assertEquals(null, conn.checkWritten(prompt1+"foo\n"));
-      process.stdinHandler(cp -> {
-        context.fail();
-      });
-      process.endHandler(v -> {
-        async.complete();
-        }
+      process.stdinHandler(cp -> context.fail());
+      process.endHandler(v -> async.complete()
       );
       process.end();
 
@@ -506,12 +481,8 @@ public class ShellTest {
     Async async2 = context.async();
     commands.add(CommandBuilder.command("bar2").processHandler(process -> {
       context.assertEquals(null, conn.checkWritten(prompt2+"bar2\n"));
-      process.stdinHandler(cp -> {
-        context.fail();
-      });
-      process.endHandler(v -> {
-          async2.complete();
-        }
+      process.stdinHandler(cp -> context.fail());
+      process.endHandler(v -> async2.complete()
       );
       process.end();
     }));
@@ -528,12 +499,8 @@ public class ShellTest {
     commands.add(CommandBuilder.
         command("foo").
         processHandler(process -> {
-          process.stdinHandler(cp -> {
-            context.fail();
-          });
-          process.endHandler(v -> {
-                barLatch.complete();
-              }
+          process.stdinHandler(cp -> context.fail());
+          process.endHandler(v -> barLatch.complete()
           );
           process.end();
         }).
@@ -541,9 +508,7 @@ public class ShellTest {
     commands.add(CommandBuilder.
         command("bar").
         processHandler(process -> {
-          process.endHandler(v -> {
-            endLatch.complete();
-          });
+          process.endHandler(v -> endLatch.complete());
           process.end();
         }).
         build(vertx));
@@ -629,9 +594,7 @@ public class ShellTest {
           cmdContext.set(Vertx.currentContext());
           process.suspendHandler(v -> fooSusp.complete());
           process.resumeHandler(v -> fooResumed.complete());
-          process.endHandler(v -> {
-            endLatch.complete();
-          });
+          process.endHandler(v -> endLatch.complete());
           fooRunning.complete();
         }));
     TestTtyConnection conn = new TestTtyConnection(vertx);
@@ -643,9 +606,7 @@ public class ShellTest {
     fooSusp.awaitSuccess(2000);
     conn.read("bg\r");
     fooResumed.awaitSuccess(2000);
-    cmdContext.get().runOnContext(v -> {
-      cmdProcess.get().end();
-    });
+    cmdContext.get().runOnContext(v -> cmdProcess.get().end());
     long now = System.currentTimeMillis();
     while (shell.jobController().jobs().size() > 0) {
       context.assertTrue(System.currentTimeMillis() - now < 2000);

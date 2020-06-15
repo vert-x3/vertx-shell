@@ -157,9 +157,7 @@ class FsHelper {
           matches.put(common, false);
         } else {
           LinkedHashMap<String, Boolean> tmp = new LinkedHashMap<>();
-          matches.forEach((suffix, terminal) -> {
-            tmp.put(prefix + suffix, terminal);
-          });
+          matches.forEach((suffix, terminal) -> tmp.put(prefix + suffix, terminal));
           matches = tmp;
         }
       }

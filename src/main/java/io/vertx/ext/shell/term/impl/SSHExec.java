@@ -75,9 +75,7 @@ public class SSHExec implements Tty {
   @Override
   public Tty stdinHandler(Handler<String> handler) {
     if (handler != null) {
-      conn.setStdinHandler(codePoints -> {
-        handler.handle(io.termd.core.util.Helper.fromCodePoints(codePoints));
-      });
+      conn.setStdinHandler(codePoints -> handler.handle(io.termd.core.util.Helper.fromCodePoints(codePoints)));
     } else {
       conn.setStdinHandler(null);
     }
@@ -93,9 +91,7 @@ public class SSHExec implements Tty {
   @Override
   public Tty resizehandler(Handler<Void> handler) {
     if (handler != null) {
-      conn.setSizeHandler(resize -> {
-        handler.handle(null);
-      });
+      conn.setSizeHandler(resize -> handler.handle(null));
     } else {
       conn.setSizeHandler(null);
     }

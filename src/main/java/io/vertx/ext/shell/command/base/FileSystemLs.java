@@ -120,9 +120,7 @@ public class FileSystemLs extends AnnotatedCommand {
               }
 
               // Here we go
-              entries.map(formatter).forEach(file -> {
-                process.write(file + "\n");
-              });
+              entries.map(formatter).forEach(file -> process.write(file + "\n"));
             } else {
               process.write("ls:" + ar.cause().getMessage() + "\n");
             }
