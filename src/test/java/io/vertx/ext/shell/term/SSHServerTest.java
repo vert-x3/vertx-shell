@@ -44,6 +44,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.User;
+import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.auth.authorization.Authorization;
 import io.vertx.ext.shell.SSHTestBase;
 import io.vertx.ext.shell.term.impl.SSHExec;
@@ -70,7 +71,7 @@ public class SSHServerTest extends SSHTestBase {
   TermServer server;
   Handler<Term> termHandler;
   Handler<SSHExec> execHandler;
-  AuthProvider authProvider;
+  AuthenticationProvider authProvider;
 
   @Override
   public void before() {
@@ -110,12 +111,10 @@ public class SSHServerTest extends SSHTestBase {
   @Test
   public void testRead(TestContext context) throws Exception {
     Async async = context.async();
-    termHandler = term -> {
-      term.stdinHandler(s -> {
-        context.assertEquals("hello", s);
-        async.complete();
-      });
-    };
+    termHandler = term -> term.stdinHandler(s -> {
+      context.assertEquals("hello", s);
+      async.complete();
+    });
     startShell();
     Session session = createSession("paulo", "secret", false);
     session.connect();
@@ -130,9 +129,7 @@ public class SSHServerTest extends SSHTestBase {
 
   @Test
   public void testWrite() throws Exception {
-    termHandler = term -> {
-      term.write("hello");
-    };
+    termHandler = term -> term.write("hello");
     startShell();
     Session session = createSession("paulo", "secret", false);
     session.connect();
@@ -158,13 +155,11 @@ public class SSHServerTest extends SSHTestBase {
   @Test
   public void testResizeHandler(TestContext context) throws Exception {
     Async async = context.async();
-    termHandler = term -> {
-      term.resizehandler(v -> {
-        context.assertEquals(20, term.width());
-        context.assertEquals(10, term.height());
-        async.complete();
-      });
-    };
+    termHandler = term -> term.resizehandler(v -> {
+      context.assertEquals(20, term.width());
+      context.assertEquals(10, term.height());
+      async.complete();
+    });
     startShell();
     Session session = createSession("paulo", "secret", false);
     session.connect();
@@ -180,11 +175,7 @@ public class SSHServerTest extends SSHTestBase {
   @Test
   public void testCloseHandler(TestContext context) throws Exception {
     Async async = context.async();
-    termHandler = term -> {
-      term.closeHandler(v -> {
-        async.complete();
-      });
-    };
+    termHandler = term -> term.closeHandler(v -> async.complete());
     startShell();
     Session session = createSession("paulo", "secret", false);
     session.connect();
@@ -196,11 +187,7 @@ public class SSHServerTest extends SSHTestBase {
 
   @Test
   public void testClose(TestContext context) throws Exception {
-    testClose(context, term -> {
-      vertx.setTimer(10, id -> {
-        term.close();
-      });
-    });
+    testClose(context, term -> vertx.setTimer(10, id -> term.close()));
   }
 
   @Test
@@ -211,9 +198,7 @@ public class SSHServerTest extends SSHTestBase {
   private void testClose(TestContext context, Consumer<Term> closer) throws Exception {
     Async async = context.async();
     termHandler = term -> {
-      term.closeHandler(v -> {
-        async.complete();
-      });
+      term.closeHandler(v -> async.complete());
       closer.accept(term);
     };
     startShell();
@@ -255,18 +240,21 @@ public class SSHServerTest extends SSHTestBase {
           }
 
           @Override
+          @Deprecated
           public User isAuthorized(String authority, Handler<AsyncResult<Boolean>> resultHandler) {
             resultHandler.handle(Future.succeededFuture(true));
             return this;
           }
 
           @Override
+          @Deprecated
           public User isAuthorized(Authorization authority, Handler<AsyncResult<Boolean>> resultHandler) {
             resultHandler.handle(Future.succeededFuture(true));
             return this;
           }
 
           @Override
+          @Deprecated
           public User clearCache() {
             return this;
           }
@@ -277,6 +265,7 @@ public class SSHServerTest extends SSHTestBase {
           }
 
           @Override
+          @Deprecated
           public void setAuthProvider(AuthProvider authProvider) {
           }
         }));
@@ -304,9 +293,7 @@ public class SSHServerTest extends SSHTestBase {
       count.incrementAndGet();
       resultHandler.handle(Future.failedFuture("not authenticated"));
     };
-    termHandler = term -> {
-      context.fail();
-    };
+    termHandler = term -> context.fail();
     startShell(new SSHTermOptions().setPort(5000).setHost("localhost").setKeyPairOptions(
       new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")));
     Session session = createSession("paulo", "anothersecret", false);
@@ -328,10 +315,9 @@ public class SSHServerTest extends SSHTestBase {
     startShell(new SSHTermOptions().setDefaultCharset("ISO_8859_1").setPort(5000).setHost("localhost").setKeyPairOptions(
       new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
       setAuthOptions(new JsonObject()
-        .put("provider", "shiro")
-        .put("type", "PROPERTIES")
+        .put("provider", "properties")
         .put("config",
-          new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
+          new JsonObject().put("file", "test-auth.properties"))));
     Session session = createSession("paulo", "secret", false);
     session.connect();
     Channel channel = session.openChannel("shell");
@@ -349,10 +335,9 @@ public class SSHServerTest extends SSHTestBase {
     startShell(new SSHTermOptions().setIntputrc(f.getAbsolutePath()).setPort(5000).setHost("localhost").setKeyPairOptions(
       new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
       setAuthOptions(new JsonObject()
-        .put("provider", "shiro")
-        .put("type", "PROPERTIES")
+        .put("provider", "properties")
         .put("config",
-          new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
+          new JsonObject().put("file", "test-auth.properties"))));
     Session session = createSession("paulo", "secret", false);
     session.connect();
     Channel channel = session.openChannel("shell");

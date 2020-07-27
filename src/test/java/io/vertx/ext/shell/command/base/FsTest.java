@@ -149,12 +149,8 @@ public class FsTest {
     context.assertTrue(new File(bar11).mkdir());
     context.assertTrue(new File(bar22).mkdir());
     context.assertTrue(new File(bar33).createNewFile());
-    helper.complete(vertx, null, "foo11", context.asyncAssertSuccess(result -> {
-      context.assertEquals(Collections.singletonMap("/", false), result);
-    }));
-    helper.complete(vertx, null, "foo1", context.asyncAssertSuccess(result -> {
-      context.assertEquals(Collections.singletonMap("1/", false), result);
-    }));
+    helper.complete(vertx, null, "foo11", context.asyncAssertSuccess(result -> context.assertEquals(Collections.singletonMap("/", false), result)));
+    helper.complete(vertx, null, "foo1", context.asyncAssertSuccess(result -> context.assertEquals(Collections.singletonMap("1/", false), result)));
     helper.complete(vertx, null, "foo", context.asyncAssertSuccess(result -> {
       Map<String, Boolean> expected = new HashMap<>();
       expected.put("foo11/", false);

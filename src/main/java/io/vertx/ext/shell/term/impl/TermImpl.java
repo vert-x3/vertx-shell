@@ -56,7 +56,7 @@ public class TermImpl implements Term {
 
   private static final List<io.termd.core.readline.Function> readlineFunctions = Helper.loadServices(Thread.currentThread().getContextClassLoader(), io.termd.core.readline.Function.class);
 
-  private Vertx vertx;
+  private final Vertx vertx;
   private final Readline readline;
   private final Consumer<int[]> echoHandler;
   final TtyConnection conn;
@@ -215,9 +215,7 @@ public class TermImpl implements Term {
   void checkPending() {
     if (stdinHandler != null && readline.hasEvent()) {
       stdinHandler.handle(Helper.fromCodePoints(readline.nextEvent().buffer().array()));
-      vertx.runOnContext(v -> {
-        checkPending();
-      });
+      vertx.runOnContext(v -> checkPending());
     }
   }
 
@@ -227,9 +225,7 @@ public class TermImpl implements Term {
       throw new IllegalStateException();
     }
     if (handler != null) {
-      conn.setSizeHandler(resize -> {
-        handler.handle(null);
-      });
+      conn.setSizeHandler(resize -> handler.handle(null));
     } else {
       conn.setSizeHandler(null);
     }
@@ -243,9 +239,7 @@ public class TermImpl implements Term {
     }
     stdinHandler = handler;
     if (handler != null) {
-      conn.setStdinHandler(codePoints -> {
-        handler.handle(Helper.fromCodePoints(codePoints));
-      });
+      conn.setStdinHandler(codePoints -> handler.handle(Helper.fromCodePoints(codePoints)));
       checkPending();
     } else {
       conn.setStdinHandler(echoHandler);

@@ -36,17 +36,13 @@ import io.netty.handler.codec.http.QueryStringDecoder;
 import io.termd.core.http.HttpTtyConnection;
 import io.termd.core.util.Vector;
 import io.vertx.core.Context;
-import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.web.handler.sockjs.SockJSSocket;
 
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -74,16 +70,12 @@ public class SockJSTtyConnection extends HttpTtyConnection {
 
   @Override
   public void execute(Runnable runnable) {
-    context.runOnContext(v -> {
-      runnable.run();
-    });
+    context.runOnContext(v -> runnable.run());
   }
 
   @Override
   public void schedule(Runnable runnable, long l, TimeUnit timeUnit) {
-    context.owner().setTimer(timeUnit.toMillis(l), id -> {
-      runnable.run();
-    });
+    context.owner().setTimer(timeUnit.toMillis(l), id -> runnable.run());
   }
 
   private static Vector getInitialSize(SockJSSocket socket) {

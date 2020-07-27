@@ -45,7 +45,7 @@ import java.util.function.Function;
  */
 public enum ObjectType {
 
-  STRING(Function.<String>identity()),
+  STRING(Function.identity()),
   BYTE(Byte::parseByte),
   SHORT(Short::parseShort),
   INTEGER(Integer::parseInt),

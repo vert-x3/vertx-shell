@@ -33,10 +33,8 @@ package io.vertx.ext.shell.impl.auth;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.auth.AuthProvider;
-import io.vertx.ext.auth.mongo.MongoAuth;
-import io.vertx.ext.auth.mongo.MongoAuthOptions;
-import io.vertx.ext.auth.mongo.MongoAuthOptionsConverter;
+import io.vertx.ext.auth.authentication.AuthenticationProvider;
+import io.vertx.ext.auth.mongo.*;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.shell.impl.ShellAuth;
 
@@ -48,22 +46,22 @@ public class MongoShellAuth implements ShellAuth {
   }
 
   @Override
-  public AuthProvider create(Vertx vertx, JsonObject config) {
-    final MongoAuthOptions options = new MongoAuthOptions(config);
+  public AuthenticationProvider create(Vertx vertx, JsonObject config) {
     MongoClient client;
-    if (options.getShared()) {
-      String datasourceName = options.getDatasourceName();
+    // move one key down
+    config = config.getJsonObject("config");
+
+    if (config.getBoolean("shared", false)) {
+      String datasourceName = config.getString("datasourceName");
       if (datasourceName != null) {
-        client = MongoClient.createShared(vertx, options.getConfig(), datasourceName);
+        client = MongoClient.createShared(vertx, config, datasourceName);
       } else {
-        client = MongoClient.createShared(vertx, options.getConfig());
+        client = MongoClient.createShared(vertx, config);
       }
     } else {
-      client = MongoClient.create(vertx, options.getConfig());
+      client = MongoClient.create(vertx, config);
     }
 
-    JsonObject authConfig = new JsonObject();
-    MongoAuthOptionsConverter.toJson(options, authConfig);
-    return MongoAuth.create(client, authConfig);
+    return MongoAuthentication.create(client, new MongoAuthenticationOptions(config));
   }
 }

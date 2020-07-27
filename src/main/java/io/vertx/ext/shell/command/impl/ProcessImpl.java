@@ -271,9 +271,7 @@ public class ProcessImpl implements Process {
       }
     });
     if (terminatedHandler != null && statusUpdate == ExecStatus.TERMINATED) {
-      processContext.runOnContext(v -> {
-        terminatedHandler.handle(exitCodeUpdate);
-      });
+      processContext.runOnContext(v -> terminatedHandler.handle(exitCodeUpdate));
     }
   }
 
@@ -385,9 +383,7 @@ public class ProcessImpl implements Process {
             throw new IllegalStateException("Cannot write to standard output when " + status().name().toLowerCase());
           }
         }
-        processContext.runOnContext(v -> {
-          tty.write(data);
-        });
+        processContext.runOnContext(v -> tty.write(data));
         return this;
       }
 

@@ -40,7 +40,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetServer;
-import io.vertx.ext.auth.AuthProvider;
+import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.Term;
@@ -66,7 +66,7 @@ public class TelnetTermServer implements TermServer {
   }
 
   @Override
-  public TermServer authProvider(AuthProvider provider) {
+  public TermServer authProvider(AuthenticationProvider provider) {
     return this;
   }
 
@@ -88,9 +88,7 @@ public class TelnetTermServer implements TermServer {
       }
       Keymap keymap = new Keymap(new ByteArrayInputStream(inputrc.getBytes()));
       TermConnectionHandler connectionHandler = new TermConnectionHandler(vertx, keymap, termHandler);
-      server.connectHandler(new TelnetSocketHandler(vertx, () -> {
-        return new TelnetTtyConnection(options.getInBinary(), options.getOutBinary(), charset, connectionHandler::handle);
-      }));
+      server.connectHandler(new TelnetSocketHandler(vertx, () -> new TelnetTtyConnection(options.getInBinary(), options.getOutBinary(), charset, connectionHandler::handle)));
       server.listen(ar -> {
         if (ar.succeeded()) {
           listenHandler.handle(Future.succeededFuture());

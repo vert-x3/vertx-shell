@@ -44,6 +44,7 @@ import io.vertx.ext.shell.system.impl.JobControllerImpl;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.term.Term;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -61,7 +62,7 @@ public class ShellImpl implements Shell {
   private final InternalCommandManager commandManager;
   private final Session session = new SessionImpl();
   private final JobControllerImpl jobController;
-  private Term term;
+  private final Term term;
   private String welcome;
   private Function<Session, String> promptFunc = s -> "% ";
 
@@ -156,9 +157,8 @@ public class ShellImpl implements Shell {
   private Job findJob() {
     Job foregroundJob = jobController.foregroundJob();
     return jobController().jobs().
-        stream().
-        filter(job -> job != foregroundJob).sorted((j1, j2) -> ((Long) j1.lastStopped()).compareTo(j2.lastStopped())).
-        findFirst().orElse(null);
+      stream().
+      filter(job -> job != foregroundJob).min(Comparator.comparingLong(Job::lastStopped)).orElse(null);
   }
 
   public void readline() {
@@ -244,9 +244,7 @@ public class ShellImpl implements Shell {
       job.setTty(term);
       job.setSession(session);
       job.run();
-    }, completion -> {
-      commandManager.complete(completion);
-    });
+    }, commandManager::complete);
   }
 
   public void close() {

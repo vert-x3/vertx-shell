@@ -296,7 +296,7 @@ public class BusTest {
     vertx.eventBus().consumer("the_address", handler);
     Shell shell = server.createShell();
     Pty pty = Pty.create();
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     pty.stdoutHandler(result::append);
     Job job = shell.createJob(cmd).setTty(pty.slave());
     job.statusUpdateHandler(status -> {
@@ -327,16 +327,14 @@ public class BusTest {
   public void testBusTailVerbose(TestContext context) {
     String expected = "the_address:\nReply address: .*\nHeader header_name:\\[header_value\\]\nthe_message\n";
     Pattern p = Pattern.compile(expected);
-    assertBusTail(context, "bus-tail --verbose the_address", () -> {
-      assertSend(context, "the_address", "the_message", new DeliveryOptions().setHeaders(MultiMap.caseInsensitiveMultiMap()).addHeader("header_name", "header_value"), 50);
-    }, s -> p.matcher(s).matches());
+    assertBusTail(context, "bus-tail --verbose the_address", () -> assertSend(context, "the_address", "the_message", new DeliveryOptions().setHeaders(MultiMap.caseInsensitiveMultiMap()).addHeader("header_name", "header_value"), 50), s -> p.matcher(s).matches());
   }
 
   private void assertBusTail(TestContext context, String cmd, Runnable send, Predicate<String> check) {
     Async runningLatch = context.async();
     Shell shell = server.createShell();
     Pty pty = Pty.create();
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     pty.stdoutHandler(result::append);
     Job job = shell.createJob(cmd).setTty(pty.slave());
     job.statusUpdateHandler(status -> {
@@ -365,9 +363,7 @@ public class BusTest {
         ReplyException ex = (ReplyException) ar.cause();
         if (ex.failureType() == NO_HANDLERS) {
           // Wait 10 ms to be sure consumer is deployed
-          vertx.setTimer(10, id -> {
-            assertSend(context, address, body, options, times - 1);
-          });
+          vertx.setTimer(10, id -> assertSend(context, address, body, options, times - 1));
         } else {
           context.fail();
         }

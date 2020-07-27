@@ -42,7 +42,7 @@ import java.util.Map;
  */
 public class SessionImpl implements Session {
 
-  private Map<String, Object> data = new HashMap<>();
+  private final Map<String, Object> data = new HashMap<>();
 
   @Override
   public Session put(String key, Object obj) {

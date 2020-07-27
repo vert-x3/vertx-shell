@@ -106,9 +106,7 @@ public class JobImpl implements Job {
       throw new IllegalStateException();
     }
     try {
-      process.resume(foreground, v -> {
-        actualStatus = ExecStatus.RUNNING;
-      });
+      process.resume(foreground, v -> actualStatus = ExecStatus.RUNNING);
     } catch (IllegalStateException ignore) {
     }
     if (foreground) {
@@ -126,9 +124,7 @@ public class JobImpl implements Job {
   @Override
   public Job suspend() {
     try {
-      process.suspend(v -> {
-        actualStatus = ExecStatus.STOPPED;
-      });
+      process.suspend(v -> actualStatus = ExecStatus.STOPPED);
     } catch (IllegalStateException ignore) {
       return this;
     }

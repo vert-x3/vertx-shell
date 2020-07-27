@@ -34,9 +34,8 @@ package io.vertx.ext.shell.impl;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxException;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.auth.AuthProvider;
+import io.vertx.ext.auth.authentication.AuthenticationProvider;
 
-import java.util.Iterator;
 import java.util.ServiceLoader;
 
 /**
@@ -46,20 +45,17 @@ public interface ShellAuth {
 
   String provider();
 
-  AuthProvider create(Vertx vertx, JsonObject config);
+  AuthenticationProvider create(Vertx vertx, JsonObject config);
 
-  static AuthProvider load(Vertx vertx, JsonObject config) {
+  static AuthenticationProvider load(Vertx vertx, JsonObject config) {
     ServiceLoader<ShellAuth> loader = ServiceLoader.load(ShellAuth.class);
 
-    Iterator<ShellAuth> factories = loader.iterator();
-
-    while (factories.hasNext()) {
+    for (ShellAuth shellAuth : loader) {
       try {
         // might fail to start (missing classes for example...
-        ShellAuth auth = factories.next();
-        if (auth != null) {
-          if (auth.provider().equals(config.getString("provider", ""))) {
-            return auth.create(vertx, config);
+        if (shellAuth != null) {
+          if (shellAuth.provider().equals(config.getString("provider", ""))) {
+            return shellAuth.create(vertx, config);
           }
         }
       } catch (RuntimeException e) {

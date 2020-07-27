@@ -105,11 +105,7 @@ public class BusTail extends AnnotatedCommand {
       };
       return local ? eb.localConsumer(address, handler) : eb.consumer(address, handler);
     }).collect(Collectors.toList());
-    process.interruptHandler(done -> {
-      process.end();
-    });
-    process.endHandler(done -> {
-      consumers.forEach(MessageConsumer::unregister);
-    });
+    process.interruptHandler(done -> process.end());
+    process.endHandler(done -> consumers.forEach(MessageConsumer::unregister));
   }
 }

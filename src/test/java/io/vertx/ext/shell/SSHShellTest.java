@@ -45,7 +45,7 @@ import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.auth.mongo.MongoAuth;
+import io.vertx.ext.auth.mongo.MongoUserUtil;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.CommandRegistry;
@@ -58,7 +58,6 @@ import org.junit.Test;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -106,7 +105,7 @@ public class SSHShellTest extends SSHTestBase {
   }
 
   @Test
-  public void testDeployServiceWithShiroAuthOptions(TestContext context) throws Exception {
+  public void testDeployServiceWithPropertiesAuthOptions(TestContext context) throws Exception {
     Async async = context.async();
     vertx.deployVerticle("service:io.vertx.ext.shell", new DeploymentOptions().setConfig(new JsonObject().put("sshOptions",
         new JsonObject().
@@ -115,12 +114,10 @@ public class SSHShellTest extends SSHTestBase {
             put("keyPairOptions", new JsonObject().
                 put("path", "src/test/resources/server-keystore.jks").
                 put("password", "wibble")).
-            put("authOptions", new JsonObject().put("provider", "shiro").put("config",
+            put("authOptions", new JsonObject().put("provider", "properties").put("config",
                 new JsonObject().
-                    put("properties_path", "classpath:test-auth.properties")))))
-        , context.asyncAssertSuccess(v -> {
-      async.complete();
-    }));
+                    put("file", "test-auth.properties")))))
+        , context.asyncAssertSuccess(v -> async.complete()));
     async.awaitSuccess(2000);
     Session session = createSession("paulo", "secret", false);
     session.connect();
@@ -140,9 +137,7 @@ public class SSHShellTest extends SSHTestBase {
   public void testDeployServiceWithJDBCAuthOptions(TestContext context) throws Exception {
     List<String> SQL  = Arrays.asList(
         "create table user (username varchar(255), password varchar(255), password_salt varchar(255) );",
-        "create table user_roles (username varchar(255), role varchar(255));",
-        "create table roles_perms (role VARCHAR(255) NOT NULL, perm VARCHAR(255) NOT NULL);",
-        "insert into user values ('tim', 'EC0D6302E35B7E792DF9DA4A5FE0DB3B90FCAB65A6215215771BF96D498A01DA8234769E1CE8269A105E9112F374FDAB2158E7DA58CDC1348A732351C38E12A0', 'C59EB438D1E24CACA2B1A48BC129348589D49303858E493FBE906A9158B7D5DC');"
+        "insert into user values ('lopus', '$pbkdf2$1drH02tXcgS5ipJIf8v/AlL/qm3CjAgAp7Qt3hyJx/c$/lONU4cTa3ayMRJbHIup47nX/1HhysyzDA0dpoFpsf727LoGH2OZ+SyFCGtv/pIEZK3mQtJv+yjzD+W0quF6xg', NULL);"
     );
     Connection conn = DriverManager.getConnection(config().getString("url"));
     for (String sql : SQL) {
@@ -162,11 +157,9 @@ public class SSHShellTest extends SSHTestBase {
                 new JsonObject()
                     .put("url", "jdbc:hsqldb:mem:test?shutdown=true")
                     .put("driver_class", "org.hsqldb.jdbcDriver")))))
-        , context.asyncAssertSuccess(v -> {
-      async.complete();
-    }));
+        , context.asyncAssertSuccess(v -> async.complete()));
     async.awaitSuccess(2000);
-    Session session = createSession("tim", "sausages", false);
+    Session session = createSession("lopus", "secret", false);
     session.connect();
     Channel channel = session.openChannel("shell");
     channel.connect();
@@ -184,9 +177,9 @@ public class SSHShellTest extends SSHTestBase {
     try {
       JsonObject config = new JsonObject().put("connection_string", "mongodb://localhost:27018");
       MongoClient client = MongoClient.create(vertx, config);
-      MongoAuth auth = MongoAuth.create(client, new JsonObject());
       Async ready = context.async();
-      auth.insertUser("admin", "password", Collections.emptyList(), Collections.emptyList(), context.asyncAssertSuccess(v -> ready.complete()));
+      MongoUserUtil mongoUserUtil = MongoUserUtil.create(client);
+      mongoUserUtil.createUser("admin", "password", context.asyncAssertSuccess(v -> ready.complete()));
       ready.awaitSuccess(2000);
       Async async = context.async();
       vertx.deployVerticle("service:io.vertx.ext.shell", new DeploymentOptions().setConfig(new JsonObject().put("sshOptions",
@@ -199,9 +192,7 @@ public class SSHShellTest extends SSHTestBase {
               put("authOptions", new JsonObject().put("provider", "mongo").put("config",
                   new JsonObject().
                       put("connection_string", "mongodb://localhost:27018")))))
-          , context.asyncAssertSuccess(v -> {
-        async.complete();
-      }));
+          , context.asyncAssertSuccess(v -> async.complete()));
       async.awaitSuccess(2000);
       Session session = createSession("admin", "password", false);
       session.connect();

@@ -39,7 +39,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
-import io.vertx.ext.auth.AuthProvider;
+import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.shell.term.impl.SSHServer;
 import io.vertx.ext.shell.term.impl.TelnetTermServer;
 import io.vertx.ext.shell.term.impl.HttpTermServer;
@@ -158,9 +158,9 @@ public interface TermServer {
    * @return this object
    */
   @Fluent
-  TermServer authProvider(AuthProvider provider);
+  TermServer authProvider(AuthenticationProvider provider);
 
-  /**
+  /**TermServer
    * Bind the term server, the {@link #termHandler(Handler)} must be set before.
    *
    * @return this object

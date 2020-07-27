@@ -34,7 +34,6 @@ package io.vertx.ext.shell;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Context;
-import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.command.CommandBuilder;
@@ -86,9 +85,7 @@ public class ShellServerTest {
 
   @Test
   public void testRun(TestContext context) {
-    commands.add(CommandBuilder.command("foo").processHandler(process -> {
-      process.end(3);
-    }));
+    commands.add(CommandBuilder.command("foo").processHandler(process -> process.end(3)));
     Shell shell = server.createShell();
     Job job = shell.createJob(CliToken.tokenize("foo"));
     Async async = context.async();
@@ -211,18 +208,14 @@ public class ShellServerTest {
   public void testSendEvent(TestContext context) {
     CountDownLatch latch = new CountDownLatch(1);
     commands.add(CommandBuilder.command("foo").processHandler(process -> {
-      process.suspendHandler(v -> {
-        process.end(0);
-      });
+      process.suspendHandler(v -> process.end(0));
       latch.countDown();
     }));
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Async async = context.async();
     Pty pty = Pty.create();
-    job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
-      async.complete();
-    })).run();
+    job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> async.complete())).run();
     try {
       latch.await(10, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
@@ -248,12 +241,8 @@ public class ShellServerTest {
     Pty pty = Pty.create();
     Async async = context.async();
     pty.setSize(20, 10);
-    pty.stdoutHandler(text -> {
-      pty.setSize(25, 15);
-    });
-    job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
-      async.complete();
-    })).run();
+    pty.stdoutHandler(text -> pty.setSize(25, 15));
+    job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> async.complete())).run();
   }
 
   @Test
@@ -329,9 +318,7 @@ public class ShellServerTest {
     Shell shell = server.createShell();
     Job job = shell.createJob("foo");
     Pty pty = Pty.create();
-    job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> {
-      endLatch.countDown();
-    })).run();
+    job.setTty(pty.slave()).statusUpdateHandler(CommandProcessTest.terminateHandler(status -> endLatch.countDown())).run();
     runningLatch.awaitSuccess(10000);
     shell.close();
     endLatch.awaitSuccess(10000);

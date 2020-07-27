@@ -54,12 +54,8 @@ public class ShellServerPromptTest {
     Async async = context.async();
     commands.add(CommandBuilder.command("foo").processHandler(process -> {
       context.assertEquals(null, conn.checkWritten("FOOPROMPTfoo\n"));
-      process.stdinHandler(cp -> {
-        context.fail();
-      });
-      process.endHandler(v -> {
-          async.complete();
-        }
+      process.stdinHandler(cp -> context.fail());
+      process.endHandler(v -> async.complete()
       );
       process.end();
 

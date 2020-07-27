@@ -45,12 +45,12 @@ import io.vertx.core.VertxException;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.impl.ContextInternal;
 import io.vertx.core.impl.VertxInternal;
-import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.core.net.KeyCertOptions;
 import io.vertx.core.net.PfxOptions;
 import io.vertx.core.net.impl.KeyStoreHelper;
-import io.vertx.ext.auth.AuthProvider;
+import io.vertx.ext.auth.authentication.AuthenticationProvider;
+import io.vertx.ext.auth.authentication.UsernamePasswordCredentials;
 import io.vertx.ext.shell.impl.ShellAuth;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.term.TermServer;
@@ -89,7 +89,7 @@ public class SSHServer implements TermServer {
   private SshServer nativeServer;
   private final AtomicInteger status = new AtomicInteger(STATUS_STOPPED);
   private ContextInternal listenContext;
-  private AuthProvider authProvider;
+  private AuthenticationProvider authProvider;
   private Handler<SSHExec> execHandler;
 
   public SSHServer(Vertx vertx, SSHTermOptions options) {
@@ -124,7 +124,7 @@ public class SSHServer implements TermServer {
   }
 
   @Override
-  public TermServer authProvider(AuthProvider provider) {
+  public TermServer authProvider(AuthenticationProvider provider) {
     authProvider = provider;
     return this;
   }
@@ -184,9 +184,7 @@ public class SSHServer implements TermServer {
         nativeServer.setShellFactory(() -> new TtyCommand(defaultCharset, connectionHandler::handle));
         Handler<SSHExec> execHandler = this.execHandler;
         if (execHandler != null) {
-          nativeServer.setCommandFactory(command -> new TtyCommand(defaultCharset, conn -> {
-            execHandler.handle(new SSHExec(command, conn));
-          }));
+          nativeServer.setCommandFactory(command -> new TtyCommand(defaultCharset, conn -> execHandler.handle(new SSHExec(command, conn))));
         }
         nativeServer.setHost(options.getHost());
         nativeServer.setPort(options.getPort());
@@ -201,11 +199,7 @@ public class SSHServer implements TermServer {
 
         nativeServer.setPasswordAuthenticator((username, userpass, session) -> {
           AsyncAuth auth = new AsyncAuth();
-          listenContext.runOnContext(v -> {
-            authProvider.authenticate(new JsonObject().put("username", username).put("password", userpass), ar -> {
-              auth.setAuthed(ar.succeeded());
-            });
-          });
+          listenContext.runOnContext(v -> authProvider.authenticate(new UsernamePasswordCredentials(username, userpass), ar -> auth.setAuthed(ar.succeeded())));
           throw auth;
         });
 
