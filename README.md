@@ -1,6 +1,6 @@
 # Vertx shell
 
-[![Build Status](https://travis-ci.org/vert-x3/vertx-shell.svg?branch=master)](https://travis-ci.org/vert-x3/vertx-shell)
+[![Build Status](https://github.com/vert-x3/vertx-shell/workflows/CI/badge.svg?branch=master)](https://github.com/vert-x3/vertx-shell/actions?query=workflow%3ACI)
 
 ## Documentation
 
