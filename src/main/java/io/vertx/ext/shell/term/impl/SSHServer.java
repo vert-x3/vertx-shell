@@ -44,12 +44,12 @@ import io.vertx.core.Vertx;
 import io.vertx.core.VertxException;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.impl.ContextInternal;
-import io.vertx.core.impl.VertxInternal;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.core.net.KeyCertOptions;
+import io.vertx.core.net.KeyStoreOptionsBase;
+import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.core.net.PfxOptions;
-import io.vertx.core.net.impl.KeyStoreHelper;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.term.TermServer;
@@ -142,11 +142,17 @@ public class SSHServer implements TermServer {
 
       try {
         KeyCertOptions ksOptions = options.getKeyPairOptions();
-        KeyStoreHelper ksHelper = KeyStoreHelper.create((VertxInternal) vertx, ksOptions);
-        if (ksHelper == null) {
+        KeyStore ks;
+        if (ksOptions instanceof KeyStoreOptionsBase) {
+          ks = ((KeyStoreOptionsBase)ksOptions).loadKeyStore(vertx);
+        } else if (ksOptions instanceof PemKeyCertOptions) {
+          ks = ((PemKeyCertOptions)ksOptions).loadKeyStore(vertx);
+        } else {
+          ks = null;
+        }
+        if (ks == null) {
           throw new VertxException("No key pair store configured");
         }
-        KeyStore ks = ksHelper.store();
 
         String kpPassword = "";
         if (ksOptions instanceof JksOptions) {
