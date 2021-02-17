@@ -94,6 +94,7 @@ Set <code>term.js</code> resource to use.
 Set <code>vertxshell.js</code> resource to use.
 +++
 |[[webSocketAllowServerNoContext]]`@webSocketAllowServerNoContext`|`Boolean`|-
+|[[webSocketClosingTimeout]]`@webSocketClosingTimeout`|`Number (int)`|-
 |[[webSocketCompressionLevel]]`@webSocketCompressionLevel`|`Number (int)`|-
 |[[webSocketPreferredClientNoContext]]`@webSocketPreferredClientNoContext`|`Boolean`|-
 |[[webSocketSubProtocols]]`@webSocketSubProtocols`|`Array of String`|-
