@@ -44,6 +44,7 @@ The path of the <i>inputrc</i> config.
 |[[keyStoreOptions]]`@keyStoreOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|-
 |[[logActivity]]`@logActivity`|`Boolean`|-
 |[[maxChunkSize]]`@maxChunkSize`|`Number (int)`|-
+|[[maxFormAttributeSize]]`@maxFormAttributeSize`|`Number (int)`|-
 |[[maxHeaderSize]]`@maxHeaderSize`|`Number (int)`|-
 |[[maxInitialLineLength]]`@maxInitialLineLength`|`Number (int)`|-
 |[[maxWebSocketFrameSize]]`@maxWebSocketFrameSize`|`Number (int)`|-
