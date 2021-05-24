@@ -153,7 +153,7 @@ public class HttpTermServer implements TermServer {
 
   @Override
   public int actualPort() {
-    return -1;
+    return server.actualPort();
   }
 
   @Override
