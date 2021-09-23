@@ -32,13 +32,12 @@
 
 package io.vertx.ext.shell.support;
 
-import io.termd.core.readline.Keymap;
 import io.termd.core.tty.TtyConnection;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.auth.AuthProvider;
+import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.impl.TermImpl;
@@ -70,7 +69,7 @@ public class TestTermServer implements TermServer {
   }
 
   @Override
-  public TermServer authProvider(AuthProvider provider) {
+  public TermServer authenticationProvider(AuthenticationProvider provider) {
     throw new UnsupportedOperationException();
   }
 

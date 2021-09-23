@@ -51,6 +51,7 @@ import io.vertx.core.net.KeyStoreOptionsBase;
 import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.core.net.PfxOptions;
 import io.vertx.ext.auth.AuthProvider;
+import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.shell.impl.ShellAuth;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.term.TermServer;
@@ -89,7 +90,7 @@ public class SSHServer implements TermServer {
   private SshServer nativeServer;
   private final AtomicInteger status = new AtomicInteger(STATUS_STOPPED);
   private ContextInternal listenContext;
-  private AuthProvider authProvider;
+  private AuthenticationProvider authProvider;
   private Handler<SSHExec> execHandler;
 
   public SSHServer(Vertx vertx, SSHTermOptions options) {
@@ -124,7 +125,7 @@ public class SSHServer implements TermServer {
   }
 
   @Override
-  public TermServer authProvider(AuthProvider provider) {
+  public TermServer authenticationProvider(AuthenticationProvider provider) {
     authProvider = provider;
     return this;
   }

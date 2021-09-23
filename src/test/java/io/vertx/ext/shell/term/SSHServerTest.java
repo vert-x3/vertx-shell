@@ -36,15 +36,13 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
-import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.User;
-import io.vertx.ext.auth.authorization.Authorization;
+import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.shell.SSHTestBase;
 import io.vertx.ext.shell.term.impl.SSHExec;
 import io.vertx.ext.shell.term.impl.SSHServer;
@@ -70,7 +68,7 @@ public class SSHServerTest extends SSHTestBase {
   TermServer server;
   Handler<Term> termHandler;
   Handler<SSHExec> execHandler;
-  AuthProvider authProvider;
+  AuthenticationProvider authProvider;
 
   @Override
   public void before() {
@@ -96,7 +94,7 @@ public class SSHServerTest extends SSHTestBase {
     CompletableFuture<Void> fut = new CompletableFuture<>();
     server.termHandler(termHandler);
     ((SSHServer) server).setExecHandler(execHandler);
-    server.authProvider(authProvider);
+    server.authenticationProvider(authProvider);
     server.listen(ar -> {
       if (ar.succeeded()) {
         fut.complete(null);
@@ -248,38 +246,7 @@ public class SSHServerTest extends SSHTestBase {
       String username = authInfo.getString("username");
       String password = authInfo.getString("password");
       if (username.equals("paulo") && password.equals("anothersecret")) {
-        resultHandler.handle(Future.succeededFuture(new User() {
-          @Override
-          public JsonObject attributes() {
-            return new JsonObject();
-          }
-
-          @Override
-          public User isAuthorized(String authority, Handler<AsyncResult<Boolean>> resultHandler) {
-            resultHandler.handle(Future.succeededFuture(true));
-            return this;
-          }
-
-          @Override
-          public User isAuthorized(Authorization authority, Handler<AsyncResult<Boolean>> resultHandler) {
-            resultHandler.handle(Future.succeededFuture(true));
-            return this;
-          }
-
-          @Override
-          public User clearCache() {
-            return this;
-          }
-
-          @Override
-          public JsonObject principal() {
-            return new JsonObject().put("username", username);
-          }
-
-          @Override
-          public void setAuthProvider(AuthProvider authProvider) {
-          }
-        }));
+        resultHandler.handle(Future.succeededFuture(User.create(authInfo)));
       } else {
         resultHandler.handle(Future.failedFuture("not authenticated"));
       }

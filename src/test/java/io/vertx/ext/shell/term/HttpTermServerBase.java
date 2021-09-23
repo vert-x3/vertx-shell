@@ -32,16 +32,13 @@
 
 package io.vertx.ext.shell.term;
 
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.WebSocketConnectOptions;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.User;
-import io.vertx.ext.auth.authorization.Authorization;
+import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -275,50 +272,19 @@ public abstract class HttpTermServerBase {
   @Test
   public void testExternalAuthProvider(TestContext context) throws Exception {
     AtomicInteger count = new AtomicInteger();
-    AuthProvider authProvider = (authInfo, resultHandler) -> {
+    AuthenticationProvider authProvider = (authInfo, resultHandler) -> {
       count.incrementAndGet();
       String username = authInfo.getString("username");
       String password = authInfo.getString("password");
       if (username.equals("paulo") && password.equals("anothersecret")) {
-        resultHandler.handle(Future.succeededFuture(new User() {
-          @Override
-          public JsonObject attributes() {
-            return new JsonObject();
-          }
-
-          @Override
-          public User isAuthorized(String authority, Handler<AsyncResult<Boolean>> resultHandler) {
-            resultHandler.handle(Future.succeededFuture(true));
-            return this;
-          }
-
-          @Override
-          public User isAuthorized(Authorization authority, Handler<AsyncResult<Boolean>> resultHandler) {
-            resultHandler.handle(Future.succeededFuture(true));
-            return this;
-          }
-
-          @Override
-          public User clearCache() {
-            return this;
-          }
-
-          @Override
-          public JsonObject principal() {
-            return new JsonObject().put("username", username);
-          }
-
-          @Override
-          public void setAuthProvider(AuthProvider authProvider) {
-          }
-        }));
+        resultHandler.handle(Future.succeededFuture(User.create(authInfo)));
       } else {
         resultHandler.handle(Future.failedFuture("not authenticated"));
       }
     };
     Async async = context.async(2);
     server = createServer(context, new HttpTermOptions().setPort(8080));
-    server.authProvider(authProvider);
+    server.authenticationProvider(authProvider);
     server.termHandler(term -> {
       context.assertEquals(1, count.get());
       async.countDown();
@@ -338,13 +304,13 @@ public abstract class HttpTermServerBase {
   @Test
   public void testExternalAuthProviderFails(TestContext context) throws Exception {
     AtomicInteger count = new AtomicInteger();
-    AuthProvider authProvider = (authInfo, resultHandler) -> {
+    AuthenticationProvider authProvider = (authInfo, resultHandler) -> {
       count.incrementAndGet();
       resultHandler.handle(Future.failedFuture("not authenticated"));
     };
     Async async = context.async();
     server = createServer(context, new HttpTermOptions().setPort(8080));
-    server.authProvider(authProvider);
+    server.authenticationProvider(authProvider);
     server.termHandler(term -> {
       context.fail();
     });

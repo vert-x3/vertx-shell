@@ -40,6 +40,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.ext.auth.AuthProvider;
+import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.shell.term.impl.SSHServer;
 import io.vertx.ext.shell.term.impl.TelnetTermServer;
 import io.vertx.ext.shell.term.impl.HttpTermServer;
@@ -151,6 +152,7 @@ public interface TermServer {
   TermServer termHandler(Handler<Term> handler);
 
   /**
+   * @deprecated See {@link #authenticationProvider(AuthenticationProvider)}
    * Set an auth provider to use, any provider configured in options will override this provider. This should be used
    * when a custom auth provider should be used.
    *
@@ -158,7 +160,20 @@ public interface TermServer {
    * @return this object
    */
   @Fluent
-  TermServer authProvider(AuthProvider provider);
+  @Deprecated
+  default TermServer authProvider(AuthProvider provider) {
+    return authenticationProvider(provider);
+  }
+
+  /**
+   * Set an auth provider to use, any provider configured in options will override this provider. This should be used
+   * when a custom auth provider should be used.
+   *
+   * @param provider the auth to use
+   * @return this object
+   */
+  @Fluent
+  TermServer authenticationProvider(AuthenticationProvider provider);
 
   /**
    * Bind the term server, the {@link #termHandler(Handler)} must be set before.

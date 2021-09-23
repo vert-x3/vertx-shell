@@ -41,6 +41,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetServer;
 import io.vertx.ext.auth.AuthProvider;
+import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.shell.term.TelnetTermOptions;
 import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.Term;
@@ -66,7 +67,7 @@ public class TelnetTermServer implements TermServer {
   }
 
   @Override
-  public TermServer authProvider(AuthProvider provider) {
+  public TermServer authenticationProvider(AuthenticationProvider provider) {
     return this;
   }
 

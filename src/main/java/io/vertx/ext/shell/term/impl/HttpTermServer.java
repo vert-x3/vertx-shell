@@ -40,6 +40,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServer;
 import io.vertx.ext.auth.AuthProvider;
+import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.shell.impl.ShellAuth;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
@@ -62,7 +63,7 @@ public class HttpTermServer implements TermServer {
   private Handler<Term> termHandler;
   private HttpServer server;
   private Router router;
-  private AuthProvider authProvider;
+  private AuthenticationProvider authProvider;
 
   public HttpTermServer(Vertx vertx, HttpTermOptions options) {
     this(vertx, null, options);
@@ -82,7 +83,7 @@ public class HttpTermServer implements TermServer {
   }
 
   @Override
-  public TermServer authProvider(AuthProvider provider) {
+  public TermServer authenticationProvider(AuthenticationProvider provider) {
     authProvider = provider;
     return this;
   }
