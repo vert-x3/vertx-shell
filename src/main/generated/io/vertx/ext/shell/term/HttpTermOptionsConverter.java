@@ -5,6 +5,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.impl.JsonUtil;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 
 /**
  * Converter and mapper for {@link io.vertx.ext.shell.term.HttpTermOptions}.
@@ -12,6 +13,9 @@ import java.time.format.DateTimeFormatter;
  */
 public class HttpTermOptionsConverter {
 
+
+  private static final Base64.Decoder BASE64_DECODER = JsonUtil.BASE64_DECODER;
+  private static final Base64.Encoder BASE64_ENCODER = JsonUtil.BASE64_ENCODER;
 
   public static void fromJson(Iterable<java.util.Map.Entry<String, Object>> json, HttpTermOptions obj) {
     for (java.util.Map.Entry<String, Object> member : json) {
@@ -33,7 +37,7 @@ public class HttpTermOptionsConverter {
           break;
         case "shellHtmlResource":
           if (member.getValue() instanceof String) {
-            obj.setShellHtmlResource(io.vertx.core.buffer.Buffer.buffer(JsonUtil.BASE64_DECODER.decode((String)member.getValue())));
+            obj.setShellHtmlResource(io.vertx.core.buffer.Buffer.buffer(BASE64_DECODER.decode((String)member.getValue())));
           }
           break;
         case "sockJSHandlerOptions":
@@ -48,12 +52,12 @@ public class HttpTermOptionsConverter {
           break;
         case "termJsResource":
           if (member.getValue() instanceof String) {
-            obj.setTermJsResource(io.vertx.core.buffer.Buffer.buffer(JsonUtil.BASE64_DECODER.decode((String)member.getValue())));
+            obj.setTermJsResource(io.vertx.core.buffer.Buffer.buffer(BASE64_DECODER.decode((String)member.getValue())));
           }
           break;
         case "vertsShellJsResource":
           if (member.getValue() instanceof String) {
-            obj.setVertsShellJsResource(io.vertx.core.buffer.Buffer.buffer(JsonUtil.BASE64_DECODER.decode((String)member.getValue())));
+            obj.setVertsShellJsResource(io.vertx.core.buffer.Buffer.buffer(BASE64_DECODER.decode((String)member.getValue())));
           }
           break;
       }
@@ -75,16 +79,16 @@ public class HttpTermOptionsConverter {
       json.put("intputrc", obj.getIntputrc());
     }
     if (obj.getShellHtmlResource() != null) {
-      json.put("shellHtmlResource", JsonUtil.BASE64_ENCODER.encodeToString(obj.getShellHtmlResource().getBytes()));
+      json.put("shellHtmlResource", BASE64_ENCODER.encodeToString(obj.getShellHtmlResource().getBytes()));
     }
     if (obj.getSockJSPath() != null) {
       json.put("sockJSPath", obj.getSockJSPath());
     }
     if (obj.getTermJsResource() != null) {
-      json.put("termJsResource", JsonUtil.BASE64_ENCODER.encodeToString(obj.getTermJsResource().getBytes()));
+      json.put("termJsResource", BASE64_ENCODER.encodeToString(obj.getTermJsResource().getBytes()));
     }
     if (obj.getVertsShellJsResource() != null) {
-      json.put("vertsShellJsResource", JsonUtil.BASE64_ENCODER.encodeToString(obj.getVertsShellJsResource().getBytes()));
+      json.put("vertsShellJsResource", BASE64_ENCODER.encodeToString(obj.getVertsShellJsResource().getBytes()));
     }
   }
 }
