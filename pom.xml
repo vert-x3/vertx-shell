@@ -29,13 +29,13 @@
       
     <artifactId>vertx-shell</artifactId>
       
-    <version>4.1.6-SNAPSHOT</version>
+    <version>4.1.6</version>
       
     <name>Vert.x Shell</name>
       
     <properties>
             
-        <stack.version>4.1.6-SNAPSHOT</stack.version>
+        <stack.version>4.1.6</stack.version>
             
         <termd.version>1.1.6</termd.version>
             
