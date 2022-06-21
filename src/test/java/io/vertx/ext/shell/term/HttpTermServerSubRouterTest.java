@@ -52,7 +52,8 @@ public class HttpTermServerSubRouterTest extends HttpTermServerBase {
     HttpServer httpServer = vertx.createHttpServer(new HttpServerOptions().setPort(8080));
     Router router = Router.router(vertx);
     Router subRouter = Router.router(vertx);
-    router.mountSubRouter("/sub", subRouter);
+    router.route("/sub/*")
+      .subRouter(subRouter);
     httpServer.requestHandler(router);
     Async async = context.async();
     httpServer.listen(8080, context.asyncAssertSuccess(s -> {

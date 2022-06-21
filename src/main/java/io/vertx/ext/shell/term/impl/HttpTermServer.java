@@ -39,7 +39,6 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServer;
-import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.shell.impl.ShellAuth;
 import io.vertx.ext.shell.term.Term;
@@ -117,9 +116,12 @@ public class HttpTermServer implements TermServer {
         return this;
       }
       Keymap keymap = new Keymap(new ByteArrayInputStream(inputrc.getBytes()));
-      SockJSHandler sockJSHandler = SockJSHandler.create(vertx, options.getSockJSHandlerOptions());
-      sockJSHandler.socketHandler(new SockJSTermHandlerImpl(vertx, charset, keymap).termHandler(termHandler));
-      router.route(options.getSockJSPath()).handler(sockJSHandler);
+      router.route(options.getSockJSPath())
+        .subRouter(
+          SockJSHandler.create(vertx, options.getSockJSHandlerOptions())
+            .socketHandler(
+              new SockJSTermHandlerImpl(vertx, charset, keymap)
+                .termHandler(termHandler)));
     }
 
     if (options.getVertsShellJsResource() != null) {

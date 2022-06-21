@@ -297,7 +297,7 @@ public class ShellExamples {
     ShellServer server = ShellServer.create(vertx); // <1>
 
     Router shellRouter = Router.router(vertx); // <2>
-    router.mountSubRouter("/shell", shellRouter);
+    router.route("/shell/*").subRouter(shellRouter);
     TermServer httpTermServer = TermServer.createHttpTermServer(vertx, router);
 
     TermServer sshTermServer = TermServer.createSSHTermServer(vertx); // <3>
