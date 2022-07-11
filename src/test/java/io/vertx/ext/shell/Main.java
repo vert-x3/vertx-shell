@@ -56,9 +56,7 @@ public class Main {
 
     CommandBuilder echoKeyboardCmd = CommandBuilder.command("echo-keyboard");
     echoKeyboardCmd.processHandler(process -> {
-      process.stdinHandler(line -> {
-        process.write("-> " + line + "\n");
-      });
+      process.stdinHandler(line -> process.write("-> " + line + "\n"));
       process.interruptHandler(v -> process.end());
     });
     mgr.registerCommand(echoKeyboardCmd.build(vertx));
@@ -66,19 +64,13 @@ public class Main {
     CommandBuilder windowCmd = CommandBuilder.command("window");
     windowCmd.processHandler(process -> {
       process.write("[" + process.width() + "," + process.height() + "]\n");
-      process.resizehandler(v -> {
-        process.write("[" + process.width() + "," + process.height() + "]\n");
-      });
-      process.interruptHandler(v -> {
-        process.end();
-      });
+      process.resizehandler(v -> process.write("[" + process.width() + "," + process.height() + "]\n"));
+      process.interruptHandler(v -> process.end());
     });
     mgr.registerCommand(windowCmd.build(vertx));
 
     CommandBuilder charsetTestCmd = CommandBuilder.command("charset-test");
-    charsetTestCmd.processHandler(process -> {
-      process.write("\u20AC").end();
-    });
+    charsetTestCmd.processHandler(process -> process.write("\u20AC").end());
     mgr.registerCommand(charsetTestCmd.build(vertx));
 
     // JS command
@@ -86,9 +78,8 @@ public class Main {
 
     // Expose the shell
     JsonObject authOptions = new JsonObject()
-      .put("provider", "shiro")
-      .put("type", "PROPERTIES")
-      .put("config", new JsonObject().put("properties_path", "file:src/test/resources/test-auth.properties"));
+      .put("provider", "properties")
+      .put("config", new JsonObject().put("file", "file:src/test/resources/test-auth.properties"));
     SSHTermOptions options = new SSHTermOptions().setPort(5001);
     options.setKeyPairOptions(new JksOptions().
       setPath("src/test/resources/server-keystore.jks").

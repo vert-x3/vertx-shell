@@ -71,9 +71,7 @@ public class VertxTelnetTermTest extends TelnetTermTest {
     }
     return () -> {
       CountDownLatch closeLatch = new CountDownLatch(1);
-      vertx.close(done -> {
-        closeLatch.countDown();
-      });
+      vertx.close(done -> closeLatch.countDown());
       try {
         closeLatch.await(10, TimeUnit.SECONDS);
       } catch (InterruptedException e) {

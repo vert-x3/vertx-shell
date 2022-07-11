@@ -32,7 +32,7 @@ keytool -genkey -keyalg RSA -keystore ssh.jks -keysize 2048 -validity 1095 -dnam
 # create the auth config
 echo user.admin=password > auth.properties
 # start the shell
-vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","password":"secret"},"authOptions":{"provider":"shiro","config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:${maven.version}
+vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","password":"secret"},"authOptions":{"provider":"properties","config":{"file":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:${maven.version}
 ----
 
 or
@@ -44,7 +44,7 @@ or
 keytool -genkey -keyalg RSA -keystore keystore.jks -keysize 2048 -validity 1095 -dname CN=localhost -keypass secret -storepass secret
 # create the auth config
 echo user.admin=password > auth.properties
-vertx run -conf '{"httpOptions":{"port":8080,"ssl":true,"keyStoreOptions":{"path":"keystore.jks","password":"secret"},"authOptions":{"provider":""shiro,"config":{"properties_path":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:${maven.version}
+vertx run -conf '{"httpOptions":{"port":8080,"ssl":true,"keyStoreOptions":{"path":"keystore.jks","password":"secret"},"authOptions":{"provider":""properties,"config":{"file":"file:auth.properties"}}}}' maven:io.vertx:vertx-shell:${maven.version}
 ----
 
 You can also deploy this service inside your own verticle:
@@ -58,14 +58,14 @@ or
 
 [source,$lang,subs="+attributes"]
 ----
-{@link examples.ShellExamples#deploySSHServiceWithShiro(io.vertx.core.Vertx)}
+{@link examples.ShellExamples#deploySSHServiceWithProperties(io.vertx.core.Vertx)}
 ----
 
 or
 
 [source,$lang,subs="+attributes"]
 ----
-{@link examples.ShellExamples#deployHttpServiceWithShiro(io.vertx.core.Vertx)}
+{@link examples.ShellExamples#deployHttpServiceWithProperties(io.vertx.core.Vertx)}
 ----
 
 NOTE: when Vert.x Shell is already on your classpath you can use `service:io.vertx.ext.shell` instead
@@ -79,7 +79,7 @@ Starting a shell service available via SSH:
 
 [source,$lang]
 ----
-{@link examples.ShellExamples#runSSHServiceWithShiro(io.vertx.core.Vertx)}
+{@link examples.ShellExamples#runSSHServiceWithProperties(io.vertx.core.Vertx)}
 ----
 
 Starting a shell service available via Telnet:
@@ -106,15 +106,17 @@ Starting a shell service available via HTTP:
 The SSH and HTTP connectors provide both authentication built on top of _vertx-auth_ with the following supported
 providers:
 
-- _shiro_ : provides `.properties` and _LDAP_ backend as seen in the ShellService presentation
-- _jdbc_ : JDBC backend
+- _properties_: provides `.properties` backend
+- _ldap_: provides `LDAP` backend
 - _mongo_ : MongoDB backend
+- _jdbc_ : JDBC backend
+- _shiro_ : (_deprecated_) provides `.properties` and _LDAP_ backend as seen in the ShellService presentation
 
 These options can be created directly using directly corresponding class:
 
-- {@link io.vertx.ext.auth.shiro.ShiroAuthOptions} for Shiro
-- {@link io.vertx.ext.auth.jdbc.JDBCAuthOptions} for JDBC
-- {@link io.vertx.ext.auth.mongo.MongoAuthOptions} for Mongo
+- {@link io.vertx.ext.auth.ldap.LdapAuthenticationOptions} for LDAP
+- {@link io.vertx.ext.auth.jdbc.JDBCAuthenticationOptions} for JDBC
+- {@link io.vertx.ext.auth.mongo.MongoAuthenticationOptions} for Mongo
 
 As for external service configuration in Json, the `authOptions` uses the `provider` property to distinguish:
 
@@ -122,9 +124,9 @@ As for external service configuration in Json, the `authOptions` uses the `provi
 {
   ...
   "authOptions": {
-    "provider":"shiro",
+    "provider":"properties",
     "config": {
-      "properties_path":"file:auth.properties"
+      "file":"file:auth.properties"
     }
   }
   ...
@@ -538,7 +540,7 @@ A {@link io.vertx.ext.shell.term.Term} handler must be set on a term server befo
 handle each term when the user connects.
 
 An {@code Auth*Options} can be set on {@link io.vertx.ext.shell.term.SSHTermOptions} and {@link io.vertx.ext.shell.term.HttpTermOptions}.
-Alternatively, an {@link io.vertx.ext.auth.AuthProvider} can be {@link io.vertx.ext.shell.term.TermServer#authProvider(io.vertx.ext.auth.AuthProvider) set}
+Alternatively, an {@link io.vertx.ext.auth.authentication.AuthenticationProvider} can be {@link io.vertx.ext.shell.term.TermServer#authenticationProvider(io.vertx.ext.auth.authentication.AuthenticationProvider) set}
 directly on the term server before starting it.
 
 === SSH term

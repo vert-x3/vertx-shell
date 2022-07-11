@@ -72,7 +72,7 @@ public class ShellServerImpl implements ShellServer {
   private final List<TermServer> termServers;
   private final long timeoutMillis;
   private final long reaperInterval;
-  private String welcomeMessage;
+  private final String welcomeMessage;
   private boolean closed = true;
   private long timerID = -1;
   private final Map<String, ShellImpl> sessions;

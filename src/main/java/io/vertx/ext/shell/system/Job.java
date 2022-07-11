@@ -39,8 +39,6 @@ import io.vertx.core.Handler;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.term.Tty;
 
-import java.util.List;
-
 /**
  * A job executed in a {@link JobController}, grouping one or several process.<p/>
  *

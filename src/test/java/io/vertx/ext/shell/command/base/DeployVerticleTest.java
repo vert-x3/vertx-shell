@@ -113,7 +113,7 @@ public class DeployVerticleTest {
     Async async = context.async();
     Shell shell = server.createShell();
     Pty pty = Pty.create();
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     pty.stdoutHandler(result::append);
     Job job = shell.createJob(cmd)
       .setTty(pty.slave());

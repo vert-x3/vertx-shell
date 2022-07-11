@@ -34,25 +34,21 @@ package io.vertx.ext.shell.impl.auth;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.authentication.AuthenticationProvider;
-import io.vertx.ext.auth.shiro.ShiroAuth;
-import io.vertx.ext.auth.shiro.ShiroAuthOptions;
+import io.vertx.ext.auth.ldap.LdapAuthentication;
+import io.vertx.ext.auth.ldap.LdapAuthenticationOptions;
 import io.vertx.ext.shell.impl.ShellAuth;
 
-/**
- * @deprecated Use one of {@link PropertiesShellAuth} and {@link LdapShellAuth} are better suited replacements
- * instead.
- */
-@Deprecated
-public class ShiroShellAuth implements ShellAuth {
+public class LdapShellAuth implements ShellAuth {
 
   @Override
   public String provider() {
-    return "shiro";
+    return "ldap";
   }
 
   @Override
   public AuthenticationProvider create(Vertx vertx, JsonObject config) {
-    final ShiroAuthOptions options = new ShiroAuthOptions(config);
-    return ShiroAuth.create(vertx, options);
+    return LdapAuthentication.create(vertx, new LdapAuthenticationOptions(
+      // move one key down
+      config.getJsonObject("config")));
   }
 }

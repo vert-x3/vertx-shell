@@ -72,22 +72,14 @@ public class Sleep extends AnnotatedCommand {
     if (millis > 0) {
       long now = System.currentTimeMillis();
       AtomicLong remaining = new AtomicLong(-1);
-      long id = process.vertx().setTimer(millis, v -> {
-        process.end();
-      });
+      long id = process.vertx().setTimer(millis, v -> process.end());
       process.suspendHandler(v -> {
         vertx.cancelTimer(id);
         remaining.set(millis - (System.currentTimeMillis() - now));
       });
-      process.resumeHandler(v -> {
-        scheduleSleep(process, remaining.get());
-      });
-      process.interruptHandler(v -> {
-        process.end();
-      });
-      process.endHandler(v -> {
-        vertx.cancelTimer(id);
-      });
+      process.resumeHandler(v -> scheduleSleep(process, remaining.get()));
+      process.interruptHandler(v -> process.end());
+      process.endHandler(v -> vertx.cancelTimer(id));
     } else {
       process.end();
     }

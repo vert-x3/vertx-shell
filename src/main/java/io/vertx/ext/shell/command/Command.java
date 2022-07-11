@@ -41,7 +41,7 @@ import io.vertx.core.cli.Option;
 import io.vertx.core.cli.annotations.CLIConfigurator;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
-import io.vertx.ext.shell.command.impl.*;
+import io.vertx.ext.shell.command.impl.ProcessImpl;
 import io.vertx.ext.shell.system.Process;
 
 import java.util.Collections;
@@ -92,7 +92,7 @@ public interface Command {
       public String name() {
         if (overridesName) {
           try {
-            return clazz.newInstance().name();
+            return clazz.getDeclaredConstructor().newInstance().name();
           } catch (Exception ignore) {
             // Use cli.getName() instead
           }
@@ -104,7 +104,7 @@ public interface Command {
       public CLI cli() {
         if (overridesCli) {
           try {
-            return clazz.newInstance().cli();
+            return clazz.getDeclaredConstructor().newInstance().cli();
           } catch (Exception ignore) {
             // Use cli instead
           }
@@ -115,7 +115,7 @@ public interface Command {
       private void process(CommandProcess process) {
         AnnotatedCommand instance;
         try {
-          instance = clazz.newInstance();
+          instance = clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
           process.end();
           return;
@@ -133,7 +133,7 @@ public interface Command {
       public void complete(Completion completion) {
         AnnotatedCommand instance;
         try {
-          instance = clazz.newInstance();
+          instance = clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
           Command.super.complete(completion);
           return;

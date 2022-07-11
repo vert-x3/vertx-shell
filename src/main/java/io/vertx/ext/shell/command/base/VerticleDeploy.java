@@ -53,7 +53,6 @@ public class VerticleDeploy extends AnnotatedCommand {
 
   private String name;
   private String options;
-  private DeploymentOptions deploymentOptions;
 
   @Argument(index = 0, argName = "name")
   @Description("the verticle name")
@@ -74,6 +73,7 @@ public class VerticleDeploy extends AnnotatedCommand {
 
   @Override
   public void process(CommandProcess process) {
+    DeploymentOptions deploymentOptions;
     try {
       deploymentOptions = getDeploymentOptions();
     } catch (RuntimeException e) {

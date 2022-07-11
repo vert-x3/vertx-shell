@@ -33,9 +33,9 @@ package io.vertx.ext.shell.impl.auth;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.auth.AuthProvider;
-import io.vertx.ext.auth.jdbc.JDBCAuth;
-import io.vertx.ext.auth.jdbc.JDBCAuthOptions;
+import io.vertx.ext.auth.authentication.AuthenticationProvider;
+import io.vertx.ext.auth.jdbc.JDBCAuthentication;
+import io.vertx.ext.auth.jdbc.JDBCAuthenticationOptions;
 import io.vertx.ext.jdbc.JDBCClient;
 import io.vertx.ext.shell.impl.ShellAuth;
 
@@ -47,35 +47,21 @@ public class JDBCShellAuth implements ShellAuth {
   }
 
   @Override
-  public AuthProvider create(Vertx vertx, JsonObject config) {
-    final JDBCAuthOptions options = new JDBCAuthOptions(config);
+  public AuthenticationProvider create(Vertx vertx, JsonObject config) {
+
     final JDBCClient client;
 
-    if (options.isShared()) {
-      String datasourceName = options.getDatasourceName();
+    if (config.getBoolean("shared", false)) {
+      String datasourceName = config.getString("datasourceName");
       if (datasourceName != null) {
-        client = JDBCClient.createShared(vertx, options.getConfig(), datasourceName);
+        client = JDBCClient.createShared(vertx, config.getJsonObject("config"), datasourceName);
       } else {
-        client = JDBCClient.createShared(vertx, options.getConfig());
+        client = JDBCClient.createShared(vertx, config.getJsonObject("config"));
       }
     } else {
-      client = JDBCClient.create(vertx, options.getConfig());
+      client = JDBCClient.create(vertx, config.getJsonObject("config"));
     }
 
-    final JDBCAuth auth = JDBCAuth.create(vertx, client);
-
-    if (options.getAuthenticationQuery() != null) {
-      auth.setAuthenticationQuery(options.getAuthenticationQuery());
-    }
-    if (options.getRolesQuery() != null) {
-      auth.setRolesQuery(options.getRolesQuery());
-    }
-    if (options.getPermissionsQuery() != null) {
-      auth.setPermissionsQuery(options.getPermissionsQuery());
-    }
-    if (options.getRolesPrefix() != null) {
-      auth.setRolePrefix(options.getRolesPrefix());
-    }
-    return auth;
+    return JDBCAuthentication.create(client, new JDBCAuthenticationOptions(config));
   }
 }

@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
  */
 public class CommandRegistryImpl implements CommandRegistry {
 
-  private static Map<Vertx, CommandRegistryImpl> registries = new ConcurrentHashMap<>();
+  private static final Map<Vertx, CommandRegistryImpl> registries = new ConcurrentHashMap<>();
 
   public static CommandRegistry get(Vertx vertx) {
     return registries.computeIfAbsent(vertx, v -> new CommandRegistryImpl((VertxInternal) vertx));
