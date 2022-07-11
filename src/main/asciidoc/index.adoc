@@ -540,7 +540,7 @@ A {@link io.vertx.ext.shell.term.Term} handler must be set on a term server befo
 handle each term when the user connects.
 
 An {@code Auth*Options} can be set on {@link io.vertx.ext.shell.term.SSHTermOptions} and {@link io.vertx.ext.shell.term.HttpTermOptions}.
-Alternatively, an {@link io.vertx.ext.auth.authentication.AuthenticationProvider} can be {@link io.vertx.ext.shell.term.TermServer#authProvider(io.vertx.ext.auth.authentication.AuthenticationProvider) set}
+Alternatively, an {@link io.vertx.ext.auth.authentication.AuthenticationProvider} can be {@link io.vertx.ext.shell.term.TermServer#authenticationProvider(io.vertx.ext.auth.authentication.AuthenticationProvider) set}
 directly on the term server before starting it.
 
 === SSH term
