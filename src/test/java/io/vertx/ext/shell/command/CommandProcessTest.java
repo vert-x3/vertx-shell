@@ -97,7 +97,7 @@ public class CommandProcessTest {
     runningLatch.awaitSuccess(5000);
     long now = System.currentTimeMillis();
     while (process.status() != ExecStatus.TERMINATED) {
-      System.out.print(System.currentTimeMillis() - now < 5000);
+      Thread.sleep(5L);
       context.assertTrue(System.currentTimeMillis() - now < 5000);
     }
   }
