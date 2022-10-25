@@ -84,6 +84,7 @@ Configure the SockJS path, the default value is <code>/term/*</code>.
 |[[tcpKeepAlive]]`@tcpKeepAlive`|`Boolean`|-
 |[[tcpNoDelay]]`@tcpNoDelay`|`Boolean`|-
 |[[tcpQuickAck]]`@tcpQuickAck`|`Boolean`|-
+|[[tcpUserTimeout]]`@tcpUserTimeout`|`Number (int)`|-
 |[[termJsResource]]`@termJsResource`|`Buffer`|+++
 Set <code>term.js</code> resource to use.
 +++
@@ -256,6 +257,7 @@ Set the telnet connection to negociate binary data format when sending to the cl
 |[[tcpKeepAlive]]`@tcpKeepAlive`|`Boolean`|-
 |[[tcpNoDelay]]`@tcpNoDelay`|`Boolean`|-
 |[[tcpQuickAck]]`@tcpQuickAck`|`Boolean`|-
+|[[tcpUserTimeout]]`@tcpUserTimeout`|`Number (int)`|-
 |[[trafficClass]]`@trafficClass`|`Number (int)`|-
 |[[trustStoreOptions]]`@trustStoreOptions`|`link:dataobjects.html#JksOptions[JksOptions]`|-
 |[[useAlpn]]`@useAlpn`|`Boolean`|-
