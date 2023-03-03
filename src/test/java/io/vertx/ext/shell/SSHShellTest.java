@@ -104,105 +104,10 @@ public class SSHShellTest extends SSHTestBase {
     fut.get(10, TimeUnit.SECONDS);
   }
 
-  @Test
-  public void testDeployServiceWithPropertiesAuthOptions(TestContext context) throws Exception {
-    Async async = context.async();
-    vertx.deployVerticle("service:io.vertx.ext.shell", new DeploymentOptions().setConfig(new JsonObject().put("sshOptions",
-        new JsonObject().
-            put("host", "localhost").
-            put("port", 5000).
-            put("keyPairOptions", new JsonObject().
-                put("path", "src/test/resources/server-keystore.jks").
-                put("password", "wibble")).
-            put("authOptions", new JsonObject().put("provider", "properties").put("config",
-                new JsonObject().
-                    put("file", "test-auth.properties")))))
-        , context.asyncAssertSuccess(v -> async.complete()));
-    async.awaitSuccess(2000);
-    Session session = createSession("paulo", "secret", false);
-    session.connect();
-    Channel channel = session.openChannel("shell");
-    channel.connect();
-    channel.disconnect();
-    session.disconnect();
-  }
-
   protected static JsonObject config() {
     return new JsonObject()
         .put("url", "jdbc:hsqldb:mem:test?shutdown=true")
         .put("driver_class", "org.hsqldb.jdbcDriver");
-  }
-
-  @Test
-  public void testDeployServiceWithJDBCAuthOptions(TestContext context) throws Exception {
-    List<String> SQL  = Arrays.asList(
-        "create table user (username varchar(255), password varchar(255), password_salt varchar(255) );",
-        "insert into user values ('lopus', '$pbkdf2$1drH02tXcgS5ipJIf8v/AlL/qm3CjAgAp7Qt3hyJx/c$/lONU4cTa3ayMRJbHIup47nX/1HhysyzDA0dpoFpsf727LoGH2OZ+SyFCGtv/pIEZK3mQtJv+yjzD+W0quF6xg', NULL);"
-    );
-    Connection conn = DriverManager.getConnection(config().getString("url"));
-    for (String sql : SQL) {
-      conn.createStatement().execute(sql);
-    }
-    Async async = context.async();
-    vertx.deployVerticle("service:io.vertx.ext.shell", new DeploymentOptions().setConfig(new JsonObject().put("sshOptions",
-        new JsonObject().
-            put("host", "localhost").
-            put("port", 5000).
-            put("keyPairOptions", new JsonObject().
-                put("path", "src/test/resources/server-keystore.jks").
-                put("password", "wibble")).
-            put("authOptions", new JsonObject()
-              .put("provider", "jdbc")
-              .put("config",
-                new JsonObject()
-                    .put("url", "jdbc:hsqldb:mem:test?shutdown=true")
-                    .put("driver_class", "org.hsqldb.jdbcDriver")))))
-        , context.asyncAssertSuccess(v -> async.complete()));
-    async.awaitSuccess(2000);
-    Session session = createSession("lopus", "secret", false);
-    session.connect();
-    Channel channel = session.openChannel("shell");
-    channel.connect();
-    channel.disconnect();
-    session.disconnect();
-  }
-
-  @Test
-  public void testDeployServiceWithMongoAuthOptions(TestContext context) throws Exception {
-    MongodExecutable exe = MongodStarter.getDefaultInstance().prepare(new MongodConfigBuilder().
-      version(Version.Main.V3_4).
-      net(new Net(27018, Network.localhostIsIPv6())).
-      build());
-    exe.start();
-    try {
-      JsonObject config = new JsonObject().put("connection_string", "mongodb://localhost:27018");
-      MongoClient client = MongoClient.create(vertx, config);
-      Async ready = context.async();
-      MongoUserUtil mongoUserUtil = MongoUserUtil.create(client);
-      mongoUserUtil.createUser("admin", "password", context.asyncAssertSuccess(v -> ready.complete()));
-      ready.awaitSuccess(2000);
-      Async async = context.async();
-      vertx.deployVerticle("service:io.vertx.ext.shell", new DeploymentOptions().setConfig(new JsonObject().put("sshOptions",
-          new JsonObject().
-              put("host", "localhost").
-              put("port", 5000).
-              put("keyPairOptions", new JsonObject().
-                  put("path", "src/test/resources/server-keystore.jks").
-                  put("password", "wibble")).
-              put("authOptions", new JsonObject().put("provider", "mongo").put("config",
-                  new JsonObject().
-                      put("connection_string", "mongodb://localhost:27018")))))
-          , context.asyncAssertSuccess(v -> async.complete()));
-      async.awaitSuccess(2000);
-      Session session = createSession("admin", "password", false);
-      session.connect();
-      Channel channel = session.openChannel("shell");
-      channel.connect();
-      channel.disconnect();
-      session.disconnect();
-    } finally {
-      exe.stop();
-    }
   }
 
   @Override

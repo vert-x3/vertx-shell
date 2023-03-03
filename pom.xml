@@ -156,11 +156,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-service-factory</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
       <version>2.3.3</version>
@@ -195,22 +190,6 @@
           </systemPropertyVariables>
           <argLine>-server -Xms128m -Xmx1024m -XX:NewRatio=2</argLine>
         </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>default-jar</id>
-            <phase>process-classes</phase>
-            <configuration>
-              <archive>
-                <manifestEntries>
-                  <Main-Verticle>service:io.vertx.ext.shell</Main-Verticle>
-                </manifestEntries>
-              </archive>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
     <pluginManagement>
