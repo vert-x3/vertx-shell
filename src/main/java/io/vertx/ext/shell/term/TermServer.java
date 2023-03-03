@@ -193,6 +193,7 @@ public interface TermServer {
    * @return this object
    */
   @Fluent
+  @Deprecated
   TermServer listen(Handler<AsyncResult<Void>> listenHandler);
 
   /**
@@ -218,6 +219,7 @@ public interface TermServer {
    *
    * @param completionHandler the handler to be notified when the term server is closed
    */
+  @Deprecated
   void close(Handler<AsyncResult<Void>> completionHandler);
 
 }

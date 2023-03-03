@@ -84,6 +84,7 @@ public interface ShellService {
    *
    * @param startHandler handler for getting notified when service is started
    */
+  @Deprecated
   void start(Handler<AsyncResult<Void>> startHandler);
 
   /**
@@ -105,6 +106,7 @@ public interface ShellService {
    *
    * @param stopHandler handler for getting notified when service is stopped
    */
+  @Deprecated
   void stop(Handler<AsyncResult<Void>> stopHandler);
 
 }

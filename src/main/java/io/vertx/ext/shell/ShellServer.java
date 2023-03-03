@@ -130,6 +130,7 @@ public interface ShellServer {
    * @param listenHandler handler for getting notified when service is started
    */
   @Fluent
+  @Deprecated
   ShellServer listen(Handler<AsyncResult<Void>> listenHandler);
 
   /**
@@ -146,6 +147,7 @@ public interface ShellServer {
    *
    * @param completionHandler handler for getting notified when service is stopped
    */
+  @Deprecated
   void close(Handler<AsyncResult<Void>> completionHandler);
 
 

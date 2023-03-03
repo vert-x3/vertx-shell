@@ -29,7 +29,7 @@
  * You may elect to redistribute this code under either of these licenses.
  *
  */
-@ModuleGen(name = "vertx-shell", groupPackage = "io.vertx")
+@ModuleGen(name = "vertx-shell", groupPackage = "io.vertx", checkCallbackDeprecation = true)
 package io.vertx.ext.shell;
 
 import io.vertx.codegen.annotations.ModuleGen;

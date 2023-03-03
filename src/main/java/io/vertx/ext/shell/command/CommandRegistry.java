@@ -104,6 +104,7 @@ public interface CommandRegistry extends CommandResolver {
    * @return a reference to this, so the API can be used fluently
    */
   @Fluent
+  @Deprecated
   CommandRegistry registerCommand(Command command, Handler<AsyncResult<Command>> completionHandler);
 
   /**
@@ -119,6 +120,7 @@ public interface CommandRegistry extends CommandResolver {
    * @return a reference to this, so the API can be used fluently
    */
   @Fluent
+  @Deprecated
   CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<List<Command>>> completionHandler);
 
   /**
@@ -134,6 +136,7 @@ public interface CommandRegistry extends CommandResolver {
    * @return a reference to this, so the API can be used fluently
    */
   @Fluent
+  @Deprecated
   CommandRegistry unregisterCommand(String commandName, Handler<AsyncResult<Void>> completionHandler);
 
 }
