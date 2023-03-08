@@ -44,12 +44,13 @@ public class ShellVerticle extends AbstractVerticle {
   public void start(Promise<Void> startFuture) throws Exception {
     ShellServiceOptions options = new ShellServiceOptions(context.config());
     ShellService service = ShellService.create(vertx, options);
-    service.start(ar -> {
-      if (ar.succeeded()) {
-        startFuture.complete();
-      } else {
-        startFuture.fail(ar.cause());
-      }
-    });
+    service.start()
+      .onComplete(ar -> {
+        if (ar.succeeded()) {
+          startFuture.complete();
+        } else {
+          startFuture.fail(ar.cause());
+        }
+      });
   }
 }

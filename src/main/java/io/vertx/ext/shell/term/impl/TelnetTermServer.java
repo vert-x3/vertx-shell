@@ -40,11 +40,10 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetServer;
-import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.shell.term.TelnetTermOptions;
-import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.Term;
+import io.vertx.ext.shell.term.TermServer;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
@@ -92,13 +91,14 @@ public class TelnetTermServer implements TermServer {
       server.connectHandler(new TelnetSocketHandler(vertx, () -> {
         return new TelnetTtyConnection(options.getInBinary(), options.getOutBinary(), charset, connectionHandler::handle);
       }));
-      server.listen(ar -> {
-        if (ar.succeeded()) {
-          listenHandler.handle(Future.succeededFuture());
-        } else {
-          listenHandler.handle(Future.failedFuture(ar.cause()));
-        }
-      });
+      server.listen()
+        .onComplete(ar -> {
+          if (ar.succeeded()) {
+            listenHandler.handle(Future.succeededFuture());
+          } else {
+            listenHandler.handle(Future.failedFuture(ar.cause()));
+          }
+        });
     } else {
       listenHandler.handle(Future.failedFuture("Already started"));
     }
@@ -107,7 +107,8 @@ public class TelnetTermServer implements TermServer {
 
   public void close(Handler<AsyncResult<Void>> completionHandler) {
     if (server != null) {
-      server.close(completionHandler);
+      server.close()
+        .onComplete(completionHandler);
       server = null;
     } else {
       completionHandler.handle(Future.failedFuture("No started"));

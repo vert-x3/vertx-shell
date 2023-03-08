@@ -41,9 +41,9 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServer;
 import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.shell.impl.ShellAuth;
+import io.vertx.ext.shell.term.HttpTermOptions;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
-import io.vertx.ext.shell.term.HttpTermOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.AuthenticationHandler;
 import io.vertx.ext.web.handler.BasicAuthHandler;
@@ -137,15 +137,16 @@ public class HttpTermServer implements TermServer {
     if (createServer) {
       server = vertx.createHttpServer(options);
       server.requestHandler(router);
-      server.listen(ar -> {
-        if (listenHandler != null) {
-          if (ar.succeeded()) {
-            listenHandler.handle(Future.succeededFuture());
-          } else {
-            listenHandler.handle(Future.failedFuture(ar.cause()));
+      server.listen()
+        .onComplete(ar -> {
+          if (listenHandler != null) {
+            if (ar.succeeded()) {
+              listenHandler.handle(Future.succeededFuture());
+            } else {
+              listenHandler.handle(Future.failedFuture(ar.cause()));
+            }
           }
-        }
-      });
+        });
     } else {
       if (listenHandler != null) {
         listenHandler.handle(Future.succeededFuture());
@@ -162,7 +163,8 @@ public class HttpTermServer implements TermServer {
   @Override
   public void close(Handler<AsyncResult<Void>> completionHandler) {
     if (server != null) {
-      server.close(completionHandler);
+      server.close()
+        .onComplete(completionHandler);
       server = null;
     } else {
       completionHandler.handle(Future.failedFuture("Not started"));

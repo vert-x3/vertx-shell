@@ -66,7 +66,8 @@ public class CommandProcessTest {
 
   @After
   public void after(TestContext context) {
-    vertx.close(context.asyncAssertSuccess());
+    vertx.close()
+      .onComplete(context.asyncAssertSuccess());
   }
 
   private Process createProcessInContext(Context context, Command command) throws Exception {

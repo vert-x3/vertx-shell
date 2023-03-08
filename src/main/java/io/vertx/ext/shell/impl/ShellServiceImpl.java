@@ -131,11 +131,13 @@ public class ShellServiceImpl implements ShellService {
       server.registerTermServer(new HttpTermServer(vertx, webOptions));
     }
     resolvers.forEach(server::registerCommandResolver);
-    server.listen(startHandler);
+    server.listen()
+      .onComplete(startHandler);
   }
 
   @Override
   public void stop(Handler<AsyncResult<Void>> stopHandler) {
-    server.close(stopHandler);
+    server.close()
+      .onComplete(stopHandler);
   }
 }

@@ -76,12 +76,15 @@ public class BusTest {
   @Before
   public void before(TestContext context) throws Exception {
     vertx = Vertx.vertx();
-    server = ShellServer.create(vertx).registerCommandResolver(new BaseCommandPack(vertx)).listen(context.asyncAssertSuccess());
+    server = ShellServer.create(vertx).registerCommandResolver(new BaseCommandPack(vertx));
+    server.listen()
+      .onComplete(context.asyncAssertSuccess());
   }
 
   @After
   public void after(TestContext context) {
-    vertx.close(context.asyncAssertSuccess());
+    vertx.close()
+      .onComplete(context.asyncAssertSuccess());
   }
 
   @Test
@@ -178,7 +181,7 @@ public class BusTest {
   public void testBusSendByte(TestContext context) {
     Async consumerAsync = context.async();
     assertBusSend(context, "bus-send --type BYTE the_address 123", msg -> {
-      context.assertEquals((byte)123, msg.body());
+      context.assertEquals((byte) 123, msg.body());
       consumerAsync.complete();
     });
   }
@@ -187,7 +190,7 @@ public class BusTest {
   public void testBusSendShort(TestContext context) {
     Async consumerAsync = context.async();
     assertBusSend(context, "bus-send --type SHORT the_address 1234", msg -> {
-      context.assertEquals((short)1234, msg.body());
+      context.assertEquals((short) 1234, msg.body());
       consumerAsync.complete();
     });
   }
@@ -268,7 +271,7 @@ public class BusTest {
   public void testBusSendHex(TestContext context) {
     Async consumerAsync = context.async();
     assertBusSend(context, "bus-send --type HEX the_address 001FFF", msg -> {
-      context.assertEquals(Buffer.buffer(new byte[]{0,31,-1}), msg.body());
+      context.assertEquals(Buffer.buffer(new byte[]{0, 31, -1}), msg.body());
       consumerAsync.complete();
     });
   }
@@ -276,8 +279,8 @@ public class BusTest {
   @Test
   public void testBusSendBase64(TestContext context) {
     Async consumerAsync = context.async();
-    assertBusSend(context, "bus-send --type BASE64 the_address " + new String(Base64.getEncoder().encode(new byte[]{0,31,-1})), msg -> {
-      context.assertEquals(Buffer.buffer(new byte[]{0,31,-1}), msg.body());
+    assertBusSend(context, "bus-send --type BASE64 the_address " + new String(Base64.getEncoder().encode(new byte[]{0, 31, -1})), msg -> {
+      context.assertEquals(Buffer.buffer(new byte[]{0, 31, -1}), msg.body());
       consumerAsync.complete();
     });
   }
@@ -358,16 +361,17 @@ public class BusTest {
 
   private void assertSend(TestContext context, String address, Object body, DeliveryOptions options, int times) {
     context.assertTrue(times > 0, "Could not send message " + body + " to address " + address);
-    vertx.eventBus().request(address, body, options, ar -> {
-      if (ar.failed()) {
-        ReplyException ex = (ReplyException) ar.cause();
-        if (ex.failureType() == NO_HANDLERS) {
-          // Wait 10 ms to be sure consumer is deployed
-          vertx.setTimer(10, id -> assertSend(context, address, body, options, times - 1));
-        } else {
-          context.fail();
+    vertx.eventBus().request(address, body, options)
+      .onComplete(ar -> {
+        if (ar.failed()) {
+          ReplyException ex = (ReplyException) ar.cause();
+          if (ex.failureType() == NO_HANDLERS) {
+            // Wait 10 ms to be sure consumer is deployed
+            vertx.setTimer(10, id -> assertSend(context, address, body, options, times - 1));
+          } else {
+            context.fail();
+          }
         }
-      }
-    });
+      });
   }
 }

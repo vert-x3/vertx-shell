@@ -40,14 +40,14 @@ import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.CommandProcess;
 import io.vertx.ext.shell.command.base.Sleep;
+import io.vertx.ext.shell.impl.ShellImpl;
 import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.session.impl.SessionImpl;
 import io.vertx.ext.shell.support.TestCommands;
-import io.vertx.ext.shell.system.impl.InternalCommandManager;
-import io.vertx.ext.shell.system.Job;
-import io.vertx.ext.shell.system.ExecStatus;
-import io.vertx.ext.shell.impl.ShellImpl;
 import io.vertx.ext.shell.support.TestTtyConnection;
+import io.vertx.ext.shell.system.ExecStatus;
+import io.vertx.ext.shell.system.Job;
+import io.vertx.ext.shell.system.impl.InternalCommandManager;
 import io.vertx.ext.shell.system.impl.JobImpl;
 import io.vertx.ext.shell.term.impl.TermImpl;
 import io.vertx.ext.unit.Async;
@@ -85,7 +85,8 @@ public class ShellTest {
 
   @After
   public void after(TestContext context) {
-    vertx.close(context.asyncAssertSuccess());
+    vertx.close()
+      .onComplete(context.asyncAssertSuccess());
   }
 
   private ShellImpl createShell(TestTtyConnection conn) {
@@ -381,24 +382,25 @@ public class ShellTest {
     shell.init().readline();
     Async async = testContext.async();
     vertx.deployVerticle(new AbstractVerticle() {
-      @Override
-      public void start() {
-        commands.add(CommandBuilder.command("foo").processHandler(process -> {
-          testContext.assertEquals(null, conn.checkWritten("% foo\n"));
-          conn.read("\u0007");
-          testContext.assertNull(conn.checkWritten("^G"));
-          conn.read("A");
-          testContext.assertNull(conn.checkWritten("A"));
-          conn.read("\r");
-          testContext.assertNull(conn.checkWritten("\n"));
-          conn.read("\003");
-          testContext.assertNull(conn.checkWritten("^C"));
-          conn.read("\004");
-          testContext.assertNull(conn.checkWritten("^D"));
-          async.complete();
-        }));
-      }
-    }, testContext.asyncAssertSuccess(id -> conn.read("foo\r")));
+        @Override
+        public void start() {
+          commands.add(CommandBuilder.command("foo").processHandler(process -> {
+            testContext.assertEquals(null, conn.checkWritten("% foo\n"));
+            conn.read("\u0007");
+            testContext.assertNull(conn.checkWritten("^G"));
+            conn.read("A");
+            testContext.assertNull(conn.checkWritten("A"));
+            conn.read("\r");
+            testContext.assertNull(conn.checkWritten("\n"));
+            conn.read("\003");
+            testContext.assertNull(conn.checkWritten("^C"));
+            conn.read("\004");
+            testContext.assertNull(conn.checkWritten("^D"));
+            async.complete();
+          }));
+        }
+      })
+      .onComplete(testContext.asyncAssertSuccess(id -> conn.read("foo\r")));
   }
 
   public void testExit(TestContext context) throws Exception {
@@ -446,32 +448,33 @@ public class ShellTest {
   public void testPromptException(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = createShell(conn);
-    Function<Session,String> dynamicPrompt = x ->  {
+    Function<Session, String> dynamicPrompt = x -> {
       System.out.println("Before");
       if (context != null) {
         throw new IllegalArgumentException("BAD_PROMPT");
       }
       System.out.println("After");
       return "OK";
-      };
+    };
     shell.setPrompt(dynamicPrompt);
     shell.init().readline();
     conn.assertWritten("% ");
   }
+
   @Test
   public void testPrompt(TestContext context) throws Exception {
     TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = createShell(conn);
-    SessionImpl session = (SessionImpl)shell.session();
-    Function<Session,String> dynamicPrompt = x -> x.get("CURRENT_PROMPT");
+    SessionImpl session = (SessionImpl) shell.session();
+    Function<Session, String> dynamicPrompt = x -> x.get("CURRENT_PROMPT");
     String prompt1 = "PROMPT1";
     String prompt2 = "PROMPT2";
     shell.setPrompt(dynamicPrompt);
-    session.put("CURRENT_PROMPT",prompt1);
+    session.put("CURRENT_PROMPT", prompt1);
     shell.init().readline();
     Async async = context.async();
     commands.add(CommandBuilder.command("foo").processHandler(process -> {
-      context.assertEquals(null, conn.checkWritten(prompt1+"foo\n"));
+      context.assertEquals(null, conn.checkWritten(prompt1 + "foo\n"));
       process.stdinHandler(cp -> context.fail());
       process.endHandler(v -> async.complete()
       );
@@ -480,14 +483,14 @@ public class ShellTest {
     }));
     Async async2 = context.async();
     commands.add(CommandBuilder.command("bar2").processHandler(process -> {
-      context.assertEquals(null, conn.checkWritten(prompt2+"bar2\n"));
+      context.assertEquals(null, conn.checkWritten(prompt2 + "bar2\n"));
       process.stdinHandler(cp -> context.fail());
       process.endHandler(v -> async2.complete()
       );
       process.end();
     }));
     conn.read("foo\r");
-    session.put("CURRENT_PROMPT",prompt2);
+    session.put("CURRENT_PROMPT", prompt2);
     async.awaitSuccess(5000);
     conn.read("bar2\n");
   }
@@ -497,21 +500,21 @@ public class ShellTest {
     Async barLatch = context.async();
     Async endLatch = context.async();
     commands.add(CommandBuilder.
-        command("foo").
-        processHandler(process -> {
-          process.stdinHandler(cp -> context.fail());
-          process.endHandler(v -> barLatch.complete()
-          );
-          process.end();
-        }).
-        build(vertx));
+      command("foo").
+      processHandler(process -> {
+        process.stdinHandler(cp -> context.fail());
+        process.endHandler(v -> barLatch.complete()
+        );
+        process.end();
+      }).
+      build(vertx));
     commands.add(CommandBuilder.
-        command("bar").
-        processHandler(process -> {
-          process.endHandler(v -> endLatch.complete());
-          process.end();
-        }).
-        build(vertx));
+      command("bar").
+      processHandler(process -> {
+        process.endHandler(v -> endLatch.complete());
+        process.end();
+      }).
+      build(vertx));
     TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = createShell(conn);
     shell.init().readline();
@@ -527,15 +530,15 @@ public class ShellTest {
     Async fooResumed = context.async();
     Async readLatch = context.async();
     commands.add(
-        CommandBuilder.command("foo").processHandler(process -> {
-          process.suspendHandler(v -> fooSusp.complete());
-          process.resumeHandler(v -> fooResumed.complete());
-          process.stdinHandler(line -> {
-            context.assertEquals("foo_msg", line);
-            readLatch.complete();
-          });
-          fooRunning.complete();
-        }));
+      CommandBuilder.command("foo").processHandler(process -> {
+        process.suspendHandler(v -> fooSusp.complete());
+        process.resumeHandler(v -> fooResumed.complete());
+        process.stdinHandler(line -> {
+          context.assertEquals("foo_msg", line);
+          readLatch.complete();
+        });
+        fooRunning.complete();
+      }));
     TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = createShell(conn);
     shell.init().readline();
@@ -556,16 +559,16 @@ public class ShellTest {
     Async fooToForeground = context.async();
     Async readLatch = context.async();
     commands.add(
-        CommandBuilder.command("foo").processHandler(process -> {
-          process.suspendHandler(v -> fooSusp.complete());
-          process.resumeHandler(v -> fooResumed.complete());
-          process.foregroundHandler(v -> fooToForeground.complete());
-          process.stdinHandler(line -> {
-            context.assertEquals("foo_msg", line);
-            readLatch.complete();
-          });
-          fooRunning.complete();
-        }));
+      CommandBuilder.command("foo").processHandler(process -> {
+        process.suspendHandler(v -> fooSusp.complete());
+        process.resumeHandler(v -> fooResumed.complete());
+        process.foregroundHandler(v -> fooToForeground.complete());
+        process.stdinHandler(line -> {
+          context.assertEquals("foo_msg", line);
+          readLatch.complete();
+        });
+        fooRunning.complete();
+      }));
     TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = createShell(conn);
     shell.init().readline();
@@ -589,14 +592,14 @@ public class ShellTest {
     AtomicReference<CommandProcess> cmdProcess = new AtomicReference<>();
     AtomicReference<Context> cmdContext = new AtomicReference<>();
     commands.add(
-        CommandBuilder.command("foo").processHandler(process -> {
-          cmdProcess.set(process);
-          cmdContext.set(Vertx.currentContext());
-          process.suspendHandler(v -> fooSusp.complete());
-          process.resumeHandler(v -> fooResumed.complete());
-          process.endHandler(v -> endLatch.complete());
-          fooRunning.complete();
-        }));
+      CommandBuilder.command("foo").processHandler(process -> {
+        cmdProcess.set(process);
+        cmdContext.set(Vertx.currentContext());
+        process.suspendHandler(v -> fooSusp.complete());
+        process.resumeHandler(v -> fooResumed.complete());
+        process.endHandler(v -> endLatch.complete());
+        fooRunning.complete();
+      }));
     TestTtyConnection conn = new TestTtyConnection(vertx);
     ShellImpl shell = createShell(conn);
     shell.init().readline();

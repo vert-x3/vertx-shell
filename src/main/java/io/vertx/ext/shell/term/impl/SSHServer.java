@@ -37,25 +37,16 @@ import io.termd.core.ssh.TtyCommand;
 import io.termd.core.ssh.netty.AsyncAuth;
 import io.termd.core.ssh.netty.AsyncUserAuthServiceFactory;
 import io.termd.core.ssh.netty.NettyIoServiceFactoryFactory;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
-import io.vertx.core.VertxException;
+import io.vertx.core.*;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.impl.ContextInternal;
-import io.vertx.core.json.JsonObject;
-import io.vertx.core.net.JksOptions;
-import io.vertx.core.net.KeyCertOptions;
-import io.vertx.core.net.KeyStoreOptionsBase;
-import io.vertx.core.net.PemKeyCertOptions;
-import io.vertx.core.net.PfxOptions;
-import io.vertx.ext.auth.AuthProvider;
+import io.vertx.core.net.*;
 import io.vertx.ext.auth.authentication.AuthenticationProvider;
+import io.vertx.ext.auth.authentication.UsernamePasswordCredentials;
 import io.vertx.ext.shell.impl.ShellAuth;
 import io.vertx.ext.shell.term.SSHTermOptions;
-import io.vertx.ext.shell.term.TermServer;
 import io.vertx.ext.shell.term.Term;
+import io.vertx.ext.shell.term.TermServer;
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.apache.sshd.server.SshServer;
@@ -63,11 +54,7 @@ import org.apache.sshd.server.session.ServerConnectionServiceFactory;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -146,9 +133,9 @@ public class SSHServer implements TermServer {
         KeyCertOptions ksOptions = options.getKeyPairOptions();
         KeyStore ks;
         if (ksOptions instanceof KeyStoreOptionsBase) {
-          ks = ((KeyStoreOptionsBase)ksOptions).loadKeyStore(vertx);
+          ks = ((KeyStoreOptionsBase) ksOptions).loadKeyStore(vertx);
         } else if (ksOptions instanceof PemKeyCertOptions) {
-          ks = ((PemKeyCertOptions)ksOptions).loadKeyStore(vertx);
+          ks = ((PemKeyCertOptions) ksOptions).loadKeyStore(vertx);
         } else {
           ks = null;
         }
@@ -208,11 +195,10 @@ public class SSHServer implements TermServer {
 
         nativeServer.setPasswordAuthenticator((username, userpass, session) -> {
           AsyncAuth auth = new AsyncAuth();
-          listenContext.runOnContext(v -> {
-            authProvider.authenticate(new JsonObject().put("username", username).put("password", userpass), ar -> {
-              auth.setAuthed(ar.succeeded());
-            });
-          });
+          listenContext.runOnContext(v ->
+            authProvider.authenticate(new UsernamePasswordCredentials(username, userpass))
+              .onSuccess(user -> auth.setAuthed(true))
+              .onFailure(err -> auth.setAuthed(false)));
           throw auth;
         });
 
@@ -238,7 +224,7 @@ public class SSHServer implements TermServer {
       completionHandler.handle(Future.failedFuture("Invalid state:" + status.get()));
       return;
     }
-    vertx.executeBlocking(fut-> {
+    vertx.executeBlocking(fut -> {
       try {
         SshServer server = this.nativeServer;
         this.nativeServer = null;

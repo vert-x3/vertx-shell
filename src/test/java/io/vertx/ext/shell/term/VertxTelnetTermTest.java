@@ -59,7 +59,8 @@ public class VertxTelnetTermTest extends TelnetTermTest {
     Vertx vertx= Vertx.vertx();
     NetServer server = vertx.createNetServer().connectHandler(new TelnetSocketHandler(vertx, handlerFactory));
     BlockingQueue<AsyncResult<NetServer>> latch = new ArrayBlockingQueue<>(1);
-    server.listen(4000, "localhost", latch::add);
+    server.listen(4000, "localhost")
+      .onComplete(latch::add);
     AsyncResult<NetServer> result;
     try {
       result = latch.poll(2, TimeUnit.SECONDS);
@@ -71,7 +72,8 @@ public class VertxTelnetTermTest extends TelnetTermTest {
     }
     return () -> {
       CountDownLatch closeLatch = new CountDownLatch(1);
-      vertx.close(done -> closeLatch.countDown());
+      vertx.close()
+        .onComplete(done -> closeLatch.countDown());
       try {
         closeLatch.await(10, TimeUnit.SECONDS);
       } catch (InterruptedException e) {

@@ -74,13 +74,16 @@ public class ShellServerTest {
     commands = new TestCommands(vertx);
     server.
         registerCommandResolver(CommandResolver.baseCommands(vertx)).
-        registerCommandResolver(commands).
-        listen(context.asyncAssertSuccess());
+        registerCommandResolver(commands);
+    server.
+        listen()
+      .onComplete(context.asyncAssertSuccess());
   }
 
   @After
   public void after(TestContext context) {
-    vertx.close(context.asyncAssertSuccess());
+    vertx.close()
+      .onComplete(context.asyncAssertSuccess());
   }
 
   @Test

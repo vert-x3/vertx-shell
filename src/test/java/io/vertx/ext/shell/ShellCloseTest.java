@@ -70,7 +70,8 @@ public class ShellCloseTest {
 
   @After
   public void after(TestContext context) {
-    vertx.close(context.asyncAssertSuccess());
+    vertx.close()
+      .onComplete(context.asyncAssertSuccess());
     shellServer = null;
   }
 
@@ -81,8 +82,10 @@ public class ShellCloseTest {
     Async latch = context.async();
     shellServer = ShellServer.create(vertx, new ShellServerOptions().setSessionTimeout(sessionTimeout).setReaperInterval(reaperInterval)).
         registerTermServer(termServer).
-        registerCommandResolver(registry).
-        listen(context.asyncAssertSuccess(v -> latch.complete()));
+        registerCommandResolver(registry);
+    shellServer.
+        listen()
+      .onComplete(context.asyncAssertSuccess(v -> latch.complete()));
     latch.awaitSuccess(20000);
   }
 
@@ -116,7 +119,8 @@ public class ShellCloseTest {
   public void testCloseShellServer(TestContext context) throws Exception {
     testClose(context, conn -> {
       Async async = context.async();
-      shellServer.close(context.asyncAssertSuccess(v -> async.complete()));
+      shellServer.close()
+        .onComplete(context.asyncAssertSuccess(v -> async.complete()));
       async.awaitSuccess(20000);
     });
   }
@@ -166,7 +170,8 @@ public class ShellCloseTest {
     processStarted.awaitSuccess(20000);
     end.get().run();
     processEnding.awaitSuccess(20000);
-    shellServer.close(context.asyncAssertSuccess(v -> closed.complete()
+    shellServer.close()
+      .onComplete(context.asyncAssertSuccess(v -> closed.complete()
     ));
     processEnd.complete();
   }

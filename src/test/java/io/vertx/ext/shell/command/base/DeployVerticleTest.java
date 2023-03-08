@@ -41,12 +41,15 @@ public class DeployVerticleTest {
     ctx = new AtomicReference<>(null);
     vertx = Vertx.vertx();
     server = ShellServer.create(vertx)
-      .registerCommandResolver(new BaseCommandPack(vertx)).listen(context.asyncAssertSuccess());
+      .registerCommandResolver(new BaseCommandPack(vertx));
+    server.listen()
+      .onComplete(context.asyncAssertSuccess());
   }
 
   @After
   public void after(TestContext context) {
-    vertx.close(context.asyncAssertSuccess());
+    vertx.close()
+      .onComplete(context.asyncAssertSuccess());
   }
 
   @Test

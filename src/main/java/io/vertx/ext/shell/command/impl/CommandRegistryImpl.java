@@ -32,23 +32,13 @@
 
 package io.vertx.ext.shell.command.impl;
 
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Closeable;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.Promise;
-import io.vertx.core.Vertx;
+import io.vertx.core.*;
 import io.vertx.core.impl.VertxInternal;
 import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandRegistry;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -139,37 +129,38 @@ public class CommandRegistryImpl implements CommandRegistry {
     }
     vertx.deployVerticle(new AbstractVerticle() {
 
-      @Override
-      public void start() throws Exception {
-        Map<String, CommandRegistration> newReg = new HashMap<>();
-        for (Command command : commands) {
-          String name = command.name();
-          if (commandMap.containsKey(name)) {
-            throw new Exception("Command " + name + " already registered");
+        @Override
+        public void start() throws Exception {
+          Map<String, CommandRegistration> newReg = new HashMap<>();
+          for (Command command : commands) {
+            String name = command.name();
+            if (commandMap.containsKey(name)) {
+              throw new Exception("Command " + name + " already registered");
+            }
+            CommandRegistration registration = new CommandRegistration(command, deploymentID());
+            newReg.put(name, registration);
           }
-          CommandRegistration registration = new CommandRegistration(command, deploymentID());
-          newReg.put(name, registration);
+          commandMap.putAll(newReg);
         }
-        commandMap.putAll(newReg);
-      }
 
-      @Override
-      public void stop() throws Exception {
-        String deploymentId = deploymentID();
-        commandMap.values().removeIf(reg -> deploymentId.equals(reg.deploymendID));
-      }
-    }, ar -> {
-      if (ar.succeeded()) {
-        List<Command> regs = commandMap.values().
+        @Override
+        public void stop() throws Exception {
+          String deploymentId = deploymentID();
+          commandMap.values().removeIf(reg -> deploymentId.equals(reg.deploymendID));
+        }
+      })
+      .onComplete(ar -> {
+        if (ar.succeeded()) {
+          List<Command> regs = commandMap.values().
             stream().
             filter(reg -> ar.result().equals(reg.deploymendID)).
             map(reg -> reg.command).
             collect(Collectors.toList());
-        doneHandler.handle(Future.succeededFuture(regs));
-      } else {
-        doneHandler.handle(Future.failedFuture(ar.cause()));
-      }
-    });
+          doneHandler.handle(Future.succeededFuture(regs));
+        } else {
+          doneHandler.handle(Future.failedFuture(ar.cause()));
+        }
+      });
     return this;
   }
 
@@ -191,7 +182,8 @@ public class CommandRegistryImpl implements CommandRegistry {
       if (deploymendID != null) {
         if (commandMap.values().stream().noneMatch(reg -> deploymendID.equals(reg.deploymendID))) {
           if (completionHandler != null) {
-            vertx.undeploy(deploymendID, completionHandler);
+            vertx.undeploy(deploymendID)
+              .onComplete(completionHandler);
           }
           return this;
         }
