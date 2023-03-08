@@ -185,7 +185,8 @@ public class ShellServerImpl implements ShellServer {
         });
       }
       termServer.termHandler(this::handleTerm);
-      termServer.listen(handler);
+      termServer.listen()
+        .onComplete(handler);
     });
     return this;
   }
@@ -253,7 +254,7 @@ public class ShellServerImpl implements ShellServer {
         }
       };
       toClose.forEach(ShellImpl::close);
-      toStop.forEach(termServer -> termServer.close(handler));
+      toStop.forEach(termServer -> termServer.close().onComplete(handler));
       sessionsClosed.future().onComplete(handler);
     }
   }

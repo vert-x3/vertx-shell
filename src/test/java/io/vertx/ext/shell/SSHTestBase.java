@@ -73,7 +73,8 @@ public abstract class SSHTestBase {
   public void after() throws Exception {
     CountDownLatch latch = new CountDownLatch(1);
     Handler<AsyncResult<Void>> handler = ar -> latch.countDown();
-    vertx.close(handler);
+    vertx.close()
+      .onComplete(handler);
     assertTrue(latch.await(10, TimeUnit.SECONDS));
   }
 

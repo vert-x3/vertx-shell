@@ -33,12 +33,10 @@
 package io.vertx.ext.shell.command;
 
 import io.vertx.core.Vertx;
-import io.vertx.ext.shell.command.CommandBuilder;
-import io.vertx.ext.shell.command.CommandRegistry;
-import io.vertx.ext.shell.system.impl.InternalCommandManager;
-import io.vertx.ext.shell.session.Session;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
+import io.vertx.ext.shell.session.Session;
+import io.vertx.ext.shell.system.impl.InternalCommandManager;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.RunTestOnContext;
@@ -70,13 +68,14 @@ public class CompletionTest {
     registry = CommandRegistry.getShared(rule.vertx());
     registry.registerCommand(CommandBuilder.command("foo").processHandler(proc -> {
     }).completionHandler(
-        completion -> completion.complete("completed_by_foo", false)
+      completion -> completion.complete("completed_by_foo", false)
     ).build(rule.vertx()), context.asyncAssertSuccess(v1 -> registry.registerCommand(CommandBuilder.command("bar").processHandler(proc -> {
     }).build(rule.vertx()), context.asyncAssertSuccess(v2 -> registry.registerCommand(CommandBuilder.command("baz").processHandler(proc -> {
-      }).build(rule.vertx()), context.asyncAssertSuccess(v3 -> registry.registerCommand(CommandBuilder.command("err").processHandler(proc -> {
-        }).completionHandler(completion -> {
-          throw new RuntimeException("expected");
-        }).build(rule.vertx()), context.asyncAssertSuccess())))))));
+    }).build(rule.vertx()), context.asyncAssertSuccess(v3 -> registry.registerCommand(CommandBuilder.command("err").processHandler(proc -> {
+      }).completionHandler(completion -> {
+        throw new RuntimeException("expected");
+      }).build(rule.vertx()))
+      .onComplete(context.asyncAssertSuccess())))))));
     mgr = new InternalCommandManager(registry);
   }
 
@@ -195,30 +194,37 @@ public class CompletionTest {
   class TestCompletion implements Completion {
     final TestContext context;
     final String line;
+
     public TestCompletion(TestContext context, String line) {
       this.line = line;
       this.context = context;
     }
+
     @Override
     public Vertx vertx() {
       return rule.vertx();
     }
+
     @Override
     public Session session() {
       return null;
     }
+
     @Override
     public String rawLine() {
       return line;
     }
+
     @Override
     public List<CliToken> lineTokens() {
       return CliToken.tokenize(line);
     }
+
     @Override
     public void complete(List<String> candidates) {
       context.fail();
     }
+
     @Override
     public void complete(String value, boolean terminal) {
       context.fail();

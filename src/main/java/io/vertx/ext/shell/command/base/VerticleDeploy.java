@@ -84,16 +84,17 @@ public class VerticleDeploy extends AnnotatedCommand {
       process.write(buffer.toString()).end();
       return;
     }
-    process.vertx().deployVerticle(name, deploymentOptions, ar -> {
-      if (ar.succeeded()) {
-        process.write("Deployed " + ar.result() + "\n").end();
-      } else {
-        process.write("Could not deploy " + name + "\n");
-        StringWriter buffer = new StringWriter();
-        PrintWriter writer = new PrintWriter(buffer);
-        ar.cause().printStackTrace(writer);
-        process.write(buffer.toString()).end();
-      }
-    });
+    process.vertx().deployVerticle(name, deploymentOptions)
+      .onComplete(ar -> {
+        if (ar.succeeded()) {
+          process.write("Deployed " + ar.result() + "\n").end();
+        } else {
+          process.write("Could not deploy " + name + "\n");
+          StringWriter buffer = new StringWriter();
+          PrintWriter writer = new PrintWriter(buffer);
+          ar.cause().printStackTrace(writer);
+          process.write(buffer.toString()).end();
+        }
+      });
   }
 }

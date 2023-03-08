@@ -43,6 +43,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.User;
 import io.vertx.ext.auth.authentication.AuthenticationProvider;
+import io.vertx.ext.auth.authentication.UsernamePasswordCredentials;
 import io.vertx.ext.shell.SSHTestBase;
 import io.vertx.ext.shell.term.impl.SSHExec;
 import io.vertx.ext.shell.term.impl.SSHServer;
@@ -80,7 +81,8 @@ public class SSHServerTest extends SSHTestBase {
   public void after() throws Exception {
     if (server != null) {
       CountDownLatch latch = new CountDownLatch(1);
-      server.close(ar -> latch.countDown());
+      server.close()
+        .onComplete(ar -> latch.countDown());
       assertTrue(latch.await(10, TimeUnit.SECONDS));
     }
     super.after();
@@ -95,13 +97,14 @@ public class SSHServerTest extends SSHTestBase {
     server.termHandler(termHandler);
     ((SSHServer) server).setExecHandler(execHandler);
     server.authenticationProvider(authProvider);
-    server.listen(ar -> {
-      if (ar.succeeded()) {
-        fut.complete(null);
-      } else {
-        fut.completeExceptionally(ar.cause());
-      }
-    });
+    server.listen()
+      .onComplete(ar -> {
+        if (ar.succeeded()) {
+          fut.complete(null);
+        } else {
+          fut.completeExceptionally(ar.cause());
+        }
+      });
     fut.get(10, TimeUnit.SECONDS);
   }
 
@@ -241,14 +244,14 @@ public class SSHServerTest extends SSHTestBase {
   @Test
   public void testExternalAuthProvider(TestContext context) throws Exception {
     AtomicInteger count = new AtomicInteger();
-    authProvider = (authInfo, resultHandler) -> {
+    authProvider = credentials -> {
       count.incrementAndGet();
-      String username = authInfo.getString("username");
-      String password = authInfo.getString("password");
+      String username = ((UsernamePasswordCredentials) credentials).getUsername();
+      String password = ((UsernamePasswordCredentials) credentials).getPassword();
       if (username.equals("paulo") && password.equals("anothersecret")) {
-        resultHandler.handle(Future.succeededFuture(User.create(authInfo)));
+        return Future.succeededFuture(User.create(credentials.toJson()));
       } else {
-        resultHandler.handle(Future.failedFuture("not authenticated"));
+        return Future.failedFuture("not authenticated");
       }
     };
     Async async = context.async();
@@ -267,9 +270,9 @@ public class SSHServerTest extends SSHTestBase {
   @Test
   public void testExternalAuthProviderFails(TestContext context) throws Exception {
     AtomicInteger count = new AtomicInteger();
-    authProvider = (authInfo, resultHandler) -> {
+    authProvider = credentials -> {
       count.incrementAndGet();
-      resultHandler.handle(Future.failedFuture("not authenticated"));
+      return Future.failedFuture("not authenticated");
     };
     termHandler = term -> {
       context.fail();
@@ -293,12 +296,12 @@ public class SSHServerTest extends SSHTestBase {
       term.close();
     };
     startShell(new SSHTermOptions().setDefaultCharset("ISO_8859_1").setPort(5000).setHost("localhost").setKeyPairOptions(
-      new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
+        new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
       setAuthOptions(new JsonObject()
-        .put("provider", "shiro")
+        .put("provider", "properties")
         .put("type", "PROPERTIES")
         .put("config",
-          new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
+          new JsonObject().put("file", "test-auth.properties"))));
     Session session = createSession("paulo", "secret", false);
     session.connect();
     Channel channel = session.openChannel("shell");
@@ -314,12 +317,12 @@ public class SSHServerTest extends SSHTestBase {
     File f = new File(url.toURI());
     termHandler = Term::close;
     startShell(new SSHTermOptions().setIntputrc(f.getAbsolutePath()).setPort(5000).setHost("localhost").setKeyPairOptions(
-      new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
+        new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble")).
       setAuthOptions(new JsonObject()
-        .put("provider", "shiro")
+        .put("provider", "properties")
         .put("type", "PROPERTIES")
         .put("config",
-          new JsonObject().put("properties_path", "classpath:test-auth.properties"))));
+          new JsonObject().put("file", "test-auth.properties"))));
     Session session = createSession("paulo", "secret", false);
     session.connect();
     Channel channel = session.openChannel("shell");

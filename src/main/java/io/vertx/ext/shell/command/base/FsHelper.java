@@ -66,7 +66,8 @@ class FsHelper {
   void cd(FileSystem fs, String currentPath, String pathArg, Handler<AsyncResult<String>> pathHandler) {
     Path base = currentPath != null ? new File(currentPath).toPath() : rootDir;
     String path = base.resolve(pathArg).toAbsolutePath().normalize().toString();
-    fs.props(path, ar -> {
+    fs.props(path)
+      .onComplete(ar -> {
       if (ar.succeeded() && ar.result().isDirectory()) {
         pathHandler.handle(Future.succeededFuture(path));
       } else {

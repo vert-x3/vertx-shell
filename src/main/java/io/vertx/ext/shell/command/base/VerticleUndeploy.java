@@ -59,16 +59,17 @@ public class VerticleUndeploy extends AnnotatedCommand {
 
   @Override
   public void process(CommandProcess process) {
-    process.vertx().undeploy(id, ar -> {
-      if (ar.succeeded()) {
-        process.write("Undeployed " + id + "\n").end();
-      } else {
-        process.write("Could not undeploy " + id + "\n");
-        StringWriter buffer = new StringWriter();
-        PrintWriter writer = new PrintWriter(buffer);
-        ar.cause().printStackTrace(writer);
-        process.write(buffer.toString()).end();
-      }
-    });
+    process.vertx().undeploy(id)
+      .onComplete(ar -> {
+        if (ar.succeeded()) {
+          process.write("Undeployed " + id + "\n").end();
+        } else {
+          process.write("Could not undeploy " + id + "\n");
+          StringWriter buffer = new StringWriter();
+          PrintWriter writer = new PrintWriter(buffer);
+          ar.cause().printStackTrace(writer);
+          process.write(buffer.toString()).end();
+        }
+      });
   }
 }

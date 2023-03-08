@@ -110,7 +110,6 @@ providers:
 - _ldap_: provides `LDAP` backend
 - _mongo_ : MongoDB backend
 - _jdbc_ : JDBC backend
-- _shiro_ : (_deprecated_) provides `.properties` and _LDAP_ backend as seen in the ShellService presentation
 
 These options can be created directly using directly corresponding class:
 

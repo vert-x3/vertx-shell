@@ -68,7 +68,8 @@ public class VertxSshTtyTest extends SshTtyTestBase {
   public void after() throws Exception {
     super.after();
     CountDownLatch latch = new CountDownLatch(1);
-    vertx.close(v -> latch.countDown());
+    vertx.close()
+      .onComplete(v -> latch.countDown());
     await(latch);
   }
 

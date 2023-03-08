@@ -32,33 +32,17 @@
 
 package io.vertx.ext.shell;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.Session;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
-import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.runtime.Network;
 import io.vertx.core.AsyncResult;
-import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.auth.mongo.MongoUserUtil;
-import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.CommandRegistry;
 import io.vertx.ext.shell.term.SSHTermOptions;
-import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import org.junit.After;
-import org.junit.Test;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -77,7 +61,8 @@ public class SSHShellTest extends SSHTestBase {
     if (service != null) {
       CountDownLatch latch = new CountDownLatch(1);
       Handler<AsyncResult<Void>> handler = ar -> latch.countDown();
-      service.stop(handler);
+      service.stop()
+        .onComplete(handler);
       assertTrue(latch.await(10, TimeUnit.SECONDS));
     }
     super.after();
@@ -94,7 +79,8 @@ public class SSHShellTest extends SSHTestBase {
         setSSHOptions(options));
 
     CompletableFuture<Void> fut = new CompletableFuture<>();
-    service.start(ar -> {
+    service.start()
+      .onComplete(ar -> {
       if (ar.succeeded()) {
         fut.complete(null);
       } else {

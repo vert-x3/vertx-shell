@@ -87,7 +87,8 @@ public class TelnetTermServerTest {
       } catch (IOException ignore) {
       }
     }
-    vertx.close(context.asyncAssertSuccess());
+    vertx.close()
+      .onComplete(context.asyncAssertSuccess());
   }
 
   private void startTelnet(TestContext context, Handler<Term> termHandler) {
@@ -98,7 +99,8 @@ public class TelnetTermServerTest {
     server = TermServer.createTelnetTermServer(vertx, options.setPort(4000));
     server.termHandler(termHandler);
     Async async = context.async();
-    server.listen(context.asyncAssertSuccess(v -> async.complete()));
+    server.listen()
+      .onComplete(context.asyncAssertSuccess(v -> async.complete()));
     async.awaitSuccess(5000);
   }
 
