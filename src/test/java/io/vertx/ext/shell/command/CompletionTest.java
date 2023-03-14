@@ -69,9 +69,9 @@ public class CompletionTest {
     registry.registerCommand(CommandBuilder.command("foo").processHandler(proc -> {
     }).completionHandler(
       completion -> completion.complete("completed_by_foo", false)
-    ).build(rule.vertx()), context.asyncAssertSuccess(v1 -> registry.registerCommand(CommandBuilder.command("bar").processHandler(proc -> {
-    }).build(rule.vertx()), context.asyncAssertSuccess(v2 -> registry.registerCommand(CommandBuilder.command("baz").processHandler(proc -> {
-    }).build(rule.vertx()), context.asyncAssertSuccess(v3 -> registry.registerCommand(CommandBuilder.command("err").processHandler(proc -> {
+    ).build(rule.vertx())).onComplete(context.asyncAssertSuccess(v1 -> registry.registerCommand(CommandBuilder.command("bar").processHandler(proc -> {
+    }).build(rule.vertx())).onComplete(context.asyncAssertSuccess(v2 -> registry.registerCommand(CommandBuilder.command("baz").processHandler(proc -> {
+    }).build(rule.vertx())).onComplete(context.asyncAssertSuccess(v3 -> registry.registerCommand(CommandBuilder.command("err").processHandler(proc -> {
       }).completionHandler(completion -> {
         throw new RuntimeException("expected");
       }).build(rule.vertx()))

@@ -113,13 +113,7 @@ public class CommandRegistryTest {
           CommandBuilder command = CommandBuilder.command("hello");
           command.processHandler(process -> {
           });
-          registry.registerCommand(command.build(vertx), ar -> {
-            if (ar.succeeded()) {
-              startPromise.complete();
-            } else {
-              startPromise.fail(ar.cause());
-            }
-          });
+          registry.registerCommand(command.build(vertx)).<Void>mapEmpty().onComplete(startPromise);
         }
       })
       .onComplete(context.asyncAssertSuccess(id -> {
@@ -127,7 +121,7 @@ public class CommandRegistryTest {
         async.complete();
       }));
     async.awaitSuccess(5000);
-    vertx.undeploy(ref.get(), context.asyncAssertSuccess(v -> context.assertEquals(Collections.emptyList(), registry.commands())));
+    vertx.undeploy(ref.get()).onComplete(context.asyncAssertSuccess(v -> context.assertEquals(Collections.emptyList(), registry.commands())));
   }
 
   @Test
