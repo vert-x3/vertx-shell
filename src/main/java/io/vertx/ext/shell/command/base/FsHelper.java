@@ -79,7 +79,7 @@ class FsHelper {
   void ls(Vertx vertx, String currentFile, String pathArg, Handler<AsyncResult<Map<String, FileProps>>> filesHandler) {
     Path base = currentFile != null ? new File(currentFile).toPath() : rootDir;
     String path = base.resolve(pathArg).toAbsolutePath().normalize().toString();
-    vertx.executeBlocking(fut -> {
+    vertx.<Map<String, FileProps>>executeBlocking(fut -> {
       FileSystem fs = vertx.fileSystem();
       if (fs.propsBlocking(path).isDirectory()) {
         LinkedHashMap<String, FileProps> result = new LinkedHashMap<>();
@@ -90,7 +90,7 @@ class FsHelper {
       } else {
         throw new RuntimeException(path + ": No such file or directory");
       }
-    }, filesHandler);
+    }).onComplete(filesHandler);
   }
 
   Handler<Completion> completionHandler() {
@@ -125,7 +125,7 @@ class FsHelper {
   }
 
   void complete(Vertx vertx, String currentPath, String _prefix, Handler<AsyncResult<Map<String, Boolean>>> handler) {
-    vertx.executeBlocking(fut -> {
+    vertx.<Void>executeBlocking(fut -> {
 
       FileSystem fs = vertx.fileSystem();
       Path base = (currentPath != null ? new File(currentPath).toPath() : rootDir);
@@ -164,7 +164,7 @@ class FsHelper {
       }
 
       fut.complete(matches);
-    }, handler);
+    }).onComplete(handler);
 
 
   }

@@ -127,7 +127,7 @@ public class SSHServer implements TermServer {
     }
     Charset defaultCharset = Charset.forName(options.getDefaultCharset());
     listenContext = (ContextInternal) vertx.getOrCreateContext();
-    vertx.executeBlocking(fut -> {
+    vertx.<Void>executeBlocking(fut -> {
 
       try {
         KeyCertOptions ksOptions = options.getKeyPairOptions();
@@ -210,7 +210,7 @@ public class SSHServer implements TermServer {
         status.set(STATUS_STOPPED);
         fut.fail(e);
       }
-    }, listenHandler);
+    }).onComplete(listenHandler);
     return this;
   }
 
@@ -224,7 +224,7 @@ public class SSHServer implements TermServer {
       completionHandler.handle(Future.failedFuture("Invalid state:" + status.get()));
       return;
     }
-    vertx.executeBlocking(fut -> {
+    vertx.<Void>executeBlocking(fut -> {
       try {
         SshServer server = this.nativeServer;
         this.nativeServer = null;
@@ -235,6 +235,6 @@ public class SSHServer implements TermServer {
       } finally {
         status.set(STATUS_STOPPED);
       }
-    }, completionHandler);
+    }).onComplete(completionHandler);
   }
 }
