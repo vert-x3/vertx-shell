@@ -125,7 +125,7 @@ class FsHelper {
   }
 
   void complete(Vertx vertx, String currentPath, String _prefix, Handler<AsyncResult<Map<String, Boolean>>> handler) {
-    vertx.<Void>executeBlocking(fut -> {
+    vertx.<Map<String, Boolean>>executeBlocking(fut -> {
 
       FileSystem fs = vertx.fileSystem();
       Path base = (currentPath != null ? new File(currentPath).toPath() : rootDir);
