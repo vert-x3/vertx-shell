@@ -34,10 +34,8 @@ package io.vertx.ext.shell;
 
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
-import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.impl.ShellServerImpl;
 import io.vertx.ext.shell.command.CommandResolver;
@@ -118,38 +116,12 @@ public interface ShellServer {
   /**
    * Start the shell service, this is an asynchronous start.
    */
-  default Future<Void> listen() {
-    Promise<Void> promise = Promise.promise();
-    listen(promise);
-    return promise.future();
-  }
-
-  /**
-   * Start the shell service, this is an asynchronous start.
-   *
-   * @param listenHandler handler for getting notified when service is started
-   */
-  @Fluent
-  @Deprecated
-  ShellServer listen(Handler<AsyncResult<Void>> listenHandler);
+  Future<Void> listen();
 
   /**
    * Close the shell server, this is an asynchronous close.
    */
-  default Future<Void> close() {
-    Promise<Void> promise = Promise.promise();
-    close(promise);
-    return promise.future();
-  }
-
-  /**
-   * Close the shell server, this is an asynchronous close.
-   *
-   * @param completionHandler handler for getting notified when service is stopped
-   */
-  @Deprecated
-  void close(Handler<AsyncResult<Void>> completionHandler);
-
+  Future<Void> close();
 
   /**
    * Called when a new shell is created. Can be used to prepopulate the shell session with objects
@@ -158,7 +130,5 @@ public interface ShellServer {
    * @param shellHandler handler for getting notified when the server creates a new shell.
    */
   void shellHandler(Handler<Shell> shellHandler);
-
-
 
 }

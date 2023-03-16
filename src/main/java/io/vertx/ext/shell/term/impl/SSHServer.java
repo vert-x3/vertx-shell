@@ -237,4 +237,14 @@ public class SSHServer implements TermServer {
       }
     }).onComplete(completionHandler);
   }
+
+  @Override
+  public Future<Void> listen() {
+    return Future.future(this::listen);
+  }
+
+  @Override
+  public Future<Void> close() {
+    return Future.future(this::close);
+  }
 }

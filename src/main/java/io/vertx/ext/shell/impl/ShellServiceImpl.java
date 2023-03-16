@@ -32,10 +32,7 @@
 
 package io.vertx.ext.shell.impl;
 
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
+import io.vertx.core.*;
 import io.vertx.ext.shell.ShellServer;
 import io.vertx.ext.shell.ShellServerOptions;
 import io.vertx.ext.shell.command.CommandRegistry;
@@ -79,7 +76,9 @@ public class ShellServiceImpl implements ShellService {
   }
 
   @Override
-  public void start(Handler<AsyncResult<Void>> startHandler) {
+  public Future<Void> start() {
+
+    Promise<Void> p = Promise.promise();
 
     // Lookup providers
     ServiceLoader<CommandResolverFactory> loader = ServiceLoader.load(CommandResolverFactory.class);
@@ -104,7 +103,7 @@ public class ShellServiceImpl implements ShellService {
     resolvers.add(registry);
     Handler<Void> startServer = v -> {
       if (count.decrementAndGet() == 0) {
-        startServer(resolvers, startHandler);
+        startServer(resolvers, p);
       }
     };
     for (CommandResolverFactory factory : factories) {
@@ -115,6 +114,8 @@ public class ShellServiceImpl implements ShellService {
         startServer.handle(null);
       });
     }
+
+    return p.future();
   }
 
   private void startServer(List<CommandResolver> resolvers, Handler<AsyncResult<Void>> startHandler) {
@@ -136,8 +137,7 @@ public class ShellServiceImpl implements ShellService {
   }
 
   @Override
-  public void stop(Handler<AsyncResult<Void>> stopHandler) {
-    server.close()
-      .onComplete(stopHandler);
+  public Future<Void> stop() {
+    return server.close();
   }
 }

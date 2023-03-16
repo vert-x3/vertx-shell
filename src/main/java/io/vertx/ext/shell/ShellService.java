@@ -33,7 +33,6 @@
 package io.vertx.ext.shell;
 
 import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
@@ -73,19 +72,7 @@ public interface ShellService {
   /**
    * Start the shell service, this is an asynchronous start.
    */
-  default Future<Void> start() {
-    Promise<Void> promise = Promise.promise();
-    start(promise);
-    return promise.future();
-  }
-
-  /**
-   * Start the shell service, this is an asynchronous start.
-   *
-   * @param startHandler handler for getting notified when service is started
-   */
-  @Deprecated
-  void start(Handler<AsyncResult<Void>> startHandler);
+  Future<Void> start();
 
   /**
    * @return the shell server
@@ -95,18 +82,6 @@ public interface ShellService {
   /**
    * Stop the shell service, this is an asynchronous stop.
    */
-  default Future<Void> stop() {
-    Promise<Void> promise = Promise.promise();
-    stop(promise);
-    return promise.future();
-  }
-
-  /**
-   * Stop the shell service, this is an asynchronous start.
-   *
-   * @param stopHandler handler for getting notified when service is stopped
-   */
-  @Deprecated
-  void stop(Handler<AsyncResult<Void>> stopHandler);
+  Future<Void> stop();
 
 }

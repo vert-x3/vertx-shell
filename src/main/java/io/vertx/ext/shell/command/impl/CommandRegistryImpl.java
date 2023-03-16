@@ -90,7 +90,6 @@ public class CommandRegistryImpl implements CommandRegistry {
     return registerCommand(Command.create(vertx, command));
   }
 
-  @Override
   public CommandRegistry registerCommand(Class<? extends AnnotatedCommand> command, Handler<AsyncResult<Command>> completionHandler) {
     return registerCommand(Command.create(vertx, command), completionHandler);
   }
@@ -102,7 +101,6 @@ public class CommandRegistryImpl implements CommandRegistry {
     return promise.future();
   }
 
-  @Override
   public CommandRegistry registerCommand(Command command, Handler<AsyncResult<Command>> completionHandler) {
     return registerCommands(Collections.singletonList(command), ar -> {
       if (completionHandler != null) {
@@ -122,7 +120,6 @@ public class CommandRegistryImpl implements CommandRegistry {
     return promise.future();
   }
 
-  @Override
   public CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<List<Command>>> doneHandler) {
     if (closed) {
       throw new IllegalStateException();
@@ -171,7 +168,6 @@ public class CommandRegistryImpl implements CommandRegistry {
     return promise.future();
   }
 
-  @Override
   public CommandRegistry unregisterCommand(String name, Handler<AsyncResult<Void>> completionHandler) {
     if (closed) {
       throw new IllegalStateException();

@@ -34,10 +34,8 @@ package io.vertx.ext.shell.term;
 
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
-import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.shell.term.impl.SSHServer;
@@ -165,21 +163,7 @@ public interface TermServer {
    *
    * @return this object
    */
-  default Future<Void> listen() {
-    Promise<Void> promise = Promise.promise();
-    listen(promise);
-    return promise.future();
-  }
-
-  /**
-   * Bind the term server, the {@link #termHandler(Handler)} must be set before.
-   *
-   * @param listenHandler the listen handler
-   * @return this object
-   */
-  @Fluent
-  @Deprecated
-  TermServer listen(Handler<AsyncResult<Void>> listenHandler);
+  Future<Void> listen();
 
   /**
    * The actual port the server is listening on. This is useful if you bound the server specifying 0 as port number
@@ -193,18 +177,5 @@ public interface TermServer {
    * Close the server. This will close any currently open connections. The close may not complete until after this
    * method has returned.
    */
-  default Future<Void> close() {
-    Promise<Void> promise = Promise.promise();
-    close(promise);
-    return promise.future();
-  }
-
-  /**
-   * Like {@link #close} but supplying a handler that will be notified when close is complete.
-   *
-   * @param completionHandler the handler to be notified when the term server is closed
-   */
-  @Deprecated
-  void close(Handler<AsyncResult<Void>> completionHandler);
-
+  Future<Void> close();
 }

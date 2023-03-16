@@ -32,12 +32,9 @@
 
 package io.vertx.ext.shell.command;
 
-import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.codegen.annotations.VertxGen;
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.impl.VertxInternal;
 import io.vertx.ext.shell.command.impl.CommandRegistryImpl;
@@ -76,67 +73,36 @@ public interface CommandRegistry extends CommandResolver {
   }
 
   /**
-   * Like {@link #registerCommand(Class, Handler)}, without a completion handler.
+   * Register a single command.
+   *
+   * @param command the class of the command to register
+   * @return a future notified when the command is registered
    */
   @GenIgnore
   Future<Command> registerCommand(Class<? extends AnnotatedCommand> command);
 
   /**
-   * Register a single command.
-   *
-   * @param command the class of the command to register
-   * @param completionHandler notified when the command is registered
-   * @return a reference to this, so the API can be used fluently
-   */
-  @GenIgnore
-  CommandRegistry registerCommand(Class<? extends AnnotatedCommand> command, Handler<AsyncResult<Command>> completionHandler);
-
-  /**
-   * Like {@link #registerCommand(Command, Handler)}, without a completion handler.
-   */
-  Future<Command> registerCommand(Command command);
-
-  /**
    * Register a command
    *
    * @param command the command to register
-   * @param completionHandler notified when the command is registered
-   * @return a reference to this, so the API can be used fluently
+   * @return a future notified when the command is registered
    */
-  @Fluent
-  @Deprecated
-  CommandRegistry registerCommand(Command command, Handler<AsyncResult<Command>> completionHandler);
-
-  /**
-   * Like {@link #registerCommands(List, Handler)}, without a completion handler.
-   */
-  Future<List<Command>> registerCommands(List<Command> commands);
+  Future<Command> registerCommand(Command command);
 
   /**
    * Register a list of commands.
    *
    * @param commands the commands to register
-   * @param completionHandler notified when the command is registered
-   * @return a reference to this, so the API can be used fluently
+   * @return a future notified when the command is registered
    */
-  @Fluent
-  @Deprecated
-  CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<List<Command>>> completionHandler);
-
-  /**
-   * Like {@link #unregisterCommand(String, Handler)}, without a completion handler.
-   */
-  Future<Void> unregisterCommand(String commandName);
+  Future<List<Command>> registerCommands(List<Command> commands);
 
   /**
    * Unregister a command.
    *
    * @param commandName the command name
-   * @param completionHandler notified when the command is unregistered
-   * @return a reference to this, so the API can be used fluently
+   * @return a future notified when the command is unregistered
    */
-  @Fluent
-  @Deprecated
-  CommandRegistry unregisterCommand(String commandName, Handler<AsyncResult<Void>> completionHandler);
+  Future<Void> unregisterCommand(String commandName);
 
 }

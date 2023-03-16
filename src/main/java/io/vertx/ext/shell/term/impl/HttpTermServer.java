@@ -87,7 +87,6 @@ public class HttpTermServer implements TermServer {
     return this;
   }
 
-  @Override
   public TermServer listen(Handler<AsyncResult<Void>> listenHandler) {
 
     Charset charset = Charset.forName(options.getCharset());
@@ -161,6 +160,15 @@ public class HttpTermServer implements TermServer {
   }
 
   @Override
+  public Future<Void> listen() {
+    return Future.future(this::listen);
+  }
+
+  @Override
+  public Future<Void> close() {
+    return Future.future(this::close);
+  }
+
   public void close(Handler<AsyncResult<Void>> completionHandler) {
     if (server != null) {
       server.close()

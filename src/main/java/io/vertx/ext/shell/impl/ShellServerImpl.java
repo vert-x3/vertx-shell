@@ -140,7 +140,7 @@ public class ShellServerImpl implements ShellServer {
   }
 
   @Override
-  public ShellServer listen(Handler<AsyncResult<Void>> listenHandler) {
+  public Future<Void> listen() {
     List<TermServer> toStart;
     synchronized (this) {
       if (!closed) {
@@ -153,9 +153,9 @@ public class ShellServerImpl implements ShellServer {
       synchronized (this) {
         closed = false;
       }
-      listenHandler.handle(Future.succeededFuture());
-      return this;
+      return Future.succeededFuture();
     }
+    Promise<Void> p = Promise.promise();
     AtomicBoolean failed = new AtomicBoolean();
     Handler<AsyncResult<Void>> handler = ar -> {
       if (ar.failed()) {
@@ -163,14 +163,14 @@ public class ShellServerImpl implements ShellServer {
       }
       if (count.decrementAndGet() == 0) {
         if (failed.get()) {
-          listenHandler.handle(Future.failedFuture(ar.cause()));
+          p.handle(Future.failedFuture(ar.cause()));
           toStart.forEach(TermServer::close);
         } else {
           synchronized (this) {
             closed = false;
           }
           setTimer();
-          listenHandler.handle(Future.succeededFuture());
+          p.handle(Future.succeededFuture());
         }
       }
     };
@@ -188,7 +188,7 @@ public class ShellServerImpl implements ShellServer {
       termServer.listen()
         .onComplete(handler);
     });
-    return this;
+    return p.future();
   }
 
   private void evictSessions(long timerID) {
@@ -225,7 +225,7 @@ public class ShellServerImpl implements ShellServer {
   }
 
   @Override
-  public void close(Handler<AsyncResult<Void>> completionHandler) {
+  public Future<Void> close() {
     List<TermServer> toStop;
     List<ShellImpl> toClose;
     synchronized (this) {
@@ -245,17 +245,19 @@ public class ShellServerImpl implements ShellServer {
       }
     }
     if (toStop.isEmpty() && toClose.isEmpty()) {
-      completionHandler.handle(Future.succeededFuture());
+      return Future.succeededFuture();
     } else {
+      Promise<Void> p = Promise.promise();
       AtomicInteger count = new AtomicInteger(1 + toClose.size());
       Handler<AsyncResult<Void>> handler = ar -> {
         if (count.decrementAndGet() == 0) {
-          completionHandler.handle(Future.succeededFuture());
+          p.handle(Future.succeededFuture());
         }
       };
       toClose.forEach(ShellImpl::close);
       toStop.forEach(termServer -> termServer.close().onComplete(handler));
       sessionsClosed.future().onComplete(handler);
+      return p.future();
     }
   }
 

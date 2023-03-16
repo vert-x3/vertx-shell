@@ -76,7 +76,6 @@ public class TelnetTermServer implements TermServer {
     return this;
   }
 
-  @Override
   public TermServer listen(Handler<AsyncResult<Void>> listenHandler) {
     Charset charset = Charset.forName(options.getCharset());
     if (server == null) {
@@ -117,5 +116,15 @@ public class TelnetTermServer implements TermServer {
 
   public int actualPort() {
     return server.actualPort();
+  }
+
+  @Override
+  public Future<Void> listen() {
+    return Future.future(this::listen);
+  }
+
+  @Override
+  public Future<Void> close() {
+    return Future.future(this::close);
   }
 }

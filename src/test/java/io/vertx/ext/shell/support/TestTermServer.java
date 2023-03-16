@@ -73,7 +73,6 @@ public class TestTermServer implements TermServer {
     throw new UnsupportedOperationException();
   }
 
-  @Override
   public TermServer listen(Handler<AsyncResult<Void>> listenHandler) {
     listenHandler.handle(Future.succeededFuture());
     return this;
@@ -84,8 +83,17 @@ public class TestTermServer implements TermServer {
     throw new UnsupportedOperationException();
   }
 
-  @Override
   public void close(Handler<AsyncResult<Void>> completionHandler) {
     completionHandler.handle(Future.succeededFuture());
+  }
+
+  @Override
+  public Future<Void> listen() {
+    return Future.future(this::listen);
+  }
+
+  @Override
+  public Future<Void> close() {
+    return Future.future(this::close);
   }
 }
