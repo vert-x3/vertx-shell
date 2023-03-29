@@ -34,12 +34,6 @@ package io.vertx.ext.shell;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.Session;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
-import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.runtime.Network;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Handler;
@@ -54,6 +48,8 @@ import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import org.junit.After;
 import org.junit.Test;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -169,13 +165,10 @@ public class SSHShellTest extends SSHTestBase {
 
   @Test
   public void testDeployServiceWithMongoAuthOptions(TestContext context) throws Exception {
-    MongodExecutable exe = MongodStarter.getDefaultInstance().prepare(new MongodConfigBuilder().
-      version(Version.Main.V3_4).
-      net(new Net(27018, Network.localhostIsIPv6())).
-      build());
-    exe.start();
+    MongoDBContainer mongoDBContainer = new MongoDBContainer(DockerImageName.parse("mongo:4.0.10"));
+    mongoDBContainer.start();
     try {
-      JsonObject config = new JsonObject().put("connection_string", "mongodb://localhost:27018");
+      JsonObject config = new JsonObject().put("connection_string", mongoDBContainer.getConnectionString());
       MongoClient client = MongoClient.create(vertx, config);
       Async ready = context.async();
       MongoUserUtil mongoUserUtil = MongoUserUtil.create(client);
@@ -191,7 +184,7 @@ public class SSHShellTest extends SSHTestBase {
                   put("password", "wibble")).
               put("authOptions", new JsonObject().put("provider", "mongo").put("config",
                   new JsonObject().
-                      put("connection_string", "mongodb://localhost:27018")))))
+                      put("connection_string", mongoDBContainer.getConnectionString())))))
           , context.asyncAssertSuccess(v -> async.complete()));
       async.awaitSuccess(2000);
       Session session = createSession("admin", "password", false);
@@ -201,7 +194,7 @@ public class SSHShellTest extends SSHTestBase {
       channel.disconnect();
       session.disconnect();
     } finally {
-      exe.stop();
+      mongoDBContainer.stop();
     }
   }
 
