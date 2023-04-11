@@ -109,12 +109,10 @@ providers:
 - _properties_: provides `.properties` backend
 - _ldap_: provides `LDAP` backend
 - _mongo_ : MongoDB backend
-- _jdbc_ : JDBC backend
 
 These options can be created directly using directly corresponding class:
 
 - {@link io.vertx.ext.auth.ldap.LdapAuthenticationOptions} for LDAP
-- {@link io.vertx.ext.auth.jdbc.JDBCAuthenticationOptions} for JDBC
 - {@link io.vertx.ext.auth.mongo.MongoAuthenticationOptions} for Mongo
 
 As for external service configuration in Json, the `authOptions` uses the `provider` property to distinguish:
@@ -169,18 +167,6 @@ The server key configuration reuses the key pair store configuration scheme prov
 {@link examples.ShellExamples#runSSHServiceWithMongo(io.vertx.core.Vertx)}
 ----
 
-.Deploying the Shell Service on SSH with JDBC authentication
-[source,$lang,subs="+attributes"]
-----
-{@link examples.ShellExamples#deploySSHServiceWithJDBC(io.vertx.core.Vertx)}
-----
-
-.Running the Shell Service on SSH with JDBC authentication
-[source,$lang,subs="+attributes"]
-----
-{@link examples.ShellExamples#runSSHServiceWithJDBC(io.vertx.core.Vertx)}
-----
-
 == HTTP term configuration
 
 HTTP terms are configured by {@link io.vertx.ext.shell.ShellServiceOptions#setHttpOptions}, the http options
@@ -202,18 +188,6 @@ In addition there are extra options for configuring an HTTP term:
 [source,$lang,subs="+attributes"]
 ----
 {@link examples.ShellExamples#runHTTPServiceWithMongo(io.vertx.core.Vertx)}
-----
-
-.Deploying the Shell Service on HTTP with JDBC authentication
-[source,$lang,subs="+attributes"]
-----
-{@link examples.ShellExamples#deployHttpServiceWithJDBC(io.vertx.core.Vertx)}
-----
-
-.Running the Shell Service on HTTP with JDBC authentication
-[source,$lang,subs="+attributes"]
-----
-{@link examples.ShellExamples#runHTTPServiceWithJDBC(io.vertx.core.Vertx)}
 ----
 
 == Keymap configuration

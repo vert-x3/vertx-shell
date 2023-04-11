@@ -90,11 +90,6 @@
       <artifactId>vertx-auth-ldap</artifactId>
       <optional>true</optional>
     </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-auth-jdbc</artifactId>
-      <optional>true</optional>
-    </dependency>
 
     <!-- Apache SSHD -->
     <dependency>
