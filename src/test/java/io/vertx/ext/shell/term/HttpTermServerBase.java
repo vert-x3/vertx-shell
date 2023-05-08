@@ -65,6 +65,7 @@ public abstract class HttpTermServerBase {
   protected Vertx vertx;
   private TermServer server;
   private final String basePath;
+  private HttpClient client;
 
   public HttpTermServerBase(String basePath) {
     this.basePath = basePath;
@@ -73,6 +74,7 @@ public abstract class HttpTermServerBase {
   @Before
   public void before() throws Exception {
     vertx = Vertx.vertx();
+    client = vertx.createHttpClient();
   }
 
   @After
@@ -92,7 +94,6 @@ public abstract class HttpTermServerBase {
     });
     server.listen()
       .onComplete(context.asyncAssertSuccess(server -> {
-        HttpClient client = vertx.createHttpClient();
         client.webSocket(8080, "localhost", basePath + "/shell/websocket")
           .onComplete(context.asyncAssertSuccess(ws -> {
             ws.handler(buf -> {
@@ -115,7 +116,6 @@ public abstract class HttpTermServerBase {
     });
     server.listen()
       .onComplete(context.asyncAssertSuccess(server -> {
-        HttpClient client = vertx.createHttpClient();
         client.webSocket(8080, "localhost", basePath + "/shell/websocket")
           .onComplete(context.asyncAssertSuccess(ws -> {
             ws.writeFinalTextFrame(new JsonObject().put("action", "read").put("data", "hello_from_client").encode());
@@ -188,7 +188,6 @@ public abstract class HttpTermServerBase {
     });
     server.listen()
       .onComplete(context.asyncAssertSuccess(server -> {
-        HttpClient client = vertx.createHttpClient();
         client.webSocket(8080, "localhost", uri)
           .onComplete(context.asyncAssertSuccess(ws -> {
           }));
@@ -222,7 +221,6 @@ public abstract class HttpTermServerBase {
     });
     server.listen()
       .onComplete(context.asyncAssertSuccess(server -> {
-        HttpClient client = vertx.createHttpClient();
         client.webSocket(8080, "localhost", basePath + "/shell/websocket")
           .onComplete(context.asyncAssertSuccess(ws -> {
             ws.writeFinalTextFrame(event.encode());
@@ -241,7 +239,6 @@ public abstract class HttpTermServerBase {
     });
     server.listen()
       .onComplete(context.asyncAssertSuccess(server -> {
-        HttpClient client = vertx.createHttpClient();
         client.webSocket(8080, "localhost", basePath + "/shell/websocket")
           .onComplete(context.asyncAssertSuccess(ws -> {
             ws.writeFinalTextFrame(new JsonObject().put("action", "resize").put("cols", -50).encode());
@@ -265,7 +262,6 @@ public abstract class HttpTermServerBase {
     });
     server.listen()
       .onComplete(context.asyncAssertSuccess(server -> {
-        HttpClient client = vertx.createHttpClient();
         client.webSocket(8080, "localhost", basePath + "/shell/websocket")
           .onComplete(context.asyncAssertFailure(err -> {
             // Retry now with auth
@@ -306,7 +302,6 @@ public abstract class HttpTermServerBase {
     });
     server.listen()
       .onComplete(context.asyncAssertSuccess(server -> {
-        HttpClient client = vertx.createHttpClient();
         WebSocketConnectOptions options = new WebSocketConnectOptions()
           .setPort(8080)
           .setURI(basePath + "/shell/websocket")
@@ -333,7 +328,6 @@ public abstract class HttpTermServerBase {
     });
     server.listen()
       .onComplete(context.asyncAssertSuccess(server -> {
-        HttpClient client = vertx.createHttpClient();
         WebSocketConnectOptions options = new WebSocketConnectOptions()
           .setPort(8080)
           .setURI(basePath + "/shell/websocket")
@@ -356,7 +350,6 @@ public abstract class HttpTermServerBase {
     });
     server.listen()
       .onComplete(context.asyncAssertSuccess(server -> {
-        HttpClient client = vertx.createHttpClient();
         WebSocketConnectOptions options = new WebSocketConnectOptions()
           .setPort(8080)
           .setURI(basePath + "/shell/websocket")
@@ -383,7 +376,6 @@ public abstract class HttpTermServerBase {
     });
     server.listen()
       .onComplete(context.asyncAssertSuccess(server -> {
-        HttpClient client = vertx.createHttpClient();
         WebSocketConnectOptions options = new WebSocketConnectOptions()
           .setPort(8080)
           .setURI(basePath + "/shell/websocket")
