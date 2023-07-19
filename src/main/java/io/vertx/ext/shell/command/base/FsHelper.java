@@ -32,10 +32,7 @@
 
 package io.vertx.ext.shell.command.base;
 
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
+import io.vertx.core.*;
 import io.vertx.core.file.FileProps;
 import io.vertx.core.file.FileSystem;
 import io.vertx.ext.shell.cli.Completion;
@@ -79,14 +76,14 @@ class FsHelper {
   void ls(Vertx vertx, String currentFile, String pathArg, Handler<AsyncResult<Map<String, FileProps>>> filesHandler) {
     Path base = currentFile != null ? new File(currentFile).toPath() : rootDir;
     String path = base.resolve(pathArg).toAbsolutePath().normalize().toString();
-    vertx.<Map<String, FileProps>>executeBlocking(fut -> {
+    vertx.<Map<String, FileProps>>executeBlocking(() -> {
       FileSystem fs = vertx.fileSystem();
       if (fs.propsBlocking(path).isDirectory()) {
         LinkedHashMap<String, FileProps> result = new LinkedHashMap<>();
         for (String file : fs.readDirBlocking(path)) {
           result.put(file, fs.propsBlocking(file));
         }
-        fut.complete(result);
+        return result;
       } else {
         throw new RuntimeException(path + ": No such file or directory");
       }
@@ -125,7 +122,7 @@ class FsHelper {
   }
 
   void complete(Vertx vertx, String currentPath, String _prefix, Handler<AsyncResult<Map<String, Boolean>>> handler) {
-    vertx.<Map<String, Boolean>>executeBlocking(fut -> {
+    vertx.<Map<String, Boolean>>executeBlocking(() -> {
 
       FileSystem fs = vertx.fileSystem();
       Path base = (currentPath != null ? new File(currentPath).toPath() : rootDir);
@@ -133,8 +130,7 @@ class FsHelper {
       int index = _prefix.lastIndexOf('/');
       String prefix;
       if (index == 0) {
-        handler.handle(Future.failedFuture("todo"));
-        return;
+        throw new VertxException("todo");
       } else if (index > 0) {
         base = base.resolve(_prefix.substring(0, index));
         prefix = _prefix.substring(index + 1);
@@ -163,7 +159,7 @@ class FsHelper {
         }
       }
 
-      fut.complete(matches);
+      return matches;
     }).onComplete(handler);
 
 
