@@ -20,9 +20,34 @@ public class HttpTermOptionsConverter {
   public static void fromJson(Iterable<java.util.Map.Entry<String, Object>> json, HttpTermOptions obj) {
     for (java.util.Map.Entry<String, Object> member : json) {
       switch (member.getKey()) {
+        case "sockJSHandlerOptions":
+          if (member.getValue() instanceof JsonObject) {
+            obj.setSockJSHandlerOptions(new io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions((io.vertx.core.json.JsonObject)member.getValue()));
+          }
+          break;
+        case "sockJSPath":
+          if (member.getValue() instanceof String) {
+            obj.setSockJSPath((String)member.getValue());
+          }
+          break;
         case "authOptions":
           if (member.getValue() instanceof JsonObject) {
             obj.setAuthOptions(((JsonObject)member.getValue()).copy());
+          }
+          break;
+        case "vertsShellJsResource":
+          if (member.getValue() instanceof String) {
+            obj.setVertsShellJsResource(io.vertx.core.buffer.Buffer.buffer(BASE64_DECODER.decode((String)member.getValue())));
+          }
+          break;
+        case "termJsResource":
+          if (member.getValue() instanceof String) {
+            obj.setTermJsResource(io.vertx.core.buffer.Buffer.buffer(BASE64_DECODER.decode((String)member.getValue())));
+          }
+          break;
+        case "shellHtmlResource":
+          if (member.getValue() instanceof String) {
+            obj.setShellHtmlResource(io.vertx.core.buffer.Buffer.buffer(BASE64_DECODER.decode((String)member.getValue())));
           }
           break;
         case "charset":
@@ -35,31 +60,6 @@ public class HttpTermOptionsConverter {
             obj.setIntputrc((String)member.getValue());
           }
           break;
-        case "shellHtmlResource":
-          if (member.getValue() instanceof String) {
-            obj.setShellHtmlResource(io.vertx.core.buffer.Buffer.buffer(BASE64_DECODER.decode((String)member.getValue())));
-          }
-          break;
-        case "sockJSHandlerOptions":
-          if (member.getValue() instanceof JsonObject) {
-            obj.setSockJSHandlerOptions(new io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions((io.vertx.core.json.JsonObject)member.getValue()));
-          }
-          break;
-        case "sockJSPath":
-          if (member.getValue() instanceof String) {
-            obj.setSockJSPath((String)member.getValue());
-          }
-          break;
-        case "termJsResource":
-          if (member.getValue() instanceof String) {
-            obj.setTermJsResource(io.vertx.core.buffer.Buffer.buffer(BASE64_DECODER.decode((String)member.getValue())));
-          }
-          break;
-        case "vertsShellJsResource":
-          if (member.getValue() instanceof String) {
-            obj.setVertsShellJsResource(io.vertx.core.buffer.Buffer.buffer(BASE64_DECODER.decode((String)member.getValue())));
-          }
-          break;
       }
     }
   }
@@ -69,26 +69,26 @@ public class HttpTermOptionsConverter {
   }
 
   public static void toJson(HttpTermOptions obj, java.util.Map<String, Object> json) {
+    if (obj.getSockJSPath() != null) {
+      json.put("sockJSPath", obj.getSockJSPath());
+    }
     if (obj.getAuthOptions() != null) {
       json.put("authOptions", obj.getAuthOptions());
+    }
+    if (obj.getVertsShellJsResource() != null) {
+      json.put("vertsShellJsResource", BASE64_ENCODER.encodeToString(obj.getVertsShellJsResource().getBytes()));
+    }
+    if (obj.getTermJsResource() != null) {
+      json.put("termJsResource", BASE64_ENCODER.encodeToString(obj.getTermJsResource().getBytes()));
+    }
+    if (obj.getShellHtmlResource() != null) {
+      json.put("shellHtmlResource", BASE64_ENCODER.encodeToString(obj.getShellHtmlResource().getBytes()));
     }
     if (obj.getCharset() != null) {
       json.put("charset", obj.getCharset());
     }
     if (obj.getIntputrc() != null) {
       json.put("intputrc", obj.getIntputrc());
-    }
-    if (obj.getShellHtmlResource() != null) {
-      json.put("shellHtmlResource", BASE64_ENCODER.encodeToString(obj.getShellHtmlResource().getBytes()));
-    }
-    if (obj.getSockJSPath() != null) {
-      json.put("sockJSPath", obj.getSockJSPath());
-    }
-    if (obj.getTermJsResource() != null) {
-      json.put("termJsResource", BASE64_ENCODER.encodeToString(obj.getTermJsResource().getBytes()));
-    }
-    if (obj.getVertsShellJsResource() != null) {
-      json.put("vertsShellJsResource", BASE64_ENCODER.encodeToString(obj.getVertsShellJsResource().getBytes()));
     }
   }
 }

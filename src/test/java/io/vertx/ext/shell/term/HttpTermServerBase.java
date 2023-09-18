@@ -35,6 +35,7 @@ package io.vertx.ext.shell.term;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
+import io.vertx.core.http.WebSocketClient;
 import io.vertx.core.http.WebSocketConnectOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.User;
@@ -65,7 +66,7 @@ public abstract class HttpTermServerBase {
   protected Vertx vertx;
   private TermServer server;
   private final String basePath;
-  private HttpClient client;
+  private WebSocketClient wsClient;
 
   public HttpTermServerBase(String basePath) {
     this.basePath = basePath;
@@ -74,7 +75,7 @@ public abstract class HttpTermServerBase {
   @Before
   public void before() throws Exception {
     vertx = Vertx.vertx();
-    client = vertx.createHttpClient();
+    wsClient = vertx.createWebSocketClient();
   }
 
   @After
@@ -94,7 +95,7 @@ public abstract class HttpTermServerBase {
     });
     server.listen()
       .onComplete(context.asyncAssertSuccess(server -> {
-        client.webSocket(8080, "localhost", basePath + "/shell/websocket")
+        wsClient.connect(8080, "localhost", basePath + "/shell/websocket")
           .onComplete(context.asyncAssertSuccess(ws -> {
             ws.handler(buf -> {
               context.assertEquals("hello_from_server", buf.toString());
@@ -116,7 +117,7 @@ public abstract class HttpTermServerBase {
     });
     server.listen()
       .onComplete(context.asyncAssertSuccess(server -> {
-        client.webSocket(8080, "localhost", basePath + "/shell/websocket")
+        wsClient.connect(8080, "localhost", basePath + "/shell/websocket")
           .onComplete(context.asyncAssertSuccess(ws -> {
             ws.writeFinalTextFrame(new JsonObject().put("action", "read").put("data", "hello_from_client").encode());
           }));
@@ -188,7 +189,7 @@ public abstract class HttpTermServerBase {
     });
     server.listen()
       .onComplete(context.asyncAssertSuccess(server -> {
-        client.webSocket(8080, "localhost", uri)
+        wsClient.connect(8080, "localhost", uri)
           .onComplete(context.asyncAssertSuccess(ws -> {
           }));
       }));
@@ -221,7 +222,7 @@ public abstract class HttpTermServerBase {
     });
     server.listen()
       .onComplete(context.asyncAssertSuccess(server -> {
-        client.webSocket(8080, "localhost", basePath + "/shell/websocket")
+        wsClient.connect(8080, "localhost", basePath + "/shell/websocket")
           .onComplete(context.asyncAssertSuccess(ws -> {
             ws.writeFinalTextFrame(event.encode());
           }));
@@ -239,7 +240,7 @@ public abstract class HttpTermServerBase {
     });
     server.listen()
       .onComplete(context.asyncAssertSuccess(server -> {
-        client.webSocket(8080, "localhost", basePath + "/shell/websocket")
+        wsClient.connect(8080, "localhost", basePath + "/shell/websocket")
           .onComplete(context.asyncAssertSuccess(ws -> {
             ws.writeFinalTextFrame(new JsonObject().put("action", "resize").put("cols", -50).encode());
             vertx.setTimer(1000, id -> {
@@ -262,14 +263,14 @@ public abstract class HttpTermServerBase {
     });
     server.listen()
       .onComplete(context.asyncAssertSuccess(server -> {
-        client.webSocket(8080, "localhost", basePath + "/shell/websocket")
+        wsClient.connect(8080, "localhost", basePath + "/shell/websocket")
           .onComplete(context.asyncAssertFailure(err -> {
             // Retry now with auth
             WebSocketConnectOptions options = new WebSocketConnectOptions()
               .setPort(8080)
               .setURI(basePath + "/shell/websocket")
               .addHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString("tim:sausages".getBytes()));
-            client.webSocket(options)
+            wsClient.connect(options)
               .onComplete(context.asyncAssertSuccess(ws -> {
                 ws.handler(buf -> {
                   context.assertEquals("hello", buf.toString());
@@ -306,7 +307,7 @@ public abstract class HttpTermServerBase {
           .setPort(8080)
           .setURI(basePath + "/shell/websocket")
           .addHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes()));
-        client.webSocket(options)
+        wsClient.connect(options)
           .onComplete(context.asyncAssertSuccess(ws -> {
             async.countDown();
           }));
@@ -332,7 +333,7 @@ public abstract class HttpTermServerBase {
           .setPort(8080)
           .setURI(basePath + "/shell/websocket")
           .addHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes()));
-        client.webSocket(options)
+        wsClient.connect(options)
           .onComplete(context.asyncAssertFailure(ws -> {
             assertEquals(1, count.get());
             async.complete();
@@ -354,7 +355,7 @@ public abstract class HttpTermServerBase {
           .setPort(8080)
           .setURI(basePath + "/shell/websocket")
           .addHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes()));
-        client.webSocket(options)
+        wsClient.connect(options)
           .onComplete(context.asyncAssertSuccess(ws -> {
             ws.handler(buf -> {
               context.assertTrue(Arrays.equals(new byte[]{63}, buf.getBytes()));
@@ -380,7 +381,7 @@ public abstract class HttpTermServerBase {
           .setPort(8080)
           .setURI(basePath + "/shell/websocket")
           .addHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString("paulo:anothersecret".getBytes()));
-        client.webSocket(options)
+        wsClient.connect(options)
           .onComplete(context.asyncAssertSuccess(ws -> {
             ws.handler(buf -> {
             });
