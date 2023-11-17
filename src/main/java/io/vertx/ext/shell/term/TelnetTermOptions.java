@@ -132,36 +132,6 @@ public class TelnetTermOptions extends NetServerOptions {
   }
 
   @Override
-  public TelnetTermOptions setKeyStoreOptions(JksOptions options) {
-    return (TelnetTermOptions) super.setKeyStoreOptions(options);
-  }
-
-  @Override
-  public TelnetTermOptions setPfxKeyCertOptions(PfxOptions options) {
-    return (TelnetTermOptions) super.setPfxKeyCertOptions(options);
-  }
-
-  @Override
-  public TelnetTermOptions setPemKeyCertOptions(PemKeyCertOptions options) {
-    return (TelnetTermOptions) super.setPemKeyCertOptions(options);
-  }
-
-  @Override
-  public TelnetTermOptions setTrustStoreOptions(JksOptions options) {
-    return (TelnetTermOptions) super.setTrustStoreOptions(options);
-  }
-
-  @Override
-  public TelnetTermOptions setPfxTrustOptions(PfxOptions options) {
-    return (TelnetTermOptions) super.setPfxTrustOptions(options);
-  }
-
-  @Override
-  public TelnetTermOptions setPemTrustOptions(PemTrustOptions options) {
-    return (TelnetTermOptions) super.setPemTrustOptions(options);
-  }
-
-  @Override
   public TelnetTermOptions addEnabledCipherSuite(String suite) {
     return (TelnetTermOptions) super.addEnabledCipherSuite(suite);
   }

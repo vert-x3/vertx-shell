@@ -220,36 +220,6 @@ public class HttpTermOptions extends HttpServerOptions {
   }
 
   @Override
-  public HttpTermOptions setKeyStoreOptions(JksOptions options) {
-    return (HttpTermOptions) super.setKeyStoreOptions(options);
-  }
-
-  @Override
-  public HttpTermOptions setPfxKeyCertOptions(PfxOptions options) {
-    return (HttpTermOptions) super.setPfxKeyCertOptions(options);
-  }
-
-  @Override
-  public HttpTermOptions setPemKeyCertOptions(PemKeyCertOptions options) {
-    return (HttpTermOptions) super.setPemKeyCertOptions(options);
-  }
-
-  @Override
-  public HttpTermOptions setTrustStoreOptions(JksOptions options) {
-    return (HttpTermOptions) super.setTrustStoreOptions(options);
-  }
-
-  @Override
-  public HttpTermOptions setPemTrustOptions(PemTrustOptions options) {
-    return (HttpTermOptions) super.setPemTrustOptions(options);
-  }
-
-  @Override
-  public HttpTermOptions setPfxTrustOptions(PfxOptions options) {
-    return (HttpTermOptions) super.setPfxTrustOptions(options);
-  }
-
-  @Override
   public HttpTermOptions addEnabledCipherSuite(String suite) {
     return (HttpTermOptions) super.addEnabledCipherSuite(suite);
   }
