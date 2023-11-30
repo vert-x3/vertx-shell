@@ -33,6 +33,7 @@
 package io.vertx.ext.shell;
 
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.codegen.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.term.TelnetTermOptions;
@@ -44,7 +45,8 @@ import io.vertx.ext.shell.term.HttpTermOptions;
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@DataObject(generateConverter = true)
+@DataObject
+@JsonGen(publicConverter = false)
 public class ShellServiceOptions extends ShellServerOptions {
 
   private TelnetTermOptions telnetOptions;
