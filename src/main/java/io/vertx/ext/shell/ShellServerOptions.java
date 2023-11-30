@@ -33,6 +33,7 @@
 package io.vertx.ext.shell;
 
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
 
 import java.io.ByteArrayOutputStream;
@@ -43,7 +44,8 @@ import java.io.InputStream;
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@DataObject(generateConverter = true)
+@DataObject
+@JsonGen(publicConverter = false)
 public class ShellServerOptions {
 
   /**

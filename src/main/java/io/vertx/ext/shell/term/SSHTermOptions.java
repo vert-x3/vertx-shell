@@ -34,6 +34,7 @@ package io.vertx.ext.shell.term;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.annotations.GenIgnore;
+import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.core.net.KeyCertOptions;
@@ -48,7 +49,8 @@ import java.nio.charset.StandardCharsets;
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@DataObject(generateConverter = true)
+@DataObject
+@JsonGen(publicConverter = false)
 public class SSHTermOptions {
 
   public static final String DEFAULT_HOST = NetServerOptions.DEFAULT_HOST;

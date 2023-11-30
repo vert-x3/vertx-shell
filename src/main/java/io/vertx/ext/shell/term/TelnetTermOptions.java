@@ -33,6 +33,7 @@
 package io.vertx.ext.shell.term;
 
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
@@ -48,7 +49,8 @@ import java.nio.charset.StandardCharsets;
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@DataObject(generateConverter = true)
+@DataObject
+@JsonGen(publicConverter = false)
 public class TelnetTermOptions extends NetServerOptions {
 
   public static final boolean DEFAULT_IN_BINARY = true;
