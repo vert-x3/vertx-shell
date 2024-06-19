@@ -35,7 +35,7 @@ package io.vertx.ext.shell.command.base;
 import io.vertx.core.cli.annotations.Name;
 import io.vertx.core.cli.annotations.Summary;
 import io.vertx.core.impl.Deployment;
-import io.vertx.core.impl.VertxInternal;
+import io.vertx.core.internal.VertxInternal;
 import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
 

@@ -39,7 +39,7 @@ import io.termd.core.ssh.netty.AsyncUserAuthServiceFactory;
 import io.termd.core.ssh.netty.NettyIoServiceFactoryFactory;
 import io.vertx.core.*;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.core.impl.ContextInternal;
+import io.vertx.core.internal.ContextInternal;
 import io.vertx.core.net.*;
 import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.auth.authentication.UsernamePasswordCredentials;

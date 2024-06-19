@@ -34,7 +34,7 @@ package io.vertx.ext.shell.term.impl;
 
 import io.termd.core.ssh.netty.NettyIoHandlerBridge;
 import io.vertx.core.VertxException;
-import io.vertx.core.impl.ContextInternal;
+import io.vertx.core.internal.ContextInternal;
 import org.apache.sshd.common.io.IoHandler;
 import org.apache.sshd.common.io.IoSession;
 

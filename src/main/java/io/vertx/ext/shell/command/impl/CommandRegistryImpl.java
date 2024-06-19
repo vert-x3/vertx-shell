@@ -33,7 +33,7 @@
 package io.vertx.ext.shell.command.impl;
 
 import io.vertx.core.*;
-import io.vertx.core.impl.VertxInternal;
+import io.vertx.core.internal.VertxInternal;
 import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.Command;
 import io.vertx.ext.shell.command.CommandRegistry;
