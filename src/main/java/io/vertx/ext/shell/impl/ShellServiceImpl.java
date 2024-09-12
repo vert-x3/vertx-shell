@@ -118,7 +118,7 @@ public class ShellServiceImpl implements ShellService {
     return p.future();
   }
 
-  private void startServer(List<CommandResolver> resolvers, Handler<AsyncResult<Void>> startHandler) {
+  private void startServer(List<CommandResolver> resolvers, Completable<Void> startHandler) {
     TelnetTermOptions telnetOptions = options.getTelnetOptions();
     SSHTermOptions sshOptions = options.getSSHOptions();
     HttpTermOptions webOptions = options.getHttpOptions();

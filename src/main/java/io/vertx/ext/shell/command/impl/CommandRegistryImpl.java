@@ -90,7 +90,7 @@ public class CommandRegistryImpl implements CommandRegistry {
     return registerCommand(Command.create(vertx, command));
   }
 
-  public CommandRegistry registerCommand(Class<? extends AnnotatedCommand> command, Handler<AsyncResult<Command>> completionHandler) {
+  public CommandRegistry registerCommand(Class<? extends AnnotatedCommand> command, Completable<Command> completionHandler) {
     return registerCommand(Command.create(vertx, command), completionHandler);
   }
 
@@ -101,13 +101,13 @@ public class CommandRegistryImpl implements CommandRegistry {
     return promise.future();
   }
 
-  public CommandRegistry registerCommand(Command command, Handler<AsyncResult<Command>> completionHandler) {
-    return registerCommands(Collections.singletonList(command), ar -> {
+  public CommandRegistry registerCommand(Command command, Completable<Command> completionHandler) {
+    return registerCommands(Collections.singletonList(command), (res, err) -> {
       if (completionHandler != null) {
-        if (ar.succeeded()) {
-          completionHandler.handle(Future.succeededFuture(ar.result().get(0)));
+        if (err == null) {
+          completionHandler.succeed(res.get(0));
         } else {
-          completionHandler.handle(Future.failedFuture(ar.cause()));
+          completionHandler.fail(err);
         }
       }
     });
@@ -120,7 +120,7 @@ public class CommandRegistryImpl implements CommandRegistry {
     return promise.future();
   }
 
-  public CommandRegistry registerCommands(List<Command> commands, Handler<AsyncResult<List<Command>>> doneHandler) {
+  public CommandRegistry registerCommands(List<Command> commands, Completable<List<Command>> doneHandler) {
     if (closed) {
       throw new IllegalStateException();
     }
@@ -153,9 +153,9 @@ public class CommandRegistryImpl implements CommandRegistry {
             filter(reg -> ar.result().equals(reg.deploymendID)).
             map(reg -> reg.command).
             collect(Collectors.toList());
-          doneHandler.handle(Future.succeededFuture(regs));
+          doneHandler.succeed(regs);
         } else {
-          doneHandler.handle(Future.failedFuture(ar.cause()));
+          doneHandler.fail(ar.cause());
         }
       });
     return this;
@@ -168,7 +168,7 @@ public class CommandRegistryImpl implements CommandRegistry {
     return promise.future();
   }
 
-  public CommandRegistry unregisterCommand(String name, Handler<AsyncResult<Void>> completionHandler) {
+  public CommandRegistry unregisterCommand(String name, Completable<Void> completionHandler) {
     if (closed) {
       throw new IllegalStateException();
     }
@@ -185,10 +185,10 @@ public class CommandRegistryImpl implements CommandRegistry {
         }
       }
       if (completionHandler != null) {
-        completionHandler.handle(Future.succeededFuture());
+        completionHandler.succeed();
       }
     } else if (completionHandler != null) {
-      completionHandler.handle(Future.failedFuture("Command " + name + " not registered"));
+      completionHandler.fail("Command " + name + " not registered");
     }
     return this;
   }

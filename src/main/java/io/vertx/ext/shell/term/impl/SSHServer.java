@@ -117,9 +117,9 @@ public class SSHServer implements TermServer {
     return this;
   }
 
-  public SSHServer listen(Handler<AsyncResult<Void>> listenHandler) {
+  public SSHServer listen(Completable<Void> listenHandler) {
     if (!status.compareAndSet(STATUS_STOPPED, STATUS_STARTING)) {
-      listenHandler.handle(Future.failedFuture("Invalid state:" + status.get()));
+      listenHandler.fail("Invalid state:" + status.get());
       return this;
     }
     if (options.getAuthOptions() != null) {
@@ -219,9 +219,9 @@ public class SSHServer implements TermServer {
     return nativeServer.getPort();
   }
 
-  public void close(Handler<AsyncResult<Void>> completionHandler) {
+  public void close(Completable<Void> completionHandler) {
     if (!status.compareAndSet(STATUS_STARTED, STATUS_STOPPING)) {
-      completionHandler.handle(Future.failedFuture("Invalid state:" + status.get()));
+      completionHandler.fail("Invalid state:" + status.get());
       return;
     }
     vertx.<Void>executeBlocking(() -> {
@@ -229,9 +229,9 @@ public class SSHServer implements TermServer {
         SshServer server = this.nativeServer;
         this.nativeServer = null;
         server.close();
-        completionHandler.handle(Future.succeededFuture());
+        completionHandler.succeed();
       } catch (Exception t) {
-        completionHandler.handle(Future.failedFuture(t));
+        completionHandler.fail(t);
       } finally {
         status.set(STATUS_STOPPED);
       }

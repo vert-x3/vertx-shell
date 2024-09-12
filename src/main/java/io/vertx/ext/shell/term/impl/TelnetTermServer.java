@@ -34,10 +34,7 @@ package io.vertx.ext.shell.term.impl;
 
 import io.termd.core.readline.Keymap;
 import io.termd.core.telnet.TelnetTtyConnection;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
+import io.vertx.core.*;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetServer;
 import io.vertx.ext.auth.authentication.AuthenticationProvider;
@@ -76,13 +73,13 @@ public class TelnetTermServer implements TermServer {
     return this;
   }
 
-  public TermServer listen(Handler<AsyncResult<Void>> listenHandler) {
+  public TermServer listen(Completable<Void> listenHandler) {
     Charset charset = Charset.forName(options.getCharset());
     if (server == null) {
       server = vertx.createNetServer(options);
       Buffer inputrc = Helper.loadResource(vertx.fileSystem(), options.getIntputrc());
       if (inputrc == null) {
-        listenHandler.handle(Future.failedFuture("Could not load inputrc from " + options.getIntputrc()));
+        listenHandler.fail("Could not load inputrc from " + options.getIntputrc());
         return this;
       }
       Keymap keymap = new Keymap(new ByteArrayInputStream(inputrc.getBytes()));
@@ -93,24 +90,24 @@ public class TelnetTermServer implements TermServer {
       server.listen()
         .onComplete(ar -> {
           if (ar.succeeded()) {
-            listenHandler.handle(Future.succeededFuture());
+            listenHandler.succeed();
           } else {
-            listenHandler.handle(Future.failedFuture(ar.cause()));
+            listenHandler.fail(ar.cause());
           }
         });
     } else {
-      listenHandler.handle(Future.failedFuture("Already started"));
+      listenHandler.fail("Already started");
     }
     return this;
   }
 
-  public void close(Handler<AsyncResult<Void>> completionHandler) {
+  public void close(Completable<Void> completionHandler) {
     if (server != null) {
       server.close()
         .onComplete(completionHandler);
       server = null;
     } else {
-      completionHandler.handle(Future.failedFuture("No started"));
+      completionHandler.fail("No started");
     }
   }
 

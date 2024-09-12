@@ -33,10 +33,7 @@
 package io.vertx.ext.shell.support;
 
 import io.termd.core.tty.TtyConnection;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
+import io.vertx.core.*;
 import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
@@ -73,8 +70,8 @@ public class TestTermServer implements TermServer {
     throw new UnsupportedOperationException();
   }
 
-  public TermServer listen(Handler<AsyncResult<Void>> listenHandler) {
-    listenHandler.handle(Future.succeededFuture());
+  public TermServer listen(Completable<Void> listenHandler) {
+    listenHandler.succeed();
     return this;
   }
 
@@ -83,8 +80,8 @@ public class TestTermServer implements TermServer {
     throw new UnsupportedOperationException();
   }
 
-  public void close(Handler<AsyncResult<Void>> completionHandler) {
-    completionHandler.handle(Future.succeededFuture());
+  public void close(Completable<Void> completionHandler) {
+    completionHandler.succeed();
   }
 
   @Override

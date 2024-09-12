@@ -33,10 +33,7 @@
 package io.vertx.ext.shell.term.impl;
 
 import io.termd.core.readline.Keymap;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
+import io.vertx.core.*;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServer;
 import io.vertx.ext.auth.authentication.AuthenticationProvider;
@@ -87,7 +84,7 @@ public class HttpTermServer implements TermServer {
     return this;
   }
 
-  public TermServer listen(Handler<AsyncResult<Void>> listenHandler) {
+  public TermServer listen(Completable<Void> listenHandler) {
 
     Charset charset = Charset.forName(options.getCharset());
 
@@ -110,7 +107,7 @@ public class HttpTermServer implements TermServer {
       Buffer inputrc = Helper.loadResource(vertx.fileSystem(), options.getIntputrc());
       if (inputrc == null) {
         if (listenHandler != null) {
-          listenHandler.handle(Future.failedFuture("Could not load inputrc from " + options.getIntputrc()));
+          listenHandler.fail("Could not load inputrc from " + options.getIntputrc());
         }
         return this;
       }
@@ -140,15 +137,15 @@ public class HttpTermServer implements TermServer {
         .onComplete(ar -> {
           if (listenHandler != null) {
             if (ar.succeeded()) {
-              listenHandler.handle(Future.succeededFuture());
+              listenHandler.succeed();
             } else {
-              listenHandler.handle(Future.failedFuture(ar.cause()));
+              listenHandler.fail(ar.cause());
             }
           }
         });
     } else {
       if (listenHandler != null) {
-        listenHandler.handle(Future.succeededFuture());
+        listenHandler.succeed();
       }
     }
     return this;
@@ -169,13 +166,13 @@ public class HttpTermServer implements TermServer {
     return Future.future(this::close);
   }
 
-  public void close(Handler<AsyncResult<Void>> completionHandler) {
+  public void close(Completable<Void> completionHandler) {
     if (server != null) {
       server.close()
         .onComplete(completionHandler);
       server = null;
     } else {
-      completionHandler.handle(Future.failedFuture("Not started"));
+      completionHandler.fail("Not started");
     }
   }
 }
