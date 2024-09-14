@@ -35,6 +35,7 @@ package io.vertx.ext.shell.command.base;
 import io.vertx.core.cli.annotations.Name;
 import io.vertx.core.cli.annotations.Summary;
 import io.vertx.core.impl.deployment.Deployment;
+import io.vertx.core.impl.deployment.DeploymentContext;
 import io.vertx.core.internal.VertxInternal;
 import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
@@ -50,8 +51,8 @@ public class VerticleLs extends AnnotatedCommand {
   public void process(CommandProcess process) {
     VertxInternal vertx = (VertxInternal) process.vertx();
     for (String id : vertx.deploymentIDs()) {
-      Deployment deployment = vertx.getDeployment(id);
-      process.write(id + ": " + deployment.identifier() + ", options=" + deployment.deploymentOptions().toJson() + "\n");
+      DeploymentContext deployment = vertx.getDeployment(id);
+      process.write(id + ": " + deployment.deployment().identifier() + ", options=" + deployment.deployment().options().toJson() + "\n");
 
     }
     process.end();
