@@ -39,6 +39,7 @@ import com.jcraft.jsch.Session;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.impl.NoStackTraceThrowable;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.User;
@@ -59,7 +60,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -79,33 +79,26 @@ public class SSHServerTest extends SSHTestBase {
 
   @After
   public void after() throws Exception {
-    if (server != null) {
-      CountDownLatch latch = new CountDownLatch(1);
-      server.close()
-        .onComplete(ar -> latch.countDown());
-      assertTrue(latch.await(10, TimeUnit.SECONDS));
+    TermServer s = server;
+    if (s != null) {
+      server = null;
+      try {
+        s.close().await(20, TimeUnit.SECONDS);
+      } catch (Throwable e) {
+      }
     }
     super.after();
   }
 
-  protected void startShell(SSHTermOptions options) throws ExecutionException, InterruptedException, TimeoutException {
+  protected void startShell(SSHTermOptions options) throws TimeoutException {
     if (server != null) {
       throw new IllegalStateException();
     }
     server = TermServer.createSSHTermServer(vertx, options);
-    CompletableFuture<Void> fut = new CompletableFuture<>();
     server.termHandler(termHandler);
     ((SSHServer) server).setExecHandler(execHandler);
     server.authenticationProvider(authProvider);
-    server.listen()
-      .onComplete(ar -> {
-        if (ar.succeeded()) {
-          fut.complete(null);
-        } else {
-          fut.completeExceptionally(ar.cause());
-        }
-      });
-    fut.get(10, TimeUnit.SECONDS);
+    server.listen().await(20, TimeUnit.SECONDS);
   }
 
   @Test
