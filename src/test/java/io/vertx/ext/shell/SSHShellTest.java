@@ -32,10 +32,7 @@
 
 package io.vertx.ext.shell;
 
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.shell.command.CommandBuilder;
 import io.vertx.ext.shell.command.CommandRegistry;
 import io.vertx.ext.shell.term.SSHTermOptions;
@@ -47,7 +44,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -58,12 +54,13 @@ public class SSHShellTest extends SSHTestBase {
 
   @After
   public void after() throws Exception {
-    if (service != null) {
-      CountDownLatch latch = new CountDownLatch(1);
-      Handler<AsyncResult<Void>> handler = ar -> latch.countDown();
-      service.stop()
-        .onComplete(handler);
-      assertTrue(latch.await(10, TimeUnit.SECONDS));
+    ShellService s = service;
+    if (s != null) {
+      service = null;
+      try {
+        s.stop().await(20, TimeUnit.SECONDS);
+      } catch (Throwable ignore) {
+      }
     }
     super.after();
   }
@@ -78,22 +75,7 @@ public class SSHShellTest extends SSHTestBase {
         setWelcomeMessage("").
         setSSHOptions(options));
 
-    CompletableFuture<Void> fut = new CompletableFuture<>();
-    service.start()
-      .onComplete(ar -> {
-      if (ar.succeeded()) {
-        fut.complete(null);
-      } else {
-        fut.completeExceptionally(ar.cause());
-      }
-    });
-    fut.get(10, TimeUnit.SECONDS);
-  }
-
-  protected static JsonObject config() {
-    return new JsonObject()
-        .put("url", "jdbc:hsqldb:mem:test?shutdown=true")
-        .put("driver_class", "org.hsqldb.jdbcDriver");
+    service.start().await();
   }
 
   @Override

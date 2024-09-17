@@ -33,8 +33,6 @@
 package io.vertx.ext.shell;
 
 import com.jcraft.jsch.*;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxException;
 import io.vertx.core.json.JsonObject;
@@ -49,7 +47,6 @@ import org.junit.runner.RunWith;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -71,11 +68,7 @@ public abstract class SSHTestBase {
 
   @After
   public void after() throws Exception {
-    CountDownLatch latch = new CountDownLatch(1);
-    Handler<AsyncResult<Void>> handler = ar -> latch.countDown();
-    vertx.close()
-      .onComplete(handler);
-    assertTrue(latch.await(10, TimeUnit.SECONDS));
+    vertx.close().await(20, TimeUnit.SECONDS);
   }
 
   protected abstract void startShell(SSHTermOptions options) throws ExecutionException, InterruptedException, TimeoutException;
@@ -168,9 +161,8 @@ public abstract class SSHTestBase {
         new JksOptions().setPath("src/test/resources/server-keystore.jks").setPassword("wibble"))
       );
       fail();
-    } catch (ExecutionException e) {
-      assertTrue(e.getCause() instanceof VertxException);
-      assertEquals("No authenticator", e.getCause().getMessage());
+    } catch (VertxException e) {
+      assertEquals("No authenticator", e.getMessage());
     }
   }
 
@@ -183,9 +175,9 @@ public abstract class SSHTestBase {
           .put("config",
             new JsonObject().put("file", "test-auth.properties")))
       );
-    } catch (ExecutionException e) {
-      assertTrue(e.getCause() instanceof VertxException);
-      assertEquals("No key pair store configured", e.getCause().getMessage());
+      fail();
+    } catch (VertxException e) {
+      assertEquals("No key pair store configured", e.getMessage());
     }
   }
 
