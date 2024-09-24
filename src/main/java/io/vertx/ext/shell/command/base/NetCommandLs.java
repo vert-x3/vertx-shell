@@ -54,7 +54,7 @@ public class NetCommandLs extends AnnotatedCommand {
     VertxInternal vertx = (VertxInternal) process.vertx();
     process.write("\nTCP Servers:\n");
     for (Map.Entry<ServerID, NetServerInternal> server : vertx.sharedTcpServers().entrySet()) {
-      process.write(server.getKey().host + ":" + server.getKey().port + "\n");
+      process.write(server.getKey().host() + ":" + server.getKey().port() + "\n");
     }
     process.end();
   }
