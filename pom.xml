@@ -36,7 +36,6 @@
 
   <properties>
     <termd.version>1.1.6</termd.version>
-    <jar.manifest>${project.basedir}/src/main/resources/META-INF/MANIFEST.MF</jar.manifest>
   </properties>
 
   <dependencyManagement>
