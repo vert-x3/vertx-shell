@@ -35,17 +35,17 @@ public class HttpTermOptionsConverter {
           break;
         case "vertsShellJsResource":
           if (member.getValue() instanceof String) {
-            obj.setVertsShellJsResource(io.vertx.core.buffer.Buffer.buffer(BASE64_DECODER.decode((String)member.getValue())));
+            obj.setVertsShellJsResource(io.vertx.core.buffer.Buffer.fromJson((String)member.getValue()));
           }
           break;
         case "termJsResource":
           if (member.getValue() instanceof String) {
-            obj.setTermJsResource(io.vertx.core.buffer.Buffer.buffer(BASE64_DECODER.decode((String)member.getValue())));
+            obj.setTermJsResource(io.vertx.core.buffer.Buffer.fromJson((String)member.getValue()));
           }
           break;
         case "shellHtmlResource":
           if (member.getValue() instanceof String) {
-            obj.setShellHtmlResource(io.vertx.core.buffer.Buffer.buffer(BASE64_DECODER.decode((String)member.getValue())));
+            obj.setShellHtmlResource(io.vertx.core.buffer.Buffer.fromJson((String)member.getValue()));
           }
           break;
         case "charset":
@@ -74,13 +74,13 @@ public class HttpTermOptionsConverter {
       json.put("authOptions", obj.getAuthOptions());
     }
     if (obj.getVertsShellJsResource() != null) {
-      json.put("vertsShellJsResource", BASE64_ENCODER.encodeToString(obj.getVertsShellJsResource().getBytes()));
+      json.put("vertsShellJsResource", obj.getVertsShellJsResource().toJson());
     }
     if (obj.getTermJsResource() != null) {
-      json.put("termJsResource", BASE64_ENCODER.encodeToString(obj.getTermJsResource().getBytes()));
+      json.put("termJsResource", obj.getTermJsResource().toJson());
     }
     if (obj.getShellHtmlResource() != null) {
-      json.put("shellHtmlResource", BASE64_ENCODER.encodeToString(obj.getShellHtmlResource().getBytes()));
+      json.put("shellHtmlResource", obj.getShellHtmlResource().toJson());
     }
     if (obj.getCharset() != null) {
       json.put("charset", obj.getCharset());
