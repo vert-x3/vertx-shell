@@ -281,7 +281,7 @@ command registry holds all the commands for a Vert.x instance.
 A command is registered until it is unregistered with the {@link io.vertx.ext.shell.command.CommandRegistry#unregisterCommand(java.lang.String)}.
 When a command is registered from a Verticle, this command is unregistered when this verticle is undeployed.
 
-NOTE: Command callbacks are invoked in the {@literal io.vertx.core.Context} when the command is registered in the
+NOTE: Command callbacks are invoked in the {@link io.vertx.core.Context} when the command is registered in the
 registry. Keep this in mind if you maintain state in a command.
 
 The {@link io.vertx.ext.shell.command.CommandProcess} object can be used for interacting with the shell.
