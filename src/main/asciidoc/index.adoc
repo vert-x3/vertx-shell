@@ -17,7 +17,7 @@ or deployed as a service.
 The shell can be started as a service directly either from the command line or as a the Vert.x deployment:
 
 .Starting a shell service available via Telnet
-[source,subs="+attributes"]
+[source,shell,subs="+attributes"]
 ----
 vertx run -conf '{"telnetOptions":{"port":5000}}' maven:io.vertx:vertx-shell:${maven.version}
 ----
@@ -25,7 +25,7 @@ vertx run -conf '{"telnetOptions":{"port":5000}}' maven:io.vertx:vertx-shell:${m
 or
 
 .Starting a shell service available via SSH
-[source,subs="+attributes"]
+[source,shell,subs="+attributes"]
 ----
 # create a key pair for the SSH server
 keytool -genkey -keyalg RSA -keystore ssh.jks -keysize 2048 -validity 1095 -dname CN=localhost -keypass secret -storepass secret
@@ -38,7 +38,7 @@ vertx run -conf '{"sshOptions":{"port":4000,"keyPairOptions":{"path":"ssh.jks","
 or
 
 .Starting a shell service available via HTTP
-[source,subs="+attributes"]
+[source,shell,subs="+attributes"]
 ----
 # create a certificate for the HTTP server
 keytool -genkey -keyalg RSA -keystore keystore.jks -keysize 2048 -validity 1095 -dname CN=localhost -keypass secret -storepass secret
@@ -117,6 +117,7 @@ These options can be created directly using directly corresponding class:
 
 As for external service configuration in Json, the `authOptions` uses the `provider` property to distinguish:
 
+[source,json]
 ----
 {
   ...
