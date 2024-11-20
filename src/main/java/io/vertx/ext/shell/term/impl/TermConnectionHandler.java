@@ -36,6 +36,7 @@ import io.termd.core.readline.Keymap;
 import io.termd.core.tty.TtyConnection;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.internal.ContextInternal;
 import io.vertx.ext.shell.term.Term;
 
 /**
@@ -43,19 +44,26 @@ import io.vertx.ext.shell.term.Term;
  */
 class TermConnectionHandler implements Handler<TtyConnection> {
 
+  final ContextInternal context;
   final Vertx vertx;
   final Handler<Term> handler;
   final Keymap keymap;
 
 
-  public TermConnectionHandler(Vertx vertx, Keymap keymap, Handler<Term> handler) {
+  public TermConnectionHandler(Vertx vertx, Keymap keymap, Handler<Term> handler, ContextInternal context) {
     this.vertx = vertx;
     this.handler = handler;
     this.keymap = keymap;
+    this.context = context;
   }
 
   @Override
   public void handle(TtyConnection conn) {
-    handler.handle(new TermImpl(vertx, keymap, conn));
+    TermImpl term = new TermImpl(vertx, keymap, conn, context);
+    if (context != null) {
+      context.dispatch(term, handler);
+    } else {
+      handler.handle(term);
+    }
   }
 }
