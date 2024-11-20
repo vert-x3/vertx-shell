@@ -38,6 +38,7 @@ import io.termd.core.tty.TtyConnection;
 import io.termd.core.util.Helper;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.impl.ContextInternal;
 import io.vertx.ext.shell.cli.CliToken;
 import io.vertx.ext.shell.cli.Completion;
 import io.vertx.ext.shell.session.Session;
@@ -56,6 +57,7 @@ public class TermImpl implements Term {
 
   private static final List<io.termd.core.readline.Function> readlineFunctions = Helper.loadServices(Thread.currentThread().getContextClassLoader(), io.termd.core.readline.Function.class);
 
+  private final ContextInternal context;
   private final Vertx vertx;
   private final Readline readline;
   private final Consumer<int[]> echoHandler;
@@ -66,16 +68,25 @@ public class TermImpl implements Term {
   private Session session;
   private boolean inReadline;
 
-  public TermImpl(Vertx vertx, TtyConnection conn) {
-    this(vertx, io.vertx.ext.shell.term.impl.Helper.defaultKeymap(), conn);
+  public TermImpl(Vertx vertx, Keymap keymap, TtyConnection conn) {
+    this(vertx, keymap, conn, null);
   }
 
-  public TermImpl(Vertx vertx, Keymap keymap, TtyConnection conn) {
+  public TermImpl(Vertx vertx, TtyConnection conn) {
+    this(vertx, io.vertx.ext.shell.term.impl.Helper.defaultKeymap(), conn, null);
+  }
+
+  public TermImpl(Vertx vertx, TtyConnection conn, ContextInternal context) {
+    this(vertx, io.vertx.ext.shell.term.impl.Helper.defaultKeymap(), conn, context);
+  }
+
+  public TermImpl(Vertx vertx, Keymap keymap, TtyConnection conn, ContextInternal context) {
     this.vertx = vertx;
     this.conn = conn;
-    readline = new Readline(keymap);
-    readlineFunctions.forEach(readline::addFunction);
-    echoHandler = codePoints -> {
+    this.context = context;
+    this.readline = new Readline(keymap);
+    this.readlineFunctions.forEach(readline::addFunction);
+    this.echoHandler = codePoints -> {
       // Echo
       echo(codePoints);
       readline.queueEvent(codePoints);
@@ -186,7 +197,13 @@ public class TermImpl implements Term {
   @Override
   public Term closeHandler(Handler<Void> handler) {
     if (handler != null) {
-      conn.setCloseHandler(handler::handle);
+      conn.setCloseHandler(v -> {
+        if (context != null) {
+          context.dispatch(handler);
+        } else {
+          handler.handle(null);
+        }
+      });
     } else {
       conn.setCloseHandler(null);
     }
@@ -225,7 +242,13 @@ public class TermImpl implements Term {
       throw new IllegalStateException();
     }
     if (handler != null) {
-      conn.setSizeHandler(resize -> handler.handle(null));
+      conn.setSizeHandler(resize -> {
+        if (context != null) {
+          context.dispatch(handler);
+        } else {
+          handler.handle(null);
+        }
+      });
     } else {
       conn.setSizeHandler(null);
     }
@@ -239,7 +262,14 @@ public class TermImpl implements Term {
     }
     stdinHandler = handler;
     if (handler != null) {
-      conn.setStdinHandler(codePoints -> handler.handle(Helper.fromCodePoints(codePoints)));
+      conn.setStdinHandler(codePoints -> {
+        String arg = Helper.fromCodePoints(codePoints);
+        if (context != null) {
+          context.dispatch(arg, handler);
+        } else {
+          handler.handle(arg);
+        }
+      });
       checkPending();
     } else {
       conn.setStdinHandler(echoHandler);

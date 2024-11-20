@@ -109,7 +109,9 @@ public class SSHServerTest extends SSHTestBase {
   public void testRead(TestContext context) throws Exception {
     Async async = context.async();
     termHandler = term -> {
+      context.assertNotNull(Vertx.currentContext());
       term.stdinHandler(s -> {
+        context.assertNotNull(Vertx.currentContext());
         context.assertEquals("hello", s);
         async.complete();
       });
@@ -158,6 +160,7 @@ public class SSHServerTest extends SSHTestBase {
     Async async = context.async();
     termHandler = term -> {
       term.resizehandler(v -> {
+        context.assertNotNull(Vertx.currentContext());
         context.assertEquals(20, term.width());
         context.assertEquals(10, term.height());
         async.complete();
@@ -180,6 +183,7 @@ public class SSHServerTest extends SSHTestBase {
     Async async = context.async();
     termHandler = term -> {
       term.closeHandler(v -> {
+        context.assertNotNull(Vertx.currentContext());
         async.complete();
       });
     };
@@ -242,6 +246,7 @@ public class SSHServerTest extends SSHTestBase {
   public void testExternalAuthProvider(TestContext context) throws Exception {
     AtomicInteger count = new AtomicInteger();
     authProvider = (authInfo, resultHandler) -> {
+      context.assertNotNull(Vertx.currentContext());
       count.incrementAndGet();
       String username = authInfo.getString("username");
       String password = authInfo.getString("password");
@@ -268,6 +273,7 @@ public class SSHServerTest extends SSHTestBase {
   public void testExternalAuthProviderFails(TestContext context) throws Exception {
     AtomicInteger count = new AtomicInteger();
     authProvider = (authInfo, resultHandler) -> {
+      context.assertNotNull(Vertx.currentContext());
       count.incrementAndGet();
       resultHandler.handle(Future.failedFuture("not authenticated"));
     };

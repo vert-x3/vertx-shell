@@ -88,7 +88,7 @@ public class TelnetTermServer implements TermServer {
         return this;
       }
       Keymap keymap = new Keymap(new ByteArrayInputStream(inputrc.getBytes()));
-      TermConnectionHandler connectionHandler = new TermConnectionHandler(vertx, keymap, termHandler);
+      TermConnectionHandler connectionHandler = new TermConnectionHandler(vertx, keymap, termHandler, null);
       server.connectHandler(new TelnetSocketHandler(vertx, () -> {
         return new TelnetTtyConnection(options.getInBinary(), options.getOutBinary(), charset, connectionHandler::handle);
       }));
