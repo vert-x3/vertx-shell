@@ -34,9 +34,6 @@ package io.vertx.ext.shell.term.impl;
 
 import io.termd.core.readline.Keymap;
 import io.termd.core.ssh.TtyCommand;
-import io.termd.core.ssh.netty.AsyncAuth;
-import io.termd.core.ssh.netty.AsyncUserAuthServiceFactory;
-import io.termd.core.ssh.netty.NettyIoServiceFactoryFactory;
 import io.vertx.core.*;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.internal.ContextInternal;
@@ -47,12 +44,20 @@ import io.vertx.ext.shell.impl.ShellAuth;
 import io.vertx.ext.shell.term.SSHTermOptions;
 import io.vertx.ext.shell.term.Term;
 import io.vertx.ext.shell.term.TermServer;
+import org.apache.sshd.common.future.CloseFuture;
+import org.apache.sshd.common.future.SshFutureListener;
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
+import org.apache.sshd.common.session.SessionContext;
+import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.SshServer;
-import org.apache.sshd.server.session.ServerConnectionServiceFactory;
+import org.apache.sshd.server.auth.AsyncAuthException;
+import org.apache.sshd.server.channel.ChannelSession;
+import org.apache.sshd.server.command.Command;
+import org.apache.sshd.server.shell.ShellFactory;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.*;
 import java.security.cert.Certificate;
@@ -60,7 +65,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.apache.sshd.server.SshServer.DEFAULT_SERVICE_FACTORIES;
 
 /**
  * Encapsulate the SSH server setup.
@@ -162,7 +170,7 @@ public class SSHServer implements TermServer {
         }
         KeyPairProvider provider = new AbstractKeyPairProvider() {
           @Override
-          public Iterable<KeyPair> loadKeys() {
+          public Iterable<KeyPair> loadKeys(SessionContext session) {
             return keyPairs;
           }
         };
@@ -172,21 +180,19 @@ public class SSHServer implements TermServer {
           throw new VertxException("Could not load inputrc from " + options.getIntputrc());
         }
         Keymap keymap = new Keymap(new ByteArrayInputStream(inputrc.getBytes()));
-        TermConnectionHandler connectionHandler = new TermConnectionHandler(vertx, keymap, termHandler);
+        TermConnectionHandler connectionHandler = new TermConnectionHandler(vertx, keymap, termHandler, listenContext);
 
         nativeServer = SshServer.setUpDefaultServer();
-        nativeServer.setShellFactory(() -> new TtyCommand(defaultCharset, connectionHandler::handle));
+        nativeServer.setShellFactory(channel -> new TtyCommand(defaultCharset, connectionHandler::handle));
         Handler<SSHExec> execHandler = this.execHandler;
         if (execHandler != null) {
-          nativeServer.setCommandFactory(command -> new TtyCommand(defaultCharset, conn -> {
-            execHandler.handle(new SSHExec(command, conn));
-          }));
+          nativeServer.setCommandFactory((channel, command) -> new TtyCommand(defaultCharset, conn -> listenContext.dispatch(new SSHExec(command, conn), execHandler)));
         }
         nativeServer.setHost(options.getHost());
         nativeServer.setPort(options.getPort());
         nativeServer.setKeyPairProvider(provider);
-        nativeServer.setIoServiceFactoryFactory(new NettyIoServiceFactoryFactory(listenContext.nettyEventLoop(), new VertxIoHandlerBridge(listenContext)));
-        nativeServer.setServiceFactories(Arrays.asList(ServerConnectionServiceFactory.INSTANCE, AsyncUserAuthServiceFactory.INSTANCE));
+        nativeServer.setIoServiceFactoryFactory(new org.apache.sshd.netty.NettyIoServiceFactoryFactory(listenContext.nettyEventLoop()));
+        nativeServer.setServiceFactories(DEFAULT_SERVICE_FACTORIES);
 
         //
         if (authProvider == null) {
@@ -194,7 +200,7 @@ public class SSHServer implements TermServer {
         }
 
         nativeServer.setPasswordAuthenticator((username, userpass, session) -> {
-          AsyncAuth auth = new AsyncAuth();
+          AsyncAuthException auth = new AsyncAuthException();
           listenContext.runOnContext(v ->
             authProvider.authenticate(new UsernamePasswordCredentials(username, userpass))
               .onSuccess(user -> auth.setAuthed(true))
@@ -224,19 +230,13 @@ public class SSHServer implements TermServer {
       completionHandler.fail("Invalid state:" + status.get());
       return;
     }
-    vertx.<Void>executeBlocking(() -> {
-      try {
-        SshServer server = this.nativeServer;
-        this.nativeServer = null;
-        server.close();
-        completionHandler.succeed();
-      } catch (Exception t) {
-        completionHandler.fail(t);
-      } finally {
-        status.set(STATUS_STOPPED);
-      }
-      return null;
-    }).onComplete(completionHandler);
+    SshServer server = this.nativeServer;
+    this.nativeServer = null;
+    CloseFuture closeFuture = server.close(false);
+    closeFuture.addListener(fut -> {
+      status.set(STATUS_STOPPED);
+      completionHandler.succeed();
+    });
   }
 
   @Override

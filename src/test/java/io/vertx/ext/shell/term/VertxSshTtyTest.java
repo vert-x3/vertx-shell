@@ -33,14 +33,11 @@
 package io.vertx.ext.shell.term;
 
 import io.termd.core.ssh.TtyCommand;
-import io.termd.core.ssh.netty.NettyIoServiceFactoryFactory;
-import io.termd.core.ssh.netty.NettyIoSession;
 import io.termd.core.tty.SshTtyTestBase;
 import io.termd.core.tty.TtyConnection;
 import io.vertx.core.Vertx;
 import io.vertx.core.internal.ContextInternal;
-import io.vertx.ext.shell.term.impl.VertxIoHandlerBridge;
-import org.apache.sshd.common.session.Session;
+import org.apache.sshd.netty.NettyIoServiceFactoryFactory;
 import org.apache.sshd.server.SshServer;
 import org.junit.After;
 import org.junit.Before;
@@ -76,25 +73,20 @@ public class VertxSshTtyTest extends SshTtyTestBase {
   @Override
   protected SshServer createServer() {
     SshServer sshd = SshServer.setUpDefaultServer();
-    sshd.setIoServiceFactoryFactory(new NettyIoServiceFactoryFactory(context.nettyEventLoop(), new VertxIoHandlerBridge(context)));
+    sshd.setIoServiceFactoryFactory(new NettyIoServiceFactoryFactory(context.nettyEventLoop()));
     return sshd;
   }
 
   @Override
   protected TtyCommand createConnection(Consumer<TtyConnection> onConnect) {
-    assertEquals(context, Vertx.currentContext());
     return new TtyCommand(charset, onConnect) {
       @Override
       public void execute(Runnable task) {
-        Session session = this.session.getSession();
-        NettyIoSession ioSession = (NettyIoSession) session.getIoSession();
-        ioSession.execute(task);
+        context.dispatch(task);
       }
       @Override
       public void schedule(Runnable task, long delay, TimeUnit unit) {
-        Session session = this.session.getSession();
-        NettyIoSession ioSession = (NettyIoSession) session.getIoSession();
-        ioSession.schedule(task, delay, unit);
+        context.dispatch(task);
       }
     };
   }

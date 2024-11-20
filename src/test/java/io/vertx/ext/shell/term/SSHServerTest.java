@@ -39,7 +39,6 @@ import com.jcraft.jsch.Session;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.core.impl.NoStackTraceThrowable;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.User;
@@ -84,7 +83,7 @@ public class SSHServerTest extends SSHTestBase {
       server = null;
       try {
         s.close().await(20, TimeUnit.SECONDS);
-      } catch (Throwable e) {
+      } catch (Throwable ignore) {
       }
     }
     super.after();
@@ -105,7 +104,9 @@ public class SSHServerTest extends SSHTestBase {
   public void testRead(TestContext context) throws Exception {
     Async async = context.async();
     termHandler = term -> {
+      context.assertNotNull(Vertx.currentContext());
       term.stdinHandler(s -> {
+        context.assertNotNull(Vertx.currentContext());
         context.assertEquals("hello", s);
         async.complete();
       });
@@ -154,6 +155,7 @@ public class SSHServerTest extends SSHTestBase {
     Async async = context.async();
     termHandler = term -> {
       term.resizehandler(v -> {
+        context.assertNotNull(Vertx.currentContext());
         context.assertEquals(20, term.width());
         context.assertEquals(10, term.height());
         async.complete();
@@ -176,6 +178,7 @@ public class SSHServerTest extends SSHTestBase {
     Async async = context.async();
     termHandler = term -> {
       term.closeHandler(v -> {
+        context.assertNotNull(Vertx.currentContext());
         async.complete();
       });
     };
@@ -238,6 +241,7 @@ public class SSHServerTest extends SSHTestBase {
   public void testExternalAuthProvider(TestContext context) throws Exception {
     AtomicInteger count = new AtomicInteger();
     authProvider = credentials -> {
+      context.assertNotNull(Vertx.currentContext());
       count.incrementAndGet();
       String username = ((UsernamePasswordCredentials) credentials).getUsername();
       String password = ((UsernamePasswordCredentials) credentials).getPassword();
@@ -264,6 +268,7 @@ public class SSHServerTest extends SSHTestBase {
   public void testExternalAuthProviderFails(TestContext context) throws Exception {
     AtomicInteger count = new AtomicInteger();
     authProvider = credentials -> {
+      context.assertNotNull(Vertx.currentContext());
       count.incrementAndGet();
       return Future.failedFuture("not authenticated");
     };
