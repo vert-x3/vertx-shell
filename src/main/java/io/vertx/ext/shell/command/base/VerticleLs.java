@@ -50,11 +50,10 @@ public class VerticleLs extends AnnotatedCommand {
 
   @Override
   public void process(CommandProcess process) {
-    VertxImpl vertx = (VertxImpl) process.vertx();
+    VertxInternal vertx = (VertxInternal)  process.vertx();
     for (String id : vertx.deploymentIDs()) {
       DeploymentContext deployment = vertx.deploymentManager().deployment(id);
-      process.write(id + ": " + deployment.id() + ", options=todo\n");
-
+      process.write(id + ": " + deployment.deployment().identifier() + ", options=" + deployment.deployment().options() + "\n");
     }
     process.end();
   }
