@@ -65,10 +65,10 @@ public class CommandRegistryImpl implements CommandRegistry {
         doClose();
         registries.remove(vertx);
       } catch (Exception e) {
-        completionHandler.handle(Future.failedFuture(e));
+        completionHandler.fail(e);
         return;
       }
-      completionHandler.handle(Future.succeededFuture());
+      completionHandler.succeed();
     };
     vertx.addCloseHook(hook);
   }
