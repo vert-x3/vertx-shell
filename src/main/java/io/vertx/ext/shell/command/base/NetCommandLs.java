@@ -35,8 +35,8 @@ package io.vertx.ext.shell.command.base;
 import io.vertx.core.cli.annotations.Name;
 import io.vertx.core.cli.annotations.Summary;
 import io.vertx.core.internal.VertxInternal;
-import io.vertx.core.net.impl.NetServerInternal;
 import io.vertx.core.net.impl.ServerID;
+import io.vertx.core.net.impl.tcp.NetServerInternal;
 import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
 
