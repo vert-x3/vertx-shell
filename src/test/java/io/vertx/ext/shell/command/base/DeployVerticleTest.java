@@ -131,4 +131,3 @@ public class DeployVerticleTest {
     return result.toString().trim();
   }
 }
-

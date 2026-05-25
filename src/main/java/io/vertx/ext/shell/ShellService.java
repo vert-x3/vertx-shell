@@ -34,8 +34,6 @@ package io.vertx.ext.shell;
 
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.ext.shell.impl.ShellServiceImpl;
 

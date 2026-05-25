@@ -32,7 +32,6 @@
 
 package io.vertx.ext.shell.cli;
 
-import io.vertx.ext.shell.cli.CliToken;
 import org.junit.Test;
 
 import java.util.Arrays;
