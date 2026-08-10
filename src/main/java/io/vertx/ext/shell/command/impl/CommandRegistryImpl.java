@@ -55,22 +55,21 @@ public class CommandRegistryImpl implements CommandRegistry {
 
   final VertxInternal vertx;
   final ConcurrentHashMap<String, CommandRegistration> commandMap = new ConcurrentHashMap<>();
-  final Closeable hook;
   private volatile boolean closed;
 
   public CommandRegistryImpl(VertxInternal vertx) {
-    this.vertx = vertx;
-    hook = completionHandler -> {
+
+    vertx.registerResource(timeout -> {
       try {
         doClose();
         registries.remove(vertx);
       } catch (Exception e) {
-        completionHandler.fail(e);
-        return;
+        return Future.failedFuture(e);
       }
-      completionHandler.succeed();
-    };
-    vertx.addCloseHook(hook);
+      return Future.succeededFuture();
+    });
+
+    this.vertx = vertx;
   }
 
   private void doClose() {
