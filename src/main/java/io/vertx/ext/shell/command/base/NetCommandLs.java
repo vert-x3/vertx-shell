@@ -35,12 +35,8 @@ package io.vertx.ext.shell.command.base;
 import io.vertx.core.cli.annotations.Name;
 import io.vertx.core.cli.annotations.Summary;
 import io.vertx.core.internal.VertxInternal;
-import io.vertx.core.internal.net.NetServerInternal;
-import io.vertx.core.net.impl.ServerID;
 import io.vertx.ext.shell.command.AnnotatedCommand;
 import io.vertx.ext.shell.command.CommandProcess;
-
-import java.util.Map;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -53,9 +49,6 @@ public class NetCommandLs extends AnnotatedCommand {
   public void process(CommandProcess process) {
     VertxInternal vertx = (VertxInternal) process.vertx();
     process.write("\nTCP Servers:\n");
-    for (Map.Entry<ServerID, NetServerInternal> server : vertx.sharedTcpServers().entrySet()) {
-      process.write(server.getKey().host() + ":" + server.getKey().port() + "\n");
-    }
     process.end();
   }
 }
